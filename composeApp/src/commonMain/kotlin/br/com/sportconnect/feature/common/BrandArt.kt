@@ -17,12 +17,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CourtLinesBackdrop(color: Color, modifier: Modifier = Modifier, lineYFraction: Float = 0.42f) {
     Canvas(modifier.fillMaxSize().clearAndSetSemantics { }) {
+        // C2: o circulo ficava enorme em cabecalhos altos e cruzava titulo/corpo. Agora o raio e limitado
+        // pela largura, o centro fica quase na borda (so ~1/4 da largura e ocupado) e o traco e mais suave.
         val sw = 2.dp.toPx()
         val y = size.height * lineYFraction
-        val r = size.height * 0.36f
-        val cx = size.width - r * 0.55f
-        drawLine(color, Offset(size.width * 0.62f, y), Offset(size.width, y), sw)
-        drawCircle(color, r, Offset(cx, y), style = Stroke(sw))
-        drawCircle(color, 4.dp.toPx(), Offset(cx, y))
+        val r = minOf(size.height * 0.36f, size.width * 0.30f)
+        val cx = size.width + r * 0.15f
+        val art = color.copy(alpha = color.alpha * 0.55f)
+        drawLine(art, Offset(cx - r, y), Offset(size.width, y), sw)
+        drawCircle(art, r, Offset(cx, y), style = Stroke(sw))
     }
 }

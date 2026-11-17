@@ -1,5 +1,13 @@
 package br.com.sportconnect.core.designsystem.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -28,6 +36,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.semantics
@@ -36,6 +45,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import br.com.sportconnect.core.designsystem.theme.SCBreakpoints
+import br.com.sportconnect.core.designsystem.theme.SCMotion
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
 
 /**
@@ -116,7 +126,7 @@ fun SCNavigationRail(
     NavigationRail(
         modifier = modifier,
         containerColor = c.surfaceContainer,
-        header = header?.let { h -> { h() } },
+        header = header?.let { h -> { Box(Modifier.padding(top = 12.dp, bottom = 8.dp)) { h() } } },
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             items.forEach { item ->
@@ -193,20 +203,40 @@ fun SCAdaptiveNavigation(
     content: @Composable (Modifier) -> Unit,
 ) {
     BoxWithConstraints(modifier.fillMaxSize()) {
+        // A barra/rail entra e sai animada: sem isso o conteudo "pula" ao abrir pagar/criar jogo (A4).
         when {
             maxWidth < SCBreakpoints.medium -> Scaffold(
-                bottomBar = { if (showNavigation) SCBottomNav(items, selectedRoute, onItemSelected) },
+                bottomBar = {
+                    AnimatedVisibility(
+                        visible = showNavigation,
+                        enter = expandVertically(tween(SCMotion.Medium2, easing = SCMotion.EmphasizedDecelerate), expandFrom = Alignment.Top) +
+                            fadeIn(tween(SCMotion.Medium1)),
+                        exit = shrinkVertically(tween(SCMotion.Medium1, easing = SCMotion.EmphasizedAccelerate), shrinkTowards = Alignment.Top) +
+                            fadeOut(tween(SCMotion.Short4)),
+                    ) { SCBottomNav(items, selectedRoute, onItemSelected) }
+                },
                 containerColor = SportConnectTheme.colors.surface,
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
             ) { padding -> content(Modifier.padding(padding).consumeWindowInsets(padding)) }
             maxWidth < drawerBreakpoint -> Row(Modifier.fillMaxSize()) {
-                if (showNavigation) SCNavigationRail(items, selectedRoute, onItemSelected, Modifier.fillMaxHeight(), header)
+                SideNavigation(showNavigation) { SCNavigationRail(items, selectedRoute, onItemSelected, Modifier.fillMaxHeight(), header) }
                 content(Modifier.weight(1f).fillMaxHeight())
             }
             else -> Row(Modifier.fillMaxSize()) {
-                if (showNavigation) SCNavigationDrawerSheet(items, selectedRoute, onItemSelected, Modifier.fillMaxHeight(), header)
+                SideNavigation(showNavigation) { SCNavigationDrawerSheet(items, selectedRoute, onItemSelected, Modifier.fillMaxHeight(), header) }
                 content(Modifier.weight(1f).fillMaxHeight())
             }
         }
     }
+}
+
+@Composable
+private fun SideNavigation(visible: Boolean, content: @Composable () -> Unit) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = expandHorizontally(tween(SCMotion.Medium2, easing = SCMotion.EmphasizedDecelerate), expandFrom = Alignment.Start) +
+            fadeIn(tween(SCMotion.Medium1)),
+        exit = shrinkHorizontally(tween(SCMotion.Medium1, easing = SCMotion.EmphasizedAccelerate), shrinkTowards = Alignment.Start) +
+            fadeOut(tween(SCMotion.Short4)),
+    ) { content() }
 }

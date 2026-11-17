@@ -22,7 +22,18 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            // R8 + remocao de recursos: Compose sem otimizacao e bem mais lento (A2).
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        // Igual ao release, mas assinado com a chave de debug: e o build para avaliar fluidez no aparelho
+        // (`./gradlew :androidApp:installBenchmark`). O debug NAO serve para medir desempenho.
+        create("benchmark") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
         }
     }
     compileOptions {

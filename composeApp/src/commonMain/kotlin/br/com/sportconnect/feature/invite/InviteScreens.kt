@@ -450,7 +450,7 @@ private fun GuestHero(state: GuestInviteUiState.Content, share: br.com.sportconn
             .testTag("guest_hero"),
     ) {
         if (state.firstOpen) {
-            CourtLinesBackdrop(c.outlineVariant, Modifier.matchParentSize().testTag("guest_hero_court_lines"), lineYFraction = 0.3f)
+            CourtLinesBackdrop(c.outlineVariant, Modifier.matchParentSize().testTag("guest_hero_court_lines"), lineYFraction = 0.55f)
         }
         Column(Modifier.padding(horizontal = 16.dp, vertical = 24.dp)) {
             if (state.firstOpen) {

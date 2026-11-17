@@ -578,9 +578,8 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
             }
             if (j != null) {
                 Spacer(Modifier.height(24.dp))
-                val counts = j.splitCounts(kotlin.time.Clock.System.now())
-                Text(stringResource(Res.string.split_progress, counts.paid + counts.covered, counts.total), style = t.titleMedium, color = c.onSurface)
-                Spacer(Modifier.height(8.dp))
+                // O SCSplitProgress ja traz o rotulo "x de y cotas pagas" (antes aparecia duplicado).
+                val counts = j.splitCounts(LocalSCClock.current.now())
                 SCSplitProgress(counts.total, counts.paid, processing = counts.processing, covered = counts.covered, variant = SCSplitProgressVariant.Compact)
             }
             Spacer(Modifier.height(32.dp))

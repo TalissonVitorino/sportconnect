@@ -42,6 +42,7 @@ import br.com.sportconnect.core.designsystem.component.SCNavItem
 import br.com.sportconnect.core.designsystem.component.SCSnackbarHost
 import br.com.sportconnect.core.designsystem.component.SCSnackbarKind
 import br.com.sportconnect.core.designsystem.component.showSC
+import br.com.sportconnect.core.designsystem.theme.LocalSCReducedMotion
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
 import br.com.sportconnect.core.domain.repository.AuthRepository
 import br.com.sportconnect.core.domain.usecase.GetMyGamesUseCase
@@ -145,6 +146,8 @@ fun AppNavHost(
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val nav = remember(navController) { AppNavigator(navController) }
+    val reducedMotion = LocalSCReducedMotion.current
+    val transitions = remember(reducedMotion) { NavTransitions(reducedMotion) }
 
     val gamesLabel = stringResource(Res.string.nav_games)
     val items = listOf(
@@ -195,7 +198,15 @@ fun AppNavHost(
         drawerBreakpoint = Dp.Infinity,
     ) { contentModifier ->
         Box(contentModifier.fillMaxSize()) {
-            NavHost(navController = navController, startDestination = start, modifier = Modifier.fillMaxSize()) {
+            NavHost(
+                navController = navController,
+                startDestination = start,
+                modifier = Modifier.fillMaxSize(),
+                enterTransition = transitions.enter,
+                exitTransition = transitions.exit,
+                popEnterTransition = transitions.popEnter,
+                popExitTransition = transitions.popExit,
+            ) {
                 composable<Route.Onboarding> {
                     OnboardingRoute(
                         OnboardingActions(

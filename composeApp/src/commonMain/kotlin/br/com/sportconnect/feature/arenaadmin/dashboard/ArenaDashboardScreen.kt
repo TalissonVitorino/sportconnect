@@ -1,5 +1,8 @@
 package br.com.sportconnect.feature.arenaadmin.dashboard
 
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -170,7 +173,7 @@ fun ArenaDashboardScreen(
 private fun DashboardTopBar(arenaName: String) {
     val c = SportConnectTheme.colors
     Row(
-        Modifier.fillMaxWidth().heightIn(min = 64.dp).background(c.surface).padding(start = 16.dp, end = 4.dp),
+        Modifier.fillMaxWidth().background(c.surface).windowInsetsPadding(WindowInsets.statusBars).heightIn(min = 64.dp).padding(start = 16.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(

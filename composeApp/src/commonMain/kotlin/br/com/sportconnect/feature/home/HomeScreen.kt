@@ -1,5 +1,8 @@
 package br.com.sportconnect.feature.home
 
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -124,7 +127,8 @@ fun HomeScreen(state: HomeUiState, actions: HomeActions, onRetry: () -> Unit = {
             topBar = {
                 val topMax = if (wc == WidthClass.Expanded) 1040.dp else 640.dp
                 val hPad = if (wc == WidthClass.Compact) 0.dp else 8.dp
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                // A barra de topo e propria (nao e TopAppBar), entao desconta a status bar aqui.
+                Box(Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars), contentAlignment = Alignment.TopCenter) {
                     Box(Modifier.widthIn(max = topMax).padding(horizontal = hPad)) { HomeTopBar(firstName, unread, actions.notifications) }
                 }
             },

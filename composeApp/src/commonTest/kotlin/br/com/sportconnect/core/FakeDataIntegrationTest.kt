@@ -87,7 +87,7 @@ class FakeDataIntegrationTest {
     }
 
     @Test
-    fun pagar_cota_pix_confirma_apos_3s_via_webhook_e_atualiza_flow() = runTest {
+    fun pagar_cota_pix_confirma_apos_1s_via_webhook_e_atualiza_flow() = runTest {
         val env = Ambiente(this)
         env.auth.entrarComo("u-atleta-10")
         val cobranca = env.payShare(DemoData.JOGO_RACHA).getOrThrow()
@@ -95,7 +95,7 @@ class FakeDataIntegrationTest {
         assertEquals(Money(150), cobranca.taxaConveniencia)
         assertEquals(8, env.games.game(DemoData.JOGO_RACHA)!!.cotasPagas)
 
-        advanceTimeBy(3.seconds + 100.milliseconds)
+        advanceTimeBy(1.seconds + 100.milliseconds)
         runCurrent()
         val jogo = env.games.observeGame(DemoData.JOGO_RACHA).first()!!
         assertEquals(9, jogo.cotasPagas)
@@ -169,7 +169,7 @@ class FakeDataIntegrationTest {
         env.service.processarDeadlines(racha.reserva.prazoCotas!! + 1.minutes)
         assertEquals(EtapaPrazo.JANELA_RESOLUCAO, env.games.game(racha.id)!!.etapaPrazo)
         // Webhook chega depois: pagamento tardio e estornado integralmente (RN-18).
-        advanceTimeBy(3.seconds + 100.milliseconds)
+        advanceTimeBy(1.seconds + 100.milliseconds)
         runCurrent()
         val status = env.gateway.pagamento(cobranca.pagamentoId)!!.status
         assertTrue(status == StatusPagamento.ESTORNO_EM_PROCESSAMENTO || status == StatusPagamento.ESTORNADO, "status=$status")

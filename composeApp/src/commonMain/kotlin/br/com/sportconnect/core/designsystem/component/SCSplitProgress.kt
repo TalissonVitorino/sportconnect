@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -109,11 +110,12 @@ fun SCSplitProgress(
         wasComplete = complete
     }
 
-    val stripePhase = if (processing > 0 && !reduced) {
+    // A fase das listras e lida so dentro do Canvas (fase de desenho): animar nao recompoe o componente.
+    val stripePhaseState: State<Float>? = if (processing > 0 && !reduced) {
         val inf = rememberInfiniteTransition(label = "split-stripes")
-        inf.animateFloat(0f, 1f, infiniteRepeatable(tween(SCMotion.ShimmerCycle, easing = LinearEasing), RepeatMode.Restart), label = "phase").value
+        inf.animateFloat(0f, 1f, infiniteRepeatable(tween(SCMotion.ShimmerCycle, easing = LinearEasing), RepeatMode.Restart), label = "phase")
     } else {
-        0f
+        null
     }
 
     val a11y = buildString {
@@ -174,7 +176,7 @@ fun SCSplitProgress(
             if (effectiveVariant == SCSplitProgressVariant.Continuous) {
                 drawContinuous(n, paid, processing, covered, segColors)
             } else {
-                drawSegments(n, paid, processing, covered, refunded, segColors, stripePhase, expired)
+                drawSegments(n, paid, processing, covered, refunded, segColors, stripePhaseState?.value ?: 0f, expired)
             }
         }
         if (showLegend && !compact) {

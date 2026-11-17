@@ -164,7 +164,7 @@ class PaymentViewModel(
         val cob = (_uiState.value.phase as? PixPhase.Waiting)?.cobranca ?: return
         _uiState.update { it.copy(phase = PixPhase.Processing(cob)) }
         viewModelScope.launch {
-            delay(600)
+            delay(300)
             gateway.simularConfirmacao(cob.pagamentoId)
         }
     }
