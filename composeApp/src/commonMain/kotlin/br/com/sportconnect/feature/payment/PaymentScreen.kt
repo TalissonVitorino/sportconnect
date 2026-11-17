@@ -2,6 +2,16 @@
 
 package br.com.sportconnect.feature.payment
 
+import kotlin.time.Duration.Companion.minutes
+import androidx.compose.runtime.produceState
+import br.com.sportconnect.resources.profile_sign_in
+import br.com.sportconnect.resources.error_session_expired_body
+import br.com.sportconnect.resources.error_session_expired_title
+import br.com.sportconnect.resources.error_payment_slow_body
+import br.com.sportconnect.resources.error_payment_slow_title
+import br.com.sportconnect.resources.error_pix_expired_action
+import br.com.sportconnect.resources.error_checkout_expired_body
+import br.com.sportconnect.resources.error_checkout_expired_title
 import br.com.sportconnect.feature.common.LocalOnline
 import br.com.sportconnect.core.designsystem.theme.SCMotion
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -174,6 +184,8 @@ data class PaymentActions(
     /** Depois de pagar a cota do organizador: segue para `game/{id}/invite`. */
     val invite: (String) -> Unit = {},
     val receipt: (String) -> Unit = {},
+    /** Sessao expirou: abre o login e volta para este pagamento. */
+    val login: (String) -> Unit = {},
 )
 
 @Composable
@@ -462,13 +474,15 @@ private fun PixSheetContent(
         }
         Spacer(Modifier.height(20.dp))
         if (expired) {
+            // E4: logo apos criar o jogo, o que acabou foi a trava de 10 min do horario (RN-08), nao so o codigo.
             NoticeCard(
-                stringResource(Res.string.error_pix_expired_title) + ". " + stringResource(Res.string.error_pix_expired_body),
+                if (state.afterCreate) stringResource(Res.string.error_checkout_expired_title) + ". " + stringResource(Res.string.error_checkout_expired_body)
+                else stringResource(Res.string.error_pix_expired_title) + ". " + stringResource(Res.string.error_pix_expired_body),
                 container = c.errorContainer,
                 content = c.onErrorContainer,
             )
             Spacer(Modifier.height(12.dp))
-            SCButton(stringResource(Res.string.pix_new_code), onRegenerate, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("pix_new_code"))
+            SCButton(stringResource(Res.string.error_pix_expired_action), onRegenerate, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("pix_new_code"))
             return@Column
         }
         SCButton(
@@ -554,7 +568,18 @@ private fun PixSheetContent(
                 )
             }
             Spacer(Modifier.height(4.dp))
-            Text(stringResource(Res.string.pix_waiting_body), style = t.bodyMedium, color = c.onSurfaceVariant)
+            // E4: passou de 2 min aguardando -> "O pagamento esta demorando" (sem pagar de novo).
+            val clock = LocalSCClock.current
+            val now by produceState(clock.now(), state.waitingSince) {
+                while (true) { value = clock.now(); delay(15_000) }
+            }
+            val slow = !processing && state.waitingSince != null && now - state.waitingSince >= 2.minutes
+            if (slow) {
+                Text(stringResource(Res.string.error_payment_slow_title), style = t.titleSmall, color = c.onSurface, modifier = Modifier.testTag("pix_slow"))
+                Text(stringResource(Res.string.error_payment_slow_body), style = t.bodyMedium, color = c.onSurfaceVariant)
+            } else {
+                Text(stringResource(Res.string.pix_waiting_body), style = t.bodyMedium, color = c.onSurfaceVariant)
+            }
         }
         Spacer(Modifier.height(16.dp))
         // C14: empilhados e com largura total; antes ficavam lado a lado com pesos visuais confusos.
@@ -629,6 +654,17 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
 
 @Composable
 private fun ErrorContent(phase: PixPhase.Error, state: PaymentUiState, actions: PaymentActions, onRetry: () -> Unit) {
+    if (phase.code == "NAO_AUTENTICADO") {
+        // E4: sessao expirou no meio do pagamento -> entrar de novo e voltar para ca.
+        br.com.sportconnect.core.designsystem.component.SCEmptyState(
+            title = stringResource(Res.string.error_session_expired_title),
+            description = stringResource(Res.string.error_session_expired_body),
+            illustration = br.com.sportconnect.core.designsystem.component.SCIllustration.Error,
+            primaryAction = state.jogo?.id?.let { id -> SCAction(stringResource(Res.string.profile_sign_in), { actions.login(id) }) },
+            modifier = Modifier.testTag("pay_session_expired"),
+        )
+        return
+    }
     val (title, body) = when (phase.code) {
         "JA_PAGOU" -> Res.string.error_already_paid_title to Res.string.error_already_paid_body
         "SEM_VAGAS" -> Res.string.error_game_full_title to Res.string.error_game_full_body

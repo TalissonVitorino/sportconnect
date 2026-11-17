@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.arenaadmin.onboarding
 
+import br.com.sportconnect.resources.error_pix_key_invalid_body
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -215,7 +216,7 @@ private fun StepForm(step: OnboardingStep, state: ArenaOnboardingUiState, vm: Ar
             OnboardingStep.Schedule -> Text(stringResource(Res.string.aadm_onb_schedule_body), style = t.bodyMedium, color = c.onSurfaceVariant)
             OnboardingStep.Bank -> SCTextField(
                 state.pixKey, vm::setPixKey, stringResource(Res.string.aadm_onb_field_pix), Modifier.fillMaxWidth(),
-                errorText = if (err && state.pixError) stringResource(Res.string.error_pix_key_invalid_title) else null,
+                errorText = if (err && state.pixError) stringResource(Res.string.error_pix_key_invalid_body) else null,
             )
         }
         SCButton(stringResource(Res.string.aadm_onb_step_save), vm::saveStep, modifier = Modifier.testTag("arenaonb_save_${step.name}"))

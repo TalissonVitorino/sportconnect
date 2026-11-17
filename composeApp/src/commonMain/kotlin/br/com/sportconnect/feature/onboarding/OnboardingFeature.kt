@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.onboarding
 
+import br.com.sportconnect.resources.error_location_denied_title
 import br.com.sportconnect.resources.onboarding_location_city_placeholder
 import br.com.sportconnect.resources.onboarding_location_city_label
 import br.com.sportconnect.resources.onboarding_location_city_unknown
@@ -416,7 +417,7 @@ private fun LocationPage(
         val status = when (location) {
             LocationUi.Locating -> stringResource(Res.string.onboarding_location_locating)
             LocationUi.Found -> stringResource(Res.string.onboarding_location_found)
-            LocationUi.Denied -> stringResource(Res.string.error_location_denied_body)
+            LocationUi.Denied -> stringResource(Res.string.error_location_denied_title) + ". " + stringResource(Res.string.error_location_denied_body)
             LocationUi.Unavailable -> if (deviceLocationSupported) stringResource(Res.string.onboarding_location_unavailable) else null
             is LocationUi.CitySet -> stringResource(Res.string.onboarding_location_city_set, location.city)
             is LocationUi.CityUnknown -> stringResource(Res.string.onboarding_location_city_unknown, location.city)

@@ -42,7 +42,7 @@ enum class RuleOption { Covers, Cancel, Resplit }
 enum class SpotsError { Range, MinShare }
 
 /** Erros de criacao mapeados para as strings do 07. */
-enum class CreateError { SlotTaken, DeadlineTooShort, CheckoutExpired, Generic }
+enum class CreateError { SlotTaken, DeadlineTooShort, CheckoutExpired, PriceChanged, SessionExpired, Generic }
 
 data class CreateGameUiState(
     val loading: Boolean = true,
@@ -262,6 +262,14 @@ class CreateGameViewModel(
         val sport = s.sport ?: return
         _uiState.update { it.copy(submitting = true, error = null) }
         viewModelScope.launch {
+            // E4: a arena pode ter mudado o preco entre a escolha e a confirmacao. Mostra o novo valor e o
+            // novo rateio antes de seguir (`error_price_changed_*`); confirmar de novo cria com o preco atual.
+            val current = runCatching { arenas.slot(slot.id) }.getOrNull()
+            if (current != null && current.preco != slot.preco) {
+                _uiState.update { it.copy(submitting = false, slot = current, error = CreateError.PriceChanged, errorMessage = current.preco.format()) }
+                analytics.track("erro_exibido", mapOf("error_id" to CreateError.PriceChanged.name))
+                return@launch
+            }
             createGame(
                 NovoJogo(
                     slotId = slot.id,
@@ -281,6 +289,7 @@ class CreateGameViewModel(
                     val err = when ((e as? RegraNegocioException)?.codigo) {
                         "SLOT_INDISPONIVEL" -> CreateError.SlotTaken
                         "POLITICA_INVIAVEL" -> CreateError.DeadlineTooShort
+                        "NAO_AUTENTICADO" -> CreateError.SessionExpired
                         else -> CreateError.Generic
                     }
                     analytics.track("erro_exibido", mapOf("error_id" to err.name))

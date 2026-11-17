@@ -255,8 +255,14 @@ class AppScreenshotTest {
         runBlocking { withTimeout(10_000) { vm.uiState.first { !it.loading } } }
         vm.pay()
         val waiting = runBlocking { withTimeout(10_000) { vm.uiState.first { it.phase is PixPhase.Waiting } } }
-        // Estado congelado em "Aguardando" (o Pix fake confirma sozinho em ~3s).
+        // Estado congelado em "Aguardando" (o Pix fake confirma sozinho em ~1s).
         compact("app-pix-compact-light.png", height = 1000) { PaymentScreen(waiting) }
+        // E4: aguardando ha mais de 2 min -> "O pagamento esta demorando".
+        val slow = waiting.copy(waitingSince = waiting.waitingSince?.minus(kotlin.time.Duration.parse("3m")))
+        compact("app-pix-slow-compact-light.png", height = 1000) { PaymentScreen(slow) }
+        compact("app-pay-session-expired-compact-light.png", height = 800) {
+            PaymentScreen(waiting.copy(phase = PixPhase.Error("NAO_AUTENTICADO", "")))
+        }
         val paid = runBlocking { withTimeout(15_000) { vm.uiState.first { it.phase is PixPhase.Paid } } }
         compact("app-pix-paid-compact-light.png") { PaymentScreen(paid) }
     }

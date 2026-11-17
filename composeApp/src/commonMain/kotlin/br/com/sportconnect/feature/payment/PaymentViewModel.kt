@@ -57,6 +57,8 @@ data class PaymentUiState(
     val copied: Boolean = false,
     val afterCreate: Boolean = false,
     val loggedIn: Boolean = true,
+    /** Quando o Pix entrou em "aguardando" (E4: depois de 2 min mostra `error_payment_slow_*`). */
+    val waitingSince: Instant? = null,
 ) {
     val fee: Money get() = if (noFee) Money.ZERO else TaxaConveniencia.para(method)
     val total: Money get() = shareValue + fee
@@ -119,6 +121,7 @@ class PaymentViewModel(
                     _uiState.update {
                         it.copy(
                             phase = if (s.method == MetodoPagamento.CARTAO) PixPhase.Processing(cob) else PixPhase.Waiting(cob),
+                            waitingSince = clock.now(),
                             shareValue = cob.valorCota,
                             noFee = cob.taxaConveniencia.isZero,
                             lockUntil = cob.expiraEm,

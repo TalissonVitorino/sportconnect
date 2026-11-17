@@ -2,6 +2,11 @@
 
 package br.com.sportconnect.feature.creategame
 
+import br.com.sportconnect.resources.profile_sign_in
+import br.com.sportconnect.resources.error_session_expired_body
+import br.com.sportconnect.resources.error_session_expired_title
+import br.com.sportconnect.resources.error_price_changed_body
+import br.com.sportconnect.resources.error_price_changed_title
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -183,6 +188,8 @@ data class CreateGameActions(
     val close: () -> Unit = {},
     val pickSlot: () -> Unit = {},
     val goToPay: (String) -> Unit = {},
+    /** Sessao expirou no meio do fluxo: abre o login (sheet) e volta para criar o jogo. */
+    val login: () -> Unit = {},
 )
 
 @Composable
@@ -337,6 +344,20 @@ fun CreateGameScreen(
             body = stringResource(Res.string.error_deadline_too_short_body),
             onDismissRequest = onDismissError,
             confirm = SCAction(stringResource(Res.string.error_slot_taken_action), { onDismissError(); actions.pickSlot() }),
+            dismiss = SCAction(stringResource(Res.string.common_close), onDismissError),
+        )
+        CreateError.PriceChanged -> SCDialog(
+            title = stringResource(Res.string.error_price_changed_title),
+            body = stringResource(Res.string.error_price_changed_body, state.errorMessage.orEmpty()),
+            onDismissRequest = onDismissError,
+            confirm = SCAction(stringResource(Res.string.common_continue), onDismissError),
+            modifier = Modifier.testTag("create_price_changed"),
+        )
+        CreateError.SessionExpired -> SCDialog(
+            title = stringResource(Res.string.error_session_expired_title),
+            body = stringResource(Res.string.error_session_expired_body),
+            onDismissRequest = onDismissError,
+            confirm = SCAction(stringResource(Res.string.profile_sign_in), { onDismissError(); actions.login() }),
             dismiss = SCAction(stringResource(Res.string.common_close), onDismissError),
         )
         CreateError.Generic, CreateError.CheckoutExpired -> SCDialog(

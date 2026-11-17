@@ -11,7 +11,8 @@ import br.com.sportconnect.feature.common.OfflineBanner
 import br.com.sportconnect.feature.common.LocalOnline
 import br.com.sportconnect.core.domain.repository.GameRepository
 import br.com.sportconnect.core.platform.ConnectivityMonitor
-import br.com.sportconnect.resources.profile_photo_error
+import br.com.sportconnect.resources.error_upload_failed_title
+import br.com.sportconnect.resources.error_upload_failed_body
 import br.com.sportconnect.feature.common.ProfilePhotoHost
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -239,7 +240,7 @@ fun AppNavHost(
         if (authRepo.currentUser.value == null) requireLogin(AfterLogin.Pay(gameId)) else nav.go(Route.GamePay(gameId, afterCreate))
     }
 
-    val photoErrorMsg = stringResource(Res.string.profile_photo_error)
+    val photoErrorMsg = stringResource(Res.string.error_upload_failed_title) + ". " + stringResource(Res.string.error_upload_failed_body)
     // E7: conexao. Ao voltar, sincroniza os dados (o que mudou enquanto estava offline).
     val connectivity: ConnectivityMonitor = koinInject()
     val online by connectivity.online.collectAsStateWithLifecycle()
@@ -352,6 +353,7 @@ fun AppNavHost(
                             close = nav::back,
                             pickSlot = { nav.openTab(Route.Explore) },
                             goToPay = { id -> nav.replace(Route.GamePay(id, afterCreate = true)) },
+                            login = { requireLogin(AfterLogin.Create(null)) },
                         ),
                     )
                 }
@@ -385,6 +387,7 @@ fun AppNavHost(
                             seeGame = { nav.replace(Route.GameDetail(it)) },
                             invite = { nav.replace(Route.GameInvite(it)) },
                             receipt = { nav.go(Route.Receipt(it)) },
+                            login = { requireLogin(AfterLogin.Pay(it)) },
                         ),
                     )
                 }
