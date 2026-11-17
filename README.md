@@ -153,6 +153,49 @@ disableAndroid=true
 Com a propriedade ligada, o build registra `SportConnect: alvo Android DESABILITADO` e o `androidMain`
 é ignorado. Não faça commit de `disableAndroid=true` no `gradle.properties` do projeto.
 
+## Estado atual do projeto
+
+| Camada | Estado |
+|---|---|
+| Documentação de design (`docs/01` a `docs/10`) | Completa. Os pontos que dependem de decisão estão em "Pendências" abaixo |
+| Design System em Compose (`core/designsystem`) | 19 componentes `SC*`, temas claro e escuro, catálogo |
+| Domínio e dados fake (`core/model`, `core/domain`, `core/data`) | Regras de rateio, prazos, estados, reembolso, lista de espera e repasse, com dados de demonstração |
+| Telas do atleta e organizador (`feature/*`) | Implementadas sobre dados fake |
+| Telas da Minha Arena (`feature/arenaadmin`) | Implementadas sobre dados fake |
+| Desktop e Web (Wasm) | Compilam; 143 testes passando em `desktopTest` |
+| Android e iOS | Configurados, **não compilados** (faltou SDK do Android e Xcode no ambiente de geração) |
+
+Não há backend nem gateway de pagamento reais: o Pix é simulado (`FakePaymentGateway`) e confirma sozinho após cerca de 3 s.
+
+### Demonstração
+
+- Usuário padrão: Rafael Souza (organizador). Código OTP de demonstração: `123456`.
+- Jogo de exemplo para o convidado: código `RACHA8`.
+- Em Perfil, "Tenho uma arena" entra como gestor da Arena Vila Madalena.
+- Capturas de tela renderizadas pelos testes: `build-screens/`. Mockups de design: `docs/ui-mockups.html`. Style guide: `docs/style-guide.html`.
+
+### Pendências (decisões de produto e jurídicas)
+
+- Escolher o gateway de pagamento (precisa de split, Pix e pré-autorização de cartão com captura parcial) e saber se ele exige CPF de quem paga.
+- Definir quem emite nota fiscal.
+- Revisão jurídica (CDC) dos prazos, multas e textos de dinheiro e reembolso. Prazos, taxas e percentuais dos documentos são propostas, não validados.
+- Validar com usuários reais as hipóteses do `docs/01-ux-research.md`.
+- Alinhar o `docs/02-service-design.md` ao modelo de prazos do PRD (`docs/03`).
+- Incluir os eventos `arena_visualizada` e `extrato_exportado` no `docs/04-ux-metrics.md`.
+- O `docs/strings-pt-BR.xml` é o catálogo original. A fonte de verdade do app é `composeApp/src/commonMain/composeResources/values/` (`strings.xml` e `strings_arena.xml`).
+
+## Rastreabilidade: os 5 planos dos Elementos da Experiência do Usuário (Garrett)
+
+| Plano | Elementos | Onde está |
+|---|---|---|
+| Estratégia | Necessidades do usuário; objetivos do produto | `docs/01-ux-research.md`, `docs/03-product-design-prd.md`, `docs/04-ux-metrics.md` |
+| Escopo | Especificações funcionais; requisitos de conteúdo | `docs/03-product-design-prd.md` (user stories e regras de negócio), `docs/07-ux-writing.md` |
+| Estrutura | Design de interação; arquitetura da informação | `docs/09-ux-design.md` (fluxos, sitemap, estados), `docs/02-service-design.md` |
+| Esqueleto | Design de interface; navegação; design da informação | `docs/09-ux-design.md` (wireframes), `docs/10-ui-design.md`, `docs/06-design-system.md`, pacote `navigation/` |
+| Superfície | Design sensorial | `docs/05-visual-design.md`, `docs/style-guide.html`, `docs/ui-mockups.html`, pacote `core/designsystem/` |
+
+Transversais: `docs/08-design-ops.md` (processo do time) e `docs/00-brief.md` (contexto). Lacuna conhecida no plano de Escopo: requisitos de conteúdo além de texto (fotos de arenas, regras por esporte e termos de uso) ainda não foram especificados.
+
 ## Versões
 
 | Componente | Versão |

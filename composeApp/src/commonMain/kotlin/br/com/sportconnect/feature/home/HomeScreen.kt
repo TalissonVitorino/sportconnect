@@ -121,7 +121,13 @@ fun HomeScreen(state: HomeUiState, actions: HomeActions, onRetry: () -> Unit = {
         val wc = widthClassOf(maxWidth)
         Scaffold(
             containerColor = c.surface,
-            topBar = { HomeTopBar(firstName, unread, actions.notifications) },
+            topBar = {
+                val topMax = if (wc == WidthClass.Expanded) 1040.dp else 640.dp
+                val hPad = if (wc == WidthClass.Compact) 0.dp else 8.dp
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                    Box(Modifier.widthIn(max = topMax).padding(horizontal = hPad)) { HomeTopBar(firstName, unread, actions.notifications) }
+                }
+            },
             floatingActionButton = {
                 // Medium/expanded: o FAB vira item da rail (casca de navegacao).
                 if (state is HomeUiState.Content && wc == WidthClass.Compact) {

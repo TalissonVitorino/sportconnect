@@ -87,7 +87,7 @@ object PtBrFormat {
     fun duration(d: Duration): String {
         val total = d.inWholeSeconds.coerceAtLeast(0)
         if (total < 60) return "${total}s"
-        val minutesTotal = (total + 59) / 60
+        val minutesTotal = total / 60 // piso, igual ao SCCountdownTimer
         val h = minutesTotal / 60
         val m = minutesTotal % 60
         return when {

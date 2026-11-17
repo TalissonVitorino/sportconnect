@@ -21,7 +21,7 @@ fun CourtLinesBackdrop(color: Color, modifier: Modifier = Modifier, lineYFractio
         val y = size.height * lineYFraction
         val r = size.height * 0.36f
         val cx = size.width - r * 0.55f
-        drawLine(color, Offset(size.width * 0.45f, y), Offset(size.width, y), sw)
+        drawLine(color, Offset(size.width * 0.62f, y), Offset(size.width, y), sw)
         drawCircle(color, r, Offset(cx, y), style = Stroke(sw))
         drawCircle(color, 4.dp.toPx(), Offset(cx, y))
     }

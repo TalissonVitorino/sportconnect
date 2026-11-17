@@ -232,14 +232,15 @@ fun ProfileScreen(
                     Text(stringResource(Res.string.profile_use_as), style = t.titleSmall, color = c.onSurfaceVariant)
                     Spacer(Modifier.height(8.dp))
                     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().testTag("profile_mode_switch")) {
-                        // Quem esta aqui como gestor esta no modo Atleta (o Perfil da arena chama esta tela para sair do modo).
+                        // No MVP fake o modo segue o perfil logado: gestor = Minha Arena.
                         SegmentedButton(
-                            selected = true,
-                            onClick = {},
+                            selected = false,
+                            onClick = { onSwitch(AppMode.Athlete) },
+                            enabled = !state.switching,
                             shape = SegmentedButtonDefaults.itemShape(0, 2),
                         ) { Text(stringResource(Res.string.profile_mode_athlete)) }
                         SegmentedButton(
-                            selected = false,
+                            selected = true,
                             onClick = { onSwitch(AppMode.Arena) },
                             enabled = !state.switching,
                             shape = SegmentedButtonDefaults.itemShape(1, 2),
@@ -264,15 +265,6 @@ fun ProfileScreen(
                         loading = state.switching,
                         fullWidth = true,
                         modifier = Modifier.testTag("profile_have_arena"),
-                    )
-                } else {
-                    SCButton(
-                        stringResource(Res.string.profile_mode_arena),
-                        { onSwitch(AppMode.Arena) },
-                        variant = SCButtonVariant.Tonal,
-                        leadingIcon = Icons.Rounded.Stadium,
-                        loading = state.switching,
-                        fullWidth = true,
                     )
                 }
                 Spacer(Modifier.height(8.dp))

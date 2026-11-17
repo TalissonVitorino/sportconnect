@@ -43,6 +43,8 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import br.com.sportconnect.core.designsystem.theme.SCMotion
 import br.com.sportconnect.core.designsystem.theme.SCShareState
@@ -50,10 +52,10 @@ import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
 import br.com.sportconnect.core.model.Money
 import br.com.sportconnect.resources.Res
 import br.com.sportconnect.resources.ds_split_count
-import br.com.sportconnect.resources.ds_split_legend_covered
-import br.com.sportconnect.resources.ds_split_legend_paid
-import br.com.sportconnect.resources.ds_split_legend_pending
-import br.com.sportconnect.resources.ds_split_legend_processing
+import br.com.sportconnect.resources.split_legend_covered
+import br.com.sportconnect.resources.split_legend_paid
+import br.com.sportconnect.resources.split_legend_pending
+import br.com.sportconnect.resources.split_legend_processing
 import br.com.sportconnect.resources.split_progress
 import org.jetbrains.compose.resources.stringResource
 
@@ -140,26 +142,31 @@ fun SCSplitProgress(
         },
         verticalArrangement = Arrangement.spacedBy(if (compact) 6.dp else 8.dp),
     ) {
-        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (compact) {
-                Text(stringResource(Res.string.ds_split_count, paid, totalShares), style = t.titleSmall, color = c.onSurface)
-            } else {
-                Text("$paid", style = SportConnectTheme.typographyExt.numericScore, color = c.onSurface, modifier = Modifier.alignByBaseline())
-                Text(
-                    stringResource(Res.string.ds_split_count, paid, totalShares).removePrefix("$paid "),
-                    style = t.titleMedium,
-                    color = c.onSurfaceVariant,
-                    modifier = Modifier.alignByBaseline(),
-                )
-            }
-            if (collected != null && total != null) {
-                Box(Modifier.weight(1f), contentAlignment = Alignment.BottomEnd) {
-                    Text(
-                        "${collected.formatBrl()} de ${total.formatBrl()}",
-                        style = if (compact) t.bodySmall else t.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = c.onSurfaceVariant,
-                    )
+        // DS-PATCH (10 §6.3 / I13): rotulo do 07 `split_progress` ("8 de 12 cotas pagas"); no Full os numeros vao em numericScore.
+        val label = stringResource(Res.string.split_progress, paid, totalShares)
+        if (compact) {
+            Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(label, style = t.titleSmall, color = c.onSurface)
+                if (collected != null && total != null) {
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.BottomEnd) {
+                        Text("${collected.formatBrl()} de ${total.formatBrl()}", style = t.bodySmall, color = c.onSurfaceVariant)
+                    }
                 }
+            }
+        } else {
+            val score = SportConnectTheme.typographyExt.numericScore.toSpanStyle()
+            Text(
+                buildAnnotatedString {
+                    label.split(" ").forEachIndexed { i, word ->
+                        if (i > 0) append(" ")
+                        if (word.all { it.isDigit() }) withStyle(score) { append(word) } else append(word)
+                    }
+                },
+                style = t.titleMedium,
+                color = c.onSurface,
+            )
+            if (collected != null && total != null) {
+                Text("${collected.formatBrl()} de ${total.formatBrl()}", style = t.bodyLarge, color = c.onSurfaceVariant)
             }
         }
         val barHeight = if (compact) 6.dp else 10.dp
@@ -172,11 +179,11 @@ fun SCSplitProgress(
         }
         if (showLegend && !compact) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                LegendItem(SCShareState.Paid, stringResource(Res.string.ds_split_legend_paid), paid, segColors)
-                if (processing > 0) LegendItem(SCShareState.Processing, stringResource(Res.string.ds_split_legend_processing), processing, segColors)
-                if (covered > 0) LegendItem(SCShareState.Covered, stringResource(Res.string.ds_split_legend_covered), covered, segColors)
+                LegendItem(SCShareState.Paid, stringResource(Res.string.split_legend_paid), paid, segColors)
+                if (processing > 0) LegendItem(SCShareState.Processing, stringResource(Res.string.split_legend_processing), processing, segColors)
+                if (covered > 0) LegendItem(SCShareState.Covered, stringResource(Res.string.split_legend_covered), covered, segColors)
                 val pending = (totalShares - paid - processing - covered - refunded).coerceAtLeast(0)
-                LegendItem(SCShareState.Pending, stringResource(Res.string.ds_split_legend_pending), pending, segColors)
+                LegendItem(SCShareState.Pending, stringResource(Res.string.split_legend_pending), pending, segColors)
             }
         }
     }

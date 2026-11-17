@@ -597,31 +597,21 @@ private fun DeadlineCard(s: GameDetailUiState.Content) {
 /** "8 de 12 cotas pagas" com numeros em numericScore (DS-PATCH do 10 §6.3) + valores + trilho. */
 @Composable
 private fun SplitBlock(s: GameDetailUiState.Content, modifier: Modifier = Modifier, showLegend: Boolean = true) {
-    val c = SportConnectTheme.colors
     val j = s.jogo
     val counts = s.counts
-    val paidTotal = counts.paid + counts.covered
-    Column(modifier) {
-        SplitHeadline(paidTotal, counts.total)
-        Spacer(Modifier.size(4.dp))
-        Text(
-            "${j.valorArrecadado.format()} de ${j.valorTotal.format()}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = c.onSurfaceVariant,
-        )
-        Spacer(Modifier.size(12.dp))
-        SCSplitProgress(
-            totalShares = counts.total,
-            paid = counts.paid,
-            processing = counts.processing,
-            covered = counts.covered,
-            refunded = counts.refunded,
-            variant = SCSplitProgressVariant.Compact,
-            showLegend = showLegend,
-            expired = j.status == StatusReserva.EXPIRADO,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
+    SCSplitProgress(
+        totalShares = counts.total,
+        paid = counts.paid,
+        processing = counts.processing,
+        covered = counts.covered,
+        refunded = counts.refunded,
+        collected = j.valorArrecadado,
+        total = j.valorTotal,
+        variant = SCSplitProgressVariant.Full,
+        showLegend = showLegend,
+        expired = j.status == StatusReserva.EXPIRADO,
+        modifier = modifier.fillMaxWidth(),
+    )
 }
 
 @Composable

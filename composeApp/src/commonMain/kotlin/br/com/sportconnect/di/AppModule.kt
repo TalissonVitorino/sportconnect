@@ -6,6 +6,10 @@ import br.com.sportconnect.core.domain.usecase.GetNotificationsUseCase
 import br.com.sportconnect.feature.common.UiSessionStore
 import br.com.sportconnect.feature.game.GameDetailViewModel
 import br.com.sportconnect.feature.arena.ArenaDetailViewModel
+import br.com.sportconnect.feature.arenaadmin.arenaAdminModule
+import br.com.sportconnect.feature.auth.AuthViewModel
+import br.com.sportconnect.feature.onboarding.OnboardingViewModel
+import br.com.sportconnect.navigation.ShellViewModel
 import br.com.sportconnect.feature.creategame.CreateGameViewModel
 import br.com.sportconnect.feature.explore.ExploreViewModel
 import br.com.sportconnect.feature.slots.SlotPickerViewModel
@@ -39,6 +43,9 @@ val featureModule = module {
     factoryOf(::GetNotificationsUseCase)
     factoryOf(::GetMyPaymentsUseCase)
 
+    viewModelOf(::ShellViewModel)
+    viewModelOf(::OnboardingViewModel)
+    viewModelOf(::AuthViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::GameDetailViewModel)
     viewModelOf(::PaymentViewModel)
@@ -56,7 +63,8 @@ val featureModule = module {
     viewModelOf(::NotificationsViewModel)
 }
 
-val appModules = listOf(dataModule, domainModule, featureModule)
+/** Modo Atleta/Organizador ([featureModule]) + modo Minha Arena ([arenaAdminModule], feature/arenaadmin). */
+val appModules = listOf(dataModule, domainModule, featureModule, arenaAdminModule)
 
 /**
  * Inicia o Koin uma unica vez (idempotente). Chamado pelos entry points de cada plataforma.
