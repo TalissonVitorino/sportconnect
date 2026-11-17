@@ -104,6 +104,10 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.android)
                 implementation(libs.koin.android)
                 implementation(libs.ktor.client.okhttp)
+                // OkHttp 5.4+ exige compileSdk 37 / AGP 9.1; fixamos a última versão compatível com SDK 36.
+                implementation("com.squareup.okhttp3:okhttp") {
+                    version { strictly(libs.versions.okhttp.get()) }
+                }
             }
         }
         iosMain.dependencies {

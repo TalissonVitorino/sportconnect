@@ -2,21 +2,21 @@
 # Build tooling
 kotlin = "2.4.21"
 agp = "8.13.2"
-composeMultiplatform = "1.12.2"
+composeMultiplatform = "1.10.3"
 
 # Android
 android-compileSdk = "36"
 android-targetSdk = "36"
 android-minSdk = "24"
-androidx-activity = "1.13.0"
+androidx-activity = "1.11.0"
 
 # Compose Multiplatform (artefatos com versionamento proprio)
 compose-material3 = "1.9.0"
 compose-material-icons = "1.7.3"
 
 # JetBrains AndroidX multiplataforma
-androidx-lifecycle = "2.11.0"
-androidx-navigation = "2.10.0"
+androidx-lifecycle = "2.9.6"
+androidx-navigation = "2.9.2"
 
 # KotlinX
 kotlinx-coroutines = "1.11.0"
@@ -26,6 +26,7 @@ kotlinx-serialization = "1.13.0"
 # DI e rede
 koin = "4.2.2"
 ktor = "3.6.1"
+okhttp = "5.3.2"
 
 [libraries]
 # Compose Multiplatform
