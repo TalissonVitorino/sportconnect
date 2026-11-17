@@ -852,6 +852,11 @@
     <string name="card_remove">Remover</string>
     <string name="card_name_invalid">Escreva o nome como está no cartão.</string>
     <string name="card_secure_note">Os dados do cartão vão direto para o intermediador de pagamento. O SportConnect não guarda o número nem o código.</string>
+    <!-- 11-backlog · E8 lembretes (propostos) -->
+    <string name="reminders_card_title">Quer um lembrete antes do prazo?</string>
+    <string name="reminders_card_body">Avisamos 2h e 30min antes de a sua cota vencer e na véspera do jogo.</string>
+    <string name="reminders_enable">Ativar lembretes</string>
+    <string name="common_not_now">Agora não</string>
 
     <!-- ===== Minha Arena (strings_arena.xml) ===== -->
     <!-- Shell / navegacao -->

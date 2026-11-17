@@ -27,5 +27,6 @@ private class IosConnectivityMonitor : ConnectivityMonitor {
 }
 
 actual val platformModule: Module = module {
+    single<ReminderScheduler> { IosReminderScheduler() }
     single<ConnectivityMonitor> { IosConnectivityMonitor() }
 }

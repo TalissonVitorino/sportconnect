@@ -1,5 +1,6 @@
 package br.com.sportconnect.di
 
+import br.com.sportconnect.feature.common.ReminderSync
 import br.com.sportconnect.core.platform.platformModule
 import br.com.sportconnect.feature.account.DeleteAccountViewModel
 import br.com.sportconnect.feature.account.EditProfileViewModel
@@ -44,6 +45,7 @@ import org.koin.mp.KoinPlatform
  */
 val featureModule = module {
     single { UiSessionStore(get()) }
+    single { ReminderSync(get(), get(), get(), get(), get()) }
     singleOf(::AvisosLidosStore)
     factoryOf(::GetNotificationsUseCase)
     factoryOf(::GetMyPaymentsUseCase)

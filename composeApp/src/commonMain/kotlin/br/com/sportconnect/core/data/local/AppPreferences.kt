@@ -79,6 +79,15 @@ class AppPreferences(private val settings: Settings) {
         }
         set(value) = settings.putString(KEY_CARDS, value.joinToString(";") { "${it.brand}|${it.last4}|${it.expiry}" })
 
+    /** E8: a pessoa ja respondeu ao card de lembretes; [remindersEnabled] = aceitou. */
+    var remindersAsked: Boolean
+        get() = settings.getBoolean(KEY_REMINDERS_ASKED, false)
+        set(value) = settings.putBoolean(KEY_REMINDERS_ASKED, value)
+
+    var remindersEnabled: Boolean
+        get() = settings.getBoolean(KEY_REMINDERS_ON, false)
+        set(value) = settings.putBoolean(KEY_REMINDERS_ON, value)
+
     data class SavedCard(val brand: String, val last4: String, val expiry: String)
 
     data class SavedOrigin(val latitude: Double, val longitude: Double, val city: String?)
@@ -97,6 +106,8 @@ class AppPreferences(private val settings: Settings) {
         const val KEY_SPORTS = PREFIX + "favorite_sports"
         const val KEY_LAT = PREFIX + "origin_lat"
         const val KEY_CARDS = PREFIX + "saved_cards"
+        const val KEY_REMINDERS_ASKED = PREFIX + "reminders_asked"
+        const val KEY_REMINDERS_ON = PREFIX + "reminders_on"
         const val KEY_LON = PREFIX + "origin_lon"
         const val KEY_CITY = PREFIX + "origin_city"
     }

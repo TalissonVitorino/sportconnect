@@ -16,6 +16,7 @@
 | 8 | [Revisão jurídica dos textos](#8-revisão-jurídica-dos-textos) | `strings.xml`, `LegalScreen.kt` | depende do Jurídico | **as duas lojas** |
 | 9 | [Formulários de privacidade das lojas](#9-formulários-de-privacidade-das-lojas) | Play Console, App Store Connect | 1 h | as duas lojas |
 | 10 | [Login com Google/Apple (opcional)](#10-login-com-googleapple-opcional) | Google Cloud, Xcode, `FeatureFlags` | 1 h | — |
+| 11 | [Push remoto (servidor)](#11-push-remoto-servidor) | Firebase, Apple, back-end | 1–2 dias | avisos da arena e reembolso |
 
 Já resolvido no código (não precisa fazer nada): excluir conta dentro do app, *privacy manifest* do iOS
 (`iosApp/iosApp/PrivacyInfo.xcprivacy`), ícones, splash, bundle id do iOS (`br.com.sportconnect.app`, igual ao Android).
@@ -254,6 +255,26 @@ O código está pronto e **desligado** (`FeatureFlags.SOCIAL_LOGIN = false`). An
 4. **Back-end:** hoje o fake aceita qualquer token. O servidor real precisa validar o JWT (assinatura,
    `aud` = seu client ID / bundle id, expiração) antes de criar a sessão.
 5. Regra da App Store (4.8): se um dia oferecer Google no iOS, o Apple precisa estar junto (já está).
+
+---
+
+## 11. Push remoto (servidor)
+
+Já funcionam **no aparelho, sem servidor** (E8): "Falta sua cota" 2h e 30min antes do prazo e
+"Amanhã tem jogo" — `ReminderPlanner` + `ReminderScheduler` (AlarmManager no Android,
+UNUserNotificationCenter no iOS), ligados pelo card "Quer um lembrete antes do prazo?" da Home.
+
+Precisam de **push remoto**, porque nascem de eventos no servidor:
+`push_arena_new_booking_*`, `push_arena_payout_*`, `push_refund_done_*`, `push_resplit_request_*`,
+`push_waitlist_spot_*`, `push_rating_*`, `push_organizer_exposure_title`, e os textos `wa_*` (WhatsApp oficial, US-150).
+
+1. **Firebase:** crie o projeto, adicione o app Android (`br.com.sportconnect.app`) e baixe o `google-services.json`
+   para `androidApp/`; adicione o plugin `com.google.gms.google-services` e `firebase-messaging`.
+2. **Apple:** em developer.apple.com crie uma **APNs Auth Key (.p8)** e envie ao Firebase (ou ao seu provedor);
+   no Xcode, *+ Capability › Push Notifications* e *Background Modes › Remote notifications*.
+3. **App:** registrar o token (FCM/APNs) no back-end após o login; tratar o toque igual aos lembretes locais
+   (o payload traz `link`, que já é aberto pelo `ExternalUriHandler`).
+4. **Servidor:** disparar nos eventos (nova reserva, repasse, reembolso concluído, vaga da lista de espera, etc.).
 
 ---
 

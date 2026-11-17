@@ -30,6 +30,7 @@ private class AndroidConnectivityMonitor(context: Context) : ConnectivityMonitor
 }
 
 actual val platformModule: Module = module {
+    single<ReminderScheduler> { AndroidReminderScheduler(get<Context>()) }
     // Context vem do androidContext() registrado em SportConnectApplication.
     single<ConnectivityMonitor> { AndroidConnectivityMonitor(get<Context>()) }
 }

@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.navigation
 
+import br.com.sportconnect.feature.common.ReminderSync
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -246,6 +247,9 @@ fun AppNavHost(
     val online by connectivity.online.collectAsStateWithLifecycle()
     val gamesRepo: GameRepository = koinInject()
     LaunchedEffect(online) { if (online) runCatching { gamesRepo.sincronizar() } }
+    // E8: lembretes locais acompanham os jogos enquanto o app esta aberto (e reagendam a cada abertura).
+    val reminders: ReminderSync = koinInject()
+    LaunchedEffect(reminders) { reminders.run() }
     CompositionLocalProvider(LocalOnline provides online) {
     Column(Modifier.fillMaxSize()) {
     var bannerVisible by remember { mutableStateOf(false) }

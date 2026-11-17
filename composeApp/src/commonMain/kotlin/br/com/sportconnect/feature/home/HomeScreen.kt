@@ -1,5 +1,21 @@
 package br.com.sportconnect.feature.home
 
+import br.com.sportconnect.resources.common_not_now
+import br.com.sportconnect.resources.reminders_enable
+import br.com.sportconnect.resources.reminders_card_body
+import br.com.sportconnect.resources.reminders_card_title
+import br.com.sportconnect.core.designsystem.component.SCButtonSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.background
+import androidx.compose.material.icons.rounded.NotificationsActive
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import br.com.sportconnect.core.platform.rememberNotificationPermission
+import br.com.sportconnect.core.platform.localRemindersSupported
+import br.com.sportconnect.core.data.local.AppPreferences
+import br.com.sportconnect.feature.common.ReminderSync
 import br.com.sportconnect.core.designsystem.component.sharedGameTitleKey
 import org.koin.compose.koinInject
 import br.com.sportconnect.core.domain.repository.GameRepository
@@ -99,7 +115,18 @@ data class HomeActions(
 fun HomeRoute(actions: HomeActions, viewModel: HomeViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val games: GameRepository = koinInject()
+    // E8: card de lembretes na 1a vez que ha jogo (permissao pedida em contexto, nao na abertura).
+    val reminders: ReminderSync = koinInject()
+    val prefs: AppPreferences = koinInject()
+    var showReminderCard by remember { mutableStateOf(localRemindersSupported && !prefs.remindersAsked) }
+    val askNotifications = rememberNotificationPermission { granted ->
+        reminders.setEnabled(granted)
+        showReminderCard = false
+    }
     HomeScreen(
+        reminderPrompt = if (showReminderCard) ({
+            ReminderCard(onEnable = askNotifications, onDismiss = { reminders.setEnabled(false); showReminderCard = false })
+        }) else null,
         onRefresh = games::sincronizar,
         state = state,
         actions = actions.copy(createGame = { viewModel.onCreateGame(); actions.createGame() }),
@@ -112,7 +139,13 @@ fun HomeRoute(actions: HomeActions, viewModel: HomeViewModel = koinViewModel()) 
  * FAB estendido "Criar jogo" (oculto no estado vazio, §3.3). Expanded: 2 colunas de cards.
  */
 @Composable
-fun HomeScreen(state: HomeUiState, actions: HomeActions, onRetry: () -> Unit = {}, onRefresh: suspend () -> Unit = {}) {
+fun HomeScreen(
+    state: HomeUiState,
+    actions: HomeActions,
+    onRetry: () -> Unit = {},
+    onRefresh: suspend () -> Unit = {},
+    reminderPrompt: (@Composable () -> Unit)? = null,
+) {
     val c = SportConnectTheme.colors
     val gridState = rememberLazyGridState()
     val expandedFab by remember { derivedStateOf { gridState.firstVisibleItemIndex == 0 } }
@@ -160,7 +193,7 @@ fun HomeScreen(state: HomeUiState, actions: HomeActions, onRetry: () -> Unit = {
                     HomeUiState.Error -> LoadErrorState(onRetry)
                     is HomeUiState.Empty -> HomeEmpty(actions)
                     is HomeUiState.Content -> SCPullToRefresh(onRefresh, Modifier.fillMaxSize()) {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) { HomeContent(state, actions, wc, gridState) }
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) { HomeContent(state, actions, wc, gridState, reminderPrompt) }
                     }
                 }
             }
@@ -216,7 +249,13 @@ private fun HomeEmpty(actions: HomeActions) {
 }
 
 @Composable
-private fun HomeContent(state: HomeUiState.Content, actions: HomeActions, wc: WidthClass, gridState: androidx.compose.foundation.lazy.grid.LazyGridState) {
+private fun HomeContent(
+    state: HomeUiState.Content,
+    actions: HomeActions,
+    wc: WidthClass,
+    gridState: androidx.compose.foundation.lazy.grid.LazyGridState,
+    reminderPrompt: (@Composable () -> Unit)? = null,
+) {
     val columns = if (wc == WidthClass.Expanded) 2 else 1
     val maxWidth = if (wc == WidthClass.Expanded) 1040.dp else 640.dp
     val hPad = if (wc == WidthClass.Compact) 16.dp else 24.dp
@@ -228,6 +267,11 @@ private fun HomeContent(state: HomeUiState.Content, actions: HomeActions, wc: Wi
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        if (reminderPrompt != null) {
+            item(span = { GridItemSpan(maxLineSpan) }, key = "reminder_prompt") {
+                Box(Modifier.padding(top = 12.dp).animateItem()) { reminderPrompt() }
+            }
+        }
         if (state.decisions.isNotEmpty()) {
             header(Res.string.home_section_decision.let { it }, "home_section_decision")
             items(state.decisions, state, actions, Section.Decision)
@@ -318,3 +362,25 @@ private fun HomeGameCard(g: HomeGame, state: HomeUiState.Content, actions: HomeA
 
 @Suppress("unused")
 private val fabElevation = SCElevation.level3
+
+/** E8: convite para ativar lembretes (finalidade clara antes do pedido do sistema). */
+@Composable
+private fun ReminderCard(onEnable: () -> Unit, onDismiss: () -> Unit) {
+    val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
+    Column(
+        Modifier.fillMaxWidth().background(c.primaryContainer.copy(alpha = 0.35f), MaterialTheme.shapes.large).padding(16.dp).testTag("reminder_card"),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Rounded.NotificationsActive, null, tint = c.onSurface, modifier = Modifier.size(24.dp))
+            Spacer(Modifier.width(12.dp))
+            Text(stringResource(Res.string.reminders_card_title), style = t.titleSmall, color = c.onSurface)
+        }
+        Text(stringResource(Res.string.reminders_card_body), style = t.bodyMedium, color = c.onSurfaceVariant)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SCButton(stringResource(Res.string.reminders_enable), onEnable, size = SCButtonSize.Small, modifier = Modifier.testTag("reminder_enable"))
+            SCButton(stringResource(Res.string.common_not_now), onDismiss, variant = SCButtonVariant.Text, size = SCButtonSize.Small)
+        }
+    }
+}

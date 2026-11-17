@@ -11,5 +11,6 @@ private class AlwaysOnline : ConnectivityMonitor {
 }
 
 actual val platformModule: Module = module {
+    single<ReminderScheduler> { NoReminders() }
     single<ConnectivityMonitor> { AlwaysOnline() }
 }

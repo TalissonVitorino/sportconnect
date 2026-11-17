@@ -4,6 +4,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- E7: saber se ha conexao (banner offline, acoes de dinheiro desligadas). -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- E8: lembretes locais (Android 13+ pede em contexto, pelo card da Home). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- B10: localizacao aproximada so para ordenar arenas por distancia (pedida no onboarding, com finalidade). -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -40,6 +42,11 @@
                 <data android:pathPrefix="/a/" />
             </intent-filter>
         </activity>
+
+        <!-- E8: recebe o alarme do lembrete e posta a notificacao (classe no :composeApp/androidMain). -->
+        <receiver
+            android:name="br.com.sportconnect.core.platform.ReminderReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>

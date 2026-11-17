@@ -19,5 +19,6 @@ private class BrowserConnectivityMonitor : ConnectivityMonitor {
 }
 
 actual val platformModule: Module = module {
+    single<ReminderScheduler> { NoReminders() }
     single<ConnectivityMonitor> { BrowserConnectivityMonitor() }
 }
