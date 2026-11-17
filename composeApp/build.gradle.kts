@@ -146,6 +146,10 @@ kotlin {
                 // Pedido de permissao (localizacao) a partir do Compose.
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.kotlinx.coroutines.android)
+                // Login com Google (B8, atras de FeatureFlags.SOCIAL_LOGIN).
+                implementation(libs.androidx.credentials)
+                implementation(libs.androidx.credentials.play.services)
+                implementation(libs.googleid)
                 implementation(libs.ktor.client.okhttp)
             }
         }

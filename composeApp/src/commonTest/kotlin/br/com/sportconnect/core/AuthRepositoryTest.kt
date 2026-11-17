@@ -112,4 +112,17 @@ class AuthRepositoryTest {
         UiSessionStore(prefs).finishOnboarding()
         assertEquals(true, UiSessionStore(prefs).onboardingDone.value)
     }
+
+    @Test
+    fun login_social_sem_nome_cai_no_passo_do_nome_e_com_nome_entra_direto() = runTest {
+        val auth = repo()
+        val semNome = auth.entrarComProvedor("apple", "token-a", email = "a@privaterelay.appleid.com", nome = null).getOrThrow()
+        assertEquals(FakeAuthRepository.NOME_PROVISORIO, semNome.nome)
+        val comNome = auth.entrarComProvedor("google", "token-g", email = "g@gmail.com", nome = "Gabi").getOrThrow()
+        assertEquals("Gabi", comNome.nome)
+        assertEquals("g@gmail.com", comNome.email)
+        // Mesmo token = mesma conta; sessao salva como as outras.
+        assertEquals(comNome.id, FakeAuthRepository(seed, analytics, clock, prefs).currentUser.value?.id)
+        assertTrue(auth.entrarComProvedor("google", "", null, null).isFailure)
+    }
 }

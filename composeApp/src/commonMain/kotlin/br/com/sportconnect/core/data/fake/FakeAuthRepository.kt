@@ -94,6 +94,19 @@ class FakeAuthRepository(
         return Result.success(usuario)
     }
 
+    override suspend fun entrarComProvedor(provedor: String, idToken: String, email: String?, nome: String?): Result<Usuario> {
+        if (idToken.isBlank()) return Result.failure(IllegalArgumentException("Token vazio"))
+        // Fake: o "sub" do token vira o id. O servidor real valida assinatura, audience e expiracao do JWT.
+        val id = "u-$provedor-${idToken.hashCode().toUInt()}"
+        val usuario = usuarios[id] ?: Usuario(
+            id = id, nome = nome?.takeIf { it.isNotBlank() } ?: NOME_PROVISORIO, celular = "", email = email,
+            celularVerificado = false, criadoEm = clock.now(),
+        )
+        setCurrent(usuario)
+        analytics.track(AnalyticsEvents.OTP_VERIFICADO, mapOf("tentativas" to 0, "metodo" to provedor))
+        return Result.success(usuario)
+    }
+
     private fun bloqueio(): AuthFailure.TooManyAttempts? {
         val ate = bloqueadoAte ?: return null
         if (clock.now() >= ate) {

@@ -34,8 +34,8 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 | A8 | ✅ P1 | M | **Pull-to-refresh** (`PullToRefreshBox`) na Home, Meus jogos, Explorar, Avisos, Agenda e Repasses. Hoje não existe em nenhuma tela. | telas de lista | Padrão esperado. Sem ele, a pessoa não tem como "forçar" atualização. |
 | A9 | ✅ P1 | M | **Transições compartilhadas** (`SharedTransitionLayout`): card do jogo → detalhe (título, badge e barra de rateio) e card da quadra → detalhe da arena (imagem). | Home/MyGames → GameDetail; Explore → Arena | Continuidade visual; é o que faz o app "parecer nativo e fluido". |
 | A10 | ✅ P1 | P | **Animar mudanças de conteúdo**: `animateItem()` nos itens das `Lazy*` (Home, Agenda, Avisos) e `AnimatedContent` nos estados loading → conteúdo (hoje só há troca seca em 6 arquivos). | telas de lista | Itens aparecem e somem sem transição. |
-| A11 | P2 | P | **Proteção contra toque duplo na navegação** (`nav.go` dispara duas telas iguais com toque rápido em rotas com argumentos diferentes). Ignorar `navigate` se o `lifecycle` da entrada atual não estiver `RESUMED`. | `AppNavigator.go` | Duplicação de telas na pilha. |
-| A12 | P2 | P | Usar `LocalSCClock` em vez de `Clock.System.now()` dentro de composables. | `PaymentScreen.kt:581` | Consistência e testabilidade. |
+| A11 | ✅ P2 | P | **Proteção contra toque duplo na navegação** (`nav.go` dispara duas telas iguais com toque rápido em rotas com argumentos diferentes). Ignorar `navigate` se o `lifecycle` da entrada atual não estiver `RESUMED`. | `AppNavigator.go` | Duplicação de telas na pilha. |
+| A12 | ✅ P2 | P | Usar `LocalSCClock` em vez de `Clock.System.now()` dentro de composables. | `PaymentScreen.kt:581` | Consistência e testabilidade. |
 
 ---
 
@@ -56,9 +56,9 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 |---|---|---|---|---|
 | B5 | ✅ P0 | M | **Completar a tela de login (`auth`)** conforme 09 ficha 2. | (a) "Receber pelo WhatsApp" chama o mesmo `sendCode` que SMS: passar o canal. (b) Estados de erro especificados e não implementados: `error_code_expired_*`, `error_too_many_attempts_*` (bloqueio de 15 min após 5 tentativas), `error_no_connection_*`; as strings já existem. (c) Campos bloqueados durante o loading. (d) **Autofill do código**: `ContentType.SmsOtpCode` (Android, SMS Retriever / User Consent API) e `textContentType = .oneTimeCode` (iOS). (e) Foco automático no OTP e `ImeAction.Done` no celular (hoje há **0** `ImeAction` no app inteiro). (f) ~~Máscara visual~~ — correção da auditoria: o `SCTextField` tipo `Phone` já aplicava a máscara. (g) Remover o `contentDescription` fixo "Código de 6 números" e usar string resource. |
 | B6 | ✅ P0 | M | **Cadastro: termos e consentimentos (LGPD, CT-05, US-003).** | Hoje `auth_terms` é texto solto, sem link e sem aceite registrado. Transformar em texto com links ("Termos de uso" e "Política de privacidade") abrindo uma tela/WebView, e registrar `Consentimento` no `Usuario` ao concluir o cadastro. Opt-in separado e desmarcado para marketing. |
-| B7 | P1 | M | **Cadastro: passo de perfil.** | Depois do nome: foto opcional (câmera/galeria) e esportes preferidos. O passo do nome hoje não tem voltar nem validação de tamanho mínimo (aceita 1 caractere). |
-| B8 | P1 | M | **Login social (Google / Apple) atrás de flag.** | Previsto em 09 (`auth_google`, `auth_apple`; as strings já existem). Se Google entrar no iOS, **Sign in with Apple passa a ser obrigatório** (App Store 4.8). |
-| B9 | P1 | P | **Login como sheet** no convite e no pagamento (09: "Também embutido como sheet"). | Hoje `GuestInvite → login` navega para a tela cheia `Route.Auth`. |
+| B7 | ✅ P1 | M | **Cadastro: passo de perfil.** | Depois do nome: foto opcional (câmera/galeria) e esportes preferidos. O passo do nome hoje não tem voltar nem validação de tamanho mínimo (aceita 1 caractere). |
+| B8 | ✅ P1 | M | **Login social (Google / Apple) atrás de flag.** | Previsto em 09 (`auth_google`, `auth_apple`; as strings já existem). Se Google entrar no iOS, **Sign in with Apple passa a ser obrigatório** (App Store 4.8). |
+| B9 | ✅ P1 | P | **Login como sheet** no convite e no pagamento (09: "Também embutido como sheet"). | Hoje `GuestInvite → login` navega para a tela cheia `Route.Auth`. |
 
 ### B.3 Onboarding
 
@@ -91,7 +91,7 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 | C5 | ✅ P1 | P | Home | O botão "Buscar quadra" e o FAB "Criar jogo" competem no rodapé; o FAB cobre o fim da lista. Mover "Buscar quadra" para um atalho no topo (ou retirá-lo, já que existe a aba "Buscar"). |
 | C6 | ✅ P1 | M | Explorar | **Imagem do card ocupa ~50% da altura**: só cabe 1 resultado por tela. Reduzir a mídia para 16:9 com altura máx. de 140 dp, ou layout horizontal (miniatura 96 dp à esquerda) como opção "lista compacta". Os cards também repetem a mesma ilustração e a mesma distância. |
 | C7 | ✅ P1 | P | Explorar | O filtro "Esporte" deveria vir pré-preenchido com os esportes do onboarding; "Mais perto" parece link e deveria ser um seletor de ordenação (chip com menu). |
-| C8 | P1 | P | Arena | O CTA fixo "Ver horários" é ambíguo (de qual quadra?). Cada quadra já tem horários e "Ver todos": trocar o CTA fixo por "Escolher quadra e horário" com rolagem até a lista, ou remover. A bottom nav + CTA fixo consomem ~180 dp. |
+| C8 | ✅ P1 | P | Arena | O CTA fixo "Ver horários" é ambíguo (de qual quadra?). Cada quadra já tem horários e "Ver todos": trocar o CTA fixo por "Escolher quadra e horário" com rolagem até a lista, ou remover. A bottom nav + CTA fixo consomem ~180 dp. |
 | C9 | ✅ P1 | P | Arena / Convite | "Ver todos" e "Ver regras" (botões de texto) ficam **recuados ~16 dp** em relação ao conteúdo (padding interno do TextButton). Compensar com `Modifier.offset(x = -12.dp)` ou usar a variante sem padding horizontal. |
 | C10 | ✅ P1 | P | **Global: cor de seleção inconsistente** | Seleções aparecem em **pêssego** (`secondaryContainer`: duração no slot picker, "Dia/Semana" na agenda, período nos repasses, "hoje" no Explorar) e em **verde** (data, horário, aba). Escolher uma só para estado selecionado (recomendo `primaryContainer` verde) e deixar o pêssego para destaque/"Recomendado". |
 | C11 | ✅ P1 | P | Escolher horário | A legenda ocupa 2 linhas; colocar em 1 linha rolável ou num ícone "?" (tooltip). Rolar automaticamente até o 1º horário disponível ≥ agora (hoje começa às 7h). |
@@ -101,12 +101,12 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 | C15 | ✅ P1 | P | Pix pago | O conteúdo fica no topo com 50% de tela vazia: centralizar verticalmente e animar o check (escala + haptic). |
 | C16 | ✅ P1 | P | Painel da arena | O nome da arena trunca ("Arena Vila M…"): usar `titleLarge` em até 2 linhas ou mostrar só o nome curto. Três cards "Atenção" quase idênticos: agrupar ("3 quadras sem horários a partir de 26/11 · Publicar"). "Publicar horários" sublinhado tem área de toque pequena: virar botão de 48 dp. |
 | C17 | ✅ P1 | P | Agenda da arena | Os horários "Livre" não parecem tocáveis: dar uma ação explícita ("+ Bloquear" / "Reservar") ou um *affordance* de toque. Rolar até a hora atual ao abrir. |
-| C18 | P2 | P | Cadastro da arena | CPF e CEP sem máscara, placeholder nem teclado numérico; CEP deveria preencher o endereço (ViaCEP). |
-| C19 | P2 | P | Repasses | Os valores usam a fonte mono (Atkinson Mono), diferente do resto do app (Saira). Padronizar com `numericPrice`. |
-| C20 | P2 | P | Avatares | O empilhamento corta as iniciais ("BL(", "CM("): aumentar o *overlap* negativo ou o diâmetro para 32 dp. |
-| C21 | P2 | P | Global | Nenhum campo define `ImeAction`/`KeyboardActions` nem `imePadding()`: o teclado cobre o botão fixo do rodapé em Auth, Criar jogo e Cadastro da arena. |
-| C22 | P2 | P | Global | Telas carregando mostram `Scaffold` vazio (ex.: `ReceiptScreen` com `p == null` dá `return`). Usar `SCSkeleton`. |
-| C23 | P2 | P | Global | Perfil: "Versão 0.1.0" fixo no código; ler `versionName` via expect/actual. |
+| C18 | ✅ P2 | P | Cadastro da arena | CPF e CEP sem máscara, placeholder nem teclado numérico; CEP deveria preencher o endereço (ViaCEP). |
+| C19 | ✅ P2 | P | Repasses | Os valores usam a fonte mono (Atkinson Mono), diferente do resto do app (Saira). Padronizar com `numericPrice`. |
+| C20 | ✅ P2 | P | Avatares | O empilhamento corta as iniciais ("BL(", "CM("): aumentar o *overlap* negativo ou o diâmetro para 32 dp. |
+| C21 | ✅ P2 | P | Global | Nenhum campo define `ImeAction`/`KeyboardActions` nem `imePadding()`: o teclado cobre o botão fixo do rodapé em Auth, Criar jogo e Cadastro da arena. |
+| C22 | ✅ P2 | P | Global | Telas carregando mostram `Scaffold` vazio (ex.: `ReceiptScreen` com `p == null` dá `return`). Usar `SCSkeleton`. |
+| C23 | ✅ P2 | P | Global | Perfil: "Versão 0.1.0" fixo no código; ler `versionName` via expect/actual. |
 
 ---
 
@@ -117,9 +117,9 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 | D1 | ✅ P0 | P | **Ícone do app Android**: `androidApp/src/main/res` só tem `values/`, então o app usa o ícone padrão. Gerar *adaptive icon* (foreground/background + monochrome para Android 13+) a partir de `docs/assets/app-icon.svg` e declarar `android:icon`/`android:roundIcon`. |
 | D2 | ✅ P0 | P | **Ícone do app iOS**: `AppIcon.appiconset` só tem o `Contents.json` (sem imagem). Exportar 1024×1024 (variantes clara, escura e tinted no iOS 18+). |
 | D3 | ✅ P0 | P | **Tema Android próprio** (`Theme.SportConnect`, DayNight, sem ActionBar, barras transparentes) no lugar de `@android:style/Theme.Material.Light.NoActionBar`. Evita o flash branco no modo escuro e prepara o splash (B1). |
-| D4 | P1 | P | **Predictive back** (Android 14+): `android:enableOnBackInvokedCallback="true"` no manifest; com A1 feito, o navigation-compose já anima o gesto. |
+| D4 | ✅ P1 | P | **Predictive back** (Android 14+): `android:enableOnBackInvokedCallback="true"` no manifest; com A1 feito, o navigation-compose já anima o gesto. |
 | D5 | ✅ P1 | P | **Deep links reais**: as rotas declaram `https://sportconnect.app/{a,g,j}`, mas o `AndroidManifest` não tem `intent-filter` com `autoVerify` e o iOS não tem Associated Domains. O convite por link (fluxo principal do produto) não abre o app. |
-| D6 | P1 | P | `android:localeConfig` + `values-pt-rBR` e `supportsRtl` revisado; `android:allowBackup` ligado guarda a sessão em backup: definir `dataExtractionRules` excluindo tokens. |
+| D6 | ✅ P1 | P | `android:localeConfig` + `values-pt-rBR` e `supportsRtl` revisado; `android:allowBackup` ligado guarda a sessão em backup: definir `dataExtractionRules` excluindo tokens. |
 | D7 | P2 | P | Trocar `material-icons-extended` (biblioteca enorme e sem manutenção) pelos ícones usados copiados para `SCIcons`, ou Material Symbols via Compose Resources: reduz build e APK. |
 
 ---
@@ -194,8 +194,11 @@ distância real), C4 (card de jogo ~20% mais baixo), C5, C6, C7 (favoritos prime
 Também: bundle id do iOS corrigido, launch screen sem quadrado, `PrivacyInfo.xcprivacy`, app iOS testado no
 simulador.
 
-Ainda em aberto: B7 (foto no cadastro), B8 (Google/Apple), B9 (login como sheet), C8 (CTA da arena), D4
-(predictive back), D6, D7 e os P2 de C (C18–C23) e A11/A12. Ver também a seção E.
+**Fechamento — 17/11/2026:** B7 (foto de perfil com FileKit), B8 (Google/Apple atrás de `FeatureFlags`,
+passo a passo no 12 §10), B9 (login como sheet), B10 completo (localização real Android/iOS + cidade
+digitada), C8, C18–C23, A11, A12, D4 (back preditivo), D6 (backup sem sessão, localeConfig).
+Não feito, de propósito: **D7** (trocar `material-icons-extended`) — o R8 já remove do APK release os ícones
+não usados, então o ganho seria só em tempo de build, ao custo de reescrever ~150 imports.
 
 ## Ordem sugerida (sprints)
 

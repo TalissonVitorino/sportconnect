@@ -2,6 +2,15 @@
 
 package br.com.sportconnect.feature.auth
 
+import br.com.sportconnect.resources.common_or
+import br.com.sportconnect.resources.auth_apple
+import br.com.sportconnect.resources.auth_google
+import androidx.compose.material3.HorizontalDivider
+import br.com.sportconnect.core.platform.rememberSocialSignIn
+import br.com.sportconnect.core.platform.availableSocialProviders
+import br.com.sportconnect.core.platform.SocialSignInResult
+import br.com.sportconnect.core.platform.SocialProvider
+import br.com.sportconnect.core.config.FeatureFlags
 import br.com.sportconnect.resources.profile_photo_hint
 import br.com.sportconnect.resources.profile_photo_change
 import br.com.sportconnect.resources.profile_photo_add
@@ -221,6 +230,28 @@ class AuthViewModel(
         }
     }
 
+    /** Resultado do "Continuar com Google/Apple" (B8). Cancelar nao mostra erro. */
+    fun onSocialResult(result: SocialSignInResult) {
+        when (result) {
+            SocialSignInResult.Cancelled -> _uiState.update { it.copy(loading = false) }
+            is SocialSignInResult.Failed -> _uiState.update { it.copy(loading = false, error = AuthError.NoConnection) }
+            is SocialSignInResult.Success -> {
+                _uiState.update { it.copy(loading = true, error = null) }
+                viewModelScope.launch {
+                    auth.entrarComProvedor(result.provider.analytics, result.idToken, result.email, result.name).fold(
+                        onSuccess = { u ->
+                            val needsName = u.nome == NOME_PROVISORIO
+                            _uiState.update { it.copy(loading = false, step = if (needsName) AuthStep.Name else it.step, done = !needsName) }
+                        },
+                        onFailure = { _uiState.update { it.copy(loading = false, error = AuthError.NoConnection) } },
+                    )
+                }
+            }
+        }
+    }
+
+    fun startSocial() = _uiState.update { it.copy(loading = true, error = null) }
+
     fun changeNumber() {
         countdown?.cancel()
         _uiState.update { it.copy(step = AuthStep.Phone, code = "", error = null, resendIn = 0) }
@@ -297,7 +328,10 @@ fun AuthRoute(
     val state by vm.uiState.collectAsStateWithLifecycle()
     val photo by koinInject<ProfilePhotoStore>().photo.collectAsStateWithLifecycle()
     LaunchedEffect(state.done) { if (state.done) onDone() }
+    val social = rememberSocialSignIn(vm::onSocialResult)
     AuthScreen(
+        socialProviders = if (FeatureFlags.SOCIAL_LOGIN) availableSocialProviders() else emptySet(),
+        onSocial = { vm.startSocial(); social(it) },
         photo = photo,
         onPickPhoto = LocalPickProfilePhoto.current,
         state = state,
@@ -333,6 +367,8 @@ fun AuthScreen(
     minutesUntil: (Instant) -> Int = { AuthRules.BLOQUEIO_MIN },
     photo: ImageBitmap? = null,
     onPickPhoto: () -> Unit = {},
+    socialProviders: Set<SocialProvider> = emptySet(),
+    onSocial: (SocialProvider) -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
@@ -398,7 +434,7 @@ fun AuthScreen(
             ) { step ->
                 Column(Modifier.widthIn(max = 560.dp).fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp)) {
                     when (step) {
-                        AuthStep.Phone -> PhoneStep(state, onPhone, onSend)
+                        AuthStep.Phone -> PhoneStep(state, onPhone, onSend, socialProviders, onSocial)
                         AuthStep.Code -> CodeStep(state, onCode, onChangeNumber, minutesUntil)
                         AuthStep.Name -> NameStep(state, onName, onMarketing, onFinishName, photo, onPickPhoto)
                     }
@@ -409,7 +445,13 @@ fun AuthScreen(
 }
 
 @Composable
-private fun PhoneStep(state: AuthUiState, onPhone: (String) -> Unit, onSend: () -> Unit) {
+private fun PhoneStep(
+    state: AuthUiState,
+    onPhone: (String) -> Unit,
+    onSend: () -> Unit,
+    socialProviders: Set<SocialProvider> = emptySet(),
+    onSocial: (SocialProvider) -> Unit = {},
+) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
     val focus = remember { FocusRequester() }
@@ -439,6 +481,26 @@ private fun PhoneStep(state: AuthUiState, onPhone: (String) -> Unit, onSend: () 
     if (state.error is AuthError.TooManyAttempts) {
         Spacer(Modifier.height(12.dp))
         ErrorBox(stringResource(Res.string.error_too_many_attempts_title), stringResource(Res.string.error_too_many_attempts_body, "${AuthRules.BLOQUEIO_MIN}min"))
+    }
+    // B8: "Continuar com Google/Apple" atras de FeatureFlags.SOCIAL_LOGIN (09 ficha 2).
+    if (socialProviders.isNotEmpty()) {
+        Spacer(Modifier.height(24.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            HorizontalDivider(Modifier.weight(1f), color = c.outlineVariant)
+            Text(stringResource(Res.string.common_or), style = t.labelMedium, color = c.onSurfaceVariant, modifier = Modifier.padding(horizontal = 12.dp))
+            HorizontalDivider(Modifier.weight(1f), color = c.outlineVariant)
+        }
+        Spacer(Modifier.height(16.dp))
+        socialProviders.sortedBy { it.ordinal }.forEach { p ->
+            SCButton(
+                stringResource(if (p == SocialProvider.GOOGLE) Res.string.auth_google else Res.string.auth_apple),
+                { onSocial(p) },
+                variant = SCButtonVariant.Secondary,
+                fullWidth = true,
+                enabled = !state.loading,
+                modifier = Modifier.padding(bottom = 8.dp).testTag("auth_social_${p.analytics}"),
+            )
+        }
     }
 }
 

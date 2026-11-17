@@ -146,6 +146,12 @@ class AppScreenshotTest {
         compact("app-auth-phone-compact-light.png", height = 800) {
             br.com.sportconnect.feature.auth.AuthScreen(br.com.sportconnect.feature.auth.AuthUiState(phone = "11987654321"))
         }
+        compact("app-auth-social-compact-light.png", height = 900) {
+            br.com.sportconnect.feature.auth.AuthScreen(
+                br.com.sportconnect.feature.auth.AuthUiState(phone = "11987654321"),
+                socialProviders = setOf(br.com.sportconnect.core.platform.SocialProvider.GOOGLE, br.com.sportconnect.core.platform.SocialProvider.APPLE),
+            )
+        }
         compact("app-auth-code-error-compact-light.png", height = 800) {
             br.com.sportconnect.feature.auth.AuthScreen(
                 br.com.sportconnect.feature.auth.AuthUiState(

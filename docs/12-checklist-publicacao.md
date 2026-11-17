@@ -15,6 +15,7 @@
 | 7 | [Contatos do suporte](#7-contatos-do-suporte) | `SupportContacts` | 5 min | — |
 | 8 | [Revisão jurídica dos textos](#8-revisão-jurídica-dos-textos) | `strings.xml`, `LegalScreen.kt` | depende do Jurídico | **as duas lojas** |
 | 9 | [Formulários de privacidade das lojas](#9-formulários-de-privacidade-das-lojas) | Play Console, App Store Connect | 1 h | as duas lojas |
+| 10 | [Login com Google/Apple (opcional)](#10-login-com-googleapple-opcional) | Google Cloud, Xcode, `FeatureFlags` | 1 h | — |
 
 Já resolvido no código (não precisa fazer nada): excluir conta dentro do app, *privacy manifest* do iOS
 (`iosApp/iosApp/PrivacyInfo.xcprivacy`), ícones, splash, bundle id do iOS (`br.com.sportconnect.app`, igual ao Android).
@@ -230,6 +231,29 @@ Respostas com base no que o app faz hoje (revisar quando entrar o back-end real 
 - [ ] URL da **Política de Privacidade** nos dois consoles (item 8).
 - [ ] Quando entrar o SDK do gateway de pagamento ou de analytics, confira se ele traz o próprio
   *privacy manifest* e atualize `iosApp/iosApp/PrivacyInfo.xcprivacy` se o app passar a usar outra API com "motivo obrigatório".
+
+---
+
+## 10. Login com Google/Apple (opcional)
+
+O código está pronto e **desligado** (`FeatureFlags.SOCIAL_LOGIN = false`). Android oferece Google
+(Credential Manager); iOS oferece Apple (AuthenticationServices). Desktop e web não oferecem.
+
+**Onde:** `composeApp/src/commonMain/kotlin/br/com/sportconnect/core/config/FeatureFlags.kt`
+
+1. **Google (Android)**
+   - Google Cloud Console › *APIs e serviços* › *Credenciais* › **Criar credencial › ID do cliente OAuth**:
+     - um do tipo **Android** (pacote `br.com.sportconnect.app` + SHA-1 da chave de assinatura do Play, item 2);
+     - um do tipo **Aplicativo da Web** — copie esse **ID do cliente da Web**.
+   - Cole em `GOOGLE_WEB_CLIENT_ID = "....apps.googleusercontent.com"`.
+2. **Apple (iOS)** — conta paga (item 1):
+   - developer.apple.com › *Identifiers* › `br.com.sportconnect.app` › marque **Sign In with Apple**.
+   - Xcode › target iosApp › *Signing & Capabilities* › **+ Capability › Sign in with Apple**
+     (vai para o mesmo `iosApp/iosApp.entitlements`).
+3. Ligue a chave: `const val SOCIAL_LOGIN = true`.
+4. **Back-end:** hoje o fake aceita qualquer token. O servidor real precisa validar o JWT (assinatura,
+   `aud` = seu client ID / bundle id, expiração) antes de criar a sessão.
+5. Regra da App Store (4.8): se um dia oferecer Google no iOS, o Apple precisa estar junto (já está).
 
 ---
 

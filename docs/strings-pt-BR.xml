@@ -843,6 +843,7 @@
     <string name="profile_photo_remove">Remover foto</string>
     <string name="profile_photo_error">Não deu pra usar essa foto. Tente outra.</string>
     <string name="profile_photo_hint">Opcional. Ajuda a galera a te reconhecer no jogo.</string>
+    <string name="common_or">ou</string>
 
     <!-- ===== Minha Arena (strings_arena.xml) ===== -->
     <!-- Shell / navegacao -->

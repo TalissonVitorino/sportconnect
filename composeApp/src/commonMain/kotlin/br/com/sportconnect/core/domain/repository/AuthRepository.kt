@@ -31,6 +31,11 @@ interface AuthRepository {
     val currentUser: StateFlow<Usuario?>
     suspend fun solicitarOtp(celular: String, canal: CanalOtp = CanalOtp.SMS): Result<Unit>
     suspend fun verificarOtp(celular: String, codigo: String): Result<Usuario>
+    /**
+     * Login social (B8): o back-end valida o [idToken] (Google/Apple) e devolve o usuario. Sem nome do
+     * provedor, o usuario volta como "Convidado" e passa pelo passo "Como a galera te chama?".
+     */
+    suspend fun entrarComProvedor(provedor: String, idToken: String, email: String?, nome: String?): Result<Usuario>
     /** Nome/apelido exibido na lista do jogo (passo 3 do cadastro e edicao de perfil) e e-mail opcional. */
     suspend fun atualizarPerfil(nome: String, email: String? = null): Result<Usuario>
     /** Troca o celular da conta: exige [solicitarOtp] para o numero novo e o codigo recebido nele. */
