@@ -14,7 +14,7 @@ html, body {
     align-items: center;
     justify-content: center;
     gap: 24px;
-    background: #191C19;
+    background: #F5FBF6;
     z-index: 10;
     transition: opacity 220ms ease-in;
 }
@@ -52,4 +52,9 @@ html, body {
 
 @media (prefers-reduced-motion: reduce) {
     .sc-bar span { animation: none; width: 100%; }
+}
+
+/* W3: loader no tema do sistema (antes era sempre escuro e "piscava" no tema claro). */
+@media (prefers-color-scheme: dark) {
+    #sc-loader { background: #101411; }
 }
