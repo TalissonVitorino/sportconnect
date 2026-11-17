@@ -2,6 +2,10 @@
 
 package br.com.sportconnect.feature.game
 
+import br.com.sportconnect.resources.guest_open_in_app
+import androidx.compose.ui.platform.LocalUriHandler
+import br.com.sportconnect.core.config.FeatureFlags
+import br.com.sportconnect.core.platform.isWebApp
 import br.com.sportconnect.resources.cancel_reason_label
 import br.com.sportconnect.resources.wa_game_cancelled
 import br.com.sportconnect.resources.cancel_done_body
@@ -300,6 +304,16 @@ fun GameDetailScreen(
                     title = "",
                     onNavigationClick = actions.back,
                     actions = {
+                        if (content != null && isWebApp) {
+                            // E12: na web, convidado pode abrir o jogo no app.
+                            val uri = LocalUriHandler.current
+                            SCButton(
+                                stringResource(Res.string.guest_open_in_app),
+                                { runCatching { uri.openUri(FeatureFlags.appLink(content.jogo.id)) } },
+                                variant = SCButtonVariant.Text, size = SCButtonSize.Small,
+                                modifier = Modifier.testTag("game_open_in_app"),
+                            )
+                        }
                         if (content != null) {
                             IconButton(onClick = { onShareInvite(content.jogo.id) }) {
                                 Icon(Icons.Rounded.Share, stringResource(Res.string.cd_share_game))

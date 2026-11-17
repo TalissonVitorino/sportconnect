@@ -278,6 +278,19 @@ Precisam de **push remoto**, porque nascem de eventos no servidor:
 
 ---
 
+## 12. Página "Baixar o app" (versão web)
+
+**O que é:** na versão web, "Abrir no app" (página do jogo) e "Baixar o app" (depois de pagar) abrem `https://sportconnect.app/app?j=<jogo>`.
+
+**Onde:** no site `sportconnect.app` (mesma hospedagem do `assetlinks.json` e do `apple-app-site-association`). O endereço fica em `FeatureFlags.APP_DOWNLOAD_URL`.
+
+**Como fazer:**
+1. Crie a página `/app` com dois botões: Google Play e App Store.
+2. Detecte o sistema pelo `User-Agent` e mande direto para a loja certa (Android → Play, iPhone → App Store, computador → mostra os dois).
+3. Se vier `?j=<id>`, mostre também o link `https://sportconnect.app/j/<id>`: com o app instalado, esse link abre o jogo no app (seções 4 e 5).
+
+**Como conferir:** abra a versão web no celular, entre num jogo como convidado e toque em "Abrir no app".
+
 ## Ordem sugerida
 
 1. Itens **1, 2 e 3** (contas e chaves) — destravam todo o resto.

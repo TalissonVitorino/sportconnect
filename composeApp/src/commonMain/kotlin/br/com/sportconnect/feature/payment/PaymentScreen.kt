@@ -2,6 +2,14 @@
 
 package br.com.sportconnect.feature.payment
 
+import br.com.sportconnect.resources.payment_app_offer_dismiss
+import br.com.sportconnect.resources.payment_app_offer_cta
+import br.com.sportconnect.resources.payment_app_offer_title
+import androidx.compose.material.icons.rounded.NotificationsActive
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalUriHandler
+import br.com.sportconnect.core.config.FeatureFlags
+import br.com.sportconnect.core.platform.isWebApp
 import br.com.sportconnect.resources.card_name_invalid
 import br.com.sportconnect.resources.common_back
 import br.com.sportconnect.resources.error_card_expired_body
@@ -676,6 +684,7 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
                     SCButton(stringResource(Res.string.pix_see_game), { actions.seeGame(id) }, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("pay_success_see_game"))
                 }
             }
+            if (isWebApp) AppOfferCard(j?.id)
             (state.phase as? PixPhase.Paid)?.cobranca?.pagamentoId?.let { pid ->
                 SCButton(
                     stringResource(Res.string.pix_paid_receipt),
@@ -687,6 +696,30 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
             }
         }
     }
+    }
+}
+
+/** E12: depois de pagar na web, oferece o app (avisos do jogo). Dispensavel. */
+@Composable
+private fun AppOfferCard(gameId: String?) {
+    var dismissed by rememberSaveable { mutableStateOf(false) }
+    if (dismissed) return
+    val c = SportConnectTheme.colors
+    val uri = LocalUriHandler.current
+    Spacer(Modifier.height(24.dp))
+    Column(
+        Modifier.fillMaxWidth().background(c.surfaceContainerLow, MaterialTheme.shapes.large).padding(16.dp).testTag("pay_app_offer"),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Rounded.NotificationsActive, null, tint = c.primary, modifier = Modifier.size(24.dp))
+            Spacer(Modifier.width(12.dp))
+            Text(stringResource(Res.string.payment_app_offer_title), style = MaterialTheme.typography.titleSmall, color = c.onSurface)
+        }
+        Spacer(Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SCButton(stringResource(Res.string.payment_app_offer_cta), { runCatching { uri.openUri(FeatureFlags.appLink(gameId)) } }, size = SCButtonSize.Small)
+            SCButton(stringResource(Res.string.payment_app_offer_dismiss), { dismissed = true }, variant = SCButtonVariant.Text, size = SCButtonSize.Small)
+        }
     }
 }
 
