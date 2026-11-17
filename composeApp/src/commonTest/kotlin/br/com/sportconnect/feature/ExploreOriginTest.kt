@@ -25,6 +25,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Instant
+import kotlinx.datetime.toLocalDateTime
 
 /** B10/C7: a busca usa a origem salva no onboarding e mostra os esportes favoritos primeiro. */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -74,5 +75,33 @@ class ExploreOriginTest {
         assertTrue(results.any { !it.quadra.suporta(Sport.PADEL) }, "os outros esportes continuam na lista")
         val firstOther = results.indexOfFirst { !it.quadra.suporta(Sport.PADEL) }
         assertTrue(results.drop(firstOther).none { it.quadra.suporta(Sport.PADEL) }, "nenhum padel depois dos outros")
+    }
+
+    @Test
+    fun filtro_noite_so_mostra_horarios_depois_das_18h() = runTest(dispatcher) {
+        val vm = vm()
+        advanceUntilIdle()
+        vm.setPeriod(br.com.sportconnect.feature.explore.DayPeriod.NIGHT)
+        advanceUntilIdle()
+        val slots = vm.uiState.value.results.flatMap { it.freeSlots }
+        assertTrue(slots.isNotEmpty())
+        assertTrue(slots.all { it.inicio.toLocalDateTime(br.com.sportconnect.core.model.FusoSaoPaulo).hour >= 18 })
+    }
+
+    @Test
+    fun preco_maximo_e_ordenacao_por_preco() = runTest(dispatcher) {
+        val vm = vm()
+        advanceUntilIdle()
+        vm.setSort(br.com.sportconnect.feature.explore.ExploreSort.PRICE)
+        advanceUntilIdle()
+        val precos = vm.uiState.value.results.map { it.quadra.precoHora.cents }
+        assertEquals(precos.sorted(), precos)
+        val teto = br.com.sportconnect.core.model.Money(20_000)
+        vm.setMaxPrice(teto)
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.results.all { it.quadra.precoHora <= teto })
+        vm.clearFilters()
+        advanceUntilIdle()
+        assertEquals(null, vm.uiState.value.maxPrice)
     }
 }

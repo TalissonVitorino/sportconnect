@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.explore
 
+import br.com.sportconnect.core.model.Money
 import br.com.sportconnect.core.model.GeoPonto
 import br.com.sportconnect.core.data.local.AppPreferences
 import androidx.lifecycle.ViewModel
@@ -32,12 +33,21 @@ data class CourtResult(
     val freeSlots: List<Slot>,
 )
 
+/** E10: faixa de horario do dia (pelos horarios livres de cada quadra). */
+enum class DayPeriod(val fromHour: Int, val toHour: Int) { MORNING(0, 12), AFTERNOON(12, 18), NIGHT(18, 24) }
+
+enum class ExploreSort { DISTANCE, PRICE }
+
 data class ExploreUiState(
     val query: String = "",
     val sport: Sport? = null,
     val date: LocalDate,
     val today: LocalDate,
     val coveredOnly: Boolean = false,
+    val period: DayPeriod? = null,
+    /** Preco maximo por hora (null = qualquer). */
+    val maxPrice: Money? = null,
+    val sort: ExploreSort = ExploreSort.DISTANCE,
     val loading: Boolean = true,
     val error: Boolean = false,
     val results: List<CourtResult> = emptyList(),
@@ -83,8 +93,23 @@ class ExploreViewModel(
         search()
     }
 
+    fun setPeriod(p: DayPeriod?) {
+        _uiState.update { it.copy(period = p) }
+        search()
+    }
+
+    fun setMaxPrice(m: Money?) {
+        _uiState.update { it.copy(maxPrice = m) }
+        search()
+    }
+
+    fun setSort(sort: ExploreSort) {
+        _uiState.update { it.copy(sort = sort) }
+        search()
+    }
+
     fun clearFilters() {
-        _uiState.update { it.copy(query = "", sport = null, coveredOnly = false, date = today) }
+        _uiState.update { it.copy(query = "", sport = null, coveredOnly = false, date = today, period = null, maxPrice = null) }
         search()
     }
 
@@ -109,14 +134,23 @@ class ExploreViewModel(
                     detail.quadras
                         .filter { s.sport == null || it.suporta(s.sport) }
                         .filter { !s.coveredOnly || it.coberta }
-                        .map { quadra -> CourtResult(a, quadra, free.filter { it.quadra.id == quadra.id }.map { it.slot }) }
+                        .filter { q -> s.maxPrice == null || q.precoHora <= s.maxPrice }
+                        .map { quadra ->
+                            val livres = free.filter { it.quadra.id == quadra.id }.map { it.slot }.filter { slot ->
+                                val p = s.period ?: return@filter true
+                                slot.inicio.toLocalDateTime(FusoSaoPaulo).hour in p.fromHour until p.toHour
+                            }
+                            CourtResult(a, quadra, livres)
+                        }
                         .filter { it.freeSlots.isNotEmpty() }
                 }
             }.fold(
                 onSuccess = { list ->
                     val fav = favorites
                     // Ordenacao estavel: favoritos primeiro, o resto mantem a ordem (distancia).
-                    val ordered = if (fav.isEmpty()) list else list.sortedByDescending { r -> fav.any { r.quadra.suporta(it) } }
+                    // E10: "Menor preco" ordena pelo preco/hora; depois, favoritos na frente (ordenacao estavel).
+                    val bySort = if (s.sort == ExploreSort.PRICE) list.sortedBy { it.quadra.precoHora } else list
+                    val ordered = if (fav.isEmpty()) bySort else bySort.sortedByDescending { r -> fav.any { r.quadra.suporta(it) } }
                     _uiState.update { it.copy(loading = false, results = ordered) }
                 },
                 onFailure = { _uiState.update { it.copy(loading = false, error = true) } },

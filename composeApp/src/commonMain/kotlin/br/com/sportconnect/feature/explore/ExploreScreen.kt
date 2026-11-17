@@ -2,6 +2,17 @@
 
 package br.com.sportconnect.feature.explore
 
+import br.com.sportconnect.resources.search_price_up_to
+import br.com.sportconnect.resources.search_price_any
+import br.com.sportconnect.resources.search_period_night
+import br.com.sportconnect.resources.search_period_afternoon
+import br.com.sportconnect.resources.search_period_morning
+import br.com.sportconnect.resources.search_period_any
+import br.com.sportconnect.resources.search_filter_price
+import br.com.sportconnect.resources.search_filter_time
+import br.com.sportconnect.resources.search_sort_price
+import androidx.compose.material.icons.rounded.Payments
+import androidx.compose.material.icons.rounded.Schedule
 import org.koin.compose.koinInject
 import br.com.sportconnect.core.domain.repository.GameRepository
 import br.com.sportconnect.core.designsystem.component.SCPullToRefresh
@@ -113,6 +124,9 @@ fun ExploreRoute(actions: ExploreActions, viewModel: ExploreViewModel = koinView
         onDate = viewModel::setDate,
         onCovered = viewModel::toggleCovered,
         onClear = viewModel::clearFilters,
+        onPeriod = viewModel::setPeriod,
+        onMaxPrice = viewModel::setMaxPrice,
+        onSort = viewModel::setSort,
         onRetry = viewModel::retry,
         onRefresh = games::sincronizar,
     )
@@ -130,6 +144,9 @@ fun ExploreScreen(
     onClear: () -> Unit = {},
     onRetry: () -> Unit = {},
     onRefresh: suspend () -> Unit = {},
+    onPeriod: (DayPeriod?) -> Unit = {},
+    onMaxPrice: (Money?) -> Unit = {},
+    onSort: (ExploreSort) -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -154,7 +171,7 @@ fun ExploreScreen(
                         } else null,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = hPad).testTag("explore_search_field"),
                     )
-                    FilterRow(state, onSport, onDate, onCovered, hPad)
+                    FilterRow(state, onSport, onDate, onCovered, hPad, onPeriod, onMaxPrice)
                     Row(Modifier.fillMaxWidth().padding(horizontal = hPad, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             stringResource(Res.string.search_results_count, state.results.size, PtBrFormat.relativeDay(state.date, state.today)),
@@ -162,13 +179,21 @@ fun ExploreScreen(
                             color = c.onSurface,
                             modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
                         )
-                        SCButton(
-                            stringResource(Res.string.search_sort_distance),
-                            {},
-                            variant = SCButtonVariant.Text,
-                            size = SCButtonSize.Small,
-                            modifier = Modifier.testTag("explore_sort"),
-                        )
+                        // E10: ordenar (antes o botao "Mais perto" nao fazia nada).
+                        Box {
+                            var sortMenu by remember { mutableStateOf(false) }
+                            SCButton(
+                                stringResource(if (state.sort == ExploreSort.PRICE) Res.string.search_sort_price else Res.string.search_sort_distance),
+                                { sortMenu = true },
+                                variant = SCButtonVariant.Text,
+                                size = SCButtonSize.Small,
+                                modifier = Modifier.testTag("explore_sort"),
+                            )
+                            DropdownMenu(expanded = sortMenu, onDismissRequest = { sortMenu = false }) {
+                                DropdownMenuItem(text = { Text(stringResource(Res.string.search_sort_distance)) }, onClick = { sortMenu = false; onSort(ExploreSort.DISTANCE) })
+                                DropdownMenuItem(text = { Text(stringResource(Res.string.search_sort_price)) }, onClick = { sortMenu = false; onSort(ExploreSort.PRICE) })
+                            }
+                        }
                     }
                     Crossfade(Triple(state.loading, state.error, state.results.isEmpty()), label = "results") { (loading, error, empty) ->
                         when {
@@ -211,6 +236,8 @@ private fun FilterRow(
     onDate: (LocalDate) -> Unit,
     onCovered: () -> Unit,
     hPad: androidx.compose.ui.unit.Dp,
+    onPeriod: (DayPeriod?) -> Unit = {},
+    onMaxPrice: (Money?) -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     var sportMenu by remember { mutableStateOf(false) }
@@ -268,6 +295,51 @@ private fun FilterRow(
             colors = chipColors,
             modifier = Modifier.testTag("explore_filter_covered"),
         )
+        // E10: faixa de horario.
+        Box {
+            var periodMenu by remember { mutableStateOf(false) }
+            val periodLabel = when (state.period) {
+                DayPeriod.MORNING -> stringResource(Res.string.search_period_morning)
+                DayPeriod.AFTERNOON -> stringResource(Res.string.search_period_afternoon)
+                DayPeriod.NIGHT -> stringResource(Res.string.search_period_night)
+                null -> stringResource(Res.string.search_filter_time)
+            }
+            FilterChip(
+                selected = state.period != null,
+                onClick = { periodMenu = true },
+                label = { Text(periodLabel) },
+                leadingIcon = { Icon(Icons.Rounded.Schedule, null, Modifier.size(18.dp)) },
+                trailingIcon = { Icon(Icons.Rounded.ArrowDropDown, null, Modifier.size(18.dp)) },
+                colors = chipColors,
+                modifier = Modifier.testTag("explore_filter_time"),
+            )
+            DropdownMenu(expanded = periodMenu, onDismissRequest = { periodMenu = false }) {
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_period_any)) }, onClick = { periodMenu = false; onPeriod(null) })
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_period_morning)) }, onClick = { periodMenu = false; onPeriod(DayPeriod.MORNING) })
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_period_afternoon)) }, onClick = { periodMenu = false; onPeriod(DayPeriod.AFTERNOON) })
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_period_night)) }, onClick = { periodMenu = false; onPeriod(DayPeriod.NIGHT) })
+            }
+        }
+        // E10: preco maximo por hora.
+        Box {
+            var priceMenu by remember { mutableStateOf(false) }
+            FilterChip(
+                selected = state.maxPrice != null,
+                onClick = { priceMenu = true },
+                label = { Text(state.maxPrice?.let { stringResource(Res.string.search_price_up_to, it.format()) } ?: stringResource(Res.string.search_filter_price)) },
+                leadingIcon = { Icon(Icons.Rounded.Payments, null, Modifier.size(18.dp)) },
+                trailingIcon = { Icon(Icons.Rounded.ArrowDropDown, null, Modifier.size(18.dp)) },
+                colors = chipColors,
+                modifier = Modifier.testTag("explore_filter_price"),
+            )
+            DropdownMenu(expanded = priceMenu, onDismissRequest = { priceMenu = false }) {
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_price_any)) }, onClick = { priceMenu = false; onMaxPrice(null) })
+                listOf(15_000L, 20_000L, 30_000L).forEach { cents ->
+                    val m = Money(cents)
+                    DropdownMenuItem(text = { Text(stringResource(Res.string.search_price_up_to, m.format())) }, onClick = { priceMenu = false; onMaxPrice(m) })
+                }
+            }
+        }
         Spacer(Modifier.width(8.dp))
     }
 }

@@ -864,4 +864,11 @@
     <string name="arena_photos_hint">Até 5 fotos. Mostre a quadra inteira, com boa luz e sem pessoas identificáveis.</string>
     <string name="arena_photos_add">Adicionar fotos</string>
     <string name="cd_remove_photo">Remover foto %1$d</string>
+    <!-- 11-backlog · E10 filtros da busca (propostos) -->
+    <string name="search_period_any">Qualquer horário</string>
+    <string name="search_period_morning">Manhã (até 12h)</string>
+    <string name="search_period_afternoon">Tarde (12h–18h)</string>
+    <string name="search_period_night">Noite (depois das 18h)</string>
+    <string name="search_price_any">Qualquer preço</string>
+    <string name="search_price_up_to">Até %1$s/h</string>
 </resources>
