@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SportConnect · Style guide v1.0</title>
+<link rel="icon" href="assets/app-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@500&family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Saira+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0..1,0&display=block" rel="stylesheet">
+<style>
+:root, .t-light {
+  --primary: #006D31;
+  --onPrimary: #FFFFFF;
+  --primaryContainer: #27F37A;
+  --onPrimaryContainer: #002107;
+  --inversePrimary: #00E46E;
+  --secondary: #9E4200;
+  --onSecondary: #FFFFFF;
+  --secondaryContainer: #FFDBC9;
+  --onSecondaryContainer: #2E1500;
+  --tertiary: #0058CA;
+  --onTertiary: #FFFFFF;
+  --tertiaryContainer: #DFE0FF;
+  --onTertiaryContainer: #001945;
+  --error: #BF0025;
+  --onError: #FFFFFF;
+  --errorContainer: #FFDAD6;
+  --onErrorContainer: #3F0400;
+  --background: #F5FBF6;
+  --onBackground: #191C19;
+  --surface: #F5FBF6;
+  --onSurface: #191C19;
+  --surfaceVariant: #D9E6DB;
+  --onSurfaceVariant: #3F4941;
+  --surfaceTint: #006D31;
+  --inverseSurface: #2D312E;
+  --inverseOnSurface: #EDF2EE;
+  --outline: #6F7A71;
+  --outlineVariant: #BDCAC0;
+  --scrim: #000000;
+  --surfaceBright: #F5FBF6;
+  --surfaceDim: #D6DBD7;
+  --surfaceContainerLowest: #FFFFFF;
+  --surfaceContainerLow: #EFF5F0;
+  --surfaceContainer: #EAEFEB;
+  --surfaceContainerHigh: #E4E9E5;
+  --surfaceContainerHighest: #DEE4DF;
+  --success: #006C47;
+  --onSuccess: #FFFFFF;
+  --successContainer: #A9F2CC;
+  --onSuccessContainer: #002113;
+  --warning: #7D5800;
+  --onWarning: #FFFFFF;
+  --warningContainer: #FFDEAE;
+  --onWarningContainer: #261A00;
+  --sp-futebol-society-container: #C3EEBD;
+  --sp-futebol-society-oncontainer: #072100;
+  --sp-futebol-society-accent: #006E19;
+  --sp-futsal-container: #E9DDFF;
+  --sp-futsal-oncontainer: #0C0961;
+  --sp-futsal-accent: #664DAF;
+  --sp-volei-container: #D3E4FF;
+  --sp-volei-oncontainer: #001D35;
+  --sp-volei-accent: #0062A0;
+  --sp-volei-praia-container: #FCDFAA;
+  --sp-volei-praia-oncontainer: #241A00;
+  --sp-volei-praia-accent: #775A00;
+  --sp-futevolei-container: #92F3F0;
+  --sp-futevolei-oncontainer: #00201F;
+  --sp-futevolei-accent: #006A69;
+  --sp-beach-tennis-container: #FFDADA;
+  --sp-beach-tennis-oncontainer: #41000B;
+  --sp-beach-tennis-accent: #B22640;
+  --sp-padel-container: #BEE9FF;
+  --sp-padel-oncontainer: #001F2A;
+  --sp-padel-accent: #006684;
+  --sp-tenis-container: #E3E7AC;
+  --sp-tenis-oncontainer: #1C1D00;
+  --sp-tenis-accent: #586400;
+  --sp-basquete-container: #FFDBC9;
+  --sp-basquete-oncontainer: #2E1500;
+  --sp-basquete-accent: #9D4404;
+  --sp-handebol-container: #FFD8EB;
+  --sp-handebol-oncontainer: #3D0028;
+  --sp-handebol-accent: #A82879;
+  --bk-aguardando-pagamento-bg: #FFDEAE;
+  --bk-aguardando-pagamento-fg: #261A00;
+  --bk-confirmado-bg: #A9F2CC;
+  --bk-confirmado-fg: #002113;
+  --bk-cancelado-bg: #FFDAD6;
+  --bk-cancelado-fg: #3F0400;
+  --bk-expirado-bg: #DEE4DF;
+  --bk-expirado-fg: #3F4941;
+  --bk-concluido-bg: #DFE0FF;
+  --bk-concluido-fg: #001945;
+  --slot-disponivel-bg: #FFFFFF;
+  --slot-disponivel-fg: #191C19;
+  --slot-disponivel-bd: #6F7A71;
+  --slot-ocupado-bg: #E4E9E5;
+  --slot-ocupado-fg: #3F4941;
+  --slot-ocupado-bd: #E4E9E5;
+  --slot-pre-reservado-bg: #FFDEAE;
+  --slot-pre-reservado-fg: #261A00;
+  --slot-pre-reservado-bd: #7D5800;
+  --slot-selecionado-bg: #006D31;
+  --slot-selecionado-fg: #FFFFFF;
+  --slot-selecionado-bd: #006D31;
+  color-scheme: light;
+}
+.t-dark {
+  --primary: #00E46E;
+  --onPrimary: #003916;
+  --primaryContainer: #005323;
+  --onPrimaryContainer: #64FF93;
+  --inversePrimary: #006D31;
+  --secondary: #FFB68E;
+  --onSecondary: #532200;
+  --secondaryContainer: #793100;
+  --onSecondaryContainer: #FFDBC9;
+  --tertiary: #BDC2FF;
+  --onTertiary: #002D6E;
+  --tertiaryContainer: #00429B;
+  --onTertiaryContainer: #DFE0FF;
+  --error: #FFB4AB;
+  --onError: #68000F;
+  --errorContainer: #93001A;
+  --onErrorContainer: #FFDAD6;
+  --background: #101411;
+  --onBackground: #DEE4DF;
+  --surface: #101411;
+  --onSurface: #DEE4DF;
+  --surfaceVariant: #3F4941;
+  --onSurfaceVariant: #BDCAC0;
+  --surfaceTint: #00E46E;
+  --inverseSurface: #DEE4DF;
+  --inverseOnSurface: #2D312E;
+  --outline: #88948A;
+  --outlineVariant: #3F4941;
+  --scrim: #000000;
+  --surfaceBright: #363A37;
+  --surfaceDim: #101411;
+  --surfaceContainerLowest: #0A100B;
+  --surfaceContainerLow: #191C19;
+  --surfaceContainer: #1D211D;
+  --surfaceContainerHigh: #272B28;
+  --surfaceContainerHighest: #323632;
+  --success: #52DEA1;
+  --onSuccess: #003823;
+  --successContainer: #005235;
+  --onSuccessContainer: #72FBBD;
+  --warning: #FFBA28;
+  --onWarning: #412D00;
+  --warningContainer: #5E4100;
+  --onWarningContainer: #FFDEAE;
+  --sp-futebol-society-container: #005310;
+  --sp-futebol-society-oncontainer: #9CF896;
+  --sp-futebol-society-accent: #80DB7C;
+  --sp-futsal-container: #4B3594;
+  --sp-futsal-oncontainer: #E9DDFF;
+  --sp-futsal-accent: #D2BBFF;
+  --sp-volei-container: #004A7A;
+  --sp-volei-oncontainer: #D3E4FF;
+  --sp-volei-accent: #A2C9FF;
+  --sp-volei-praia-container: #5A4300;
+  --sp-volei-praia-oncontainer: #FFDEA2;
+  --sp-volei-praia-accent: #EFC053;
+  --sp-futevolei-container: #00504F;
+  --sp-futevolei-oncontainer: #00FCF9;
+  --sp-futevolei-accent: #00DDDB;
+  --sp-beach-tennis-container: #91002B;
+  --sp-beach-tennis-oncontainer: #FFDADA;
+  --sp-beach-tennis-accent: #FFB3B5;
+  --sp-padel-container: #004D65;
+  --sp-padel-oncontainer: #BEE9FF;
+  --sp-padel-accent: #6AD3FF;
+  --sp-tenis-container: #424B00;
+  --sp-tenis-oncontainer: #DFEB73;
+  --sp-tenis-accent: #C2CF58;
+  --sp-basquete-container: #793100;
+  --sp-basquete-oncontainer: #FFDBC9;
+  --sp-basquete-accent: #FFB68E;
+  --sp-handebol-container: #8A005F;
+  --sp-handebol-oncontainer: #FFD8EB;
+  --sp-handebol-accent: #FFAED9;
+  --bk-aguardando-pagamento-bg: #5E4100;
+  --bk-aguardando-pagamento-fg: #FFDEAE;
+  --bk-confirmado-bg: #005235;
+  --bk-confirmado-fg: #72FBBD;
+  --bk-cancelado-bg: #93001A;
+  --bk-cancelado-fg: #FFDAD6;
+  --bk-expirado-bg: #323632;
+  --bk-expirado-fg: #BDCAC0;
+  --bk-concluido-bg: #00429B;
+  --bk-concluido-fg: #DFE0FF;
+  --slot-disponivel-bg: #0A100B;
+  --slot-disponivel-fg: #DEE4DF;
+  --slot-disponivel-bd: #88948A;
+  --slot-ocupado-bg: #272B28;
+  --slot-ocupado-fg: #BDCAC0;
+  --slot-ocupado-bd: #272B28;
+  --slot-pre-reservado-bg: #5E4100;
+  --slot-pre-reservado-fg: #FFDEAE;
+  --slot-pre-reservado-bd: #FFBA28;
+  --slot-selecionado-bg: #00E46E;
+  --slot-selecionado-fg: #003916;
+  --slot-selecionado-bd: #00E46E;
+  color-scheme: dark;
+}
+:root {
+  --fd: "Saira Condensed", "Roboto Condensed", sans-serif;
+  --ft: "Atkinson Hyperlegible Next", Roboto, system-ui, sans-serif;
+  --fm: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --ink: #191C19; --cal: #F5FBF6; --vq: #00E46E; --ls: #EE6800;
+  --e-std: cubic-bezier(.2,0,0,1); --e-apito: cubic-bezier(.34,1.4,.64,1);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--surface); color: var(--onSurface); font: 400 16px/24px var(--ft); letter-spacing: .15px; -webkit-font-smoothing: antialiased; }
+a { color: var(--primary); text-underline-offset: 3px; }
+code { font-family: var(--fm); font-size: 12.5px; }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 6px; }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--primary); color: var(--onPrimary); padding: 8px 16px; border-radius: 12px; z-index: 10; }
+.skip:focus { left: 16px; }
+.ms { font-family: "Material Symbols Rounded"; font-weight: 500; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24; }
+.ms.sm { font-size: 18px; font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 20; }
+.ms.big { font-size: 36px; }
+
+/* ---------- Estrutura ---------- */
+.wrap-page { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+header.top { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 2px solid var(--outlineVariant); }
+header.top .wrap-page { display: flex; align-items: center; gap: 24px; height: 64px; }
+header.top .logo { width: 164px; flex: none; }
+header.top nav { display: flex; gap: 4px; overflow-x: auto; margin-left: auto; scrollbar-width: none; }
+header.top nav a { color: var(--onSurfaceVariant); text-decoration: none; font-weight: 600; font-size: 14px; padding: 12px 12px; border-radius: 12px; white-space: nowrap; }
+header.top nav a:hover { background: var(--surfaceContainerHigh); color: var(--onSurface); }
+section { padding: 72px 0; }
+section + section { border-top: 2px solid var(--outlineVariant); }
+.sec-head { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 16px 48px; margin-bottom: 40px; align-items: end; }
+h2 { font: 700 56px/56px var(--fd); margin: 0; letter-spacing: -.5px; }
+.sec-head p { margin: 0; color: var(--onSurfaceVariant); max-width: 62ch; }
+h3 { font: 600 26px/32px var(--fd); margin: 48px 0 16px; }
+h4 { font: 700 14px/20px var(--ft); margin: 0 0 12px; color: var(--onSurfaceVariant); letter-spacing: .1px; }
+
+/* ---------- Hero ---------- */
+.hero { background: var(--ink); color: var(--cal); padding: 0; position: relative; overflow: hidden; border-top: 0; }
+.hero-court { position: absolute; inset: 0; pointer-events: none; }
+.hero .wrap-page { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; min-height: 560px; padding-top: 64px; padding-bottom: 64px; }
+.hero h1 { font: 800 clamp(72px, 11vw, 148px)/.86 var(--fd); margin: 0 0 24px; letter-spacing: -1px; color: var(--cal); }
+.hero h1 span { display: block; color: var(--vq); }
+.hero p.lead { font-size: 19px; line-height: 30px; max-width: 46ch; color: #C2C8C3; margin: 0 0 24px; }
+.hero .facts { display: flex; flex-wrap: wrap; gap: 8px 28px; color: #A7ACA8; font-size: 14px; margin: 0; padding: 0; list-style: none; }
+.hero .facts strong { color: var(--cal); font-weight: 700; }
+.closer { background: #1D211D; border: 1px solid #3F4941; border-radius: 24px; padding: 24px; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+.closer .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.closer-title { font: 600 26px/32px var(--fd); margin: 16px 0 4px; color: var(--cal); }
+.closer-sub { margin: 0 0 20px; color: #BDCAC0; font-size: 14px; }
+.closer-num { font: 700 88px/80px var(--fd); color: var(--cal); font-variant-numeric: tabular-nums; }
+.closer-num small { font-size: 36px; color: #BDCAC0; font-weight: 600; }
+.closer .segs { margin: 16px 0 12px; }
+.closer .segs i { height: 16px; background: #323632; box-shadow: inset 0 0 0 1px #88948A; border-radius: 3px; }
+.closer .segs i.on { background: var(--vq); box-shadow: none; }
+.closer .segs i.last { animation: fill .3s var(--e-apito) 1.6s both; }
+@keyframes fill { from { background: #323632; transform: scaleY(.4); } to { background: var(--vq); transform: scaleY(1); box-shadow: none; } }
+.flip { position: relative; display: inline-grid; }
+.flip > * { grid-area: 1/1; justify-self: end; }
+.flip .b-wait { animation: out .2s ease 1.9s both; }
+.flip .b-ok { animation: in .25s var(--e-apito) 1.95s both; }
+@keyframes out { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.num-flip { display: inline-grid; }
+.num-flip > span { grid-area: 1/1; }
+.num-flip .n11 { animation: out .15s ease 1.6s both; }
+.num-flip .n12 { animation: in .25s var(--e-apito) 1.65s both; }
+.closer-foot { margin: 8px 0 0; font-size: 14px; color: #BDCAC0; }
+.closer-foot .fin { color: var(--vq); font-weight: 700; animation: in .3s ease 2.1s both; }
+
+/* ---------- Marca ---------- */
+.logo-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+.panel { border-radius: 24px; padding: 40px; display: flex; align-items: center; justify-content: center; min-height: 220px; }
+.panel.light { background: var(--surfaceContainerLowest); border: 1px solid var(--outlineVariant); }
+.panel.dark { background: var(--ink); }
+.panel .logo-box { width: min(100%, 420px); }
+.icons { display: flex; align-items: end; gap: 24px; }
+.icons .ic { overflow: hidden; flex: none; }
+.construct { display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: center; margin-top: 24px; background: var(--surfaceContainerLow); border-radius: 24px; padding: 32px; }
+.construct ul { margin: 0; padding-left: 20px; color: var(--onSurfaceVariant); }
+.construct li + li { margin-top: 6px; }
+.principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+.principles div { border-top: 2px solid var(--onSurface); padding-top: 16px; }
+.principles strong { font: 600 24px/28px var(--fd); display: block; margin-bottom: 8px; }
+.principles p { margin: 0; color: var(--onSurfaceVariant); font-size: 15px; }
+
+/* ---------- Cor ---------- */
+.bswatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+.bsw { margin: 0; }
+.bsw-chip { background: var(--c); color: var(--f); aspect-ratio: 3/4; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid color-mix(in srgb, var(--onSurface) 12%, transparent); }
+.bsw-hex { font: 700 22px/24px var(--fd); }
+.bsw-ratio { font-size: 12px; font-weight: 600; }
+.bsw figcaption { margin-top: 10px; display: grid; gap: 2px; font-size: 13px; line-height: 18px; color: var(--onSurfaceVariant); }
+.bsw figcaption strong { color: var(--onSurface); font-size: 15px; }
+.tonal { display: grid; grid-template-columns: 170px 1fr; gap: 16px; align-items: center; margin-bottom: 10px; }
+.tonal-name { display: grid; font-size: 14px; line-height: 18px; }
+.tonal-name code { color: var(--onSurfaceVariant); font-size: 12px; }
+.tonal-strip { display: grid; grid-template-columns: repeat(13, 1fr); list-style: none; margin: 0; padding: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--outlineVariant); }
+.tonal-strip li { background: var(--c); color: var(--f); height: 48px; display: flex; align-items: end; padding: 6px; font-size: 11px; font-weight: 600; }
+.schemes { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.scheme { border-radius: 24px; padding: 20px; background: var(--surface); color: var(--onSurface); border: 1px solid var(--outlineVariant); }
+.scheme h3 { margin: 0 0 16px; }
+.roles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.role { border-radius: 12px; padding: 12px; min-height: 84px; display: grid; align-content: space-between; border: 1px solid color-mix(in srgb, currentColor 14%, transparent); }
+.role-name { font-weight: 700; font-size: 14px; }
+.role-meta { font-size: 11.5px; line-height: 16px; opacity: .92; }
+.role-ratio { font: 700 18px/20px var(--fd); }
+.role-extra { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 16px; margin-top: 8px; font-size: 13px; }
+.role-line { display: flex; align-items: center; gap: 8px; }
+.role-line .dot { width: 20px; height: 20px; border-radius: 6px; border: 1px solid var(--outline); flex: none; }
+.role-line span:last-child { margin-left: auto; color: var(--onSurfaceVariant); }
+
+/* ---------- Esportes ---------- */
+.sports { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 24px; }
+.sport { display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--outlineVariant); }
+.sport-pair { display: grid; gap: 6px; justify-items: start; }
+.dk-wrap { background: #101411; padding: 8px; border-radius: 12px; display: inline-flex; }
+.sport-meta { display: flex; gap: 12px; align-items: start; font-size: 12.5px; line-height: 17px; color: var(--onSurfaceVariant); }
+.sport-meta div { display: grid; }
+.sport-meta strong { color: var(--onSurface); font-size: 15px; }
+.sport-meta code { font-size: 12px; color: var(--onSurface); }
+
+/* ---------- Tipografia ---------- */
+.fams { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-bottom: 40px; }
+.fam { border-radius: 24px; padding: 28px; background: var(--surfaceContainerLow); }
+.fam .aa { font: 800 120px/100px var(--fd); }
+.fam.t .aa { font: 700 96px/100px var(--ft); }
+.fam p { margin: 8px 0 0; color: var(--onSurfaceVariant); font-size: 15px; }
+.fam .glyphs { font-size: 22px; line-height: 32px; margin-top: 12px; color: var(--onSurface); }
+.fd { font-family: var(--fd); } .ft { font-family: var(--ft); }
+.ty { display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--outlineVariant); }
+.ty-meta { display: grid; font-size: 12.5px; color: var(--onSurfaceVariant); line-height: 18px; }
+.ty-meta code { color: var(--onSurface); font-size: 13px; }
+.ty-sample { margin: 0; max-width: 62ch; font-variant-numeric: tabular-nums; }
+
+/* ---------- Componentes ---------- */
+.themes { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-radius: 28px; overflow: hidden; border: 1px solid var(--outlineVariant); }
+.theme { background: var(--surface); color: var(--onSurface); padding: 32px; }
+.theme-label { display: flex; align-items: center; gap: 8px; font: 600 26px/32px var(--fd); margin: 0 0 24px; }
+.comp-block { margin-bottom: 32px; }
+.row { display: flex; gap: 8px; align-items: center; }
+.row.wrap { flex-wrap: wrap; }
+.row.between { justify-content: space-between; }
+.row.baseline { align-items: baseline; }
+.btn { font: 600 14px/20px var(--ft); letter-spacing: .1px; min-height: 48px; padding: 0 24px; border-radius: 12px; border: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; position: relative; transition: box-shadow .15s var(--e-std); }
+.btn::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: currentColor; opacity: 0; transition: opacity .1s var(--e-std); }
+.btn:hover::after { opacity: .08; } .btn:active::after { opacity: .12; }
+.b-primary { background: var(--primary); color: var(--onPrimary); }
+.b-secondary { background: transparent; color: var(--primary); box-shadow: inset 0 0 0 1px var(--outline); }
+.b-tonal { background: var(--primaryContainer); color: var(--onPrimaryContainer); }
+.b-text { background: transparent; color: var(--primary); padding: 0 12px; }
+.b-destructive { background: var(--error); color: var(--onError); }
+.btn:disabled { background: color-mix(in srgb, var(--onSurface) 12%, transparent); color: color-mix(in srgb, var(--onSurface) 38%, transparent); cursor: not-allowed; }
+.btn:disabled::after { display: none; }
+.btn.full { width: 100%; } .btn.lg { min-height: 56px; font-size: 15px; }
+.spin { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid currentColor; border-right-color: transparent; animation: rot .8s linear infinite; }
+@keyframes rot { to { transform: rotate(360deg); } }
+.chip-s { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px 0 8px; border-radius: 8px; font: 600 12px/16px var(--ft); letter-spacing: .5px; white-space: nowrap; }
+.chip-f { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px 0 8px; border-radius: 8px; font: 600 12px/16px var(--ft); letter-spacing: .5px; background: var(--surfaceContainerLowest); color: var(--onSurfaceVariant); border: 1px solid var(--outline); cursor: pointer; position: relative; }
+.chip-f::before { content: ""; position: absolute; inset: -8px 0; }
+.chip-f .ms { color: var(--sa); }
+.chip-f.is-on { background: var(--sc); color: var(--so); border: 2px solid var(--sa); padding-left: 7px; }
+.chip-f.is-on .ms { color: var(--so); }
+.badge { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px 0 6px; border-radius: 4px; font: 600 12px/16px var(--ft); letter-spacing: .3px; white-space: nowrap; }
+.badge .ms.sm { font-size: 16px; font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 20; }
+.bk-aguardando-pagamento { background: var(--bk-aguardando-pagamento-bg); color: var(--bk-aguardando-pagamento-fg); }
+.bk-confirmado { background: var(--bk-confirmado-bg); color: var(--bk-confirmado-fg); }
+.bk-cancelado { background: var(--bk-cancelado-bg); color: var(--bk-cancelado-fg); }
+.bk-expirado { background: var(--bk-expirado-bg); color: var(--bk-expirado-fg); }
+.bk-concluido { background: var(--bk-concluido-bg); color: var(--bk-concluido-fg); }
+.gcard { background: var(--surfaceContainerLowest); border: 1px solid var(--outlineVariant); border-radius: 24px; padding: 16px 16px 16px 20px; position: relative; overflow: hidden; display: grid; gap: 6px; }
+.gcard::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--stripe); }
+.gtitle { font: 600 26px/32px var(--fd); margin: 8px 0 0; }
+.gmeta { margin: 0; display: flex; gap: 8px; align-items: center; font-size: 14px; line-height: 20px; color: var(--onSurfaceVariant); }
+.split { margin: 10px 0 4px; }
+.split-num { font: 700 44px/44px var(--fd); font-variant-numeric: tabular-nums; }
+.split-num small { font-size: 22px; font-weight: 600; color: var(--onSurfaceVariant); }
+.split-money { font-size: 14px; color: var(--onSurfaceVariant); font-variant-numeric: tabular-nums; }
+.segs { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; margin: 8px 0; }
+.segs i { height: 10px; border-radius: 2px; background: var(--surfaceContainerHighest); box-shadow: inset 0 0 0 1px var(--outline); }
+.segs i.paid { background: var(--primary); box-shadow: none; }
+.segs i.cov { background: var(--tertiary); box-shadow: none; }
+.legend { display: flex; gap: 16px; font-size: 12px; color: var(--onSurfaceVariant); }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.lg { width: 12px; height: 12px; border-radius: 2px; background: var(--surfaceContainerHighest); box-shadow: inset 0 0 0 1px var(--outline); display: inline-block; }
+.lg.paid { background: var(--primary); box-shadow: none; } .lg.cov { background: var(--tertiary); box-shadow: none; }
+.gfoot { margin: 6px 0 10px; }
+.avs { display: inline-flex; }
+.av { width: 32px; height: 32px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font: 700 11px/1 var(--ft); border: 2px solid var(--surfaceContainerLowest); margin-left: -8px; }
+.av:first-child { margin-left: 0; }
+.av.more { background: var(--surfaceContainerHighest); color: var(--onSurface); }
+.timer { display: inline-flex; align-items: center; gap: 4px; font: 700 20px/24px var(--fd); font-variant-numeric: tabular-nums; color: var(--onSurfaceVariant); }
+.timer.warn { color: var(--warning); }
+.days { display: flex; gap: 8px; margin-bottom: 12px; }
+.day { min-width: 56px; min-height: 56px; border-radius: 12px; border: 1px solid var(--outlineVariant); background: transparent; color: var(--onSurface); font: 700 22px/24px var(--fd); display: grid; place-items: center; cursor: pointer; padding: 4px; }
+.day small { font: 600 11px/14px var(--ft); color: var(--onSurfaceVariant); }
+.day.on { background: var(--onSurface); color: var(--surface); border-color: var(--onSurface); }
+.day.on small { color: var(--surface); }
+.slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.slot { min-height: 56px; border-radius: 12px; padding: 8px 12px; text-align: left; display: grid; gap: 2px; font-family: var(--ft); cursor: pointer; border: 0; }
+.slot-time { font: 700 14px/20px var(--ft); font-variant-numeric: tabular-nums; }
+.slot-sub { font-size: 12px; line-height: 16px; display: inline-flex; gap: 4px; align-items: center; }
+.slot-sub .ms.sm { font-size: 15px; }
+.s-disponivel { background: var(--slot-disponivel-bg); color: var(--slot-disponivel-fg); box-shadow: inset 0 0 0 1px var(--slot-disponivel-bd); }
+.s-ocupado { background: repeating-linear-gradient(135deg, var(--slot-ocupado-bg) 0 5px, var(--outlineVariant) 5px 6px); color: var(--slot-ocupado-fg); cursor: not-allowed; }
+.s-pre-reservado { background: var(--slot-pre-reservado-bg); color: var(--slot-pre-reservado-fg); box-shadow: inset 0 0 0 1px var(--slot-pre-reservado-bd); cursor: not-allowed; }
+.s-selecionado { background: var(--slot-selecionado-bg); color: var(--slot-selecionado-fg); }
+.sheet { background: var(--surfaceContainerLow); border-radius: 28px 28px 0 0; padding: 12px 20px 16px; display: grid; gap: 8px; box-shadow: 0 -1px 0 var(--outlineVariant); }
+.handle { width: 32px; height: 4px; border-radius: 2px; background: var(--outline); justify-self: center; margin-bottom: 8px; }
+.sheet-title { font: 700 22px/28px var(--ft); margin: 0; }
+.sheet .timer { color: var(--warning); }
+.sheet-amount { font: 700 38px/44px var(--fd); margin: 0; font-variant-numeric: tabular-nums; }
+.sheet-sub { margin: -4px 0 4px; font-size: 13px; color: var(--onSurfaceVariant); }
+.qr { background: #fff; border-radius: 16px; padding: 12px; width: 200px; height: 200px; justify-self: center; margin: 4px 0 8px; }
+.qr svg { width: 100%; height: 100%; display: block; }
+.pixcode { font: 500 12.5px/18px var(--fm); color: var(--onSurfaceVariant); background: var(--surfaceContainerHighest); border-radius: 8px; padding: 8px 10px; margin: 0; overflow-wrap: anywhere; }
+.live { display: flex; gap: 8px; align-items: center; justify-content: center; font-size: 14px; color: var(--onSurfaceVariant); margin: 4px 0 0; }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--warning); animation: pul 1.6s ease-in-out infinite; }
+@keyframes pul { 50% { opacity: .3; } }
+.sheet .b-text { justify-self: center; }
+.snack { background: var(--inverseSurface); color: var(--inverseOnSurface); border-radius: 12px; padding: 6px 8px 6px 16px; display: flex; gap: 10px; align-items: center; font-size: 14px; min-height: 48px; box-shadow: 0 3px 8px rgba(0,0,0,.18); }
+.snack .ms { color: var(--inversePrimary); }
+.snack-act { margin-left: auto; background: transparent; border: 0; color: var(--inversePrimary); font: 600 14px/20px var(--ft); padding: 0 12px; min-height: 40px; border-radius: 8px; cursor: pointer; }
+
+/* ---------- Forma & motion ---------- */
+.shapes { display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px; }
+.shape { display: grid; gap: 8px; font-size: 13px; color: var(--onSurfaceVariant); }
+.shape div { aspect-ratio: 1; background: var(--primaryContainer); border: 2px solid var(--onPrimaryContainer); }
+.shape strong { color: var(--onSurface); font-size: 14px; }
+.spacing { display: grid; gap: 6px; margin-top: 32px; }
+.sp-row { display: grid; grid-template-columns: 90px 1fr; gap: 16px; align-items: center; font-size: 13px; }
+.sp-row i { display: block; height: 16px; background: var(--secondary); border-radius: 2px; }
+.motion { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+.mcard { background: var(--surfaceContainerLow); border-radius: 16px; padding: 20px; font-size: 14px; }
+.mcard strong { font: 600 22px/28px var(--fd); display: block; }
+.mcard code { color: var(--onSurfaceVariant); }
+.track { height: 8px; background: var(--surfaceContainerHighest); border-radius: 4px; margin-top: 16px; position: relative; }
+.track b { position: absolute; top: -6px; left: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--primary); }
+.mcard:hover .track b, .mcard:focus-within .track b { left: calc(100% - 20px); }
+.m1 .track b { transition: left .3s cubic-bezier(.2,0,0,1); }
+.m2 .track b { transition: left .4s cubic-bezier(.05,.7,.1,1); }
+.m3 .track b { transition: left .7s var(--e-apito); background: var(--ls); }
+footer { padding: 40px 0 64px; color: var(--onSurfaceVariant); font-size: 14px; border-top: 2px solid var(--outlineVariant); }
+footer .wrap-page { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+
+@media (max-width: 960px) {
+  .hero .wrap-page, .logo-grid, .schemes, .themes, .fams, .sec-head, .construct { grid-template-columns: 1fr; }
+  .bswatches { grid-template-columns: repeat(3, 1fr); }
+  .sports { grid-template-columns: 1fr; }
+  .shapes { grid-template-columns: repeat(4, 1fr); }
+  .principles, .motion { grid-template-columns: 1fr; }
+  header.top .logo { width: 132px; }
+}
+@media (max-width: 600px) {
+  .wrap-page { padding: 0 16px; }
+  h2 { font-size: 44px; line-height: 44px; }
+  .tonal { grid-template-columns: 1fr; gap: 6px; }
+  .tonal-strip li { height: 40px; font-size: 9px; padding: 3px; }
+  .roles { grid-template-columns: 1fr; }
+  .ty { grid-template-columns: 1fr; gap: 4px; }
+  .theme { padding: 20px 16px; }
+  .sport { grid-template-columns: 1fr; }
+  .bswatches { grid-template-columns: repeat(2, 1fr); }
+  header.top nav { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition-duration: 0s !important; }
+  html { scroll-behavior: auto; }
+  .spin, .pulse { animation: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<header class="top"><div class="wrap-page">
+  <a class="logo" href="#topo" aria-label="SportConnect, início"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 64" style="display:block;width:100%;height:auto" role="img" aria-label="SportConnect">
+  
+  <!-- Símbolo "Quique": S traçado por duas metades do círculo central da quadra, cruzando a linha de meio; a bola laranja marca o saque. Grade 48u, escala 64/48. -->
+  <g transform="scale(1.3333)">
+    <rect width="48" height="48" rx="12" fill="#191C19"/>
+    <line x1="7" y1="24" x2="41" y2="24" stroke="#F5FBF6" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#191C19" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#00E46E" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="37.5" cy="9.5" r="3.25" fill="#EE6800"/>
+  </g>
+  <path fill="#191C19" d="M81.794 48.04V42.244Q85.98 42.566 88.188 42.566Q89.706 42.566 90.44200000000001 42.451Q91.178 42.336 91.5 41.922Q91.822 41.6 91.914 41.048Q92.006 40.496 92.006 39.438Q92.006 37.92 91.845 37.275999999999996Q91.684 36.632 91.132 36.333Q90.58 36.034 89.246 35.804L85.244 35.068Q82.944 34.7 82.07 32.469Q81.196 30.238 81.196 26.19Q81.196 22.142 82.392 20.026Q83.588 17.91 85.612 17.197000000000003Q87.636 16.484 90.764 16.484Q94.26 16.484 98.21600000000001 17.312V23.108Q95.87 22.786 92.604 22.786Q91.03999999999999 22.786 90.304 22.878Q89.568 22.97 89.2 23.292Q88.832 23.568 88.69399999999999 24.166Q88.556 24.764 88.556 25.914Q88.556 27.156 88.67099999999999 27.708Q88.786 28.26 89.17699999999999 28.513Q89.568 28.766000000000002 90.488 28.95L94.26 29.64Q95.824 29.962 96.905 30.628999999999998Q97.986 31.296 98.63 32.998000000000005Q99.366 34.93 99.366 38.38Q99.366 42.934 98.239 45.211Q97.112 47.488 95.226 48.178Q93.34 48.868 90.258 48.868Q88.096 48.868 85.79599999999999 48.638000000000005Q83.496 48.408 81.794 48.04Z M102.756 25.04H109.334L109.518 27.708000000000002H109.932Q110.438 26.052 111.68 25.362000000000002Q112.922 24.672 114.532 24.672Q116.694 24.672 117.91300000000001 25.707Q119.132 26.742 119.684 29.318Q120.23599999999999 31.894000000000002 120.23599999999999 36.724000000000004Q120.23599999999999 41.416 119.72999999999999 44.015Q119.22399999999999 46.614 118.005 47.741Q116.786 48.868 114.578 48.868Q112.87599999999999 48.868 111.726 48.201Q110.576 47.534 109.978 46.062H109.61V57.608000000000004H102.756ZM113.428 36.769999999999996Q113.428 33.596000000000004 113.31299999999999 32.423Q113.198 31.25 112.853 30.951Q112.508 30.652 111.496 30.652Q110.714 30.652 110.346 30.905Q109.978 31.158 109.794 31.986Q109.65599999999999 32.538 109.633 33.803Q109.61 35.068 109.61 36.769999999999996Q109.61 40.68 109.74799999999999 41.37Q109.932 42.29 110.32300000000001 42.589Q110.714 42.888 111.496 42.888Q112.508 42.888 112.853 42.589Q113.198 42.29 113.31299999999999 41.117000000000004Q113.428 39.944 113.428 36.769999999999996Z M123.35 36.769999999999996Q123.35 31.48 123.87899999999999 29.088Q124.40799999999999 26.696 126.225 25.684Q128.042 24.672 132.136 24.672Q136.23 24.672 138.024 25.684Q139.81799999999998 26.696 140.34699999999998 29.088Q140.87599999999998 31.48 140.87599999999998 36.769999999999996Q140.87599999999998 42.06 140.34699999999998 44.452Q139.81799999999998 46.844 138.024 47.856Q136.23 48.868 132.136 48.868Q128.042 48.868 126.225 47.856Q124.40799999999999 46.844 123.87899999999999 44.452Q123.35 42.06 123.35 36.769999999999996ZM134.06799999999998 36.769999999999996Q134.06799999999998 33.412 133.95299999999997 32.17Q133.838 30.928 133.493 30.583Q133.148 30.238 132.136 30.238Q131.124 30.238 130.75599999999997 30.583Q130.38799999999998 30.928 130.296 32.147Q130.20399999999998 33.366 130.20399999999998 36.769999999999996Q130.20399999999998 40.174 130.296 41.393Q130.38799999999998 42.612 130.75599999999997 42.957Q131.124 43.302 132.136 43.302Q133.148 43.302 133.493 42.957Q133.838 42.612 133.95299999999997 41.370000000000005Q134.06799999999998 40.128 134.06799999999998 36.769999999999996Z M144.45 25.04H151.028L151.212 28.812H151.57999999999998Q152.31599999999997 26.512 153.558 25.592Q154.79999999999998 24.672 156.916 24.672V31.618Q154.892 31.618 153.696 32.124Q152.5 32.63 151.902 34.033Q151.30399999999997 35.436 151.30399999999997 38.058V48.5H144.45Z M161.272 48.5V30.606H158.512V25.04H161.272V18.232H168.172V25.04H171.80599999999998V30.606H168.172V48.5Z M184.34999999999997 48.868Q179.88799999999998 48.868 177.79499999999996 47.396Q175.70199999999997 45.924 175.03499999999997 42.611999999999995Q174.36799999999997 39.3 174.36799999999997 32.676Q174.36799999999997 26.098 175.05799999999996 22.786Q175.74799999999996 19.474 177.86399999999998 17.979Q179.97999999999996 16.484 184.34999999999997 16.484Q185.914 16.484 187.45499999999998 16.714Q188.99599999999998 16.944 189.86999999999998 17.266000000000002V23.062Q187.33999999999997 22.786 185.82199999999997 22.786Q183.70599999999996 22.786 182.94699999999997 23.361Q182.188 23.936 181.981 25.753Q181.77399999999997 27.57 181.77399999999997 32.676Q181.77399999999997 37.782 181.981 39.599Q182.188 41.416 182.94699999999997 41.991Q183.70599999999996 42.566 185.82199999999997 42.566Q188.30599999999998 42.566 189.962 42.29V48.04Q188.95 48.408 187.33999999999997 48.638000000000005Q185.72999999999996 48.868 184.34999999999997 48.868Z M192.938 36.769999999999996Q192.938 31.48 193.46699999999998 29.088Q193.99599999999998 26.696 195.813 25.684Q197.63 24.672 201.724 24.672Q205.81799999999998 24.672 207.61199999999997 25.684Q209.40599999999998 26.696 209.935 29.088Q210.464 31.48 210.464 36.769999999999996Q210.464 42.06 209.935 44.452Q209.40599999999998 46.844 207.61199999999997 47.856Q205.81799999999998 48.868 201.724 48.868Q197.63 48.868 195.813 47.856Q193.99599999999998 46.844 193.46699999999998 44.452Q192.938 42.06 192.938 36.769999999999996ZM203.65599999999998 36.769999999999996Q203.65599999999998 33.412 203.541 32.17Q203.426 30.928 203.081 30.583Q202.736 30.238 201.724 30.238Q200.712 30.238 200.344 30.583Q199.976 30.928 199.884 32.147Q199.79199999999997 33.366 199.79199999999997 36.769999999999996Q199.79199999999997 40.174 199.884 41.393Q199.976 42.612 200.344 42.957Q200.712 43.302 201.724 43.302Q202.736 43.302 203.081 42.957Q203.426 42.612 203.541 41.370000000000005Q203.65599999999998 40.128 203.65599999999998 36.769999999999996Z M224.43399999999997 35.896Q224.43399999999997 33.182 224.34199999999998 32.193Q224.24999999999997 31.204 223.92799999999997 30.928Q223.60599999999997 30.652 222.68599999999998 30.652Q221.766 30.652 221.421 31.020000000000003Q221.07599999999996 31.388 220.98399999999998 32.538000000000004Q220.89199999999997 33.688 220.89199999999997 36.632V48.5H214.03799999999998V25.04H220.61599999999999L220.79999999999998 27.754H221.16799999999998Q222.36399999999998 24.672 226.182 24.672Q228.344 24.672 229.44799999999998 25.546Q230.55199999999996 26.42 230.91999999999996 28.168Q231.28799999999998 29.916 231.28799999999998 32.998000000000005V48.5H224.43399999999997Z M245.67199999999997 35.896Q245.67199999999997 33.182 245.57999999999998 32.193Q245.48799999999997 31.204 245.16599999999997 30.928Q244.84399999999997 30.652 243.92399999999998 30.652Q243.004 30.652 242.659 31.020000000000003Q242.31399999999996 31.388 242.22199999999998 32.538000000000004Q242.12999999999997 33.688 242.12999999999997 36.632V48.5H235.27599999999998V25.04H241.85399999999998L242.03799999999998 27.754H242.40599999999998Q243.60199999999998 24.672 247.42 24.672Q249.582 24.672 250.68599999999998 25.546Q251.78999999999996 26.42 252.15799999999996 28.168Q252.52599999999998 29.916 252.52599999999998 32.998000000000005V48.5H245.67199999999997Z M272.936 38.656H262.816Q262.816 41.048 263.02299999999997 41.922Q263.22999999999996 42.796 263.989 43.049Q264.748 43.302 266.772 43.302Q269.30199999999996 43.302 272.38399999999996 43.072V48.178Q271.188 48.5 269.164 48.684Q267.14 48.868 265.162 48.868Q260.88399999999996 48.868 258.952 47.626000000000005Q257.02 46.384 256.514 43.992000000000004Q256.008 41.6 256.008 36.816Q256.008 32.078 256.537 29.64Q257.066 27.202 258.90599999999995 25.937Q260.746 24.672 264.702 24.672Q268.70399999999995 24.672 270.429 25.845Q272.154 27.018 272.54499999999996 29.317999999999998Q272.936 31.618 272.936 36.816ZM262.816 34.516H266.542Q266.542 32.354 266.42699999999996 31.48Q266.31199999999995 30.606 265.967 30.353Q265.62199999999996 30.1 264.702 30.1Q263.828 30.1 263.46 30.353Q263.092 30.606 262.95399999999995 31.503Q262.816 32.4 262.816 34.516Z M284.05400000000003 48.868Q280.558 48.868 278.83299999999997 47.557Q277.108 46.246 276.579 43.762Q276.05 41.278 276.05 36.769999999999996Q276.05 32.216 276.625 29.709000000000003Q277.2 27.202 278.925 25.937Q280.65000000000003 24.672 284.05400000000003 24.672Q286.998 24.672 289.298 25.316V30.468Q287.688 30.238 286.07800000000003 30.238Q284.56 30.238 283.962 30.628999999999998Q283.36400000000003 31.02 283.15700000000004 32.308Q282.95 33.596000000000004 282.95 36.769999999999996Q282.95 39.99 283.15700000000004 41.278000000000006Q283.36400000000003 42.566 283.962 42.934Q284.56 43.302 286.07800000000003 43.302Q287.642 43.302 289.39 43.072V48.178Q286.76800000000003 48.868 284.05400000000003 48.868Z M294.252 48.5V30.606H291.492V25.04H294.252V18.232H301.152V25.04H304.786V30.606H301.152V48.5Z"/>
+</svg>
+</a>
+  <nav aria-label="Seções"><a href="#marca">Marca</a><a href="#cor">Cor</a><a href="#esportes">Esportes</a><a href="#estados">Estados</a><a href="#tipografia">Tipografia</a><a href="#componentes">Componentes</a><a href="#forma">Forma e motion</a></nav>
+</div></header>
+
+<main id="conteudo">
+<section class="hero" id="topo" aria-labelledby="hero-t">
+  <svg class="hero-court" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#F5FBF6" stroke-opacity=".07" stroke-width="3">
+      <rect x="40" y="40" width="1120" height="520"/><line x1="600" y1="40" x2="600" y2="560"/><circle cx="600" cy="300" r="90"/>
+      <rect x="40" y="170" width="120" height="260"/><rect x="1040" y="170" width="120" height="260"/>
+      <path d="M160 230 A70 70 0 0 1 160 370"/><path d="M1040 230 A70 70 0 0 0 1040 370"/>
+    </g>
+  </svg>
+  <div class="wrap-page">
+    <div>
+      <h1 id="hero-t">Fechou<span>o jogo.</span></h1>
+      <p class="lead">Identidade visual e design system do SportConnect: a quadra é marcada, a galera paga a cota pelo Pix e o horário só é confirmado quando o rateio fecha.</p>
+      <ul class="facts"><li><strong>Material 3</strong> light e dark</li><li><strong>10</strong> esportes com cor e ícone</li><li><strong>170</strong> pares de contraste WCAG AA</li><li><strong>19</strong> componentes SC</li></ul>
+    </div>
+    <div class="closer" role="img" aria-label="Exemplo: jogo de futevôlei com 12 de 12 cotas pagas, status confirmado">
+      <div class="row">
+        <span class="chip-s" style="background:#00504F;color:#00FCF9"><span class="ms sm" aria-hidden="true">footprint</span>Futevôlei</span>
+        <span class="flip">
+          <span class="badge b-wait" style="background:#5E4100;color:#FFDEAE"><span class="ms sm">hourglass_top</span>Aguardando pagamento</span>
+          <span class="badge b-ok" style="background:#005235;color:#72FBBD"><span class="ms sm">check_circle</span>Confirmado</span>
+        </span>
+      </div>
+      <p class="closer-title">Fute da orla · sábado 8h</p>
+      <p class="closer-sub">Arena Barra Beach · Quadra 3 · R$ 15,00 por cota</p>
+      <div class="closer-num"><span class="num-flip"><span class="n11">11</span><span class="n12">12</span></span><small> de 12 pagas</small></div>
+      <div class="segs"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="last"></i></div>
+      <p class="closer-foot">R$ 180 de R$ 180 · <span class="fin">Horário confirmado, arena avisada.</span></p>
+    </div>
+  </div>
+</section>
+
+<section id="marca" aria-labelledby="marca-t"><div class="wrap-page">
+  <div class="sec-head"><h2 id="marca-t">Marca</h2>
+  <p>O símbolo "Quique" é um S traçado com as duas metades do círculo central da quadra, cruzando a linha de meio-campo. A bola laranja marca o saque. Não pertence a nenhum esporte, por isso serve aos dez.</p></div>
+  <div class="logo-grid">
+    <div class="panel light"><div class="logo-box"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 64" style="display:block;width:100%;height:auto" role="img" aria-label="SportConnect">
+  
+  <!-- Símbolo "Quique": S traçado por duas metades do círculo central da quadra, cruzando a linha de meio; a bola laranja marca o saque. Grade 48u, escala 64/48. -->
+  <g transform="scale(1.3333)">
+    <rect width="48" height="48" rx="12" fill="#191C19"/>
+    <line x1="7" y1="24" x2="41" y2="24" stroke="#F5FBF6" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#191C19" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#00E46E" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="37.5" cy="9.5" r="3.25" fill="#EE6800"/>
+  </g>
+  <path fill="#191C19" d="M81.794 48.04V42.244Q85.98 42.566 88.188 42.566Q89.706 42.566 90.44200000000001 42.451Q91.178 42.336 91.5 41.922Q91.822 41.6 91.914 41.048Q92.006 40.496 92.006 39.438Q92.006 37.92 91.845 37.275999999999996Q91.684 36.632 91.132 36.333Q90.58 36.034 89.246 35.804L85.244 35.068Q82.944 34.7 82.07 32.469Q81.196 30.238 81.196 26.19Q81.196 22.142 82.392 20.026Q83.588 17.91 85.612 17.197000000000003Q87.636 16.484 90.764 16.484Q94.26 16.484 98.21600000000001 17.312V23.108Q95.87 22.786 92.604 22.786Q91.03999999999999 22.786 90.304 22.878Q89.568 22.97 89.2 23.292Q88.832 23.568 88.69399999999999 24.166Q88.556 24.764 88.556 25.914Q88.556 27.156 88.67099999999999 27.708Q88.786 28.26 89.17699999999999 28.513Q89.568 28.766000000000002 90.488 28.95L94.26 29.64Q95.824 29.962 96.905 30.628999999999998Q97.986 31.296 98.63 32.998000000000005Q99.366 34.93 99.366 38.38Q99.366 42.934 98.239 45.211Q97.112 47.488 95.226 48.178Q93.34 48.868 90.258 48.868Q88.096 48.868 85.79599999999999 48.638000000000005Q83.496 48.408 81.794 48.04Z M102.756 25.04H109.334L109.518 27.708000000000002H109.932Q110.438 26.052 111.68 25.362000000000002Q112.922 24.672 114.532 24.672Q116.694 24.672 117.91300000000001 25.707Q119.132 26.742 119.684 29.318Q120.23599999999999 31.894000000000002 120.23599999999999 36.724000000000004Q120.23599999999999 41.416 119.72999999999999 44.015Q119.22399999999999 46.614 118.005 47.741Q116.786 48.868 114.578 48.868Q112.87599999999999 48.868 111.726 48.201Q110.576 47.534 109.978 46.062H109.61V57.608000000000004H102.756ZM113.428 36.769999999999996Q113.428 33.596000000000004 113.31299999999999 32.423Q113.198 31.25 112.853 30.951Q112.508 30.652 111.496 30.652Q110.714 30.652 110.346 30.905Q109.978 31.158 109.794 31.986Q109.65599999999999 32.538 109.633 33.803Q109.61 35.068 109.61 36.769999999999996Q109.61 40.68 109.74799999999999 41.37Q109.932 42.29 110.32300000000001 42.589Q110.714 42.888 111.496 42.888Q112.508 42.888 112.853 42.589Q113.198 42.29 113.31299999999999 41.117000000000004Q113.428 39.944 113.428 36.769999999999996Z M123.35 36.769999999999996Q123.35 31.48 123.87899999999999 29.088Q124.40799999999999 26.696 126.225 25.684Q128.042 24.672 132.136 24.672Q136.23 24.672 138.024 25.684Q139.81799999999998 26.696 140.34699999999998 29.088Q140.87599999999998 31.48 140.87599999999998 36.769999999999996Q140.87599999999998 42.06 140.34699999999998 44.452Q139.81799999999998 46.844 138.024 47.856Q136.23 48.868 132.136 48.868Q128.042 48.868 126.225 47.856Q124.40799999999999 46.844 123.87899999999999 44.452Q123.35 42.06 123.35 36.769999999999996ZM134.06799999999998 36.769999999999996Q134.06799999999998 33.412 133.95299999999997 32.17Q133.838 30.928 133.493 30.583Q133.148 30.238 132.136 30.238Q131.124 30.238 130.75599999999997 30.583Q130.38799999999998 30.928 130.296 32.147Q130.20399999999998 33.366 130.20399999999998 36.769999999999996Q130.20399999999998 40.174 130.296 41.393Q130.38799999999998 42.612 130.75599999999997 42.957Q131.124 43.302 132.136 43.302Q133.148 43.302 133.493 42.957Q133.838 42.612 133.95299999999997 41.370000000000005Q134.06799999999998 40.128 134.06799999999998 36.769999999999996Z M144.45 25.04H151.028L151.212 28.812H151.57999999999998Q152.31599999999997 26.512 153.558 25.592Q154.79999999999998 24.672 156.916 24.672V31.618Q154.892 31.618 153.696 32.124Q152.5 32.63 151.902 34.033Q151.30399999999997 35.436 151.30399999999997 38.058V48.5H144.45Z M161.272 48.5V30.606H158.512V25.04H161.272V18.232H168.172V25.04H171.80599999999998V30.606H168.172V48.5Z M184.34999999999997 48.868Q179.88799999999998 48.868 177.79499999999996 47.396Q175.70199999999997 45.924 175.03499999999997 42.611999999999995Q174.36799999999997 39.3 174.36799999999997 32.676Q174.36799999999997 26.098 175.05799999999996 22.786Q175.74799999999996 19.474 177.86399999999998 17.979Q179.97999999999996 16.484 184.34999999999997 16.484Q185.914 16.484 187.45499999999998 16.714Q188.99599999999998 16.944 189.86999999999998 17.266000000000002V23.062Q187.33999999999997 22.786 185.82199999999997 22.786Q183.70599999999996 22.786 182.94699999999997 23.361Q182.188 23.936 181.981 25.753Q181.77399999999997 27.57 181.77399999999997 32.676Q181.77399999999997 37.782 181.981 39.599Q182.188 41.416 182.94699999999997 41.991Q183.70599999999996 42.566 185.82199999999997 42.566Q188.30599999999998 42.566 189.962 42.29V48.04Q188.95 48.408 187.33999999999997 48.638000000000005Q185.72999999999996 48.868 184.34999999999997 48.868Z M192.938 36.769999999999996Q192.938 31.48 193.46699999999998 29.088Q193.99599999999998 26.696 195.813 25.684Q197.63 24.672 201.724 24.672Q205.81799999999998 24.672 207.61199999999997 25.684Q209.40599999999998 26.696 209.935 29.088Q210.464 31.48 210.464 36.769999999999996Q210.464 42.06 209.935 44.452Q209.40599999999998 46.844 207.61199999999997 47.856Q205.81799999999998 48.868 201.724 48.868Q197.63 48.868 195.813 47.856Q193.99599999999998 46.844 193.46699999999998 44.452Q192.938 42.06 192.938 36.769999999999996ZM203.65599999999998 36.769999999999996Q203.65599999999998 33.412 203.541 32.17Q203.426 30.928 203.081 30.583Q202.736 30.238 201.724 30.238Q200.712 30.238 200.344 30.583Q199.976 30.928 199.884 32.147Q199.79199999999997 33.366 199.79199999999997 36.769999999999996Q199.79199999999997 40.174 199.884 41.393Q199.976 42.612 200.344 42.957Q200.712 43.302 201.724 43.302Q202.736 43.302 203.081 42.957Q203.426 42.612 203.541 41.370000000000005Q203.65599999999998 40.128 203.65599999999998 36.769999999999996Z M224.43399999999997 35.896Q224.43399999999997 33.182 224.34199999999998 32.193Q224.24999999999997 31.204 223.92799999999997 30.928Q223.60599999999997 30.652 222.68599999999998 30.652Q221.766 30.652 221.421 31.020000000000003Q221.07599999999996 31.388 220.98399999999998 32.538000000000004Q220.89199999999997 33.688 220.89199999999997 36.632V48.5H214.03799999999998V25.04H220.61599999999999L220.79999999999998 27.754H221.16799999999998Q222.36399999999998 24.672 226.182 24.672Q228.344 24.672 229.44799999999998 25.546Q230.55199999999996 26.42 230.91999999999996 28.168Q231.28799999999998 29.916 231.28799999999998 32.998000000000005V48.5H224.43399999999997Z M245.67199999999997 35.896Q245.67199999999997 33.182 245.57999999999998 32.193Q245.48799999999997 31.204 245.16599999999997 30.928Q244.84399999999997 30.652 243.92399999999998 30.652Q243.004 30.652 242.659 31.020000000000003Q242.31399999999996 31.388 242.22199999999998 32.538000000000004Q242.12999999999997 33.688 242.12999999999997 36.632V48.5H235.27599999999998V25.04H241.85399999999998L242.03799999999998 27.754H242.40599999999998Q243.60199999999998 24.672 247.42 24.672Q249.582 24.672 250.68599999999998 25.546Q251.78999999999996 26.42 252.15799999999996 28.168Q252.52599999999998 29.916 252.52599999999998 32.998000000000005V48.5H245.67199999999997Z M272.936 38.656H262.816Q262.816 41.048 263.02299999999997 41.922Q263.22999999999996 42.796 263.989 43.049Q264.748 43.302 266.772 43.302Q269.30199999999996 43.302 272.38399999999996 43.072V48.178Q271.188 48.5 269.164 48.684Q267.14 48.868 265.162 48.868Q260.88399999999996 48.868 258.952 47.626000000000005Q257.02 46.384 256.514 43.992000000000004Q256.008 41.6 256.008 36.816Q256.008 32.078 256.537 29.64Q257.066 27.202 258.90599999999995 25.937Q260.746 24.672 264.702 24.672Q268.70399999999995 24.672 270.429 25.845Q272.154 27.018 272.54499999999996 29.317999999999998Q272.936 31.618 272.936 36.816ZM262.816 34.516H266.542Q266.542 32.354 266.42699999999996 31.48Q266.31199999999995 30.606 265.967 30.353Q265.62199999999996 30.1 264.702 30.1Q263.828 30.1 263.46 30.353Q263.092 30.606 262.95399999999995 31.503Q262.816 32.4 262.816 34.516Z M284.05400000000003 48.868Q280.558 48.868 278.83299999999997 47.557Q277.108 46.246 276.579 43.762Q276.05 41.278 276.05 36.769999999999996Q276.05 32.216 276.625 29.709000000000003Q277.2 27.202 278.925 25.937Q280.65000000000003 24.672 284.05400000000003 24.672Q286.998 24.672 289.298 25.316V30.468Q287.688 30.238 286.07800000000003 30.238Q284.56 30.238 283.962 30.628999999999998Q283.36400000000003 31.02 283.15700000000004 32.308Q282.95 33.596000000000004 282.95 36.769999999999996Q282.95 39.99 283.15700000000004 41.278000000000006Q283.36400000000003 42.566 283.962 42.934Q284.56 43.302 286.07800000000003 43.302Q287.642 43.302 289.39 43.072V48.178Q286.76800000000003 48.868 284.05400000000003 48.868Z M294.252 48.5V30.606H291.492V25.04H294.252V18.232H301.152V25.04H304.786V30.606H301.152V48.5Z"/>
+</svg>
+</div></div>
+    <div class="panel dark"><div class="logo-box"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 64" style="display:block;width:100%;height:auto" role="img" aria-label="SportConnect">
+  
+  <!-- Símbolo "Quique": S traçado por duas metades do círculo central da quadra, cruzando a linha de meio; a bola laranja marca o saque. Grade 48u, escala 64/48. -->
+  <g transform="scale(1.3333)">
+    <rect width="48" height="48" rx="12" fill="#191C19" stroke="#3F4941" stroke-width="1"/>
+    <line x1="7" y1="24" x2="41" y2="24" stroke="#F5FBF6" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#191C19" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#00E46E" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="37.5" cy="9.5" r="3.25" fill="#EE6800"/>
+  </g>
+  <path fill="#F5FBF6" d="M81.794 48.04V42.244Q85.98 42.566 88.188 42.566Q89.706 42.566 90.44200000000001 42.451Q91.178 42.336 91.5 41.922Q91.822 41.6 91.914 41.048Q92.006 40.496 92.006 39.438Q92.006 37.92 91.845 37.275999999999996Q91.684 36.632 91.132 36.333Q90.58 36.034 89.246 35.804L85.244 35.068Q82.944 34.7 82.07 32.469Q81.196 30.238 81.196 26.19Q81.196 22.142 82.392 20.026Q83.588 17.91 85.612 17.197000000000003Q87.636 16.484 90.764 16.484Q94.26 16.484 98.21600000000001 17.312V23.108Q95.87 22.786 92.604 22.786Q91.03999999999999 22.786 90.304 22.878Q89.568 22.97 89.2 23.292Q88.832 23.568 88.69399999999999 24.166Q88.556 24.764 88.556 25.914Q88.556 27.156 88.67099999999999 27.708Q88.786 28.26 89.17699999999999 28.513Q89.568 28.766000000000002 90.488 28.95L94.26 29.64Q95.824 29.962 96.905 30.628999999999998Q97.986 31.296 98.63 32.998000000000005Q99.366 34.93 99.366 38.38Q99.366 42.934 98.239 45.211Q97.112 47.488 95.226 48.178Q93.34 48.868 90.258 48.868Q88.096 48.868 85.79599999999999 48.638000000000005Q83.496 48.408 81.794 48.04Z M102.756 25.04H109.334L109.518 27.708000000000002H109.932Q110.438 26.052 111.68 25.362000000000002Q112.922 24.672 114.532 24.672Q116.694 24.672 117.91300000000001 25.707Q119.132 26.742 119.684 29.318Q120.23599999999999 31.894000000000002 120.23599999999999 36.724000000000004Q120.23599999999999 41.416 119.72999999999999 44.015Q119.22399999999999 46.614 118.005 47.741Q116.786 48.868 114.578 48.868Q112.87599999999999 48.868 111.726 48.201Q110.576 47.534 109.978 46.062H109.61V57.608000000000004H102.756ZM113.428 36.769999999999996Q113.428 33.596000000000004 113.31299999999999 32.423Q113.198 31.25 112.853 30.951Q112.508 30.652 111.496 30.652Q110.714 30.652 110.346 30.905Q109.978 31.158 109.794 31.986Q109.65599999999999 32.538 109.633 33.803Q109.61 35.068 109.61 36.769999999999996Q109.61 40.68 109.74799999999999 41.37Q109.932 42.29 110.32300000000001 42.589Q110.714 42.888 111.496 42.888Q112.508 42.888 112.853 42.589Q113.198 42.29 113.31299999999999 41.117000000000004Q113.428 39.944 113.428 36.769999999999996Z M123.35 36.769999999999996Q123.35 31.48 123.87899999999999 29.088Q124.40799999999999 26.696 126.225 25.684Q128.042 24.672 132.136 24.672Q136.23 24.672 138.024 25.684Q139.81799999999998 26.696 140.34699999999998 29.088Q140.87599999999998 31.48 140.87599999999998 36.769999999999996Q140.87599999999998 42.06 140.34699999999998 44.452Q139.81799999999998 46.844 138.024 47.856Q136.23 48.868 132.136 48.868Q128.042 48.868 126.225 47.856Q124.40799999999999 46.844 123.87899999999999 44.452Q123.35 42.06 123.35 36.769999999999996ZM134.06799999999998 36.769999999999996Q134.06799999999998 33.412 133.95299999999997 32.17Q133.838 30.928 133.493 30.583Q133.148 30.238 132.136 30.238Q131.124 30.238 130.75599999999997 30.583Q130.38799999999998 30.928 130.296 32.147Q130.20399999999998 33.366 130.20399999999998 36.769999999999996Q130.20399999999998 40.174 130.296 41.393Q130.38799999999998 42.612 130.75599999999997 42.957Q131.124 43.302 132.136 43.302Q133.148 43.302 133.493 42.957Q133.838 42.612 133.95299999999997 41.370000000000005Q134.06799999999998 40.128 134.06799999999998 36.769999999999996Z M144.45 25.04H151.028L151.212 28.812H151.57999999999998Q152.31599999999997 26.512 153.558 25.592Q154.79999999999998 24.672 156.916 24.672V31.618Q154.892 31.618 153.696 32.124Q152.5 32.63 151.902 34.033Q151.30399999999997 35.436 151.30399999999997 38.058V48.5H144.45Z M161.272 48.5V30.606H158.512V25.04H161.272V18.232H168.172V25.04H171.80599999999998V30.606H168.172V48.5Z M184.34999999999997 48.868Q179.88799999999998 48.868 177.79499999999996 47.396Q175.70199999999997 45.924 175.03499999999997 42.611999999999995Q174.36799999999997 39.3 174.36799999999997 32.676Q174.36799999999997 26.098 175.05799999999996 22.786Q175.74799999999996 19.474 177.86399999999998 17.979Q179.97999999999996 16.484 184.34999999999997 16.484Q185.914 16.484 187.45499999999998 16.714Q188.99599999999998 16.944 189.86999999999998 17.266000000000002V23.062Q187.33999999999997 22.786 185.82199999999997 22.786Q183.70599999999996 22.786 182.94699999999997 23.361Q182.188 23.936 181.981 25.753Q181.77399999999997 27.57 181.77399999999997 32.676Q181.77399999999997 37.782 181.981 39.599Q182.188 41.416 182.94699999999997 41.991Q183.70599999999996 42.566 185.82199999999997 42.566Q188.30599999999998 42.566 189.962 42.29V48.04Q188.95 48.408 187.33999999999997 48.638000000000005Q185.72999999999996 48.868 184.34999999999997 48.868Z M192.938 36.769999999999996Q192.938 31.48 193.46699999999998 29.088Q193.99599999999998 26.696 195.813 25.684Q197.63 24.672 201.724 24.672Q205.81799999999998 24.672 207.61199999999997 25.684Q209.40599999999998 26.696 209.935 29.088Q210.464 31.48 210.464 36.769999999999996Q210.464 42.06 209.935 44.452Q209.40599999999998 46.844 207.61199999999997 47.856Q205.81799999999998 48.868 201.724 48.868Q197.63 48.868 195.813 47.856Q193.99599999999998 46.844 193.46699999999998 44.452Q192.938 42.06 192.938 36.769999999999996ZM203.65599999999998 36.769999999999996Q203.65599999999998 33.412 203.541 32.17Q203.426 30.928 203.081 30.583Q202.736 30.238 201.724 30.238Q200.712 30.238 200.344 30.583Q199.976 30.928 199.884 32.147Q199.79199999999997 33.366 199.79199999999997 36.769999999999996Q199.79199999999997 40.174 199.884 41.393Q199.976 42.612 200.344 42.957Q200.712 43.302 201.724 43.302Q202.736 43.302 203.081 42.957Q203.426 42.612 203.541 41.370000000000005Q203.65599999999998 40.128 203.65599999999998 36.769999999999996Z M224.43399999999997 35.896Q224.43399999999997 33.182 224.34199999999998 32.193Q224.24999999999997 31.204 223.92799999999997 30.928Q223.60599999999997 30.652 222.68599999999998 30.652Q221.766 30.652 221.421 31.020000000000003Q221.07599999999996 31.388 220.98399999999998 32.538000000000004Q220.89199999999997 33.688 220.89199999999997 36.632V48.5H214.03799999999998V25.04H220.61599999999999L220.79999999999998 27.754H221.16799999999998Q222.36399999999998 24.672 226.182 24.672Q228.344 24.672 229.44799999999998 25.546Q230.55199999999996 26.42 230.91999999999996 28.168Q231.28799999999998 29.916 231.28799999999998 32.998000000000005V48.5H224.43399999999997Z M245.67199999999997 35.896Q245.67199999999997 33.182 245.57999999999998 32.193Q245.48799999999997 31.204 245.16599999999997 30.928Q244.84399999999997 30.652 243.92399999999998 30.652Q243.004 30.652 242.659 31.020000000000003Q242.31399999999996 31.388 242.22199999999998 32.538000000000004Q242.12999999999997 33.688 242.12999999999997 36.632V48.5H235.27599999999998V25.04H241.85399999999998L242.03799999999998 27.754H242.40599999999998Q243.60199999999998 24.672 247.42 24.672Q249.582 24.672 250.68599999999998 25.546Q251.78999999999996 26.42 252.15799999999996 28.168Q252.52599999999998 29.916 252.52599999999998 32.998000000000005V48.5H245.67199999999997Z M272.936 38.656H262.816Q262.816 41.048 263.02299999999997 41.922Q263.22999999999996 42.796 263.989 43.049Q264.748 43.302 266.772 43.302Q269.30199999999996 43.302 272.38399999999996 43.072V48.178Q271.188 48.5 269.164 48.684Q267.14 48.868 265.162 48.868Q260.88399999999996 48.868 258.952 47.626000000000005Q257.02 46.384 256.514 43.992000000000004Q256.008 41.6 256.008 36.816Q256.008 32.078 256.537 29.64Q257.066 27.202 258.90599999999995 25.937Q260.746 24.672 264.702 24.672Q268.70399999999995 24.672 270.429 25.845Q272.154 27.018 272.54499999999996 29.317999999999998Q272.936 31.618 272.936 36.816ZM262.816 34.516H266.542Q266.542 32.354 266.42699999999996 31.48Q266.31199999999995 30.606 265.967 30.353Q265.62199999999996 30.1 264.702 30.1Q263.828 30.1 263.46 30.353Q263.092 30.606 262.95399999999995 31.503Q262.816 32.4 262.816 34.516Z M284.05400000000003 48.868Q280.558 48.868 278.83299999999997 47.557Q277.108 46.246 276.579 43.762Q276.05 41.278 276.05 36.769999999999996Q276.05 32.216 276.625 29.709000000000003Q277.2 27.202 278.925 25.937Q280.65000000000003 24.672 284.05400000000003 24.672Q286.998 24.672 289.298 25.316V30.468Q287.688 30.238 286.07800000000003 30.238Q284.56 30.238 283.962 30.628999999999998Q283.36400000000003 31.02 283.15700000000004 32.308Q282.95 33.596000000000004 282.95 36.769999999999996Q282.95 39.99 283.15700000000004 41.278000000000006Q283.36400000000003 42.566 283.962 42.934Q284.56 43.302 286.07800000000003 43.302Q287.642 43.302 289.39 43.072V48.178Q286.76800000000003 48.868 284.05400000000003 48.868Z M294.252 48.5V30.606H291.492V25.04H294.252V18.232H301.152V25.04H304.786V30.606H301.152V48.5Z"/>
+</svg>
+</div></div>
+  </div>
+  <div class="construct">
+    <div class="icons" aria-label="Ícone do app em 3 tamanhos">
+      <div class="ic" style="width:120px;height:120px;border-radius:27px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%" aria-hidden="true">
+  
+  <!-- Ícone 1024×1024 (iOS/Android/Desktop). Fundo full-bleed: as plataformas aplicam a máscara (squircle iOS, adaptive icon Android).
+       Zona segura do adaptive icon: círculo de 66% central — o símbolo ocupa ~62%. -->
+  <rect width="100%" height="100%" fill="#191C19"/>
+  <g transform="translate(512 512) scale(16) translate(-24 -24)">
+    <line x1="4" y1="24" x2="44" y2="24" stroke="#F5FBF6" stroke-width="1.6" stroke-linecap="round" opacity=".92"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#191C19" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#00E46E" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="37.5" cy="9.5" r="3.25" fill="#EE6800"/>
+  </g>
+</svg>
+</div>
+      <div class="ic" style="width:64px;height:64px;border-radius:15px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%" aria-hidden="true">
+  
+  <!-- Ícone 1024×1024 (iOS/Android/Desktop). Fundo full-bleed: as plataformas aplicam a máscara (squircle iOS, adaptive icon Android).
+       Zona segura do adaptive icon: círculo de 66% central — o símbolo ocupa ~62%. -->
+  <rect width="100%" height="100%" fill="#191C19"/>
+  <g transform="translate(512 512) scale(16) translate(-24 -24)">
+    <line x1="4" y1="24" x2="44" y2="24" stroke="#F5FBF6" stroke-width="1.6" stroke-linecap="round" opacity=".92"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#191C19" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#00E46E" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="37.5" cy="9.5" r="3.25" fill="#EE6800"/>
+  </g>
+</svg>
+</div>
+      <div class="ic" style="width:32px;height:32px;border-radius:8px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%" aria-hidden="true">
+  
+  <!-- Ícone 1024×1024 (iOS/Android/Desktop). Fundo full-bleed: as plataformas aplicam a máscara (squircle iOS, adaptive icon Android).
+       Zona segura do adaptive icon: círculo de 66% central — o símbolo ocupa ~62%. -->
+  <rect width="100%" height="100%" fill="#191C19"/>
+  <g transform="translate(512 512) scale(16) translate(-24 -24)">
+    <line x1="4" y1="24" x2="44" y2="24" stroke="#F5FBF6" stroke-width="1.6" stroke-linecap="round" opacity=".92"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#191C19" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#00E46E" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="37.5" cy="9.5" r="3.25" fill="#EE6800"/>
+  </g>
+</svg>
+</div>
+    </div>
+    <ul>
+      <li>Grade de 48 unidades, a mesma dos ícones Material; base com raio de 12u.</li>
+      <li>Dois arcos de raio 8u formam o S; traço de 5,5u com terminais arredondados.</li>
+      <li>Um recorte de 9,5u na cor da base faz o S passar por cima da linha de meio.</li>
+      <li>Wordmark em Saira Condensed 800, convertido em curvas. Área de proteção: metade da altura do símbolo.</li>
+      <li>Mínimo: símbolo com 16 px, logo horizontal com 96 px de largura.</li>
+    </ul>
+  </div>
+  <div class="principles">
+    <div><strong>Energia na moldura</strong><p>Verde Quadra e tipo de placar chamam para o jogo, uma cor vibrante por tela.</p></div>
+    <div><strong>Sobriedade no dinheiro</strong><p>Valores, prazos e status com contraste máximo, ícone e texto. Nada depende só de cor.</p></div>
+    <div><strong>Brasileiro sem caricatura</strong><p>Pix como protagonista, "racha" e "galera" na linguagem, e nenhuma bandeira à vista.</p></div>
+  </div>
+</div></section>
+
+<section id="cor" aria-labelledby="cor-t"><div class="wrap-page">
+  <div class="sec-head"><h2 id="cor-t">Cor</h2>
+  <p>Paletas tonais com tom igual a L* (CIELAB), o mesmo princípio do HCT do Material 3. Neutros com croma 3 a 7 no matiz do gramado. Todos os números de contraste abaixo foram calculados pela fórmula WCAG 2.1 no gerador de tokens.</p></div>
+  <div class="bswatches"><figure class="bsw" style="--c:#00E46E;--f:#191C19"><div class="bsw-chip"><span class="bsw-hex">#00E46E</span>
+<span class="bsw-ratio">Grafite 10.09:1</span></div>
+<figcaption><strong>Verde Quadra</strong><span>verde-quadra 80 · Destaque, dark primary, logo</span></figcaption></figure>
+<figure class="bsw" style="--c:#006D31;--f:#FFFFFF"><div class="bsw-chip"><span class="bsw-hex">#006D31</span>
+<span class="bsw-ratio">Branco 6.50:1</span></div>
+<figcaption><strong>Verde Quadra Profundo</strong><span>verde-quadra 40 · Light primary, CTA</span></figcaption></figure>
+<figure class="bsw" style="--c:#EE6800;--f:#191C19"><div class="bsw-chip"><span class="bsw-hex">#EE6800</span>
+<span class="bsw-ratio">Grafite 5.42:1</span></div>
+<figcaption><strong>Laranja Saibro</strong><span>laranja-saibro 60 · Bola do logo, acento quente</span></figcaption></figure>
+<figure class="bsw" style="--c:#2E70F0;--f:#FFFFFF"><div class="bsw-chip"><span class="bsw-hex">#2E70F0</span>
+<span class="bsw-ratio">Branco 4.48:1</span></div>
+<figcaption><strong>Azul Refletor</strong><span>azul-refletor 50 · Pagamento, informação</span></figcaption></figure>
+<figure class="bsw" style="--c:#191C19;--f:#FFFFFF"><div class="bsw-chip"><span class="bsw-hex">#191C19</span>
+<span class="bsw-ratio">Branco 17.19:1</span></div>
+<figcaption><strong>Grafite Noturno</strong><span>grafite 10 · Texto, base do símbolo</span></figcaption></figure>
+<figure class="bsw" style="--c:#F5FBF6;--f:#191C19"><div class="bsw-chip"><span class="bsw-hex">#F5FBF6</span>
+<span class="bsw-ratio">Grafite 16.38:1</span></div>
+<figcaption><strong>Cal de Quadra</strong><span>grafite 98 · Fundo claro</span></figcaption></figure></div>
+  <h3>Escalas tonais</h3>
+  <div class="tonal"><div class="tonal-name"><strong>Primária</strong><code>verde-quadra</code></div><ol class="tonal-strip"><li style="--c:#000000;--f:#fff" title="verde-quadra 0 · #000000"><span>0</span></li><li style="--c:#002107;--f:#fff" title="verde-quadra 10 · #002107"><span>10</span></li><li style="--c:#003916;--f:#fff" title="verde-quadra 20 · #003916"><span>20</span></li><li style="--c:#005323;--f:#fff" title="verde-quadra 30 · #005323"><span>30</span></li><li style="--c:#006D31;--f:#fff" title="verde-quadra 40 · #006D31"><span>40</span></li><li style="--c:#008A40;--f:#fff" title="verde-quadra 50 · #008A40"><span>50</span></li><li style="--c:#00A74F;--f:#000" title="verde-quadra 60 · #00A74F"><span>60</span></li><li style="--c:#00C55E;--f:#000" title="verde-quadra 70 · #00C55E"><span>70</span></li><li style="--c:#00E46E;--f:#000" title="verde-quadra 80 · #00E46E"><span>80</span></li><li style="--c:#64FF93;--f:#000" title="verde-quadra 90 · #64FF93"><span>90</span></li><li style="--c:#C3FFCE;--f:#000" title="verde-quadra 95 · #C3FFCE"><span>95</span></li><li style="--c:#E9FFEC;--f:#000" title="verde-quadra 98 · #E9FFEC"><span>98</span></li><li style="--c:#FFFFFF;--f:#000" title="verde-quadra 100 · #FFFFFF"><span>100</span></li></ol></div>
+<div class="tonal"><div class="tonal-name"><strong>Secundária</strong><code>laranja-saibro</code></div><ol class="tonal-strip"><li style="--c:#000000;--f:#fff" title="laranja-saibro 0 · #000000"><span>0</span></li><li style="--c:#2E1500;--f:#fff" title="laranja-saibro 10 · #2E1500"><span>10</span></li><li style="--c:#532200;--f:#fff" title="laranja-saibro 20 · #532200"><span>20</span></li><li style="--c:#793100;--f:#fff" title="laranja-saibro 30 · #793100"><span>30</span></li><li style="--c:#9E4200;--f:#fff" title="laranja-saibro 40 · #9E4200"><span>40</span></li><li style="--c:#C65500;--f:#fff" title="laranja-saibro 50 · #C65500"><span>50</span></li><li style="--c:#EE6800;--f:#000" title="laranja-saibro 60 · #EE6800"><span>60</span></li><li style="--c:#FF8D48;--f:#000" title="laranja-saibro 70 · #FF8D48"><span>70</span></li><li style="--c:#FFB68E;--f:#000" title="laranja-saibro 80 · #FFB68E"><span>80</span></li><li style="--c:#FFDBC9;--f:#000" title="laranja-saibro 90 · #FFDBC9"><span>90</span></li><li style="--c:#FFEDE4;--f:#000" title="laranja-saibro 95 · #FFEDE4"><span>95</span></li><li style="--c:#FFF8F4;--f:#000" title="laranja-saibro 98 · #FFF8F4"><span>98</span></li><li style="--c:#FFFFFF;--f:#000" title="laranja-saibro 100 · #FFFFFF"><span>100</span></li></ol></div>
+<div class="tonal"><div class="tonal-name"><strong>Terciária</strong><code>azul-refletor</code></div><ol class="tonal-strip"><li style="--c:#000000;--f:#fff" title="azul-refletor 0 · #000000"><span>0</span></li><li style="--c:#001945;--f:#fff" title="azul-refletor 10 · #001945"><span>10</span></li><li style="--c:#002D6E;--f:#fff" title="azul-refletor 20 · #002D6E"><span>20</span></li><li style="--c:#00429B;--f:#fff" title="azul-refletor 30 · #00429B"><span>30</span></li><li style="--c:#0058CA;--f:#fff" title="azul-refletor 40 · #0058CA"><span>40</span></li><li style="--c:#2E70F0;--f:#fff" title="azul-refletor 50 · #2E70F0"><span>50</span></li><li style="--c:#6789FF;--f:#000" title="azul-refletor 60 · #6789FF"><span>60</span></li><li style="--c:#97A5FF;--f:#000" title="azul-refletor 70 · #97A5FF"><span>70</span></li><li style="--c:#BDC2FF;--f:#000" title="azul-refletor 80 · #BDC2FF"><span>80</span></li><li style="--c:#DFE0FF;--f:#000" title="azul-refletor 90 · #DFE0FF"><span>90</span></li><li style="--c:#EFEFFF;--f:#000" title="azul-refletor 95 · #EFEFFF"><span>95</span></li><li style="--c:#F9F9FF;--f:#000" title="azul-refletor 98 · #F9F9FF"><span>98</span></li><li style="--c:#FFFFFF;--f:#000" title="azul-refletor 100 · #FFFFFF"><span>100</span></li></ol></div>
+<div class="tonal"><div class="tonal-name"><strong>Erro</strong><code>vermelho-falta</code></div><ol class="tonal-strip"><li style="--c:#000000;--f:#fff" title="vermelho-falta 0 · #000000"><span>0</span></li><li style="--c:#3F0400;--f:#fff" title="vermelho-falta 10 · #3F0400"><span>10</span></li><li style="--c:#68000F;--f:#fff" title="vermelho-falta 20 · #68000F"><span>20</span></li><li style="--c:#93001A;--f:#fff" title="vermelho-falta 30 · #93001A"><span>30</span></li><li style="--c:#BF0025;--f:#fff" title="vermelho-falta 40 · #BF0025"><span>40</span></li><li style="--c:#E52838;--f:#fff" title="vermelho-falta 50 · #E52838"><span>50</span></li><li style="--c:#FF5353;--f:#000" title="vermelho-falta 60 · #FF5353"><span>60</span></li><li style="--c:#FF8980;--f:#000" title="vermelho-falta 70 · #FF8980"><span>70</span></li><li style="--c:#FFB4AB;--f:#000" title="vermelho-falta 80 · #FFB4AB"><span>80</span></li><li style="--c:#FFDAD6;--f:#000" title="vermelho-falta 90 · #FFDAD6"><span>90</span></li><li style="--c:#FFEDEA;--f:#000" title="vermelho-falta 95 · #FFEDEA"><span>95</span></li><li style="--c:#FFF8F7;--f:#000" title="vermelho-falta 98 · #FFF8F7"><span>98</span></li><li style="--c:#FFFFFF;--f:#000" title="vermelho-falta 100 · #FFFFFF"><span>100</span></li></ol></div>
+<div class="tonal"><div class="tonal-name"><strong>Sucesso</strong><code>verde-placar</code></div><ol class="tonal-strip"><li style="--c:#000000;--f:#fff" title="verde-placar 0 · #000000"><span>0</span></li><li style="--c:#002113;--f:#fff" title="verde-placar 10 · #002113"><span>10</span></li><li style="--c:#003823;--f:#fff" title="verde-placar 20 · #003823"><span>20</span></li><li style="--c:#005235;--f:#fff" title="verde-placar 30 · #005235"><span>30</span></li><li style="--c:#006C47;--f:#fff" title="verde-placar 40 · #006C47"><span>40</span></li><li style="--c:#00885B;--f:#fff" title="verde-placar 50 · #00885B"><span>50</span></li><li style="--c:#00A56F;--f:#000" title="verde-placar 60 · #00A56F"><span>60</span></li><li style="--c:#2DC287;--f:#000" title="verde-placar 70 · #2DC287"><span>70</span></li><li style="--c:#52DEA1;--f:#000" title="verde-placar 80 · #52DEA1"><span>80</span></li><li style="--c:#72FBBD;--f:#000" title="verde-placar 90 · #72FBBD"><span>90</span></li><li style="--c:#BEFFDD;--f:#000" title="verde-placar 95 · #BEFFDD"><span>95</span></li><li style="--c:#E7FFF2;--f:#000" title="verde-placar 98 · #E7FFF2"><span>98</span></li><li style="--c:#FFFFFF;--f:#000" title="verde-placar 100 · #FFFFFF"><span>100</span></li></ol></div>
+<div class="tonal"><div class="tonal-name"><strong>Aviso</strong><code>amarelo-cartao</code></div><ol class="tonal-strip"><li style="--c:#000000;--f:#fff" title="amarelo-cartao 0 · #000000"><span>0</span></li><li style="--c:#261A00;--f:#fff" title="amarelo-cartao 10 · #261A00"><span>10</span></li><li style="--c:#412D00;--f:#fff" title="amarelo-cartao 20 · #412D00"><span>20</span></li><li style="--c:#5E4100;--f:#fff" title="amarelo-cartao 30 · #5E4100"><span>30</span></li><li style="--c:#7D5800;--f:#fff" title="amarelo-cartao 40 · #7D5800"><span>40</span></li><li style="--c:#9C6F00;--f:#fff" title="amarelo-cartao 50 · #9C6F00"><span>50</span></li><li style="--c:#BD8700;--f:#000" title="amarelo-cartao 60 · #BD8700"><span>60</span></li><li style="--c:#DFA000;--f:#000" title="amarelo-cartao 70 · #DFA000"><span>70</span></li><li style="--c:#FFBA28;--f:#000" title="amarelo-cartao 80 · #FFBA28"><span>80</span></li><li style="--c:#FFDEAE;--f:#000" title="amarelo-cartao 90 · #FFDEAE"><span>90</span></li><li style="--c:#FFEED9;--f:#000" title="amarelo-cartao 95 · #FFEED9"><span>95</span></li><li style="--c:#FFF8F0;--f:#000" title="amarelo-cartao 98 · #FFF8F0"><span>98</span></li><li style="--c:#FFFFFF;--f:#000" title="amarelo-cartao 100 · #FFFFFF"><span>100</span></li></ol></div>
+<div class="tonal"><div class="tonal-name"><strong>Neutro</strong><code>grafite</code></div><ol class="tonal-strip"><li style="--c:#000000;--f:#fff" title="grafite 0 · #000000"><span>0</span></li><li style="--c:#191C19;--f:#fff" title="grafite 10 · #191C19"><span>10</span></li><li style="--c:#2D312E;--f:#fff" title="grafite 20 · #2D312E"><span>20</span></li><li style="--c:#434844;--f:#fff" title="grafite 30 · #434844"><span>30</span></li><li style="--c:#5B5F5C;--f:#fff" title="grafite 40 · #5B5F5C"><span>40</span></li><li style="--c:#737874;--f:#fff" title="grafite 50 · #737874"><span>50</span></li><li style="--c:#8D928E;--f:#000" title="grafite 60 · #8D928E"><span>60</span></li><li style="--c:#A7ACA8;--f:#000" title="grafite 70 · #A7ACA8"><span>70</span></li><li style="--c:#C2C8C3;--f:#000" title="grafite 80 · #C2C8C3"><span>80</span></li><li style="--c:#DEE4DF;--f:#000" title="grafite 90 · #DEE4DF"><span>90</span></li><li style="--c:#EDF2EE;--f:#000" title="grafite 95 · #EDF2EE"><span>95</span></li><li style="--c:#F5FBF6;--f:#000" title="grafite 98 · #F5FBF6"><span>98</span></li><li style="--c:#FFFFFF;--f:#000" title="grafite 100 · #FFFFFF"><span>100</span></li></ol></div>
+<div class="tonal"><div class="tonal-name"><strong>Neutro variante</strong><code>grafite-variante</code></div><ol class="tonal-strip"><li style="--c:#000000;--f:#fff" title="grafite-variante 0 · #000000"><span>0</span></li><li style="--c:#151E17;--f:#fff" title="grafite-variante 10 · #151E17"><span>10</span></li><li style="--c:#29332B;--f:#fff" title="grafite-variante 20 · #29332B"><span>20</span></li><li style="--c:#3F4941;--f:#fff" title="grafite-variante 30 · #3F4941"><span>30</span></li><li style="--c:#566158;--f:#fff" title="grafite-variante 40 · #566158"><span>40</span></li><li style="--c:#6F7A71;--f:#fff" title="grafite-variante 50 · #6F7A71"><span>50</span></li><li style="--c:#88948A;--f:#000" title="grafite-variante 60 · #88948A"><span>60</span></li><li style="--c:#A2AEA5;--f:#000" title="grafite-variante 70 · #A2AEA5"><span>70</span></li><li style="--c:#BDCAC0;--f:#000" title="grafite-variante 80 · #BDCAC0"><span>80</span></li><li style="--c:#D9E6DB;--f:#000" title="grafite-variante 90 · #D9E6DB"><span>90</span></li><li style="--c:#E7F4EA;--f:#000" title="grafite-variante 95 · #E7F4EA"><span>95</span></li><li style="--c:#F0FDF2;--f:#000" title="grafite-variante 98 · #F0FDF2"><span>98</span></li><li style="--c:#FFFFFF;--f:#000" title="grafite-variante 100 · #FFFFFF"><span>100</span></li></ol></div>
+  <h3>ColorScheme Material 3</h3>
+  <div class="schemes">
+    <div class="scheme t-light"><h3>Light</h3><div class="roles"><div class="role" style="background:#006D31;color:#FFFFFF"><span class="role-name">primary</span>
+<span class="role-meta">#006D31 · texto onPrimary #FFFFFF</span><span class="role-ratio">6.50:1 AA</span></div>
+<div class="role" style="background:#27F37A;color:#002107"><span class="role-name">primaryContainer</span>
+<span class="role-meta">#27F37A · texto onPrimaryContainer #002107</span><span class="role-ratio">11.62:1 AAA</span></div>
+<div class="role" style="background:#9E4200;color:#FFFFFF"><span class="role-name">secondary</span>
+<span class="role-meta">#9E4200 · texto onSecondary #FFFFFF</span><span class="role-ratio">6.50:1 AA</span></div>
+<div class="role" style="background:#FFDBC9;color:#2E1500"><span class="role-name">secondaryContainer</span>
+<span class="role-meta">#FFDBC9 · texto onSecondaryContainer #2E1500</span><span class="role-ratio">13.26:1 AAA</span></div>
+<div class="role" style="background:#0058CA;color:#FFFFFF"><span class="role-name">tertiary</span>
+<span class="role-meta">#0058CA · texto onTertiary #FFFFFF</span><span class="role-ratio">6.46:1 AA</span></div>
+<div class="role" style="background:#DFE0FF;color:#001945"><span class="role-name">tertiaryContainer</span>
+<span class="role-meta">#DFE0FF · texto onTertiaryContainer #001945</span><span class="role-ratio">13.26:1 AAA</span></div>
+<div class="role" style="background:#BF0025;color:#FFFFFF"><span class="role-name">error</span>
+<span class="role-meta">#BF0025 · texto onError #FFFFFF</span><span class="role-ratio">6.48:1 AA</span></div>
+<div class="role" style="background:#FFDAD6;color:#3F0400"><span class="role-name">errorContainer</span>
+<span class="role-meta">#FFDAD6 · texto onErrorContainer #3F0400</span><span class="role-ratio">13.23:1 AAA</span></div>
+<div class="role" style="background:#006C47;color:#FFFFFF"><span class="role-name">success</span>
+<span class="role-meta">#006C47 · texto onSuccess #FFFFFF</span><span class="role-ratio">6.49:1 AA</span></div>
+<div class="role" style="background:#A9F2CC;color:#002113"><span class="role-name">successContainer</span>
+<span class="role-meta">#A9F2CC · texto onSuccessContainer #002113</span><span class="role-ratio">13.25:1 AAA</span></div>
+<div class="role" style="background:#7D5800;color:#FFFFFF"><span class="role-name">warning</span>
+<span class="role-meta">#7D5800 · texto onWarning #FFFFFF</span><span class="role-ratio">6.43:1 AA</span></div>
+<div class="role" style="background:#FFDEAE;color:#261A00"><span class="role-name">warningContainer</span>
+<span class="role-meta">#FFDEAE · texto onWarningContainer #261A00</span><span class="role-ratio">13.26:1 AAA</span></div>
+<div class="role" style="background:#F5FBF6;color:#191C19"><span class="role-name">surface</span>
+<span class="role-meta">#F5FBF6 · texto onSurface #191C19</span><span class="role-ratio">16.38:1 AAA</span></div>
+<div class="role" style="background:#D9E6DB;color:#3F4941"><span class="role-name">surfaceVariant</span>
+<span class="role-meta">#D9E6DB · texto onSurfaceVariant #3F4941</span><span class="role-ratio">7.27:1 AAA</span></div>
+<div class="role" style="background:#FFFFFF;color:#191C19"><span class="role-name">surfaceContainerLowest</span>
+<span class="role-meta">#FFFFFF · texto onSurface #191C19</span><span class="role-ratio">17.19:1 AAA</span></div>
+<div class="role" style="background:#EFF5F0;color:#191C19"><span class="role-name">surfaceContainerLow</span>
+<span class="role-meta">#EFF5F0 · texto onSurface #191C19</span><span class="role-ratio">15.55:1 AAA</span></div>
+<div class="role" style="background:#EAEFEB;color:#191C19"><span class="role-name">surfaceContainer</span>
+<span class="role-meta">#EAEFEB · texto onSurface #191C19</span><span class="role-ratio">14.77:1 AAA</span></div>
+<div class="role" style="background:#E4E9E5;color:#191C19"><span class="role-name">surfaceContainerHigh</span>
+<span class="role-meta">#E4E9E5 · texto onSurface #191C19</span><span class="role-ratio">13.99:1 AAA</span></div>
+<div class="role" style="background:#DEE4DF;color:#191C19"><span class="role-name">surfaceContainerHighest</span>
+<span class="role-meta">#DEE4DF · texto onSurface #191C19</span><span class="role-ratio">13.32:1 AAA</span></div>
+<div class="role" style="background:#2D312E;color:#EDF2EE"><span class="role-name">inverseSurface</span>
+<span class="role-meta">#2D312E · texto inverseOnSurface #EDF2EE</span><span class="role-ratio">11.66:1 AAA</span></div><div class="role-extra"><div class="role-line"><span class="dot" style="background:#6F7A71"></span><code>outline</code><span>#6F7A71</span></div><div class="role-line"><span class="dot" style="background:#BDCAC0"></span><code>outlineVariant</code><span>#BDCAC0</span></div><div class="role-line"><span class="dot" style="background:#00E46E"></span><code>inversePrimary</code><span>#00E46E</span></div><div class="role-line"><span class="dot" style="background:#D6DBD7"></span><code>surfaceDim</code><span>#D6DBD7</span></div><div class="role-line"><span class="dot" style="background:#F5FBF6"></span><code>surfaceBright</code><span>#F5FBF6</span></div><div class="role-line"><span class="dot" style="background:#000000"></span><code>scrim</code><span>#000000</span></div></div></div></div>
+    <div class="scheme t-dark"><h3>Dark</h3><div class="roles"><div class="role" style="background:#00E46E;color:#003916"><span class="role-name">primary</span>
+<span class="role-meta">#00E46E · texto onPrimary #003916</span><span class="role-ratio">7.72:1 AAA</span></div>
+<div class="role" style="background:#005323;color:#64FF93"><span class="role-name">primaryContainer</span>
+<span class="role-meta">#005323 · texto onPrimaryContainer #64FF93</span><span class="role-ratio">7.19:1 AAA</span></div>
+<div class="role" style="background:#FFB68E;color:#532200"><span class="role-name">secondary</span>
+<span class="role-meta">#FFB68E · texto onSecondary #532200</span><span class="role-ratio">7.72:1 AAA</span></div>
+<div class="role" style="background:#793100;color:#FFDBC9"><span class="role-name">secondaryContainer</span>
+<span class="role-meta">#793100 · texto onSecondaryContainer #FFDBC9</span><span class="role-ratio">7.21:1 AAA</span></div>
+<div class="role" style="background:#BDC2FF;color:#002D6E"><span class="role-name">tertiary</span>
+<span class="role-meta">#BDC2FF · texto onTertiary #002D6E</span><span class="role-ratio">7.70:1 AAA</span></div>
+<div class="role" style="background:#00429B;color:#DFE0FF"><span class="role-name">tertiaryContainer</span>
+<span class="role-meta">#00429B · texto onTertiaryContainer #DFE0FF</span><span class="role-ratio">7.21:1 AAA</span></div>
+<div class="role" style="background:#FFB4AB;color:#68000F"><span class="role-name">error</span>
+<span class="role-meta">#FFB4AB · texto onError #68000F</span><span class="role-ratio">7.75:1 AAA</span></div>
+<div class="role" style="background:#93001A;color:#FFDAD6"><span class="role-name">errorContainer</span>
+<span class="role-meta">#93001A · texto onErrorContainer #FFDAD6</span><span class="role-ratio">7.21:1 AAA</span></div>
+<div class="role" style="background:#52DEA1;color:#003823"><span class="role-name">success</span>
+<span class="role-meta">#52DEA1 · texto onSuccess #003823</span><span class="role-ratio">7.75:1 AAA</span></div>
+<div class="role" style="background:#005235;color:#72FBBD"><span class="role-name">successContainer</span>
+<span class="role-meta">#005235 · texto onSuccessContainer #72FBBD</span><span class="role-ratio">7.20:1 AAA</span></div>
+<div class="role" style="background:#FFBA28;color:#412D00"><span class="role-name">warning</span>
+<span class="role-meta">#FFBA28 · texto onWarning #412D00</span><span class="role-ratio">7.69:1 AAA</span></div>
+<div class="role" style="background:#5E4100;color:#FFDEAE"><span class="role-name">warningContainer</span>
+<span class="role-meta">#5E4100 · texto onWarningContainer #FFDEAE</span><span class="role-ratio">7.31:1 AAA</span></div>
+<div class="role" style="background:#101411;color:#DEE4DF"><span class="role-name">surface</span>
+<span class="role-meta">#101411 · texto onSurface #DEE4DF</span><span class="role-ratio">14.39:1 AAA</span></div>
+<div class="role" style="background:#3F4941;color:#BDCAC0"><span class="role-name">surfaceVariant</span>
+<span class="role-meta">#3F4941 · texto onSurfaceVariant #BDCAC0</span><span class="role-ratio">5.52:1 AA</span></div>
+<div class="role" style="background:#0A100B;color:#DEE4DF"><span class="role-name">surfaceContainerLowest</span>
+<span class="role-meta">#0A100B · texto onSurface #DEE4DF</span><span class="role-ratio">14.90:1 AAA</span></div>
+<div class="role" style="background:#191C19;color:#DEE4DF"><span class="role-name">surfaceContainerLow</span>
+<span class="role-meta">#191C19 · texto onSurface #DEE4DF</span><span class="role-ratio">13.32:1 AAA</span></div>
+<div class="role" style="background:#1D211D;color:#DEE4DF"><span class="role-name">surfaceContainer</span>
+<span class="role-meta">#1D211D · texto onSurface #DEE4DF</span><span class="role-ratio">12.64:1 AAA</span></div>
+<div class="role" style="background:#272B28;color:#DEE4DF"><span class="role-name">surfaceContainerHigh</span>
+<span class="role-meta">#272B28 · texto onSurface #DEE4DF</span><span class="role-ratio">11.12:1 AAA</span></div>
+<div class="role" style="background:#323632;color:#DEE4DF"><span class="role-name">surfaceContainerHighest</span>
+<span class="role-meta">#323632 · texto onSurface #DEE4DF</span><span class="role-ratio">9.52:1 AAA</span></div>
+<div class="role" style="background:#DEE4DF;color:#2D312E"><span class="role-name">inverseSurface</span>
+<span class="role-meta">#DEE4DF · texto inverseOnSurface #2D312E</span><span class="role-ratio">10.23:1 AAA</span></div><div class="role-extra"><div class="role-line"><span class="dot" style="background:#88948A"></span><code>outline</code><span>#88948A</span></div><div class="role-line"><span class="dot" style="background:#3F4941"></span><code>outlineVariant</code><span>#3F4941</span></div><div class="role-line"><span class="dot" style="background:#006D31"></span><code>inversePrimary</code><span>#006D31</span></div><div class="role-line"><span class="dot" style="background:#101411"></span><code>surfaceDim</code><span>#101411</span></div><div class="role-line"><span class="dot" style="background:#363A37"></span><code>surfaceBright</code><span>#363A37</span></div><div class="role-line"><span class="dot" style="background:#000000"></span><code>scrim</code><span>#000000</span></div></div></div></div>
+  </div>
+</div></section>
+
+<section id="esportes" aria-labelledby="esp-t"><div class="wrap-page">
+  <div class="sec-head"><h2 id="esp-t">Esportes</h2>
+  <p>Dez matizes distribuídos pelo círculo cromático, cerca de 35° entre vizinhos. O chip usa container e onContainer (sempre acima de 13:1); o acento serve para ícones sobre a superfície. Chip claro em cima, escuro embaixo.</p></div>
+  <ul class="sports"><li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#C3EEBD;color:#072100"><span class="ms" aria-hidden="true">sports_soccer</span>Futebol society</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#005310;color:#9CF896"><span class="ms" aria-hidden="true">sports_soccer</span>Futebol society</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#006E19" aria-hidden="true">sports_soccer</span>
+<div><strong>Gramado</strong><code>sports_soccer</code><span>Light #C3EEBD / #072100 · 13.28:1</span>
+<span>Dark #005310 / #9CF896 · 7.25:1</span>
+<span>Acento #006E19 · #80DB7C</span></div></div></li>
+<li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#E9DDFF;color:#0C0961"><span class="ms" aria-hidden="true">sports</span>Futsal</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#4B3594;color:#E9DDFF"><span class="ms" aria-hidden="true">sports</span>Futsal</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#664DAF" aria-hidden="true">sports</span>
+<div><strong>Ginásio roxo</strong><code>sports</code><span>Light #E9DDFF / #0C0961 · 13.24:1</span>
+<span>Dark #4B3594 / #E9DDFF · 7.27:1</span>
+<span>Acento #664DAF · #D2BBFF</span></div></div></li>
+<li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#D3E4FF;color:#001D35"><span class="ms" aria-hidden="true">sports_volleyball</span>Vôlei</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#004A7A;color:#D3E4FF"><span class="ms" aria-hidden="true">sports_volleyball</span>Vôlei</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#0062A0" aria-hidden="true">sports_volleyball</span>
+<div><strong>Índigo rede</strong><code>sports_volleyball</code><span>Light #D3E4FF / #001D35 · 13.29:1</span>
+<span>Dark #004A7A / #D3E4FF · 7.22:1</span>
+<span>Acento #0062A0 · #A2C9FF</span></div></div></li>
+<li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#FCDFAA;color:#241A00"><span class="ms" aria-hidden="true">beach_access</span>Vôlei de praia</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#5A4300;color:#FFDEA2"><span class="ms" aria-hidden="true">beach_access</span>Vôlei de praia</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#775A00" aria-hidden="true">beach_access</span>
+<div><strong>Areia</strong><code>beach_access</code><span>Light #FCDFAA / #241A00 · 13.31:1</span>
+<span>Dark #5A4300 / #FFDEA2 · 7.25:1</span>
+<span>Acento #775A00 · #EFC053</span></div></div></li>
+<li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#92F3F0;color:#00201F"><span class="ms" aria-hidden="true">footprint</span>Futevôlei</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#00504F;color:#00FCF9"><span class="ms" aria-hidden="true">footprint</span>Futevôlei</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#006A69" aria-hidden="true">footprint</span>
+<div><strong>Mar turquesa</strong><code>footprint</code><span>Light #92F3F0 / #00201F · 13.29:1</span>
+<span>Dark #00504F / #00FCF9 · 7.21:1</span>
+<span>Acento #006A69 · #00DDDB</span></div></div></li>
+<li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#FFDADA;color:#41000B"><span class="ms" aria-hidden="true">sunny</span>Beach tennis</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#91002B;color:#FFDADA"><span class="ms" aria-hidden="true">sunny</span>Beach tennis</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#B22640" aria-hidden="true">sunny</span>
+<div><strong>Coral</strong><code>sunny</code><span>Light #FFDADA / #41000B · 13.25:1</span>
+<span>Dark #91002B / #FFDADA · 7.28:1</span>
+<span>Acento #B22640 · #FFB3B5</span></div></div></li>
+<li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#BEE9FF;color:#001F2A"><span class="ms" aria-hidden="true">pickleball</span>Padel</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#004D65;color:#BEE9FF"><span class="ms" aria-hidden="true">pickleball</span>Padel</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#006684" aria-hidden="true">pickleball</span>
+<div><strong>Azul vidro</strong><code>pickleball</code><span>Light #BEE9FF / #001F2A · 13.25:1</span>
+<span>Dark #004D65 / #BEE9FF · 7.24:1</span>
+<span>Acento #006684 · #6AD3FF</span></div></div></li>
+<li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#E3E7AC;color:#1C1D00"><span class="ms" aria-hidden="true">sports_tennis</span>Tênis</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#424B00;color:#DFEB73"><span class="ms" aria-hidden="true">sports_tennis</span>Tênis</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#586400" aria-hidden="true">sports_tennis</span>
+<div><strong>Bola limão</strong><code>sports_tennis</code><span>Light #E3E7AC / #1C1D00 · 13.30:1</span>
+<span>Dark #424B00 / #DFEB73 · 7.27:1</span>
+<span>Acento #586400 · #C2CF58</span></div></div></li>
+<li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#FFDBC9;color:#2E1500"><span class="ms" aria-hidden="true">sports_basketball</span>Basquete</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#793100;color:#FFDBC9"><span class="ms" aria-hidden="true">sports_basketball</span>Basquete</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#9D4404" aria-hidden="true">sports_basketball</span>
+<div><strong>Laranja aro</strong><code>sports_basketball</code><span>Light #FFDBC9 / #2E1500 · 13.26:1</span>
+<span>Dark #793100 / #FFDBC9 · 7.21:1</span>
+<span>Acento #9D4404 · #FFB68E</span></div></div></li>
+<li class="sport">
+<div class="sport-pair">
+  <span class="chip-s" style="background:#FFD8EB;color:#3D0028"><span class="ms" aria-hidden="true">sports_handball</span>Handebol</span>
+  <span class="dk-wrap"><span class="chip-s" style="background:#8A005F;color:#FFD8EB"><span class="ms" aria-hidden="true">sports_handball</span>Handebol</span></span>
+</div>
+<div class="sport-meta"><span class="ms big" style="color:#A82879" aria-hidden="true">sports_handball</span>
+<div><strong>Magenta</strong><code>sports_handball</code><span>Light #FFD8EB / #3D0028 · 13.24:1</span>
+<span>Dark #8A005F / #FFD8EB · 7.25:1</span>
+<span>Acento #A82879 · #FFAED9</span></div></div></li></ul>
+</div></section>
+
+<section id="estados" aria-labelledby="est-t"><div class="wrap-page">
+  <div class="sec-head"><h2 id="est-t">Estados</h2>
+  <p>Os estados da reserva e da agenda são o vocabulário de confiança do produto: cor, ícone e rótulo fixos, iguais no badge, no card, na notificação e no e-mail.</p></div>
+  <div class="themes">
+    <div class="theme t-light"><h4>Reserva · light</h4><div class="row wrap"><span class="badge bk-aguardando-pagamento"><span class="ms sm" aria-hidden="true">hourglass_top</span>Aguardando pagamento</span><span class="badge bk-confirmado"><span class="ms sm" aria-hidden="true">check_circle</span>Confirmado</span><span class="badge bk-cancelado"><span class="ms sm" aria-hidden="true">cancel</span>Cancelado</span><span class="badge bk-expirado"><span class="ms sm" aria-hidden="true">timer_off</span>Expirado</span><span class="badge bk-concluido"><span class="ms sm" aria-hidden="true">sports_score</span>Concluído</span></div>
+      <h4 style="margin-top:24px">Horário · light</h4><div class="slots"><div class="slot s-disponivel"><span class="slot-time">Disponível</span><span class="slot-sub">Toque para escolher</span></div><div class="slot s-ocupado"><span class="slot-time">Ocupado</span><span class="slot-sub">Hachura + rótulo</span></div><div class="slot s-pre-reservado"><span class="slot-time">Pré-reservado</span><span class="slot-sub">Libera às 18:40</span></div><div class="slot s-selecionado"><span class="slot-time">Selecionado</span><span class="slot-sub">19:00–20:00</span></div></div></div>
+    <div class="theme t-dark"><h4>Reserva · dark</h4><div class="row wrap"><span class="badge bk-aguardando-pagamento"><span class="ms sm" aria-hidden="true">hourglass_top</span>Aguardando pagamento</span><span class="badge bk-confirmado"><span class="ms sm" aria-hidden="true">check_circle</span>Confirmado</span><span class="badge bk-cancelado"><span class="ms sm" aria-hidden="true">cancel</span>Cancelado</span><span class="badge bk-expirado"><span class="ms sm" aria-hidden="true">timer_off</span>Expirado</span><span class="badge bk-concluido"><span class="ms sm" aria-hidden="true">sports_score</span>Concluído</span></div>
+      <h4 style="margin-top:24px">Horário · dark</h4><div class="slots"><div class="slot s-disponivel"><span class="slot-time">Disponível</span><span class="slot-sub">Toque para escolher</span></div><div class="slot s-ocupado"><span class="slot-time">Ocupado</span><span class="slot-sub">Hachura + rótulo</span></div><div class="slot s-pre-reservado"><span class="slot-time">Pré-reservado</span><span class="slot-sub">Libera às 18:40</span></div><div class="slot s-selecionado"><span class="slot-time">Selecionado</span><span class="slot-sub">19:00–20:00</span></div></div></div>
+  </div>
+</div></section>
+
+<section id="tipografia" aria-labelledby="tip-t"><div class="wrap-page">
+  <div class="sec-head"><h2 id="tip-t">Tipografia</h2>
+  <p>Saira Condensed traz o placar eletrônico e a numeração de camisa. Atkinson Hyperlegible Next, do Braille Institute, separa 0 de O e 1 de l, o que importa quando a tela mostra dinheiro e códigos Pix.</p></div>
+  <div class="fams">
+    <div class="fam"><div class="aa fd">Aa 19:40</div><p>Saira Condensed · 500 a 800 · display, headline, números</p><div class="glyphs fd" style="font-weight:700">0123456789 R$ 240,00 · 8 de 12</div></div>
+    <div class="fam t"><div class="aa">Aa Il1</div><p>Atkinson Hyperlegible Next · 400 a 700 · título, corpo, rótulo</p><div class="glyphs">0O 1lI 5S 8B · Pix copia e cola</div></div>
+  </div>
+  <div class="ty"><div class="ty-meta"><code>displayLarge</code><span>Saira Condensed · 700 · 60/64</span></div>
+<p class="ty-sample fd" style="font-weight:700;font-size:60px;line-height:64px">R$ 240,00</p></div>
+<div class="ty"><div class="ty-meta"><code>displayMedium</code><span>Saira Condensed · 700 · 48/52</span></div>
+<p class="ty-sample fd" style="font-weight:700;font-size:48px;line-height:52px">14:59</p></div>
+<div class="ty"><div class="ty-meta"><code>displaySmall</code><span>Saira Condensed · 700 · 38/44</span></div>
+<p class="ty-sample fd" style="font-weight:700;font-size:38px;line-height:44px">Sua cota: R$ 21,50</p></div>
+<div class="ty"><div class="ty-meta"><code>headlineLarge</code><span>Saira Condensed · 600 · 34/40</span></div>
+<p class="ty-sample fd" style="font-weight:600;font-size:34px;line-height:40px">Fechou o jogo</p></div>
+<div class="ty"><div class="ty-meta"><code>headlineMedium</code><span>Saira Condensed · 600 · 30/36</span></div>
+<p class="ty-sample fd" style="font-weight:600;font-size:30px;line-height:36px">Arena Vila Madalena</p></div>
+<div class="ty"><div class="ty-meta"><code>headlineSmall</code><span>Saira Condensed · 600 · 26/32</span></div>
+<p class="ty-sample fd" style="font-weight:600;font-size:26px;line-height:32px">Racha de quinta</p></div>
+<div class="ty"><div class="ty-meta"><code>titleLarge</code><span>Atkinson Hyperlegible Next · 700 · 22/28</span></div>
+<p class="ty-sample ft" style="font-weight:700;font-size:22px;line-height:28px">Escolha o horário</p></div>
+<div class="ty"><div class="ty-meta"><code>titleMedium</code><span>Atkinson Hyperlegible Next · 700 · 16/24</span></div>
+<p class="ty-sample ft" style="font-weight:700;font-size:16px;line-height:24px">Quadra 2 · Grama sintética</p></div>
+<div class="ty"><div class="ty-meta"><code>titleSmall</code><span>Atkinson Hyperlegible Next · 700 · 14/20</span></div>
+<p class="ty-sample ft" style="font-weight:700;font-size:14px;line-height:20px">Quem já pagou</p></div>
+<div class="ty"><div class="ty-meta"><code>bodyLarge</code><span>Atkinson Hyperlegible Next · 400 · 16/24</span></div>
+<p class="ty-sample ft" style="font-weight:400;font-size:16px;line-height:24px">O horário fica pré-reservado enquanto a galera paga. Pagou tudo, o jogo está confirmado.</p></div>
+<div class="ty"><div class="ty-meta"><code>bodyMedium</code><span>Atkinson Hyperlegible Next · 400 · 14/20</span></div>
+<p class="ty-sample ft" style="font-weight:400;font-size:14px;line-height:20px">Se faltar alguém até 18:40, você cobre a diferença de até R$ 80,00.</p></div>
+<div class="ty"><div class="ty-meta"><code>bodySmall</code><span>Atkinson Hyperlegible Next · 400 · 12/16</span></div>
+<p class="ty-sample ft" style="font-weight:400;font-size:12px;line-height:16px">Taxa de conveniência de R$ 1,50 por cota.</p></div>
+<div class="ty"><div class="ty-meta"><code>labelLarge</code><span>Atkinson Hyperlegible Next · 600 · 14/20</span></div>
+<p class="ty-sample ft" style="font-weight:600;font-size:14px;line-height:20px">Pagar minha cota</p></div>
+<div class="ty"><div class="ty-meta"><code>labelMedium</code><span>Atkinson Hyperlegible Next · 600 · 12/16</span></div>
+<p class="ty-sample ft" style="font-weight:600;font-size:12px;line-height:16px">Vôlei de praia</p></div>
+<div class="ty"><div class="ty-meta"><code>labelSmall</code><span>Atkinson Hyperlegible Next · 600 · 11/16</span></div>
+<p class="ty-sample ft" style="font-weight:600;font-size:11px;line-height:16px">Jogos</p></div>
+</div></section>
+
+<section id="componentes" aria-labelledby="comp-t"><div class="wrap-page">
+  <div class="sec-head"><h2 id="comp-t">Componentes</h2>
+  <p>A mesma marcação nos dois temas, trocando só os tokens semânticos. O rateio em segmentos (uma cota por segmento) é o componente-assinatura do produto.</p></div>
+  <div class="themes">
+    <div class="theme t-light"><p class="theme-label"><span class="ms" aria-hidden="true">light_mode</span>Light</p>
+<div class="comp-block"><h4>SCButton</h4>
+  <div class="row wrap">
+    <button class="btn b-primary" type="button"><span class="ms sm" aria-hidden="true">qr_code_2</span>Pagar R$ 21,50</button>
+    <button class="btn b-secondary" type="button">Pagar com cartão</button>
+    <button class="btn b-tonal" type="button"><span class="ms sm" aria-hidden="true">share</span>Convidar galera</button>
+    <button class="btn b-text" type="button">Ver regras</button>
+    <button class="btn b-destructive" type="button">Cancelar e reembolsar</button>
+    <button class="btn b-primary" type="button" disabled>Pagar R$ 21,50</button>
+    <button class="btn b-primary is-loading" type="button" aria-busy="true"><span class="spin" aria-hidden="true"></span>Gerando código</button>
+  </div>
+</div>
+<div class="comp-block"><h4>SCSportChip · filtro</h4>
+  <div class="row wrap" role="group" aria-label="Filtrar por esporte">
+    <button class="chip-f is-on" type="button" aria-pressed="true" style="--sc:#C3EEBD;--so:#072100;--sa:#006E19"><span class="ms sm" aria-hidden="true">check</span><span class="ms sm" aria-hidden="true">sports_soccer</span>Futebol society</button>
+    <button class="chip-f" type="button" aria-pressed="false" style="--sa:#B22640"><span class="ms sm" aria-hidden="true">sunny</span>Beach tennis</button>
+    <button class="chip-f" type="button" aria-pressed="false" style="--sa:#006684"><span class="ms sm" aria-hidden="true">pickleball</span>Padel</button>
+  </div>
+</div>
+<div class="comp-block"><h4>SCStatusBadge</h4><div class="row wrap"><span class="badge bk-aguardando-pagamento"><span class="ms sm" aria-hidden="true">hourglass_top</span>Aguardando pagamento</span><span class="badge bk-confirmado"><span class="ms sm" aria-hidden="true">check_circle</span>Confirmado</span><span class="badge bk-cancelado"><span class="ms sm" aria-hidden="true">cancel</span>Cancelado</span><span class="badge bk-expirado"><span class="ms sm" aria-hidden="true">timer_off</span>Expirado</span><span class="badge bk-concluido"><span class="ms sm" aria-hidden="true">sports_score</span>Concluído</span></div></div>
+<div class="comp-block"><h4>SCGameCard + SCSplitProgress</h4>
+  <article class="gcard" style="--stripe:#006E19">
+    <div class="row between"><span class="chip-s" style="background:#C3EEBD;color:#072100"><span class="ms sm" aria-hidden="true">sports_soccer</span>Futebol society</span>
+      <span class="badge bk-aguardando-pagamento"><span class="ms sm" aria-hidden="true">hourglass_top</span>Aguardando pagamento</span></div>
+    <h5 class="gtitle">Racha de quinta</h5>
+    <p class="gmeta"><span class="ms sm" aria-hidden="true">stadium</span>Arena Vila Madalena · Quadra 2</p>
+    <p class="gmeta"><span class="ms sm" aria-hidden="true">schedule</span>Qui, 21/11 · 19h–20h</p>
+    <div class="split" role="progressbar" aria-valuemin="0" aria-valuemax="12" aria-valuenow="9" aria-label="9 de 12 cotas resolvidas: 8 pagas e 1 coberta pelo organizador">
+      <div class="row between baseline"><span class="split-num">9<small> de 12</small></span><span class="split-money">R$ 180 de R$ 240</span></div>
+      <div class="segs"><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg cov"></i><i class="seg "></i><i class="seg "></i><i class="seg "></i></div>
+      <div class="legend"><span><i class="lg paid"></i>8 pagas</span><span><i class="lg cov"></i>1 coberta</span><span><i class="lg"></i>3 faltam</span></div>
+    </div>
+    <div class="row between gfoot"><span class="avs" aria-label="Ana, Bruno, Carla, Diego e mais 8"><span class="av" style="background:#664DAF">AS</span><span class="av" style="background:#0062A0">BR</span><span class="av" style="background:#9D4404">CL</span><span class="av" style="background:#006A69">DM</span><span class="av more">+8</span></span>
+      <span class="timer warn"><span class="ms sm" aria-hidden="true">timer</span>42:10</span></div>
+    <button class="btn b-primary full" type="button">Pagar minha cota · R$ 21,50</button>
+  </article>
+</div>
+<div class="comp-block"><h4>SCTimeSlotPicker</h4>
+  <div class="days" role="tablist" aria-label="Dia">
+    <button role="tab" aria-selected="false" class="day" type="button"><small>Qua</small>20</button>
+    <button role="tab" aria-selected="true" class="day on" type="button"><small>Qui</small>21</button>
+    <button role="tab" aria-selected="false" class="day" type="button"><small>Sex</small>22</button>
+    <button role="tab" aria-selected="false" class="day" type="button"><small>Sáb</small>23</button>
+  </div>
+  <div class="slots"><button class="slot s-disponivel" type="button"  aria-pressed="false">
+<span class="slot-time">17:00–18:00</span><span class="slot-sub">R$ 180</span></button><button class="slot s-ocupado" type="button" aria-disabled="true" aria-pressed="false">
+<span class="slot-time">18:00–19:00</span><span class="slot-sub"><span class="ms sm" aria-hidden="true">block</span>Ocupado</span></button><button class="slot s-selecionado" type="button"  aria-pressed="true">
+<span class="slot-time">19:00–20:00</span><span class="slot-sub"><span class="ms sm" aria-hidden="true">check</span>Selecionado</span></button><button class="slot s-pre-reservado" type="button" aria-disabled="true" aria-pressed="false">
+<span class="slot-time">20:00–21:00</span><span class="slot-sub"><span class="ms sm" aria-hidden="true">hourglass_top</span>Libera 18:40</span></button><button class="slot s-disponivel" type="button"  aria-pressed="false">
+<span class="slot-time">21:00–22:00</span><span class="slot-sub">R$ 240</span></button><button class="slot s-ocupado" type="button" aria-disabled="true" aria-pressed="false">
+<span class="slot-time">22:00–23:00</span><span class="slot-sub"><span class="ms sm" aria-hidden="true">block</span>Ocupado</span></button></div>
+</div>
+<div class="comp-block"><h4>SCPixPaymentSheet</h4>
+  <div class="sheet" role="dialog" aria-label="Pague com Pix">
+    <span class="handle" aria-hidden="true"></span>
+    <div class="row between baseline"><h5 class="sheet-title">Pague com Pix</h5><span class="timer"><span class="ms sm" aria-hidden="true">timer</span>14:59</span></div>
+    <p class="sheet-amount">R$ 21,50</p>
+    <p class="sheet-sub">Cota de R$ 20,00 + taxa de conveniência R$ 1,50</p>
+    <div class="qr"><svg viewBox="-2 -2 33 33" role="img" aria-label="QR code Pix ilustrativo de R$ 21,50" shape-rendering="crispEdges"><rect x="-2" y="-2" width="33" height="33" fill="#fff"/><path d="M8 0h1v1h-1zM9 0h1v1h-1zM11 0h1v1h-1zM13 0h1v1h-1zM14 0h1v1h-1zM16 0h1v1h-1zM17 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM9 1h1v1h-1zM10 1h1v1h-1zM14 1h1v1h-1zM16 1h1v1h-1zM18 1h1v1h-1zM19 1h1v1h-1zM20 1h1v1h-1zM8 2h1v1h-1zM10 2h1v1h-1zM13 2h1v1h-1zM15 2h1v1h-1zM16 2h1v1h-1zM17 2h1v1h-1zM19 2h1v1h-1zM20 2h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM13 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM8 4h1v1h-1zM10 4h1v1h-1zM12 4h1v1h-1zM17 4h1v1h-1zM8 5h1v1h-1zM11 5h1v1h-1zM13 5h1v1h-1zM18 5h1v1h-1zM19 5h1v1h-1zM8 6h1v1h-1zM9 6h1v1h-1zM10 6h1v1h-1zM11 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM15 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM19 6h1v1h-1zM11 7h1v1h-1zM12 7h1v1h-1zM13 7h1v1h-1zM16 7h1v1h-1zM17 7h1v1h-1zM18 7h1v1h-1zM19 7h1v1h-1zM1 8h1v1h-1zM2 8h1v1h-1zM3 8h1v1h-1zM4 8h1v1h-1zM11 8h1v1h-1zM16 8h1v1h-1zM17 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM21 8h1v1h-1zM22 8h1v1h-1zM23 8h1v1h-1zM24 8h1v1h-1zM25 8h1v1h-1zM26 8h1v1h-1zM27 8h1v1h-1zM28 8h1v1h-1zM0 9h1v1h-1zM1 9h1v1h-1zM4 9h1v1h-1zM5 9h1v1h-1zM6 9h1v1h-1zM7 9h1v1h-1zM8 9h1v1h-1zM11 9h1v1h-1zM13 9h1v1h-1zM14 9h1v1h-1zM15 9h1v1h-1zM16 9h1v1h-1zM18 9h1v1h-1zM19 9h1v1h-1zM22 9h1v1h-1zM24 9h1v1h-1zM0 10h1v1h-1zM1 10h1v1h-1zM2 10h1v1h-1zM6 10h1v1h-1zM7 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM17 10h1v1h-1zM18 10h1v1h-1zM19 10h1v1h-1zM20 10h1v1h-1zM23 10h1v1h-1zM27 10h1v1h-1zM28 10h1v1h-1zM0 11h1v1h-1zM1 11h1v1h-1zM2 11h1v1h-1zM6 11h1v1h-1zM9 11h1v1h-1zM14 11h1v1h-1zM15 11h1v1h-1zM17 11h1v1h-1zM20 11h1v1h-1zM21 11h1v1h-1zM24 11h1v1h-1zM25 11h1v1h-1zM26 11h1v1h-1zM0 12h1v1h-1zM4 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM12 12h1v1h-1zM15 12h1v1h-1zM16 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM20 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM24 12h1v1h-1zM25 12h1v1h-1zM28 12h1v1h-1zM4 13h1v1h-1zM5 13h1v1h-1zM6 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM10 13h1v1h-1zM13 13h1v1h-1zM17 13h1v1h-1zM19 13h1v1h-1zM20 13h1v1h-1zM26 13h1v1h-1zM2 14h1v1h-1zM4 14h1v1h-1zM9 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM15 14h1v1h-1zM16 14h1v1h-1zM17 14h1v1h-1zM18 14h1v1h-1zM22 14h1v1h-1zM25 14h1v1h-1zM28 14h1v1h-1zM1 15h1v1h-1zM5 15h1v1h-1zM6 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM10 15h1v1h-1zM12 15h1v1h-1zM14 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM19 15h1v1h-1zM23 15h1v1h-1zM24 15h1v1h-1zM25 15h1v1h-1zM27 15h1v1h-1zM28 15h1v1h-1zM0 16h1v1h-1zM3 16h1v1h-1zM4 16h1v1h-1zM8 16h1v1h-1zM9 16h1v1h-1zM11 16h1v1h-1zM12 16h1v1h-1zM16 16h1v1h-1zM18 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM24 16h1v1h-1zM25 16h1v1h-1zM27 16h1v1h-1zM28 16h1v1h-1zM0 17h1v1h-1zM1 17h1v1h-1zM2 17h1v1h-1zM3 17h1v1h-1zM4 17h1v1h-1zM6 17h1v1h-1zM8 17h1v1h-1zM9 17h1v1h-1zM10 17h1v1h-1zM11 17h1v1h-1zM12 17h1v1h-1zM15 17h1v1h-1zM16 17h1v1h-1zM18 17h1v1h-1zM20 17h1v1h-1zM23 17h1v1h-1zM27 17h1v1h-1zM2 18h1v1h-1zM3 18h1v1h-1zM4 18h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM8 18h1v1h-1zM9 18h1v1h-1zM10 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM16 18h1v1h-1zM17 18h1v1h-1zM18 18h1v1h-1zM19 18h1v1h-1zM20 18h1v1h-1zM24 18h1v1h-1zM26 18h1v1h-1zM27 18h1v1h-1zM28 18h1v1h-1zM0 19h1v1h-1zM1 19h1v1h-1zM3 19h1v1h-1zM5 19h1v1h-1zM6 19h1v1h-1zM7 19h1v1h-1zM8 19h1v1h-1zM9 19h1v1h-1zM10 19h1v1h-1zM11 19h1v1h-1zM12 19h1v1h-1zM19 19h1v1h-1zM20 19h1v1h-1zM22 19h1v1h-1zM25 19h1v1h-1zM2 20h1v1h-1zM12 20h1v1h-1zM13 20h1v1h-1zM14 20h1v1h-1zM15 20h1v1h-1zM16 20h1v1h-1zM23 20h1v1h-1zM8 21h1v1h-1zM10 21h1v1h-1zM11 21h1v1h-1zM12 21h1v1h-1zM14 21h1v1h-1zM18 21h1v1h-1zM19 21h1v1h-1zM24 21h1v1h-1zM25 21h1v1h-1zM26 21h1v1h-1zM28 21h1v1h-1zM9 22h1v1h-1zM10 22h1v1h-1zM11 22h1v1h-1zM15 22h1v1h-1zM17 22h1v1h-1zM18 22h1v1h-1zM19 22h1v1h-1zM21 22h1v1h-1zM24 22h1v1h-1zM25 22h1v1h-1zM28 22h1v1h-1zM8 23h1v1h-1zM9 23h1v1h-1zM11 23h1v1h-1zM13 23h1v1h-1zM16 23h1v1h-1zM21 23h1v1h-1zM24 23h1v1h-1zM25 23h1v1h-1zM27 23h1v1h-1zM28 23h1v1h-1zM8 24h1v1h-1zM9 24h1v1h-1zM10 24h1v1h-1zM12 24h1v1h-1zM15 24h1v1h-1zM19 24h1v1h-1zM20 24h1v1h-1zM21 24h1v1h-1zM24 24h1v1h-1zM25 24h1v1h-1zM26 24h1v1h-1zM27 24h1v1h-1zM28 24h1v1h-1zM9 25h1v1h-1zM11 25h1v1h-1zM12 25h1v1h-1zM14 25h1v1h-1zM15 25h1v1h-1zM24 25h1v1h-1zM26 25h1v1h-1zM8 26h1v1h-1zM9 26h1v1h-1zM11 26h1v1h-1zM12 26h1v1h-1zM13 26h1v1h-1zM14 26h1v1h-1zM17 26h1v1h-1zM19 26h1v1h-1zM21 26h1v1h-1zM22 26h1v1h-1zM23 26h1v1h-1zM24 26h1v1h-1zM27 26h1v1h-1zM9 27h1v1h-1zM10 27h1v1h-1zM11 27h1v1h-1zM12 27h1v1h-1zM13 27h1v1h-1zM14 27h1v1h-1zM15 27h1v1h-1zM16 27h1v1h-1zM20 27h1v1h-1zM21 27h1v1h-1zM23 27h1v1h-1zM24 27h1v1h-1zM25 27h1v1h-1zM26 27h1v1h-1zM28 27h1v1h-1zM11 28h1v1h-1zM12 28h1v1h-1zM13 28h1v1h-1zM14 28h1v1h-1zM15 28h1v1h-1zM19 28h1v1h-1zM20 28h1v1h-1zM23 28h1v1h-1zM25 28h1v1h-1zM26 28h1v1h-1z" fill="#000"/><rect x="0" y="0" width="7" height="7" fill="#000"/><rect x="1" y="1" width="5" height="5" fill="#fff"/><rect x="2" y="2" width="3" height="3" fill="#000"/><rect x="22" y="0" width="7" height="7" fill="#000"/><rect x="23" y="1" width="5" height="5" fill="#fff"/><rect x="24" y="2" width="3" height="3" fill="#000"/><rect x="0" y="22" width="7" height="7" fill="#000"/><rect x="1" y="23" width="5" height="5" fill="#fff"/><rect x="2" y="24" width="3" height="3" fill="#000"/></svg></div>
+    <button class="btn b-primary full lg" type="button"><span class="ms sm" aria-hidden="true">content_copy</span>Copiar código Pix</button>
+    <p class="pixcode">00020126580014BR.GOV.BCB.PIX0136a1b2c3d4-e5f6-7890-abcd-ef1234567890520400005303986540521.505802BR5913SPORTCONNECT…</p>
+    <p class="live"><span class="pulse" aria-hidden="true"></span>Aguardando pagamento…</p>
+    <button class="btn b-text" type="button">Pagar com cartão</button>
+  </div>
+</div>
+<div class="comp-block"><h4>SCSnackbar</h4>
+  <div class="snack" role="status"><span class="ms sm" aria-hidden="true">check_circle</span>Código Pix copiado<button class="snack-act" type="button">Abrir banco</button></div>
+</div></div>
+    <div class="theme t-dark"><p class="theme-label"><span class="ms" aria-hidden="true">dark_mode</span>Dark</p>
+<div class="comp-block"><h4>SCButton</h4>
+  <div class="row wrap">
+    <button class="btn b-primary" type="button"><span class="ms sm" aria-hidden="true">qr_code_2</span>Pagar R$ 21,50</button>
+    <button class="btn b-secondary" type="button">Pagar com cartão</button>
+    <button class="btn b-tonal" type="button"><span class="ms sm" aria-hidden="true">share</span>Convidar galera</button>
+    <button class="btn b-text" type="button">Ver regras</button>
+    <button class="btn b-destructive" type="button">Cancelar e reembolsar</button>
+    <button class="btn b-primary" type="button" disabled>Pagar R$ 21,50</button>
+    <button class="btn b-primary is-loading" type="button" aria-busy="true"><span class="spin" aria-hidden="true"></span>Gerando código</button>
+  </div>
+</div>
+<div class="comp-block"><h4>SCSportChip · filtro</h4>
+  <div class="row wrap" role="group" aria-label="Filtrar por esporte">
+    <button class="chip-f is-on" type="button" aria-pressed="true" style="--sc:#005310;--so:#9CF896;--sa:#80DB7C"><span class="ms sm" aria-hidden="true">check</span><span class="ms sm" aria-hidden="true">sports_soccer</span>Futebol society</button>
+    <button class="chip-f" type="button" aria-pressed="false" style="--sa:#FFB3B5"><span class="ms sm" aria-hidden="true">sunny</span>Beach tennis</button>
+    <button class="chip-f" type="button" aria-pressed="false" style="--sa:#6AD3FF"><span class="ms sm" aria-hidden="true">pickleball</span>Padel</button>
+  </div>
+</div>
+<div class="comp-block"><h4>SCStatusBadge</h4><div class="row wrap"><span class="badge bk-aguardando-pagamento"><span class="ms sm" aria-hidden="true">hourglass_top</span>Aguardando pagamento</span><span class="badge bk-confirmado"><span class="ms sm" aria-hidden="true">check_circle</span>Confirmado</span><span class="badge bk-cancelado"><span class="ms sm" aria-hidden="true">cancel</span>Cancelado</span><span class="badge bk-expirado"><span class="ms sm" aria-hidden="true">timer_off</span>Expirado</span><span class="badge bk-concluido"><span class="ms sm" aria-hidden="true">sports_score</span>Concluído</span></div></div>
+<div class="comp-block"><h4>SCGameCard + SCSplitProgress</h4>
+  <article class="gcard" style="--stripe:#80DB7C">
+    <div class="row between"><span class="chip-s" style="background:#005310;color:#9CF896"><span class="ms sm" aria-hidden="true">sports_soccer</span>Futebol society</span>
+      <span class="badge bk-aguardando-pagamento"><span class="ms sm" aria-hidden="true">hourglass_top</span>Aguardando pagamento</span></div>
+    <h5 class="gtitle">Racha de quinta</h5>
+    <p class="gmeta"><span class="ms sm" aria-hidden="true">stadium</span>Arena Vila Madalena · Quadra 2</p>
+    <p class="gmeta"><span class="ms sm" aria-hidden="true">schedule</span>Qui, 21/11 · 19h–20h</p>
+    <div class="split" role="progressbar" aria-valuemin="0" aria-valuemax="12" aria-valuenow="9" aria-label="9 de 12 cotas resolvidas: 8 pagas e 1 coberta pelo organizador">
+      <div class="row between baseline"><span class="split-num">9<small> de 12</small></span><span class="split-money">R$ 180 de R$ 240</span></div>
+      <div class="segs"><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg paid"></i><i class="seg cov"></i><i class="seg "></i><i class="seg "></i><i class="seg "></i></div>
+      <div class="legend"><span><i class="lg paid"></i>8 pagas</span><span><i class="lg cov"></i>1 coberta</span><span><i class="lg"></i>3 faltam</span></div>
+    </div>
+    <div class="row between gfoot"><span class="avs" aria-label="Ana, Bruno, Carla, Diego e mais 8"><span class="av" style="background:#664DAF">AS</span><span class="av" style="background:#0062A0">BR</span><span class="av" style="background:#9D4404">CL</span><span class="av" style="background:#006A69">DM</span><span class="av more">+8</span></span>
+      <span class="timer warn"><span class="ms sm" aria-hidden="true">timer</span>42:10</span></div>
+    <button class="btn b-primary full" type="button">Pagar minha cota · R$ 21,50</button>
+  </article>
+</div>
+<div class="comp-block"><h4>SCTimeSlotPicker</h4>
+  <div class="days" role="tablist" aria-label="Dia">
+    <button role="tab" aria-selected="false" class="day" type="button"><small>Qua</small>20</button>
+    <button role="tab" aria-selected="true" class="day on" type="button"><small>Qui</small>21</button>
+    <button role="tab" aria-selected="false" class="day" type="button"><small>Sex</small>22</button>
+    <button role="tab" aria-selected="false" class="day" type="button"><small>Sáb</small>23</button>
+  </div>
+  <div class="slots"><button class="slot s-disponivel" type="button"  aria-pressed="false">
+<span class="slot-time">17:00–18:00</span><span class="slot-sub">R$ 180</span></button><button class="slot s-ocupado" type="button" aria-disabled="true" aria-pressed="false">
+<span class="slot-time">18:00–19:00</span><span class="slot-sub"><span class="ms sm" aria-hidden="true">block</span>Ocupado</span></button><button class="slot s-selecionado" type="button"  aria-pressed="true">
+<span class="slot-time">19:00–20:00</span><span class="slot-sub"><span class="ms sm" aria-hidden="true">check</span>Selecionado</span></button><button class="slot s-pre-reservado" type="button" aria-disabled="true" aria-pressed="false">
+<span class="slot-time">20:00–21:00</span><span class="slot-sub"><span class="ms sm" aria-hidden="true">hourglass_top</span>Libera 18:40</span></button><button class="slot s-disponivel" type="button"  aria-pressed="false">
+<span class="slot-time">21:00–22:00</span><span class="slot-sub">R$ 240</span></button><button class="slot s-ocupado" type="button" aria-disabled="true" aria-pressed="false">
+<span class="slot-time">22:00–23:00</span><span class="slot-sub"><span class="ms sm" aria-hidden="true">block</span>Ocupado</span></button></div>
+</div>
+<div class="comp-block"><h4>SCPixPaymentSheet</h4>
+  <div class="sheet" role="dialog" aria-label="Pague com Pix">
+    <span class="handle" aria-hidden="true"></span>
+    <div class="row between baseline"><h5 class="sheet-title">Pague com Pix</h5><span class="timer"><span class="ms sm" aria-hidden="true">timer</span>14:59</span></div>
+    <p class="sheet-amount">R$ 21,50</p>
+    <p class="sheet-sub">Cota de R$ 20,00 + taxa de conveniência R$ 1,50</p>
+    <div class="qr"><svg viewBox="-2 -2 33 33" role="img" aria-label="QR code Pix ilustrativo de R$ 21,50" shape-rendering="crispEdges"><rect x="-2" y="-2" width="33" height="33" fill="#fff"/><path d="M8 0h1v1h-1zM9 0h1v1h-1zM11 0h1v1h-1zM13 0h1v1h-1zM14 0h1v1h-1zM16 0h1v1h-1zM17 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM9 1h1v1h-1zM10 1h1v1h-1zM14 1h1v1h-1zM16 1h1v1h-1zM18 1h1v1h-1zM19 1h1v1h-1zM20 1h1v1h-1zM8 2h1v1h-1zM10 2h1v1h-1zM13 2h1v1h-1zM15 2h1v1h-1zM16 2h1v1h-1zM17 2h1v1h-1zM19 2h1v1h-1zM20 2h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM13 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM8 4h1v1h-1zM10 4h1v1h-1zM12 4h1v1h-1zM17 4h1v1h-1zM8 5h1v1h-1zM11 5h1v1h-1zM13 5h1v1h-1zM18 5h1v1h-1zM19 5h1v1h-1zM8 6h1v1h-1zM9 6h1v1h-1zM10 6h1v1h-1zM11 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM15 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM19 6h1v1h-1zM11 7h1v1h-1zM12 7h1v1h-1zM13 7h1v1h-1zM16 7h1v1h-1zM17 7h1v1h-1zM18 7h1v1h-1zM19 7h1v1h-1zM1 8h1v1h-1zM2 8h1v1h-1zM3 8h1v1h-1zM4 8h1v1h-1zM11 8h1v1h-1zM16 8h1v1h-1zM17 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM21 8h1v1h-1zM22 8h1v1h-1zM23 8h1v1h-1zM24 8h1v1h-1zM25 8h1v1h-1zM26 8h1v1h-1zM27 8h1v1h-1zM28 8h1v1h-1zM0 9h1v1h-1zM1 9h1v1h-1zM4 9h1v1h-1zM5 9h1v1h-1zM6 9h1v1h-1zM7 9h1v1h-1zM8 9h1v1h-1zM11 9h1v1h-1zM13 9h1v1h-1zM14 9h1v1h-1zM15 9h1v1h-1zM16 9h1v1h-1zM18 9h1v1h-1zM19 9h1v1h-1zM22 9h1v1h-1zM24 9h1v1h-1zM0 10h1v1h-1zM1 10h1v1h-1zM2 10h1v1h-1zM6 10h1v1h-1zM7 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM17 10h1v1h-1zM18 10h1v1h-1zM19 10h1v1h-1zM20 10h1v1h-1zM23 10h1v1h-1zM27 10h1v1h-1zM28 10h1v1h-1zM0 11h1v1h-1zM1 11h1v1h-1zM2 11h1v1h-1zM6 11h1v1h-1zM9 11h1v1h-1zM14 11h1v1h-1zM15 11h1v1h-1zM17 11h1v1h-1zM20 11h1v1h-1zM21 11h1v1h-1zM24 11h1v1h-1zM25 11h1v1h-1zM26 11h1v1h-1zM0 12h1v1h-1zM4 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM12 12h1v1h-1zM15 12h1v1h-1zM16 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM20 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM24 12h1v1h-1zM25 12h1v1h-1zM28 12h1v1h-1zM4 13h1v1h-1zM5 13h1v1h-1zM6 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM10 13h1v1h-1zM13 13h1v1h-1zM17 13h1v1h-1zM19 13h1v1h-1zM20 13h1v1h-1zM26 13h1v1h-1zM2 14h1v1h-1zM4 14h1v1h-1zM9 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM15 14h1v1h-1zM16 14h1v1h-1zM17 14h1v1h-1zM18 14h1v1h-1zM22 14h1v1h-1zM25 14h1v1h-1zM28 14h1v1h-1zM1 15h1v1h-1zM5 15h1v1h-1zM6 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM10 15h1v1h-1zM12 15h1v1h-1zM14 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM19 15h1v1h-1zM23 15h1v1h-1zM24 15h1v1h-1zM25 15h1v1h-1zM27 15h1v1h-1zM28 15h1v1h-1zM0 16h1v1h-1zM3 16h1v1h-1zM4 16h1v1h-1zM8 16h1v1h-1zM9 16h1v1h-1zM11 16h1v1h-1zM12 16h1v1h-1zM16 16h1v1h-1zM18 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM24 16h1v1h-1zM25 16h1v1h-1zM27 16h1v1h-1zM28 16h1v1h-1zM0 17h1v1h-1zM1 17h1v1h-1zM2 17h1v1h-1zM3 17h1v1h-1zM4 17h1v1h-1zM6 17h1v1h-1zM8 17h1v1h-1zM9 17h1v1h-1zM10 17h1v1h-1zM11 17h1v1h-1zM12 17h1v1h-1zM15 17h1v1h-1zM16 17h1v1h-1zM18 17h1v1h-1zM20 17h1v1h-1zM23 17h1v1h-1zM27 17h1v1h-1zM2 18h1v1h-1zM3 18h1v1h-1zM4 18h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM8 18h1v1h-1zM9 18h1v1h-1zM10 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM16 18h1v1h-1zM17 18h1v1h-1zM18 18h1v1h-1zM19 18h1v1h-1zM20 18h1v1h-1zM24 18h1v1h-1zM26 18h1v1h-1zM27 18h1v1h-1zM28 18h1v1h-1zM0 19h1v1h-1zM1 19h1v1h-1zM3 19h1v1h-1zM5 19h1v1h-1zM6 19h1v1h-1zM7 19h1v1h-1zM8 19h1v1h-1zM9 19h1v1h-1zM10 19h1v1h-1zM11 19h1v1h-1zM12 19h1v1h-1zM19 19h1v1h-1zM20 19h1v1h-1zM22 19h1v1h-1zM25 19h1v1h-1zM2 20h1v1h-1zM12 20h1v1h-1zM13 20h1v1h-1zM14 20h1v1h-1zM15 20h1v1h-1zM16 20h1v1h-1zM23 20h1v1h-1zM8 21h1v1h-1zM10 21h1v1h-1zM11 21h1v1h-1zM12 21h1v1h-1zM14 21h1v1h-1zM18 21h1v1h-1zM19 21h1v1h-1zM24 21h1v1h-1zM25 21h1v1h-1zM26 21h1v1h-1zM28 21h1v1h-1zM9 22h1v1h-1zM10 22h1v1h-1zM11 22h1v1h-1zM15 22h1v1h-1zM17 22h1v1h-1zM18 22h1v1h-1zM19 22h1v1h-1zM21 22h1v1h-1zM24 22h1v1h-1zM25 22h1v1h-1zM28 22h1v1h-1zM8 23h1v1h-1zM9 23h1v1h-1zM11 23h1v1h-1zM13 23h1v1h-1zM16 23h1v1h-1zM21 23h1v1h-1zM24 23h1v1h-1zM25 23h1v1h-1zM27 23h1v1h-1zM28 23h1v1h-1zM8 24h1v1h-1zM9 24h1v1h-1zM10 24h1v1h-1zM12 24h1v1h-1zM15 24h1v1h-1zM19 24h1v1h-1zM20 24h1v1h-1zM21 24h1v1h-1zM24 24h1v1h-1zM25 24h1v1h-1zM26 24h1v1h-1zM27 24h1v1h-1zM28 24h1v1h-1zM9 25h1v1h-1zM11 25h1v1h-1zM12 25h1v1h-1zM14 25h1v1h-1zM15 25h1v1h-1zM24 25h1v1h-1zM26 25h1v1h-1zM8 26h1v1h-1zM9 26h1v1h-1zM11 26h1v1h-1zM12 26h1v1h-1zM13 26h1v1h-1zM14 26h1v1h-1zM17 26h1v1h-1zM19 26h1v1h-1zM21 26h1v1h-1zM22 26h1v1h-1zM23 26h1v1h-1zM24 26h1v1h-1zM27 26h1v1h-1zM9 27h1v1h-1zM10 27h1v1h-1zM11 27h1v1h-1zM12 27h1v1h-1zM13 27h1v1h-1zM14 27h1v1h-1zM15 27h1v1h-1zM16 27h1v1h-1zM20 27h1v1h-1zM21 27h1v1h-1zM23 27h1v1h-1zM24 27h1v1h-1zM25 27h1v1h-1zM26 27h1v1h-1zM28 27h1v1h-1zM11 28h1v1h-1zM12 28h1v1h-1zM13 28h1v1h-1zM14 28h1v1h-1zM15 28h1v1h-1zM19 28h1v1h-1zM20 28h1v1h-1zM23 28h1v1h-1zM25 28h1v1h-1zM26 28h1v1h-1z" fill="#000"/><rect x="0" y="0" width="7" height="7" fill="#000"/><rect x="1" y="1" width="5" height="5" fill="#fff"/><rect x="2" y="2" width="3" height="3" fill="#000"/><rect x="22" y="0" width="7" height="7" fill="#000"/><rect x="23" y="1" width="5" height="5" fill="#fff"/><rect x="24" y="2" width="3" height="3" fill="#000"/><rect x="0" y="22" width="7" height="7" fill="#000"/><rect x="1" y="23" width="5" height="5" fill="#fff"/><rect x="2" y="24" width="3" height="3" fill="#000"/></svg></div>
+    <button class="btn b-primary full lg" type="button"><span class="ms sm" aria-hidden="true">content_copy</span>Copiar código Pix</button>
+    <p class="pixcode">00020126580014BR.GOV.BCB.PIX0136a1b2c3d4-e5f6-7890-abcd-ef1234567890520400005303986540521.505802BR5913SPORTCONNECT…</p>
+    <p class="live"><span class="pulse" aria-hidden="true"></span>Aguardando pagamento…</p>
+    <button class="btn b-text" type="button">Pagar com cartão</button>
+  </div>
+</div>
+<div class="comp-block"><h4>SCSnackbar</h4>
+  <div class="snack" role="status"><span class="ms sm" aria-hidden="true">check_circle</span>Código Pix copiado<button class="snack-act" type="button">Abrir banco</button></div>
+</div></div>
+  </div>
+</div></section>
+
+<section id="forma" aria-labelledby="forma-t"><div class="wrap-page">
+  <div class="sec-head"><h2 id="forma-t">Forma e motion</h2>
+  <p>Raios com hierarquia: quanto mais contêiner, mais arredondado. Botões ficam em 12dp, como placa de placar, e não em pílula. O movimento responde ao toque; a única celebração é o "Fechou!".</p></div>
+  <div class="shapes"><div class="shape"><div style="border-radius:4px"></div><strong>xs · 4dp</strong><span>Badge</span></div><div class="shape"><div style="border-radius:8px"></div><strong>sm · 8dp</strong><span>Chip</span></div><div class="shape"><div style="border-radius:12px"></div><strong>md · 12dp</strong><span>Botão, campo, slot</span></div><div class="shape"><div style="border-radius:16px"></div><strong>lg · 16dp</strong><span>QR, card pequeno</span></div><div class="shape"><div style="border-radius:24px"></div><strong>xl · 24dp</strong><span>Game card</span></div><div class="shape"><div style="border-radius:28px"></div><strong>xxl · 28dp</strong><span>Sheet, diálogo</span></div><div class="shape"><div style="border-radius:999px"></div><strong>full · 999dp</strong><span>Avatar, FAB</span></div></div>
+  <div class="spacing" aria-label="Escala de espaçamento"><div class="sp-row"><code>space.1 · 4</code><i style="width:16px"></i></div><div class="sp-row"><code>space.2 · 8</code><i style="width:32px"></i></div><div class="sp-row"><code>space.3 · 12</code><i style="width:48px"></i></div><div class="sp-row"><code>space.4 · 16</code><i style="width:64px"></i></div><div class="sp-row"><code>space.6 · 24</code><i style="width:96px"></i></div><div class="sp-row"><code>space.8 · 32</code><i style="width:128px"></i></div><div class="sp-row"><code>space.12 · 48</code><i style="width:192px"></i></div><div class="sp-row"><code>space.16 · 64</code><i style="width:256px"></i></div></div>
+  <div class="motion">
+    <div class="mcard m1" tabindex="0"><strong>standard · 300ms</strong><code>cubic-bezier(0.2, 0, 0, 1)</code><div class="track"><b></b></div></div>
+    <div class="mcard m2" tabindex="0"><strong>emphasized · 400ms</strong><code>cubic-bezier(0.05, 0.7, 0.1, 1)</code><div class="track"><b></b></div></div>
+    <div class="mcard m3" tabindex="0"><strong>apito · 700ms</strong><code>cubic-bezier(0.34, 1.4, 0.64, 1)</code><div class="track"><b></b></div></div>
+  </div>
+  <p style="color:var(--onSurfaceVariant);font-size:14px;margin-top:12px">Passe o mouse ou foque um cartão para ver a curva.</p>
+</div></section>
+</main>
+<footer><div class="wrap-page"><span>SportConnect · Placar DS v1.0.0 · tokens em <a href="design-tokens.json">design-tokens.json</a></span><span>Documentação: <a href="05-visual-design.md">05 Visual design</a> · <a href="06-design-system.md">06 Design system</a></span></div></footer>
+</body>
+</html>

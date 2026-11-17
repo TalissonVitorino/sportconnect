@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SportConnect - strings pt-BR (Compose Multiplatform resources)
+  Gerado a partir de docs/07-ux-writing.md. Não editar textos aqui sem atualizar o catálogo.
+  Destino: app/composeApp/src/commonMain/composeResources/values/strings.xml
+  Placeholders: %1$s = texto/valor já formatado; %1$d = inteiro.
+-->
+<resources>
+
+    <!-- 3.1 Comum (`common_`) -->
+    <string name="common_continue">Continuar</string>
+    <string name="common_back">Voltar</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_close">Fechar</string>
+    <string name="common_save">Salvar</string>
+    <string name="common_edit">Editar</string>
+    <string name="common_retry">Tentar de novo</string>
+    <string name="common_copy">Copiar</string>
+    <string name="common_copied">Copiado</string>
+    <string name="common_share">Compartilhar</string>
+    <string name="common_see_all">Ver todos</string>
+    <string name="common_see_details">Ver detalhes</string>
+    <string name="common_loading">Carregando…</string>
+    <string name="common_today">hoje</string>
+    <string name="common_tomorrow">amanhã</string>
+    <string name="common_per_person">por pessoa</string>
+    <string name="common_date_time">%1$s · %2$s</string>
+    <string name="common_currency_per_person">%1$s por pessoa</string>
+    <string name="common_convenience_fee">Taxa de conveniência</string>
+    <string name="common_help">Ajuda</string>
+
+    <!-- 3.2 Onboarding (`onboarding_`) -->
+    <string name="onboarding_1_title">Seu jogo, sem planilha</string>
+    <string name="onboarding_1_body">Escolha a quadra, chame a galera e acompanhe quem já pagou, tudo num lugar só.</string>
+    <string name="onboarding_2_title">Cada um paga a sua parte</string>
+    <string name="onboarding_2_body">O valor da quadra é dividido entre as vagas. Cada atleta paga a própria cota por Pix, direto no link.</string>
+    <string name="onboarding_3_title">Quadra garantida quando todo mundo paga</string>
+    <string name="onboarding_3_body">O horário fica pré-reservado enquanto a galera paga. Pagou tudo, o jogo está confirmado.</string>
+    <string name="onboarding_skip">Pular</string>
+    <string name="onboarding_next">Próximo</string>
+    <string name="onboarding_start">Começar</string>
+    <string name="onboarding_sports_title">Quais esportes você joga?</string>
+    <string name="onboarding_sports_body">Vamos mostrar quadras e jogos desses esportes primeiro. Dá pra mudar depois.</string>
+    <string name="onboarding_location_title">Encontre quadras perto de você</string>
+    <string name="onboarding_location_body">Usamos sua localização só para mostrar arenas próximas. Não compartilhamos com ninguém.</string>
+    <string name="onboarding_location_allow">Usar minha localização</string>
+    <string name="onboarding_location_manual">Digitar minha cidade</string>
+    <string name="onboarding_role_arena">Tenho uma arena</string>
+
+    <!-- 3.3 Login e cadastro (`auth_`) -->
+    <string name="auth_title">Entre com seu celular</string>
+    <string name="auth_body">Enviamos um código por SMS ou WhatsApp. Sem senha pra decorar.</string>
+    <string name="auth_phone_label">Celular com DDD</string>
+    <string name="auth_phone_placeholder">(11) 98765-4321</string>
+    <string name="auth_send_code">Receber código</string>
+    <string name="auth_send_code_whatsapp">Receber pelo WhatsApp</string>
+    <string name="auth_code_title">Digite o código</string>
+    <string name="auth_code_body">Enviamos 6 números para %1$s.</string>
+    <string name="auth_code_resend">Reenviar código</string>
+    <string name="auth_code_resend_in">Reenviar em %1$ds</string>
+    <string name="auth_code_wrong_number">Trocar número</string>
+    <string name="auth_name_title">Como a galera te chama?</string>
+    <string name="auth_name_label">Nome ou apelido</string>
+    <string name="auth_terms">Ao continuar, você concorda com os Termos de Uso e a Política de Privacidade.</string>
+    <string name="auth_google">Continuar com Google</string>
+    <string name="auth_apple">Continuar com Apple</string>
+    <string name="auth_logout">Sair da conta</string>
+
+    <!-- 3.4 Home (`home_`) -->
+    <string name="home_greeting">E aí, %1$s!</string>
+    <string name="home_cta_create_game">Criar jogo</string>
+    <string name="home_cta_find_court">Buscar quadra</string>
+    <string name="home_section_next_games">Seus próximos jogos</string>
+    <string name="home_section_pending_payment">Falta pagar</string>
+    <string name="home_section_open_games">Jogos com vaga perto de você</string>
+    <string name="home_card_status_pending">Pré-reserva · %1$d de %2$d pagas</string>
+    <string name="home_card_status_confirmed">Confirmado</string>
+    <string name="home_card_deadline">Prazo: %1$s</string>
+    <string name="home_pay_now">Pagar minha cota</string>
+
+    <!-- 3.5 Busca de quadras (`search_`) -->
+    <string name="search_title">Buscar quadra</string>
+    <string name="search_field_placeholder">Arena, bairro ou cidade</string>
+    <string name="search_filter_sport">Esporte</string>
+    <string name="search_filter_date">Data</string>
+    <string name="search_filter_time">Horário</string>
+    <string name="search_filter_price">Preço</string>
+    <string name="search_filter_covered">Coberta</string>
+    <string name="search_filter_apply">Ver %1$d quadras</string>
+    <string name="search_filter_clear">Limpar filtros</string>
+    <string name="search_results_count">%1$d quadras livres %2$s</string>
+    <string name="search_sort_distance">Mais perto</string>
+    <string name="search_sort_price">Menor preço</string>
+    <string name="search_card_price_from">a partir de %1$s/h</string>
+    <string name="search_card_distance">%1$s km</string>
+    <string name="search_map_view">Ver no mapa</string>
+    <string name="search_list_view">Ver em lista</string>
+
+    <!-- 3.6 Detalhe da arena (`arena_detail_`) -->
+    <string name="arena_detail_courts">Quadras</string>
+    <string name="arena_detail_amenities">Estrutura</string>
+    <string name="arena_detail_amenity_parking">Estacionamento</string>
+    <string name="arena_detail_amenity_locker">Vestiário</string>
+    <string name="arena_detail_amenity_bar">Bar e lanchonete</string>
+    <string name="arena_detail_amenity_lighting">Iluminação noturna</string>
+    <string name="arena_detail_rules">Regras da arena</string>
+    <string name="arena_detail_cancellation_policy">Política de cancelamento</string>
+    <string name="arena_detail_open_maps">Como chegar</string>
+    <string name="arena_detail_call">Ligar para a arena</string>
+    <string name="arena_detail_court_surface">Piso: %1$s</string>
+    <string name="arena_detail_see_times">Ver horários</string>
+
+    <!-- 3.7 Seleção de horário (`slot_`) -->
+    <string name="slot_title">Escolha o horário</string>
+    <string name="slot_duration_label">Duração</string>
+    <string name="slot_duration_option">%1$s</string>
+    <string name="slot_available">Livre</string>
+    <string name="slot_unavailable">Ocupado</string>
+    <string name="slot_on_hold">Pré-reservado</string>
+    <string name="slot_price">%1$s</string>
+    <string name="slot_summary">%1$s · %2$s · %3$s</string>
+    <string name="slot_too_soon_hint">Jogos com menos de 2h de antecedência precisam ser pagos na hora.</string>
+    <string name="slot_select_cta">Reservar este horário</string>
+    <string name="slot_hold_notice">Ao continuar, seguramos este horário por %1$s enquanto a galera paga.</string>
+
+    <!-- 3.8 Criar jogo (`game_create_`) -->
+    <string name="game_create_title">Criar jogo</string>
+    <string name="game_create_step_court">Quadra e horário</string>
+    <string name="game_create_step_split">Vagas e rateio</string>
+    <string name="game_create_step_rule">Se alguém não pagar</string>
+    <string name="game_create_name_label">Nome do jogo (opcional)</string>
+    <string name="game_create_name_placeholder">Ex.: Futebol da firma</string>
+    <string name="game_create_sport_label">Esporte</string>
+    <string name="game_create_spots_label">Quantas vagas?</string>
+    <string name="game_create_spots_helper">Contando com você. O valor da quadra é dividido por esse número.</string>
+    <string name="game_create_split_preview">%1$s ÷ %2$d vagas = %3$s por pessoa</string>
+    <string name="game_create_fee_notice">Cada atleta paga também %1$s de taxa de conveniência.</string>
+    <string name="game_create_organizer_pays_own">Pagar minha cota agora</string>
+    <string name="game_create_deadline_label">Prazo para todo mundo pagar</string>
+    <string name="game_create_deadline_value">Até %1$s</string>
+    <string name="game_create_deadline_helper">O horário fica pré-reservado até lá. O prazo máximo é 2h antes do jogo.</string>
+    <string name="game_create_rule_title">E se alguém não pagar até o prazo?</string>
+    <string name="game_create_rule_body">Escolha o que acontece. A galera vê essa regra antes de pagar.</string>
+    <string name="game_create_rule_covers_title">Eu cubro o que faltar</string>
+    <string name="game_create_rule_covers_body">O jogo acontece de qualquer jeito. Você paga as cotas que faltarem no prazo.</string>
+    <string name="game_create_rule_covers_example">Ex.: se 2 pessoas não pagarem, você paga %1$s.</string>
+    <string name="game_create_rule_cancel_title">Cancelar e devolver para todos</string>
+    <string name="game_create_rule_cancel_body">Se faltar alguma cota no prazo, o jogo é cancelado e todo mundo recebe o dinheiro de volta.</string>
+    <string name="game_create_rule_resplit_title">Dividir o que faltar entre quem pagou</string>
+    <string name="game_create_rule_resplit_body">O valor que faltar é dividido entre quem já pagou. Cada um precisa aceitar. Quem não aceitar recebe o dinheiro de volta.</string>
+    <string name="game_create_rule_recommended">Recomendado</string>
+    <string name="game_create_review_title">Confira antes de criar</string>
+    <string name="game_create_total_label">Valor da quadra</string>
+    <string name="game_create_cta">Criar jogo e chamar a galera</string>
+    <string name="game_create_success">Jogo criado! Agora é só mandar o link.</string>
+
+    <!-- 3.9 Convite (`invite_`) -->
+    <string name="invite_title">Chame a galera</string>
+    <string name="invite_body">Mande o link no grupo. Cada um paga a própria cota e a vaga fica garantida.</string>
+    <string name="invite_share_whatsapp">Enviar no WhatsApp</string>
+    <string name="invite_copy_link">Copiar link</string>
+    <string name="invite_link_copied">Link copiado. Cole no grupo da galera.</string>
+    <string name="invite_share_other">Outros apps</string>
+    <string name="invite_message_preview_label">Mensagem que vai ser enviada</string>
+
+    <!-- 3.10 Tela do convidado (`guest_`) -->
+    <string name="guest_invited_by">%1$s te chamou pra jogar</string>
+    <string name="guest_spots_left">%1$d vagas abertas de %2$d</string>
+    <string name="guest_your_share">Sua cota</string>
+    <string name="guest_share_breakdown">%1$s + %2$s de taxa</string>
+    <string name="guest_deadline">Pague até %1$s pra garantir sua vaga</string>
+    <string name="guest_rule_label">Se alguém não pagar</string>
+    <string name="guest_rule_covers">%1$s cobre o que faltar. O jogo acontece.</string>
+    <string name="guest_rule_cancel">O jogo é cancelado e você recebe o dinheiro de volta.</string>
+    <string name="guest_rule_resplit">O que faltar pode ser dividido entre quem pagou, só se você aceitar.</string>
+    <string name="guest_who_is_in">Quem já pagou</string>
+    <string name="guest_cta_pay">Pagar %1$s e entrar</string>
+    <string name="guest_cta_decline">Não vou dessa vez</string>
+    <string name="guest_no_account_hint">Você entra com seu celular. Leva menos de 1 minuto.</string>
+    <string name="guest_already_paid">Você já está no jogo</string>
+
+    <!-- 3.11 Pagamento Pix e cartão (`pix_`, `card_`, `payment_`) -->
+    <string name="payment_method_title">Como você quer pagar?</string>
+    <string name="payment_method_pix">Pix</string>
+    <string name="payment_method_pix_hint">Aprovação na hora</string>
+    <string name="payment_method_card">Cartão de crédito</string>
+    <string name="payment_summary_share">Cota</string>
+    <string name="payment_summary_total">Total</string>
+    <string name="pix_title">Pague com Pix</string>
+    <string name="pix_amount">Valor: %1$s</string>
+    <string name="pix_instructions">Copie o código, abra o app do seu banco e escolha Pix copia e cola.</string>
+    <string name="pix_copy_code">Copiar código Pix</string>
+    <string name="pix_code_copied">Código copiado. Agora cole no app do banco.</string>
+    <string name="pix_show_qr">Mostrar QR Code</string>
+    <string name="pix_expires_in">O código vale por %1$s</string>
+    <string name="pix_waiting_title">Aguardando seu Pix</string>
+    <string name="pix_waiting_body">Assim que o banco confirmar, sua vaga fica garantida. Pode sair desta tela, a gente avisa.</string>
+    <string name="pix_waiting_check">Já paguei</string>
+    <string name="pix_paid_title">Pix recebido!</string>
+    <string name="pix_paid_body">Sua cota de %1$s está paga. Agora falta o resto da galera.</string>
+    <string name="pix_paid_receipt">Ver comprovante</string>
+    <string name="pix_new_code">Gerar novo código</string>
+    <string name="card_number_label">Número do cartão</string>
+    <string name="card_expiry_label">Validade (MM/AA)</string>
+    <string name="card_cvv_label">Código de segurança</string>
+    <string name="card_name_label">Nome impresso no cartão</string>
+    <string name="card_pay_cta">Pagar %1$s</string>
+    <string name="card_processing">Processando pagamento…</string>
+    <string name="card_save_toggle">Salvar cartão para os próximos jogos</string>
+
+    <!-- 3.12 Progresso do rateio (`split_`) -->
+    <string name="split_title">Rateio</string>
+    <string name="split_progress">%1$d de %2$d cotas pagas</string>
+    <string name="split_amount_progress">%1$s de %2$s</string>
+    <string name="split_time_left">Faltam %1$s pro prazo</string>
+    <string name="split_status_paid">Pagou</string>
+    <string name="split_status_pending">Falta pagar</string>
+    <string name="split_status_processing">Pagamento em análise</string>
+    <string name="split_open_spot">Vaga aberta</string>
+    <string name="split_remind_all">Lembrar quem falta</string>
+    <string name="split_remind_sent">Lembrete enviado para %1$d pessoas.</string>
+    <string name="split_remove_athlete">Tirar do jogo</string>
+    <string name="split_almost_there">Falta pouco! Só %1$d cotas.</string>
+    <string name="split_organizer_exposure">Se ninguém mais pagar, você cobre %1$s.</string>
+
+    <!-- 3.13 Confirmação (`confirmed_`) -->
+    <string name="confirmed_title">Jogo confirmado!</string>
+    <string name="confirmed_body">Todo mundo pagou e a quadra está garantida pra %1$s. A arena já foi avisada.</string>
+    <string name="confirmed_covered_body">Você cobriu %1$s e o jogo está garantido.</string>
+    <string name="confirmed_add_calendar">Adicionar à agenda</string>
+    <string name="confirmed_directions">Como chegar</string>
+    <string name="confirmed_share">Avisar a galera</string>
+
+    <!-- 3.14 Expiração (`expiry_`) -->
+    <string name="expiry_warning">A pré-reserva acaba em %1$s</string>
+    <string name="expiry_title">O prazo acabou</string>
+    <string name="expiry_covers_charge">Faltaram %1$d cotas. Cobramos %2$s de você, como combinado, e o jogo está confirmado.</string>
+    <string name="expiry_covers_pay_cta">Pagar %1$s e confirmar</string>
+    <string name="expiry_cancel_body">Nem todas as cotas foram pagas, então o jogo foi cancelado. Quem pagou recebe o dinheiro de volta.</string>
+    <string name="expiry_resplit_title">Topa pagar %1$s a mais?</string>
+    <string name="expiry_resplit_body">Faltaram %1$d cotas. Se você aceitar, sua parte fica %2$s no total. Responda até %3$s.</string>
+    <string name="expiry_resplit_accept">Aceitar e pagar %1$s</string>
+    <string name="expiry_resplit_decline">Não aceito, quero o reembolso</string>
+    <string name="expiry_slot_released">O horário foi liberado para outros grupos.</string>
+
+    <!-- 3.15 Cancelamento (`cancel_`) -->
+    <string name="cancel_game_cta">Cancelar jogo</string>
+    <string name="cancel_dialog_title">Cancelar o jogo de %1$s?</string>
+    <string name="cancel_dialog_body">Todo mundo que pagou recebe o dinheiro de volta e o horário é liberado. Isso não pode ser desfeito.</string>
+    <string name="cancel_dialog_confirm">Cancelar jogo</string>
+    <string name="cancel_dialog_keep">Manter jogo</string>
+    <string name="cancel_reason_label">Motivo (a galera vai ver)</string>
+    <string name="cancel_done_title">Jogo cancelado</string>
+    <string name="cancel_done_body">Avisamos a galera e a arena. Os reembolsos já foram pedidos.</string>
+    <string name="cancel_by_arena_body">A arena cancelou o jogo de %1$s. Motivo: %2$s. Seu dinheiro volta integralmente.</string>
+    <string name="cancel_leave_game">Sair do jogo</string>
+    <string name="cancel_leave_dialog_title">Sair do jogo?</string>
+    <string name="cancel_leave_dialog_body">Sua vaga fica aberta para outra pessoa. Reembolso: %1$s.</string>
+    <string name="cancel_leave_confirm">Sair do jogo</string>
+
+    <!-- 3.16 Reembolso (`refund_`) -->
+    <string name="refund_title">Reembolso</string>
+    <string name="refund_requested">Reembolso de %1$s pedido</string>
+    <string name="refund_pix_eta">Devolvemos para a mesma conta do Pix. O dinheiro cai em até 1 dia útil.</string>
+    <string name="refund_card_eta">Devolvemos no mesmo cartão. Pode aparecer em até 2 faturas, depende do seu banco.</string>
+    <string name="refund_done">Reembolso de %1$s concluído em %2$s</string>
+    <string name="refund_fee_note">A taxa de conveniência também é devolvida quando o jogo é cancelado.</string>
+    <string name="refund_status_processing">Em andamento</string>
+    <string name="refund_status_done">Concluído</string>
+    <string name="refund_help">Não recebeu? Fale com a gente</string>
+
+    <!-- 3.17 Lista de espera (`waitlist_`) — Fase 2 -->
+    <string name="waitlist_join">Entrar na lista de espera</string>
+    <string name="waitlist_body">O jogo está lotado. Se alguém sair, a gente avisa e você tem 15min para pagar.</string>
+    <string name="waitlist_position">Sua posição na fila: %1$dº</string>
+    <string name="waitlist_leave">Sair da lista de espera</string>
+    <string name="waitlist_spot_open_title">Abriu uma vaga pra você!</string>
+    <string name="waitlist_spot_open_body">Pague %1$s até %2$s pra garantir. Depois disso, a vaga vai para o próximo.</string>
+    <string name="waitlist_missed">A vaga foi para a próxima pessoa da fila. Você continua na lista.</string>
+    <string name="waitlist_joined">Você entrou na lista de espera.</string>
+
+    <!-- 3.18 Avaliação (`rating_`) — Fase 2 -->
+    <string name="rating_title">Como foi o jogo?</string>
+    <string name="rating_body">Marque quem apareceu. Isso ajuda a galera a montar jogos com quem é de confiança.</string>
+    <string name="rating_attended">Foi</string>
+    <string name="rating_no_show">Não foi</string>
+    <string name="rating_late">Chegou com atraso</string>
+    <string name="rating_court_label">E a quadra?</string>
+    <string name="rating_comment_placeholder">Quer contar algo para a arena? (opcional)</string>
+    <string name="rating_submit">Enviar avaliação</string>
+    <string name="rating_thanks">Valeu! Sua avaliação foi enviada.</string>
+    <string name="rating_private_note">Só o app vê quem faltou. Ninguém recebe a sua marcação individual.</string>
+
+    <!-- 3.19 Painel da arena (`arena_`, `payout_`) -->
+    <string name="arena_dashboard_title">Painel</string>
+    <string name="arena_tab_schedule">Agenda</string>
+    <string name="arena_tab_courts">Quadras</string>
+    <string name="arena_tab_payouts">Repasses</string>
+    <string name="arena_tab_reports">Relatórios</string>
+    <string name="arena_today_summary">Hoje: %1$d jogos confirmados · %2$d em pré-reserva</string>
+    <string name="arena_schedule_status_confirmed">Confirmado</string>
+    <string name="arena_schedule_status_hold">Pré-reserva até %1$s</string>
+    <string name="arena_schedule_status_blocked">Bloqueado</string>
+    <string name="arena_schedule_block_cta">Bloquear horário</string>
+    <string name="arena_schedule_block_reason">Motivo do bloqueio</string>
+    <string name="arena_court_add">Adicionar quadra</string>
+    <string name="arena_court_name_label">Nome da quadra</string>
+    <string name="arena_court_sports_label">Esportes nesta quadra</string>
+    <string name="arena_court_price_label">Preço por hora</string>
+    <string name="arena_court_price_peak_label">Preço no horário de pico</string>
+    <string name="arena_court_saved">Quadra salva. Os horários já aparecem para os atletas.</string>
+    <string name="arena_game_detail_organizer">Organizador: %1$s</string>
+    <string name="arena_game_detail_paid">%1$d de %2$d cotas pagas</string>
+    <string name="payout_next_title">Próximo repasse</string>
+    <string name="payout_next_amount">%1$s em %2$s</string>
+    <string name="payout_gross">Valor das reservas</string>
+    <string name="payout_platform_fee">Taxa SportConnect</string>
+    <string name="payout_net">Você recebe</string>
+    <string name="payout_status_scheduled">Programado</string>
+    <string name="payout_status_paid">Pago</string>
+    <string name="payout_status_held">Retido até o jogo</string>
+    <string name="payout_rule_explainer">O valor de cada jogo é repassado depois que ele acontece, já sem a taxa.</string>
+    <string name="payout_bank_account">Conta para receber</string>
+    <string name="payout_export">Exportar extrato</string>
+
+    <!-- 3.20 Perfil (`profile_`) -->
+    <string name="profile_title">Perfil</string>
+    <string name="profile_my_games">Meus jogos</string>
+    <string name="profile_payments">Pagamentos e reembolsos</string>
+    <string name="profile_sports">Meus esportes</string>
+    <string name="profile_notifications">Notificações</string>
+    <string name="profile_saved_cards">Cartões salvos</string>
+    <string name="profile_privacy">Privacidade e dados</string>
+    <string name="profile_download_data">Baixar meus dados</string>
+    <string name="profile_delete_account">Excluir conta</string>
+    <string name="profile_delete_dialog_title">Excluir sua conta?</string>
+    <string name="profile_delete_dialog_body">Seus dados pessoais são apagados em até 15 dias. Pagamentos ficam guardados pelo prazo exigido por lei. Isso não pode ser desfeito.</string>
+    <string name="profile_delete_confirm">Excluir conta</string>
+    <string name="profile_attendance">Presença: %1$s dos jogos</string>
+    <string name="profile_version">Versão %1$s</string>
+    <string name="profile_support">Falar com o suporte</string>
+
+    <!-- 4. Mensagens de erro -->
+    <string name="error_slot_taken_title">Esse horário acabou de ser reservado</string>
+    <string name="error_slot_taken_body">Outro grupo foi mais rápido. Escolha outro horário. Seus dados do jogo continuam salvos.</string>
+    <string name="error_slot_taken_action">Ver outros horários</string>
+    <string name="error_pix_expired_title">O código Pix expirou</string>
+    <string name="error_pix_expired_body">Nenhum valor foi cobrado. Gere um novo código para pagar.</string>
+    <string name="error_pix_expired_action">Gerar novo código</string>
+    <string name="error_payment_declined_title">O pagamento não foi aprovado</string>
+    <string name="error_payment_declined_body">Seu banco recusou o cartão. Tente outro cartão ou pague com Pix.</string>
+    <string name="error_payment_declined_action">Pagar com Pix</string>
+    <string name="error_card_expired_title">Esse cartão está vencido</string>
+    <string name="error_card_expired_body">Confira a validade ou use outro cartão.</string>
+    <string name="error_no_connection_title">Sem conexão com a internet</string>
+    <string name="error_no_connection_body">Confira o Wi-Fi ou os dados móveis e tente de novo. Se você já pagou, seu pagamento está seguro.</string>
+    <string name="error_server_title">Não conseguimos carregar agora</string>
+    <string name="error_server_body">O problema é do nosso lado. Tente de novo em alguns segundos.</string>
+    <string name="error_hold_expired_title">A pré-reserva expirou</string>
+    <string name="error_hold_expired_body">Seguramos o horário por 10min enquanto você criava o jogo. Confira se ele ainda está livre.</string>
+    <string name="error_game_full_title">As vagas acabaram</string>
+    <string name="error_game_full_body">Alguém pagou a última cota antes de você. Nada foi cobrado. Entre na lista de espera.</string>
+    <string name="error_game_cancelled_title">Esse jogo foi cancelado</string>
+    <string name="error_game_cancelled_body">O organizador ou a arena cancelou. Se você pagou, o reembolso já está a caminho.</string>
+    <string name="error_invite_invalid_title">Link de convite inválido</string>
+    <string name="error_invite_invalid_body">O link pode estar incompleto. Peça um novo para quem te convidou.</string>
+    <string name="error_code_invalid_title">Código incorreto</string>
+    <string name="error_code_invalid_body">Confira os 6 números da mensagem e digite de novo.</string>
+    <string name="error_code_expired_title">O código expirou</string>
+    <string name="error_code_expired_body">Códigos valem por 5min. Peça um novo.</string>
+    <string name="error_phone_invalid_title">Número de celular inválido</string>
+    <string name="error_phone_invalid_body">Digite o DDD e os 9 dígitos, por exemplo (11) 98765-4321.</string>
+    <string name="error_too_many_attempts_title">Muitas tentativas seguidas</string>
+    <string name="error_too_many_attempts_body">Por segurança, espere %1$s e tente de novo.</string>
+    <string name="error_already_paid_title">Sua cota já está paga</string>
+    <string name="error_already_paid_body">Encontramos seu pagamento. Não precisa pagar de novo.</string>
+    <string name="error_payment_slow_title">O pagamento está demorando</string>
+    <string name="error_payment_slow_body">Às vezes o banco leva alguns minutos. Não pague de novo: a gente avisa assim que confirmar.</string>
+    <string name="error_refund_failed_title">Não conseguimos devolver seu dinheiro</string>
+    <string name="error_refund_failed_body">A conta de origem não aceitou a devolução. Informe uma chave Pix para recebermos o reembolso.</string>
+    <string name="error_refund_failed_action">Informar chave Pix</string>
+    <string name="error_deadline_too_short_title">Não dá tempo de ratear</string>
+    <string name="error_deadline_too_short_body">Faltam menos de 2h para o jogo. Pague o valor total agora ou escolha outro horário.</string>
+    <string name="error_price_changed_title">O preço do horário mudou</string>
+    <string name="error_price_changed_body">A arena atualizou o valor para %1$s. Confira o novo rateio antes de continuar.</string>
+    <string name="error_location_denied_title">Sem acesso à localização</string>
+    <string name="error_location_denied_body">Digite sua cidade ou bairro para ver quadras perto de você.</string>
+    <string name="error_session_expired_title">Sua sessão expirou</string>
+    <string name="error_session_expired_body">Entre de novo com seu celular. Seus jogos continuam salvos.</string>
+    <string name="error_pix_key_invalid_title">Chave Pix inválida</string>
+    <string name="error_pix_key_invalid_body">Confira se a chave é CPF, CNPJ, e-mail, celular ou chave aleatória e digite de novo.</string>
+    <string name="error_upload_failed_title">A foto não foi enviada</string>
+    <string name="error_upload_failed_body">Use JPG ou PNG de até 5 MB e tente de novo.</string>
+    <string name="error_resplit_expired_title">O tempo para aceitar acabou</string>
+    <string name="error_resplit_expired_body">Como você não respondeu, devolvemos sua cota. O reembolso cai em até 1 dia útil.</string>
+    <string name="error_generic_title">Algo deu errado</string>
+    <string name="error_generic_body">Tente de novo. Se continuar, fale com o suporte.</string>
+
+    <!-- 5. Empty states -->
+    <string name="empty_games_title">Nenhum jogo marcado</string>
+    <string name="empty_games_body">Crie um jogo e mande o link pra galera. Ou procure um jogo com vaga perto de você.</string>
+    <string name="empty_games_cta">Criar jogo</string>
+    <string name="empty_search_title">Nenhuma quadra livre nesse horário</string>
+    <string name="empty_search_body">Tente outro horário ou tire alguns filtros.</string>
+    <string name="empty_search_cta">Limpar filtros</string>
+    <string name="empty_paid_list_title">Ninguém pagou ainda</string>
+    <string name="empty_paid_list_body">Mande o link no grupo. Quem pagar aparece aqui na hora.</string>
+    <string name="empty_paid_list_cta">Enviar no WhatsApp</string>
+    <string name="empty_payments_title">Nenhum pagamento por aqui</string>
+    <string name="empty_payments_body">Quando você pagar uma cota, o comprovante fica guardado aqui.</string>
+    <string name="empty_notifications_title">Tudo em dia</string>
+    <string name="empty_notifications_body">Avisos de pagamento e confirmação de jogos aparecem aqui.</string>
+    <string name="empty_open_games_title">Nenhum jogo com vaga por perto</string>
+    <string name="empty_open_games_body">Que tal criar um e abrir vagas pra quem quiser jogar?</string>
+    <string name="empty_arena_schedule_title">Nenhuma reserva neste dia</string>
+    <string name="empty_arena_schedule_body">Os jogos aparecem aqui assim que um grupo pré-reservar um horário.</string>
+    <string name="empty_arena_courts_title">Cadastre sua primeira quadra</string>
+    <string name="empty_arena_courts_body">Informe esportes, horários e preço. Em seguida, os atletas já podem reservar.</string>
+    <string name="empty_arena_courts_cta">Adicionar quadra</string>
+    <string name="empty_payouts_title">Nenhum repasse ainda</string>
+    <string name="empty_payouts_body">Depois do primeiro jogo confirmado, o repasse aparece aqui com a data prevista.</string>
+    <string name="empty_waitlist_title">A lista de espera está vazia</string>
+    <string name="empty_waitlist_body">Se o jogo lotar, quem quiser entrar aparece aqui.</string>
+
+    <!-- 6. Notificações push -->
+    <string name="push_payment_reminder_2h_title">Falta sua cota pro jogo</string>
+    <string name="push_payment_reminder_2h_body">Pague %1$s até %2$s e garanta sua vaga em %3$s.</string>
+    <string name="push_payment_reminder_30m_title">Últimos 30min pra pagar</string>
+    <string name="push_payment_reminder_30m_body">Sua cota de %1$s vence às %2$s. Depois disso a vaga pode sair.</string>
+    <string name="push_organizer_progress_title">%1$d de %2$d já pagaram</string>
+    <string name="push_organizer_progress_body">Faltam %1$d cotas e o prazo é %2$s. Toque para lembrar a galera.</string>
+    <string name="push_organizer_exposure_title">Prazo acaba em 30min</string>
+    <string name="push_organizer_exposure_body">Faltam %1$d cotas. Se não pagarem, você cobre %2$s.</string>
+    <string name="push_payment_received_title">Pix recebido</string>
+    <string name="push_payment_received_body">Sua vaga em %1$s está garantida. Agora é com a galera.</string>
+    <string name="push_game_confirmed_title">Jogo confirmado! ⚽</string>
+    <string name="push_game_confirmed_body">Quadra garantida pra %1$s na %2$s. Bom jogo!</string>
+    <string name="push_game_cancelled_title">Jogo cancelado</string>
+    <string name="push_game_cancelled_body">O jogo de %1$s foi cancelado. Seu reembolso de %2$s já foi pedido.</string>
+    <string name="push_resplit_request_title">Topa pagar %1$s a mais?</string>
+    <string name="push_resplit_request_body">Faltaram cotas no jogo de %1$s. Responda até %2$s ou recebe o reembolso.</string>
+    <string name="push_refund_done_title">Reembolso concluído</string>
+    <string name="push_refund_done_body">Devolvemos %1$s para a mesma conta do Pix.</string>
+    <string name="push_waitlist_spot_title">Abriu uma vaga pra você!</string>
+    <string name="push_waitlist_spot_body">Pague %1$s em 15min pra entrar no jogo de %2$s.</string>
+    <string name="push_game_tomorrow_title">Amanhã tem jogo</string>
+    <string name="push_game_tomorrow_body">%1$s na %2$s. Veja como chegar.</string>
+    <string name="push_rating_title">Como foi o jogo?</string>
+    <string name="push_rating_body">Marque quem apareceu. Leva 10 segundos.</string>
+    <string name="push_arena_new_booking_title">Nova reserva confirmada</string>
+    <string name="push_arena_new_booking_body">%1$s · %2$s. Todas as cotas pagas.</string>
+    <string name="push_arena_payout_title">Repasse enviado</string>
+    <string name="push_arena_payout_body">%1$s foram transferidos para sua conta.</string>
+
+    <!-- 8. Acessibilidade de texto (content descriptions) -->
+    <string name="cd_back">Voltar</string>
+    <string name="cd_close">Fechar</string>
+    <string name="cd_menu_more">Mais opções</string>
+    <string name="cd_share_game">Compartilhar jogo</string>
+    <string name="cd_share_whatsapp">Enviar convite pelo WhatsApp</string>
+    <string name="cd_copy_link">Copiar link do jogo</string>
+    <string name="cd_copy_pix">Copiar código Pix</string>
+    <string name="cd_qr_code">QR Code do Pix de %1$s</string>
+    <string name="cd_search">Buscar</string>
+    <string name="cd_filter">Filtrar resultados</string>
+    <string name="cd_clear_text">Apagar texto</string>
+    <string name="cd_map_pin">Arena %1$s, a %2$s km</string>
+    <string name="cd_favorite_add">Salvar arena nos favoritos</string>
+    <string name="cd_favorite_remove">Tirar arena dos favoritos</string>
+    <string name="cd_notifications">Notificações</string>
+    <string name="cd_notifications_unread">Notificações, %1$d não lidas</string>
+    <string name="cd_profile">Perfil</string>
+    <string name="cd_avatar">Foto de %1$s</string>
+    <string name="cd_status_paid">%1$s pagou</string>
+    <string name="cd_status_pending">%1$s ainda não pagou</string>
+    <string name="cd_split_progress">%1$d de %2$d cotas pagas</string>
+    <string name="cd_countdown">Faltam %1$s para o prazo de pagamento</string>
+    <string name="cd_sport_icon">Esporte: %1$s</string>
+    <string name="cd_calendar_add">Adicionar jogo à agenda do celular</string>
+    <string name="cd_directions">Abrir rota até a arena</string>
+    <string name="cd_increase_spots">Aumentar número de vagas</string>
+    <string name="cd_decrease_spots">Diminuir número de vagas</string>
+    <string name="cd_password_visibility">Mostrar código</string>
+    <string name="cd_info_rule">Saber mais sobre esta regra</string>
+    <string name="cd_arena_photo">Foto da %1$s</string>
+    <string name="cd_rating_star">%1$d de 5 estrelas</string>
+
+    <!-- 7. Mensagens de WhatsApp -->
+    <string name="wa_invite_message">Bora pro %1$s? 🙌\n📍 %2$s\n🗓 %3$s\n💰 Sua cota: %4$s\nPague pelo link até %5$s pra garantir sua vaga. Quem pagar primeiro, entra.\n%6$s</string>
+    <string name="wa_payment_reminder_2h">Oi, %1$s! Falta sua cota pro jogo de %2$s.\n💰 %3$s\n⏰ Prazo: %4$s\nPague em 1 minuto pelo link:\n%5$s</string>
+    <string name="wa_payment_reminder_30m">%1$s, o prazo pra pagar o jogo de %2$s acaba em 30min (%3$s).\nSua cota é %4$s. Depois disso, sua vaga pode ficar com outra pessoa.\n%5$s</string>
+    <string name="wa_organizer_reminder_30m">%1$s, faltam %2$d cotas pro jogo de %3$s e o prazo acaba às %4$s.\nRegra escolhida: %5$s.\nVeja quem falta e mande um lembrete:\n%6$s</string>
+    <string name="wa_game_confirmed">Jogo confirmado! ⚽\n📍 %1$s\n🗓 %2$s\nTodo mundo pagou e a quadra está garantida. Bom jogo!\n%3$s</string>
+    <string name="wa_game_cancelled">O jogo de %1$s na %2$s foi cancelado.\nMotivo: %3$s.\nSe você pagou, devolvemos %4$s para a mesma conta. Cai em até 1 dia útil.\n%5$s</string>
+    <string name="wa_resplit_request">%1$s, faltaram %2$d cotas no jogo de %3$s.\nPra o jogo acontecer, cada pagante precisa colocar mais %4$s.\nResponda até %5$s. Se não aceitar, devolvemos sua cota.\n%6$s</string>
+</resources>

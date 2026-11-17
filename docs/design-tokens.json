@@ -1,0 +1,2853 @@
+{
+  "$description": "SportConnect Design Tokens v1.0.0 — formato W3C Design Tokens (DTCG). Gerado por tools/design/gen_tokens.py.",
+  "primitive": {
+    "color": {
+      "verde-quadra": {
+        "0": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "4": {
+          "$type": "color",
+          "$value": "#001202"
+        },
+        "6": {
+          "$type": "color",
+          "$value": "#001803"
+        },
+        "10": {
+          "$type": "color",
+          "$value": "#002107"
+        },
+        "12": {
+          "$type": "color",
+          "$value": "#00260A"
+        },
+        "17": {
+          "$type": "color",
+          "$value": "#003213"
+        },
+        "20": {
+          "$type": "color",
+          "$value": "#003916"
+        },
+        "22": {
+          "$type": "color",
+          "$value": "#003E19"
+        },
+        "24": {
+          "$type": "color",
+          "$value": "#00431C"
+        },
+        "30": {
+          "$type": "color",
+          "$value": "#005323"
+        },
+        "35": {
+          "$type": "color",
+          "$value": "#00602A"
+        },
+        "40": {
+          "$type": "color",
+          "$value": "#006D31"
+        },
+        "50": {
+          "$type": "color",
+          "$value": "#008A40"
+        },
+        "60": {
+          "$type": "color",
+          "$value": "#00A74F"
+        },
+        "70": {
+          "$type": "color",
+          "$value": "#00C55E"
+        },
+        "80": {
+          "$type": "color",
+          "$value": "#00E46E"
+        },
+        "85": {
+          "$type": "color",
+          "$value": "#27F37A"
+        },
+        "87": {
+          "$type": "color",
+          "$value": "#33F97F"
+        },
+        "90": {
+          "$type": "color",
+          "$value": "#64FF93"
+        },
+        "92": {
+          "$type": "color",
+          "$value": "#93FFAC"
+        },
+        "94": {
+          "$type": "color",
+          "$value": "#B5FFC3"
+        },
+        "95": {
+          "$type": "color",
+          "$value": "#C3FFCE"
+        },
+        "96": {
+          "$type": "color",
+          "$value": "#D1FFD8"
+        },
+        "98": {
+          "$type": "color",
+          "$value": "#E9FFEC"
+        },
+        "99": {
+          "$type": "color",
+          "$value": "#F4FFF6"
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        }
+      },
+      "laranja-saibro": {
+        "0": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "4": {
+          "$type": "color",
+          "$value": "#1A0B00"
+        },
+        "6": {
+          "$type": "color",
+          "$value": "#210F00"
+        },
+        "10": {
+          "$type": "color",
+          "$value": "#2E1500"
+        },
+        "12": {
+          "$type": "color",
+          "$value": "#351800"
+        },
+        "17": {
+          "$type": "color",
+          "$value": "#481E00"
+        },
+        "20": {
+          "$type": "color",
+          "$value": "#532200"
+        },
+        "22": {
+          "$type": "color",
+          "$value": "#5A2500"
+        },
+        "24": {
+          "$type": "color",
+          "$value": "#622800"
+        },
+        "30": {
+          "$type": "color",
+          "$value": "#793100"
+        },
+        "35": {
+          "$type": "color",
+          "$value": "#8B3A00"
+        },
+        "40": {
+          "$type": "color",
+          "$value": "#9E4200"
+        },
+        "50": {
+          "$type": "color",
+          "$value": "#C65500"
+        },
+        "60": {
+          "$type": "color",
+          "$value": "#EE6800"
+        },
+        "70": {
+          "$type": "color",
+          "$value": "#FF8D48"
+        },
+        "80": {
+          "$type": "color",
+          "$value": "#FFB68E"
+        },
+        "85": {
+          "$type": "color",
+          "$value": "#FFC9AC"
+        },
+        "87": {
+          "$type": "color",
+          "$value": "#FFD0B8"
+        },
+        "90": {
+          "$type": "color",
+          "$value": "#FFDBC9"
+        },
+        "92": {
+          "$type": "color",
+          "$value": "#FFE3D4"
+        },
+        "94": {
+          "$type": "color",
+          "$value": "#FFEADF"
+        },
+        "95": {
+          "$type": "color",
+          "$value": "#FFEDE4"
+        },
+        "96": {
+          "$type": "color",
+          "$value": "#FFF1EA"
+        },
+        "98": {
+          "$type": "color",
+          "$value": "#FFF8F4"
+        },
+        "99": {
+          "$type": "color",
+          "$value": "#FFFBFA"
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        }
+      },
+      "azul-refletor": {
+        "0": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "4": {
+          "$type": "color",
+          "$value": "#000B30"
+        },
+        "6": {
+          "$type": "color",
+          "$value": "#001136"
+        },
+        "10": {
+          "$type": "color",
+          "$value": "#001945"
+        },
+        "12": {
+          "$type": "color",
+          "$value": "#001D4D"
+        },
+        "17": {
+          "$type": "color",
+          "$value": "#002762"
+        },
+        "20": {
+          "$type": "color",
+          "$value": "#002D6E"
+        },
+        "22": {
+          "$type": "color",
+          "$value": "#003177"
+        },
+        "24": {
+          "$type": "color",
+          "$value": "#003580"
+        },
+        "30": {
+          "$type": "color",
+          "$value": "#00429B"
+        },
+        "35": {
+          "$type": "color",
+          "$value": "#004DB2"
+        },
+        "40": {
+          "$type": "color",
+          "$value": "#0058CA"
+        },
+        "50": {
+          "$type": "color",
+          "$value": "#2E70F0"
+        },
+        "60": {
+          "$type": "color",
+          "$value": "#6789FF"
+        },
+        "70": {
+          "$type": "color",
+          "$value": "#97A5FF"
+        },
+        "80": {
+          "$type": "color",
+          "$value": "#BDC2FF"
+        },
+        "85": {
+          "$type": "color",
+          "$value": "#CED1FF"
+        },
+        "87": {
+          "$type": "color",
+          "$value": "#D5D7FF"
+        },
+        "90": {
+          "$type": "color",
+          "$value": "#DFE0FF"
+        },
+        "92": {
+          "$type": "color",
+          "$value": "#E5E6FF"
+        },
+        "94": {
+          "$type": "color",
+          "$value": "#ECECFF"
+        },
+        "95": {
+          "$type": "color",
+          "$value": "#EFEFFF"
+        },
+        "96": {
+          "$type": "color",
+          "$value": "#F2F3FF"
+        },
+        "98": {
+          "$type": "color",
+          "$value": "#F9F9FF"
+        },
+        "99": {
+          "$type": "color",
+          "$value": "#FCFCFF"
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        }
+      },
+      "vermelho-falta": {
+        "0": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "4": {
+          "$type": "color",
+          "$value": "#210500"
+        },
+        "6": {
+          "$type": "color",
+          "$value": "#2A0800"
+        },
+        "10": {
+          "$type": "color",
+          "$value": "#3F0400"
+        },
+        "12": {
+          "$type": "color",
+          "$value": "#490000"
+        },
+        "17": {
+          "$type": "color",
+          "$value": "#5C000A"
+        },
+        "20": {
+          "$type": "color",
+          "$value": "#68000F"
+        },
+        "22": {
+          "$type": "color",
+          "$value": "#710011"
+        },
+        "24": {
+          "$type": "color",
+          "$value": "#790014"
+        },
+        "30": {
+          "$type": "color",
+          "$value": "#93001A"
+        },
+        "35": {
+          "$type": "color",
+          "$value": "#A90020"
+        },
+        "40": {
+          "$type": "color",
+          "$value": "#BF0025"
+        },
+        "50": {
+          "$type": "color",
+          "$value": "#E52838"
+        },
+        "60": {
+          "$type": "color",
+          "$value": "#FF5353"
+        },
+        "70": {
+          "$type": "color",
+          "$value": "#FF8980"
+        },
+        "80": {
+          "$type": "color",
+          "$value": "#FFB4AB"
+        },
+        "85": {
+          "$type": "color",
+          "$value": "#FFC7C1"
+        },
+        "87": {
+          "$type": "color",
+          "$value": "#FFCFC9"
+        },
+        "90": {
+          "$type": "color",
+          "$value": "#FFDAD6"
+        },
+        "92": {
+          "$type": "color",
+          "$value": "#FFE2DE"
+        },
+        "94": {
+          "$type": "color",
+          "$value": "#FFE9E6"
+        },
+        "95": {
+          "$type": "color",
+          "$value": "#FFEDEA"
+        },
+        "96": {
+          "$type": "color",
+          "$value": "#FFF0EF"
+        },
+        "98": {
+          "$type": "color",
+          "$value": "#FFF8F7"
+        },
+        "99": {
+          "$type": "color",
+          "$value": "#FFFBFB"
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        }
+      },
+      "verde-placar": {
+        "0": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "4": {
+          "$type": "color",
+          "$value": "#001208"
+        },
+        "6": {
+          "$type": "color",
+          "$value": "#00180C"
+        },
+        "10": {
+          "$type": "color",
+          "$value": "#002113"
+        },
+        "12": {
+          "$type": "color",
+          "$value": "#002516"
+        },
+        "17": {
+          "$type": "color",
+          "$value": "#00311E"
+        },
+        "20": {
+          "$type": "color",
+          "$value": "#003823"
+        },
+        "22": {
+          "$type": "color",
+          "$value": "#003D27"
+        },
+        "24": {
+          "$type": "color",
+          "$value": "#00422A"
+        },
+        "30": {
+          "$type": "color",
+          "$value": "#005235"
+        },
+        "35": {
+          "$type": "color",
+          "$value": "#005F3E"
+        },
+        "40": {
+          "$type": "color",
+          "$value": "#006C47"
+        },
+        "50": {
+          "$type": "color",
+          "$value": "#00885B"
+        },
+        "60": {
+          "$type": "color",
+          "$value": "#00A56F"
+        },
+        "70": {
+          "$type": "color",
+          "$value": "#2DC287"
+        },
+        "80": {
+          "$type": "color",
+          "$value": "#52DEA1"
+        },
+        "85": {
+          "$type": "color",
+          "$value": "#62EDAF"
+        },
+        "87": {
+          "$type": "color",
+          "$value": "#68F2B4"
+        },
+        "90": {
+          "$type": "color",
+          "$value": "#72FBBD"
+        },
+        "92": {
+          "$type": "color",
+          "$value": "#87FFC6"
+        },
+        "94": {
+          "$type": "color",
+          "$value": "#ADFFD5"
+        },
+        "95": {
+          "$type": "color",
+          "$value": "#BEFFDD"
+        },
+        "96": {
+          "$type": "color",
+          "$value": "#CCFFE4"
+        },
+        "98": {
+          "$type": "color",
+          "$value": "#E7FFF2"
+        },
+        "99": {
+          "$type": "color",
+          "$value": "#F3FFF8"
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        }
+      },
+      "amarelo-cartao": {
+        "0": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "4": {
+          "$type": "color",
+          "$value": "#150D00"
+        },
+        "6": {
+          "$type": "color",
+          "$value": "#1B1200"
+        },
+        "10": {
+          "$type": "color",
+          "$value": "#261A00"
+        },
+        "12": {
+          "$type": "color",
+          "$value": "#2B1D00"
+        },
+        "17": {
+          "$type": "color",
+          "$value": "#392700"
+        },
+        "20": {
+          "$type": "color",
+          "$value": "#412D00"
+        },
+        "22": {
+          "$type": "color",
+          "$value": "#473100"
+        },
+        "24": {
+          "$type": "color",
+          "$value": "#4D3500"
+        },
+        "30": {
+          "$type": "color",
+          "$value": "#5E4100"
+        },
+        "35": {
+          "$type": "color",
+          "$value": "#6D4C00"
+        },
+        "40": {
+          "$type": "color",
+          "$value": "#7D5800"
+        },
+        "50": {
+          "$type": "color",
+          "$value": "#9C6F00"
+        },
+        "60": {
+          "$type": "color",
+          "$value": "#BD8700"
+        },
+        "70": {
+          "$type": "color",
+          "$value": "#DFA000"
+        },
+        "80": {
+          "$type": "color",
+          "$value": "#FFBA28"
+        },
+        "85": {
+          "$type": "color",
+          "$value": "#FFCC7A"
+        },
+        "87": {
+          "$type": "color",
+          "$value": "#FFD390"
+        },
+        "90": {
+          "$type": "color",
+          "$value": "#FFDEAE"
+        },
+        "92": {
+          "$type": "color",
+          "$value": "#FFE4C0"
+        },
+        "94": {
+          "$type": "color",
+          "$value": "#FFEBD1"
+        },
+        "95": {
+          "$type": "color",
+          "$value": "#FFEED9"
+        },
+        "96": {
+          "$type": "color",
+          "$value": "#FFF2E1"
+        },
+        "98": {
+          "$type": "color",
+          "$value": "#FFF8F0"
+        },
+        "99": {
+          "$type": "color",
+          "$value": "#FFFCF8"
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        }
+      },
+      "grafite": {
+        "0": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "4": {
+          "$type": "color",
+          "$value": "#0A100B"
+        },
+        "6": {
+          "$type": "color",
+          "$value": "#101411"
+        },
+        "10": {
+          "$type": "color",
+          "$value": "#191C19"
+        },
+        "12": {
+          "$type": "color",
+          "$value": "#1D211D"
+        },
+        "17": {
+          "$type": "color",
+          "$value": "#272B28"
+        },
+        "20": {
+          "$type": "color",
+          "$value": "#2D312E"
+        },
+        "22": {
+          "$type": "color",
+          "$value": "#323632"
+        },
+        "24": {
+          "$type": "color",
+          "$value": "#363A37"
+        },
+        "30": {
+          "$type": "color",
+          "$value": "#434844"
+        },
+        "35": {
+          "$type": "color",
+          "$value": "#4F5350"
+        },
+        "40": {
+          "$type": "color",
+          "$value": "#5B5F5C"
+        },
+        "50": {
+          "$type": "color",
+          "$value": "#737874"
+        },
+        "60": {
+          "$type": "color",
+          "$value": "#8D928E"
+        },
+        "70": {
+          "$type": "color",
+          "$value": "#A7ACA8"
+        },
+        "80": {
+          "$type": "color",
+          "$value": "#C2C8C3"
+        },
+        "85": {
+          "$type": "color",
+          "$value": "#D0D6D1"
+        },
+        "87": {
+          "$type": "color",
+          "$value": "#D6DBD7"
+        },
+        "90": {
+          "$type": "color",
+          "$value": "#DEE4DF"
+        },
+        "92": {
+          "$type": "color",
+          "$value": "#E4E9E5"
+        },
+        "94": {
+          "$type": "color",
+          "$value": "#EAEFEB"
+        },
+        "95": {
+          "$type": "color",
+          "$value": "#EDF2EE"
+        },
+        "96": {
+          "$type": "color",
+          "$value": "#EFF5F0"
+        },
+        "98": {
+          "$type": "color",
+          "$value": "#F5FBF6"
+        },
+        "99": {
+          "$type": "color",
+          "$value": "#F8FEF9"
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        }
+      },
+      "grafite-variante": {
+        "0": {
+          "$type": "color",
+          "$value": "#000000"
+        },
+        "4": {
+          "$type": "color",
+          "$value": "#031106"
+        },
+        "6": {
+          "$type": "color",
+          "$value": "#0A160D"
+        },
+        "10": {
+          "$type": "color",
+          "$value": "#151E17"
+        },
+        "12": {
+          "$type": "color",
+          "$value": "#18221B"
+        },
+        "17": {
+          "$type": "color",
+          "$value": "#232C25"
+        },
+        "20": {
+          "$type": "color",
+          "$value": "#29332B"
+        },
+        "22": {
+          "$type": "color",
+          "$value": "#2D372F"
+        },
+        "24": {
+          "$type": "color",
+          "$value": "#323C34"
+        },
+        "30": {
+          "$type": "color",
+          "$value": "#3F4941"
+        },
+        "35": {
+          "$type": "color",
+          "$value": "#4A554D"
+        },
+        "40": {
+          "$type": "color",
+          "$value": "#566158"
+        },
+        "50": {
+          "$type": "color",
+          "$value": "#6F7A71"
+        },
+        "60": {
+          "$type": "color",
+          "$value": "#88948A"
+        },
+        "70": {
+          "$type": "color",
+          "$value": "#A2AEA5"
+        },
+        "80": {
+          "$type": "color",
+          "$value": "#BDCAC0"
+        },
+        "85": {
+          "$type": "color",
+          "$value": "#CBD8CD"
+        },
+        "87": {
+          "$type": "color",
+          "$value": "#D1DDD3"
+        },
+        "90": {
+          "$type": "color",
+          "$value": "#D9E6DB"
+        },
+        "92": {
+          "$type": "color",
+          "$value": "#DFEBE1"
+        },
+        "94": {
+          "$type": "color",
+          "$value": "#E4F1E7"
+        },
+        "95": {
+          "$type": "color",
+          "$value": "#E7F4EA"
+        },
+        "96": {
+          "$type": "color",
+          "$value": "#EAF7ED"
+        },
+        "98": {
+          "$type": "color",
+          "$value": "#F0FDF2"
+        },
+        "99": {
+          "$type": "color",
+          "$value": "#F4FFF6"
+        },
+        "100": {
+          "$type": "color",
+          "$value": "#FFFFFF"
+        }
+      },
+      "sport": {
+        "futebol_society": {
+          "10": {
+            "$type": "color",
+            "$value": "#072100"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#005310"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#006E19"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#80DB7C"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#9CF896"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#C3EEBD"
+          }
+        },
+        "futsal": {
+          "10": {
+            "$type": "color",
+            "$value": "#0C0961"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#4B3594"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#664DAF"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#D2BBFF"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#E9DDFF"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#E9DDFF"
+          }
+        },
+        "volei": {
+          "10": {
+            "$type": "color",
+            "$value": "#001D35"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#004A7A"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#0062A0"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#A2C9FF"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#D3E4FF"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#D3E4FF"
+          }
+        },
+        "volei_praia": {
+          "10": {
+            "$type": "color",
+            "$value": "#241A00"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#5A4300"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#775A00"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#EFC053"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#FFDEA2"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#FCDFAA"
+          }
+        },
+        "futevolei": {
+          "10": {
+            "$type": "color",
+            "$value": "#00201F"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#00504F"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#006A69"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#00DDDB"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#00FCF9"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#92F3F0"
+          }
+        },
+        "beach_tennis": {
+          "10": {
+            "$type": "color",
+            "$value": "#41000B"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#91002B"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#B22640"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#FFB3B5"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#FFDADA"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#FFDADA"
+          }
+        },
+        "padel": {
+          "10": {
+            "$type": "color",
+            "$value": "#001F2A"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#004D65"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#006684"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#6AD3FF"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#BEE9FF"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#BEE9FF"
+          }
+        },
+        "tenis": {
+          "10": {
+            "$type": "color",
+            "$value": "#1C1D00"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#424B00"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#586400"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#C2CF58"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#DFEB73"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#E3E7AC"
+          }
+        },
+        "basquete": {
+          "10": {
+            "$type": "color",
+            "$value": "#2E1500"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#793100"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#9D4404"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#FFB68E"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#FFDBC9"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#FFDBC9"
+          }
+        },
+        "handebol": {
+          "10": {
+            "$type": "color",
+            "$value": "#3D0028"
+          },
+          "30": {
+            "$type": "color",
+            "$value": "#8A005F"
+          },
+          "40": {
+            "$type": "color",
+            "$value": "#A82879"
+          },
+          "80": {
+            "$type": "color",
+            "$value": "#FFAED9"
+          },
+          "90": {
+            "$type": "color",
+            "$value": "#FFD8EB"
+          },
+          "90-soft": {
+            "$type": "color",
+            "$value": "#FFD8EB"
+          }
+        }
+      },
+      "verde-placar-soft": {
+        "90": {
+          "$type": "color",
+          "$value": "#A9F2CC"
+        }
+      }
+    },
+    "fontFamily": {
+      "display": {
+        "$type": "fontFamily",
+        "$value": [
+          "Saira Condensed",
+          "sans-serif"
+        ]
+      },
+      "text": {
+        "$type": "fontFamily",
+        "$value": [
+          "Atkinson Hyperlegible Next",
+          "sans-serif"
+        ]
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": [
+          "Atkinson Hyperlegible Mono",
+          "monospace"
+        ]
+      }
+    },
+    "dimension": {
+      "space": {
+        "0": {
+          "$type": "dimension",
+          "$value": "0px",
+          "$description": "0dp"
+        },
+        "1": {
+          "$type": "dimension",
+          "$value": "4px",
+          "$description": "4dp"
+        },
+        "2": {
+          "$type": "dimension",
+          "$value": "8px",
+          "$description": "8dp"
+        },
+        "3": {
+          "$type": "dimension",
+          "$value": "12px",
+          "$description": "12dp"
+        },
+        "4": {
+          "$type": "dimension",
+          "$value": "16px",
+          "$description": "16dp"
+        },
+        "5": {
+          "$type": "dimension",
+          "$value": "20px",
+          "$description": "20dp"
+        },
+        "6": {
+          "$type": "dimension",
+          "$value": "24px",
+          "$description": "24dp"
+        },
+        "8": {
+          "$type": "dimension",
+          "$value": "32px",
+          "$description": "32dp"
+        },
+        "10": {
+          "$type": "dimension",
+          "$value": "40px",
+          "$description": "40dp"
+        },
+        "12": {
+          "$type": "dimension",
+          "$value": "48px",
+          "$description": "48dp"
+        },
+        "16": {
+          "$type": "dimension",
+          "$value": "64px",
+          "$description": "64dp"
+        },
+        "20": {
+          "$type": "dimension",
+          "$value": "80px",
+          "$description": "80dp"
+        }
+      },
+      "radius": {
+        "none": {
+          "$type": "dimension",
+          "$value": "0px"
+        },
+        "xs": {
+          "$type": "dimension",
+          "$value": "4px"
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "8px"
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "12px"
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "16px"
+        },
+        "xl": {
+          "$type": "dimension",
+          "$value": "24px"
+        },
+        "xxl": {
+          "$type": "dimension",
+          "$value": "28px"
+        },
+        "full": {
+          "$type": "dimension",
+          "$value": "9999px"
+        }
+      },
+      "elevation": {
+        "level0": {
+          "$type": "dimension",
+          "$value": "0px"
+        },
+        "level1": {
+          "$type": "dimension",
+          "$value": "1px"
+        },
+        "level2": {
+          "$type": "dimension",
+          "$value": "3px"
+        },
+        "level3": {
+          "$type": "dimension",
+          "$value": "6px"
+        },
+        "level4": {
+          "$type": "dimension",
+          "$value": "8px"
+        },
+        "level5": {
+          "$type": "dimension",
+          "$value": "12px"
+        }
+      },
+      "touchTarget": {
+        "min": {
+          "$type": "dimension",
+          "$value": "48px"
+        }
+      }
+    },
+    "duration": {
+      "short1": {
+        "$type": "duration",
+        "$value": "50ms"
+      },
+      "short2": {
+        "$type": "duration",
+        "$value": "100ms"
+      },
+      "short3": {
+        "$type": "duration",
+        "$value": "150ms"
+      },
+      "short4": {
+        "$type": "duration",
+        "$value": "200ms"
+      },
+      "medium1": {
+        "$type": "duration",
+        "$value": "250ms"
+      },
+      "medium2": {
+        "$type": "duration",
+        "$value": "300ms"
+      },
+      "medium3": {
+        "$type": "duration",
+        "$value": "350ms"
+      },
+      "medium4": {
+        "$type": "duration",
+        "$value": "400ms"
+      },
+      "long1": {
+        "$type": "duration",
+        "$value": "450ms"
+      },
+      "long2": {
+        "$type": "duration",
+        "$value": "500ms"
+      },
+      "long3": {
+        "$type": "duration",
+        "$value": "550ms"
+      },
+      "long4": {
+        "$type": "duration",
+        "$value": "600ms"
+      },
+      "extraLong1": {
+        "$type": "duration",
+        "$value": "700ms"
+      }
+    },
+    "cubicBezier": {
+      "standard": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.2,
+          0,
+          0,
+          1
+        ]
+      },
+      "standardDecelerate": {
+        "$type": "cubicBezier",
+        "$value": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      "standardAccelerate": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.3,
+          0,
+          1,
+          1
+        ]
+      },
+      "emphasizedDecelerate": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.05,
+          0.7,
+          0.1,
+          1
+        ]
+      },
+      "emphasizedAccelerate": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.3,
+          0,
+          0.8,
+          0.15
+        ]
+      },
+      "apito": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.34,
+          1.4,
+          0.64,
+          1
+        ]
+      }
+    },
+    "brand": {
+      "verde-quadra": {
+        "$type": "color",
+        "$value": "#00E46E"
+      },
+      "verde-quadra-profundo": {
+        "$type": "color",
+        "$value": "#006D31"
+      },
+      "laranja-saibro": {
+        "$type": "color",
+        "$value": "#EE6800"
+      },
+      "azul-refletor": {
+        "$type": "color",
+        "$value": "#2E70F0"
+      },
+      "grafite-noturno": {
+        "$type": "color",
+        "$value": "#191C19"
+      },
+      "cal-de-quadra": {
+        "$type": "color",
+        "$value": "#F5FBF6"
+      }
+    }
+  },
+  "semantic": {
+    "light": {
+      "color": {
+        "primary": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.40}",
+          "$extensions": {
+            "br.sportconnect.hex": "#006D31"
+          }
+        },
+        "onPrimary": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.100}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFFFFF"
+          }
+        },
+        "primaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.85}",
+          "$extensions": {
+            "br.sportconnect.hex": "#27F37A"
+          }
+        },
+        "onPrimaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.10}",
+          "$extensions": {
+            "br.sportconnect.hex": "#002107"
+          }
+        },
+        "inversePrimary": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#00E46E"
+          }
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "{primitive.color.laranja-saibro.40}",
+          "$extensions": {
+            "br.sportconnect.hex": "#9E4200"
+          }
+        },
+        "onSecondary": {
+          "$type": "color",
+          "$value": "{primitive.color.laranja-saibro.100}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFFFFF"
+          }
+        },
+        "secondaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.laranja-saibro.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFDBC9"
+          }
+        },
+        "onSecondaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.laranja-saibro.10}",
+          "$extensions": {
+            "br.sportconnect.hex": "#2E1500"
+          }
+        },
+        "tertiary": {
+          "$type": "color",
+          "$value": "{primitive.color.azul-refletor.40}",
+          "$extensions": {
+            "br.sportconnect.hex": "#0058CA"
+          }
+        },
+        "onTertiary": {
+          "$type": "color",
+          "$value": "{primitive.color.azul-refletor.100}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFFFFF"
+          }
+        },
+        "tertiaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.azul-refletor.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#DFE0FF"
+          }
+        },
+        "onTertiaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.azul-refletor.10}",
+          "$extensions": {
+            "br.sportconnect.hex": "#001945"
+          }
+        },
+        "error": {
+          "$type": "color",
+          "$value": "{primitive.color.vermelho-falta.40}",
+          "$extensions": {
+            "br.sportconnect.hex": "#BF0025"
+          }
+        },
+        "onError": {
+          "$type": "color",
+          "$value": "{primitive.color.vermelho-falta.100}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFFFFF"
+          }
+        },
+        "errorContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.vermelho-falta.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFDAD6"
+          }
+        },
+        "onErrorContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.vermelho-falta.10}",
+          "$extensions": {
+            "br.sportconnect.hex": "#3F0400"
+          }
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.98}",
+          "$extensions": {
+            "br.sportconnect.hex": "#F5FBF6"
+          }
+        },
+        "onBackground": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.10}",
+          "$extensions": {
+            "br.sportconnect.hex": "#191C19"
+          }
+        },
+        "surface": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.98}",
+          "$extensions": {
+            "br.sportconnect.hex": "#F5FBF6"
+          }
+        },
+        "onSurface": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.10}",
+          "$extensions": {
+            "br.sportconnect.hex": "#191C19"
+          }
+        },
+        "surfaceVariant": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite-variante.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#D9E6DB"
+          }
+        },
+        "onSurfaceVariant": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite-variante.30}",
+          "$extensions": {
+            "br.sportconnect.hex": "#3F4941"
+          }
+        },
+        "surfaceTint": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.40}",
+          "$extensions": {
+            "br.sportconnect.hex": "#006D31"
+          }
+        },
+        "inverseSurface": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.20}",
+          "$extensions": {
+            "br.sportconnect.hex": "#2D312E"
+          }
+        },
+        "inverseOnSurface": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.95}",
+          "$extensions": {
+            "br.sportconnect.hex": "#EDF2EE"
+          }
+        },
+        "outline": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite-variante.50}",
+          "$extensions": {
+            "br.sportconnect.hex": "#6F7A71"
+          }
+        },
+        "outlineVariant": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite-variante.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#BDCAC0"
+          }
+        },
+        "scrim": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.0}",
+          "$extensions": {
+            "br.sportconnect.hex": "#000000"
+          }
+        },
+        "surfaceBright": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.98}",
+          "$extensions": {
+            "br.sportconnect.hex": "#F5FBF6"
+          }
+        },
+        "surfaceDim": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.87}",
+          "$extensions": {
+            "br.sportconnect.hex": "#D6DBD7"
+          }
+        },
+        "surfaceContainerLowest": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.100}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFFFFF"
+          }
+        },
+        "surfaceContainerLow": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.96}",
+          "$extensions": {
+            "br.sportconnect.hex": "#EFF5F0"
+          }
+        },
+        "surfaceContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.94}",
+          "$extensions": {
+            "br.sportconnect.hex": "#EAEFEB"
+          }
+        },
+        "surfaceContainerHigh": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.92}",
+          "$extensions": {
+            "br.sportconnect.hex": "#E4E9E5"
+          }
+        },
+        "surfaceContainerHighest": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#DEE4DF"
+          }
+        },
+        "success": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-placar.40}",
+          "$extensions": {
+            "br.sportconnect.hex": "#006C47"
+          }
+        },
+        "onSuccess": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-placar.100}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFFFFF"
+          }
+        },
+        "onSuccessContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-placar.10}",
+          "$extensions": {
+            "br.sportconnect.hex": "#002113"
+          }
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "{primitive.color.amarelo-cartao.40}",
+          "$extensions": {
+            "br.sportconnect.hex": "#7D5800"
+          }
+        },
+        "onWarning": {
+          "$type": "color",
+          "$value": "{primitive.color.amarelo-cartao.100}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFFFFF"
+          }
+        },
+        "warningContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.amarelo-cartao.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFDEAE"
+          }
+        },
+        "onWarningContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.amarelo-cartao.10}",
+          "$extensions": {
+            "br.sportconnect.hex": "#261A00"
+          }
+        },
+        "successContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-placar-soft.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#A9F2CC"
+          }
+        }
+      },
+      "sport": {
+        "futebol_society": {
+          "container": {
+            "$type": "color",
+            "$value": "#C3EEBD"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#072100"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#006E19"
+          }
+        },
+        "futsal": {
+          "container": {
+            "$type": "color",
+            "$value": "#E9DDFF"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#0C0961"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#664DAF"
+          }
+        },
+        "volei": {
+          "container": {
+            "$type": "color",
+            "$value": "#D3E4FF"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#001D35"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#0062A0"
+          }
+        },
+        "volei_praia": {
+          "container": {
+            "$type": "color",
+            "$value": "#FCDFAA"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#241A00"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#775A00"
+          }
+        },
+        "futevolei": {
+          "container": {
+            "$type": "color",
+            "$value": "#92F3F0"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#00201F"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#006A69"
+          }
+        },
+        "beach_tennis": {
+          "container": {
+            "$type": "color",
+            "$value": "#FFDADA"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#41000B"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#B22640"
+          }
+        },
+        "padel": {
+          "container": {
+            "$type": "color",
+            "$value": "#BEE9FF"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#001F2A"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#006684"
+          }
+        },
+        "tenis": {
+          "container": {
+            "$type": "color",
+            "$value": "#E3E7AC"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#1C1D00"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#586400"
+          }
+        },
+        "basquete": {
+          "container": {
+            "$type": "color",
+            "$value": "#FFDBC9"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#2E1500"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#9D4404"
+          }
+        },
+        "handebol": {
+          "container": {
+            "$type": "color",
+            "$value": "#FFD8EB"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#3D0028"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#A82879"
+          }
+        }
+      },
+      "booking": {
+        "aguardando_pagamento": {
+          "container": {
+            "$type": "color",
+            "$value": "#FFDEAE"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#261A00"
+          },
+          "$description": "Aguardando pagamento — ícone hourglass_top"
+        },
+        "confirmado": {
+          "container": {
+            "$type": "color",
+            "$value": "#A9F2CC"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#002113"
+          },
+          "$description": "Confirmado — ícone check_circle"
+        },
+        "cancelado": {
+          "container": {
+            "$type": "color",
+            "$value": "#FFDAD6"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#3F0400"
+          },
+          "$description": "Cancelado — ícone cancel"
+        },
+        "expirado": {
+          "container": {
+            "$type": "color",
+            "$value": "#DEE4DF"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#3F4941"
+          },
+          "$description": "Expirado — ícone timer_off"
+        },
+        "concluido": {
+          "container": {
+            "$type": "color",
+            "$value": "#DFE0FF"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#001945"
+          },
+          "$description": "Concluído — ícone sports_score"
+        }
+      },
+      "timeSlot": {
+        "disponivel": {
+          "container": {
+            "$type": "color",
+            "$value": "#FFFFFF"
+          },
+          "content": {
+            "$type": "color",
+            "$value": "#191C19"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "#6F7A71"
+          }
+        },
+        "ocupado": {
+          "container": {
+            "$type": "color",
+            "$value": "#E4E9E5"
+          },
+          "content": {
+            "$type": "color",
+            "$value": "#3F4941"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "#E4E9E5"
+          }
+        },
+        "pre_reservado": {
+          "container": {
+            "$type": "color",
+            "$value": "#FFDEAE"
+          },
+          "content": {
+            "$type": "color",
+            "$value": "#261A00"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "#7D5800"
+          }
+        },
+        "selecionado": {
+          "container": {
+            "$type": "color",
+            "$value": "#006D31"
+          },
+          "content": {
+            "$type": "color",
+            "$value": "#FFFFFF"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "#006D31"
+          }
+        }
+      }
+    },
+    "dark": {
+      "color": {
+        "primary": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#00E46E"
+          }
+        },
+        "onPrimary": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.20}",
+          "$extensions": {
+            "br.sportconnect.hex": "#003916"
+          }
+        },
+        "primaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.30}",
+          "$extensions": {
+            "br.sportconnect.hex": "#005323"
+          }
+        },
+        "onPrimaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#64FF93"
+          }
+        },
+        "inversePrimary": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.40}",
+          "$extensions": {
+            "br.sportconnect.hex": "#006D31"
+          }
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "{primitive.color.laranja-saibro.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFB68E"
+          }
+        },
+        "onSecondary": {
+          "$type": "color",
+          "$value": "{primitive.color.laranja-saibro.20}",
+          "$extensions": {
+            "br.sportconnect.hex": "#532200"
+          }
+        },
+        "secondaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.laranja-saibro.30}",
+          "$extensions": {
+            "br.sportconnect.hex": "#793100"
+          }
+        },
+        "onSecondaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.laranja-saibro.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFDBC9"
+          }
+        },
+        "tertiary": {
+          "$type": "color",
+          "$value": "{primitive.color.azul-refletor.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#BDC2FF"
+          }
+        },
+        "onTertiary": {
+          "$type": "color",
+          "$value": "{primitive.color.azul-refletor.20}",
+          "$extensions": {
+            "br.sportconnect.hex": "#002D6E"
+          }
+        },
+        "tertiaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.azul-refletor.30}",
+          "$extensions": {
+            "br.sportconnect.hex": "#00429B"
+          }
+        },
+        "onTertiaryContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.azul-refletor.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#DFE0FF"
+          }
+        },
+        "error": {
+          "$type": "color",
+          "$value": "{primitive.color.vermelho-falta.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFB4AB"
+          }
+        },
+        "onError": {
+          "$type": "color",
+          "$value": "{primitive.color.vermelho-falta.20}",
+          "$extensions": {
+            "br.sportconnect.hex": "#68000F"
+          }
+        },
+        "errorContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.vermelho-falta.30}",
+          "$extensions": {
+            "br.sportconnect.hex": "#93001A"
+          }
+        },
+        "onErrorContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.vermelho-falta.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFDAD6"
+          }
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.6}",
+          "$extensions": {
+            "br.sportconnect.hex": "#101411"
+          }
+        },
+        "onBackground": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#DEE4DF"
+          }
+        },
+        "surface": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.6}",
+          "$extensions": {
+            "br.sportconnect.hex": "#101411"
+          }
+        },
+        "onSurface": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#DEE4DF"
+          }
+        },
+        "surfaceVariant": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite-variante.30}",
+          "$extensions": {
+            "br.sportconnect.hex": "#3F4941"
+          }
+        },
+        "onSurfaceVariant": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite-variante.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#BDCAC0"
+          }
+        },
+        "surfaceTint": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-quadra.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#00E46E"
+          }
+        },
+        "inverseSurface": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#DEE4DF"
+          }
+        },
+        "inverseOnSurface": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.20}",
+          "$extensions": {
+            "br.sportconnect.hex": "#2D312E"
+          }
+        },
+        "outline": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite-variante.60}",
+          "$extensions": {
+            "br.sportconnect.hex": "#88948A"
+          }
+        },
+        "outlineVariant": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite-variante.30}",
+          "$extensions": {
+            "br.sportconnect.hex": "#3F4941"
+          }
+        },
+        "scrim": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.0}",
+          "$extensions": {
+            "br.sportconnect.hex": "#000000"
+          }
+        },
+        "surfaceBright": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.24}",
+          "$extensions": {
+            "br.sportconnect.hex": "#363A37"
+          }
+        },
+        "surfaceDim": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.6}",
+          "$extensions": {
+            "br.sportconnect.hex": "#101411"
+          }
+        },
+        "surfaceContainerLowest": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.4}",
+          "$extensions": {
+            "br.sportconnect.hex": "#0A100B"
+          }
+        },
+        "surfaceContainerLow": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.10}",
+          "$extensions": {
+            "br.sportconnect.hex": "#191C19"
+          }
+        },
+        "surfaceContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.12}",
+          "$extensions": {
+            "br.sportconnect.hex": "#1D211D"
+          }
+        },
+        "surfaceContainerHigh": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.17}",
+          "$extensions": {
+            "br.sportconnect.hex": "#272B28"
+          }
+        },
+        "surfaceContainerHighest": {
+          "$type": "color",
+          "$value": "{primitive.color.grafite.22}",
+          "$extensions": {
+            "br.sportconnect.hex": "#323632"
+          }
+        },
+        "success": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-placar.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#52DEA1"
+          }
+        },
+        "onSuccess": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-placar.20}",
+          "$extensions": {
+            "br.sportconnect.hex": "#003823"
+          }
+        },
+        "successContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-placar.30}",
+          "$extensions": {
+            "br.sportconnect.hex": "#005235"
+          }
+        },
+        "onSuccessContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.verde-placar.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#72FBBD"
+          }
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "{primitive.color.amarelo-cartao.80}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFBA28"
+          }
+        },
+        "onWarning": {
+          "$type": "color",
+          "$value": "{primitive.color.amarelo-cartao.20}",
+          "$extensions": {
+            "br.sportconnect.hex": "#412D00"
+          }
+        },
+        "warningContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.amarelo-cartao.30}",
+          "$extensions": {
+            "br.sportconnect.hex": "#5E4100"
+          }
+        },
+        "onWarningContainer": {
+          "$type": "color",
+          "$value": "{primitive.color.amarelo-cartao.90}",
+          "$extensions": {
+            "br.sportconnect.hex": "#FFDEAE"
+          }
+        }
+      },
+      "sport": {
+        "futebol_society": {
+          "container": {
+            "$type": "color",
+            "$value": "#005310"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#9CF896"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#80DB7C"
+          }
+        },
+        "futsal": {
+          "container": {
+            "$type": "color",
+            "$value": "#4B3594"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#E9DDFF"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#D2BBFF"
+          }
+        },
+        "volei": {
+          "container": {
+            "$type": "color",
+            "$value": "#004A7A"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#D3E4FF"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#A2C9FF"
+          }
+        },
+        "volei_praia": {
+          "container": {
+            "$type": "color",
+            "$value": "#5A4300"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#FFDEA2"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#EFC053"
+          }
+        },
+        "futevolei": {
+          "container": {
+            "$type": "color",
+            "$value": "#00504F"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#00FCF9"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#00DDDB"
+          }
+        },
+        "beach_tennis": {
+          "container": {
+            "$type": "color",
+            "$value": "#91002B"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#FFDADA"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#FFB3B5"
+          }
+        },
+        "padel": {
+          "container": {
+            "$type": "color",
+            "$value": "#004D65"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#BEE9FF"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#6AD3FF"
+          }
+        },
+        "tenis": {
+          "container": {
+            "$type": "color",
+            "$value": "#424B00"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#DFEB73"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#C2CF58"
+          }
+        },
+        "basquete": {
+          "container": {
+            "$type": "color",
+            "$value": "#793100"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#FFDBC9"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#FFB68E"
+          }
+        },
+        "handebol": {
+          "container": {
+            "$type": "color",
+            "$value": "#8A005F"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#FFD8EB"
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "#FFAED9"
+          }
+        }
+      },
+      "booking": {
+        "aguardando_pagamento": {
+          "container": {
+            "$type": "color",
+            "$value": "#5E4100"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#FFDEAE"
+          },
+          "$description": "Aguardando pagamento — ícone hourglass_top"
+        },
+        "confirmado": {
+          "container": {
+            "$type": "color",
+            "$value": "#005235"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#72FBBD"
+          },
+          "$description": "Confirmado — ícone check_circle"
+        },
+        "cancelado": {
+          "container": {
+            "$type": "color",
+            "$value": "#93001A"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#FFDAD6"
+          },
+          "$description": "Cancelado — ícone cancel"
+        },
+        "expirado": {
+          "container": {
+            "$type": "color",
+            "$value": "#323632"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#BDCAC0"
+          },
+          "$description": "Expirado — ícone timer_off"
+        },
+        "concluido": {
+          "container": {
+            "$type": "color",
+            "$value": "#00429B"
+          },
+          "onContainer": {
+            "$type": "color",
+            "$value": "#DFE0FF"
+          },
+          "$description": "Concluído — ícone sports_score"
+        }
+      },
+      "timeSlot": {
+        "disponivel": {
+          "container": {
+            "$type": "color",
+            "$value": "#0A100B"
+          },
+          "content": {
+            "$type": "color",
+            "$value": "#DEE4DF"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "#88948A"
+          }
+        },
+        "ocupado": {
+          "container": {
+            "$type": "color",
+            "$value": "#272B28"
+          },
+          "content": {
+            "$type": "color",
+            "$value": "#BDCAC0"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "#272B28"
+          }
+        },
+        "pre_reservado": {
+          "container": {
+            "$type": "color",
+            "$value": "#5E4100"
+          },
+          "content": {
+            "$type": "color",
+            "$value": "#FFDEAE"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "#FFBA28"
+          }
+        },
+        "selecionado": {
+          "container": {
+            "$type": "color",
+            "$value": "#00E46E"
+          },
+          "content": {
+            "$type": "color",
+            "$value": "#003916"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "#00E46E"
+          }
+        }
+      }
+    }
+  },
+  "typography": {
+    "displayLarge": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.display}",
+        "fontWeight": 700,
+        "fontSize": "60px",
+        "lineHeight": "64px",
+        "letterSpacing": "-0.5px"
+      }
+    },
+    "displayMedium": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.display}",
+        "fontWeight": 700,
+        "fontSize": "48px",
+        "lineHeight": "52px",
+        "letterSpacing": "-0.25px"
+      }
+    },
+    "displaySmall": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.display}",
+        "fontWeight": 700,
+        "fontSize": "38px",
+        "lineHeight": "44px",
+        "letterSpacing": "0px"
+      }
+    },
+    "headlineLarge": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.display}",
+        "fontWeight": 600,
+        "fontSize": "34px",
+        "lineHeight": "40px",
+        "letterSpacing": "0px"
+      }
+    },
+    "headlineMedium": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.display}",
+        "fontWeight": 600,
+        "fontSize": "30px",
+        "lineHeight": "36px",
+        "letterSpacing": "0px"
+      }
+    },
+    "headlineSmall": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.display}",
+        "fontWeight": 600,
+        "fontSize": "26px",
+        "lineHeight": "32px",
+        "letterSpacing": "0px"
+      }
+    },
+    "titleLarge": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.text}",
+        "fontWeight": 700,
+        "fontSize": "22px",
+        "lineHeight": "28px",
+        "letterSpacing": "0px"
+      }
+    },
+    "titleMedium": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.text}",
+        "fontWeight": 700,
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "letterSpacing": "0.15px"
+      }
+    },
+    "titleSmall": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.text}",
+        "fontWeight": 700,
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "letterSpacing": "0.1px"
+      }
+    },
+    "bodyLarge": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.text}",
+        "fontWeight": 400,
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "letterSpacing": "0.15px"
+      }
+    },
+    "bodyMedium": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.text}",
+        "fontWeight": 400,
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "letterSpacing": "0.25px"
+      }
+    },
+    "bodySmall": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.text}",
+        "fontWeight": 400,
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "letterSpacing": "0.4px"
+      }
+    },
+    "labelLarge": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.text}",
+        "fontWeight": 600,
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "letterSpacing": "0.1px"
+      }
+    },
+    "labelMedium": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.text}",
+        "fontWeight": 600,
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "letterSpacing": "0.5px"
+      }
+    },
+    "labelSmall": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.text}",
+        "fontWeight": 600,
+        "fontSize": "11px",
+        "lineHeight": "16px",
+        "letterSpacing": "0.5px"
+      }
+    },
+    "numericScore": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.display}",
+        "fontWeight": 700,
+        "fontSize": "44px",
+        "lineHeight": "48px",
+        "letterSpacing": "0px"
+      }
+    },
+    "numericPrice": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.display}",
+        "fontWeight": 700,
+        "fontSize": "28px",
+        "lineHeight": "32px",
+        "letterSpacing": "0px"
+      }
+    },
+    "pixCode": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{primitive.fontFamily.mono}",
+        "fontWeight": 500,
+        "fontSize": "13px",
+        "lineHeight": "20px",
+        "letterSpacing": "0px"
+      }
+    }
+  },
+  "component": {
+    "button": {
+      "height": {
+        "sm": {
+          "$type": "dimension",
+          "$value": "40px"
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "48px"
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "56px"
+        }
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.radius.md}"
+      },
+      "paddingX": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space.6}"
+      },
+      "primary": {
+        "container": {
+          "$type": "color",
+          "$value": "{semantic.<mode>.color.primary}"
+        },
+        "content": {
+          "$type": "color",
+          "$value": "{semantic.<mode>.color.onPrimary}"
+        }
+      }
+    },
+    "card": {
+      "radius": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.radius.xl}"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.space.4}"
+      },
+      "container": {
+        "$type": "color",
+        "$value": "{semantic.<mode>.color.surfaceContainerLowest}"
+      }
+    },
+    "chip": {
+      "height": {
+        "$type": "dimension",
+        "$value": "32px"
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.radius.sm}"
+      }
+    },
+    "badge": {
+      "height": {
+        "$type": "dimension",
+        "$value": "24px"
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.radius.xs}"
+      }
+    },
+    "splitProgress": {
+      "segmentHeight": {
+        "$type": "dimension",
+        "$value": "10px"
+      },
+      "segmentGap": {
+        "$type": "dimension",
+        "$value": "3px"
+      },
+      "segmentRadius": {
+        "$type": "dimension",
+        "$value": "2px"
+      },
+      "paid": {
+        "$type": "color",
+        "$value": "{semantic.<mode>.color.primary}"
+      },
+      "pending": {
+        "$type": "color",
+        "$value": "{semantic.<mode>.color.surfaceContainerHighest}"
+      }
+    },
+    "timeSlot": {
+      "height": {
+        "$type": "dimension",
+        "$value": "56px"
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.radius.md}"
+      }
+    },
+    "sheet": {
+      "radiusTop": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.radius.xxl}"
+      }
+    },
+    "textField": {
+      "height": {
+        "$type": "dimension",
+        "$value": "56px"
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{primitive.dimension.radius.md}"
+      }
+    },
+    "$description": "<mode> = light | dark. Componentes referenciam apenas tokens semânticos."
+  }
+}

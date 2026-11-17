@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SportConnect · Mockups das telas-chave do MVP</title>
+<link rel="icon" href="assets/app-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@500&family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Saira+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0..1,0&display=block" rel="stylesheet">
+<style>
+/* Tokens gerados por tools/design/gen_tokens.py (copiados de style-guide.html). Não editar à mão. */
+:root, .t-light {
+  --primary: #006D31;
+  --onPrimary: #FFFFFF;
+  --primaryContainer: #27F37A;
+  --onPrimaryContainer: #002107;
+  --inversePrimary: #00E46E;
+  --secondary: #9E4200;
+  --onSecondary: #FFFFFF;
+  --secondaryContainer: #FFDBC9;
+  --onSecondaryContainer: #2E1500;
+  --tertiary: #0058CA;
+  --onTertiary: #FFFFFF;
+  --tertiaryContainer: #DFE0FF;
+  --onTertiaryContainer: #001945;
+  --error: #BF0025;
+  --onError: #FFFFFF;
+  --errorContainer: #FFDAD6;
+  --onErrorContainer: #3F0400;
+  --background: #F5FBF6;
+  --onBackground: #191C19;
+  --surface: #F5FBF6;
+  --onSurface: #191C19;
+  --surfaceVariant: #D9E6DB;
+  --onSurfaceVariant: #3F4941;
+  --surfaceTint: #006D31;
+  --inverseSurface: #2D312E;
+  --inverseOnSurface: #EDF2EE;
+  --outline: #6F7A71;
+  --outlineVariant: #BDCAC0;
+  --scrim: #000000;
+  --surfaceBright: #F5FBF6;
+  --surfaceDim: #D6DBD7;
+  --surfaceContainerLowest: #FFFFFF;
+  --surfaceContainerLow: #EFF5F0;
+  --surfaceContainer: #EAEFEB;
+  --surfaceContainerHigh: #E4E9E5;
+  --surfaceContainerHighest: #DEE4DF;
+  --success: #006C47;
+  --onSuccess: #FFFFFF;
+  --successContainer: #A9F2CC;
+  --onSuccessContainer: #002113;
+  --warning: #7D5800;
+  --onWarning: #FFFFFF;
+  --warningContainer: #FFDEAE;
+  --onWarningContainer: #261A00;
+  --sp-futebol-society-container: #C3EEBD;
+  --sp-futebol-society-oncontainer: #072100;
+  --sp-futebol-society-accent: #006E19;
+  --sp-futsal-container: #E9DDFF;
+  --sp-futsal-oncontainer: #0C0961;
+  --sp-futsal-accent: #664DAF;
+  --sp-volei-container: #D3E4FF;
+  --sp-volei-oncontainer: #001D35;
+  --sp-volei-accent: #0062A0;
+  --sp-volei-praia-container: #FCDFAA;
+  --sp-volei-praia-oncontainer: #241A00;
+  --sp-volei-praia-accent: #775A00;
+  --sp-futevolei-container: #92F3F0;
+  --sp-futevolei-oncontainer: #00201F;
+  --sp-futevolei-accent: #006A69;
+  --sp-beach-tennis-container: #FFDADA;
+  --sp-beach-tennis-oncontainer: #41000B;
+  --sp-beach-tennis-accent: #B22640;
+  --sp-padel-container: #BEE9FF;
+  --sp-padel-oncontainer: #001F2A;
+  --sp-padel-accent: #006684;
+  --sp-tenis-container: #E3E7AC;
+  --sp-tenis-oncontainer: #1C1D00;
+  --sp-tenis-accent: #586400;
+  --sp-basquete-container: #FFDBC9;
+  --sp-basquete-oncontainer: #2E1500;
+  --sp-basquete-accent: #9D4404;
+  --sp-handebol-container: #FFD8EB;
+  --sp-handebol-oncontainer: #3D0028;
+  --sp-handebol-accent: #A82879;
+  --bk-aguardando-pagamento-bg: #FFDEAE;
+  --bk-aguardando-pagamento-fg: #261A00;
+  --bk-confirmado-bg: #A9F2CC;
+  --bk-confirmado-fg: #002113;
+  --bk-cancelado-bg: #FFDAD6;
+  --bk-cancelado-fg: #3F0400;
+  --bk-expirado-bg: #DEE4DF;
+  --bk-expirado-fg: #3F4941;
+  --bk-concluido-bg: #DFE0FF;
+  --bk-concluido-fg: #001945;
+  --slot-disponivel-bg: #FFFFFF;
+  --slot-disponivel-fg: #191C19;
+  --slot-disponivel-bd: #6F7A71;
+  --slot-ocupado-bg: #E4E9E5;
+  --slot-ocupado-fg: #3F4941;
+  --slot-ocupado-bd: #E4E9E5;
+  --slot-pre-reservado-bg: #FFDEAE;
+  --slot-pre-reservado-fg: #261A00;
+  --slot-pre-reservado-bd: #7D5800;
+  --slot-selecionado-bg: #006D31;
+  --slot-selecionado-fg: #FFFFFF;
+  --slot-selecionado-bd: #006D31;
+  color-scheme: light;
+}
+.t-dark {
+  --primary: #00E46E;
+  --onPrimary: #003916;
+  --primaryContainer: #005323;
+  --onPrimaryContainer: #64FF93;
+  --inversePrimary: #006D31;
+  --secondary: #FFB68E;
+  --onSecondary: #532200;
+  --secondaryContainer: #793100;
+  --onSecondaryContainer: #FFDBC9;
+  --tertiary: #BDC2FF;
+  --onTertiary: #002D6E;
+  --tertiaryContainer: #00429B;
+  --onTertiaryContainer: #DFE0FF;
+  --error: #FFB4AB;
+  --onError: #68000F;
+  --errorContainer: #93001A;
+  --onErrorContainer: #FFDAD6;
+  --background: #101411;
+  --onBackground: #DEE4DF;
+  --surface: #101411;
+  --onSurface: #DEE4DF;
+  --surfaceVariant: #3F4941;
+  --onSurfaceVariant: #BDCAC0;
+  --surfaceTint: #00E46E;
+  --inverseSurface: #DEE4DF;
+  --inverseOnSurface: #2D312E;
+  --outline: #88948A;
+  --outlineVariant: #3F4941;
+  --scrim: #000000;
+  --surfaceBright: #363A37;
+  --surfaceDim: #101411;
+  --surfaceContainerLowest: #0A100B;
+  --surfaceContainerLow: #191C19;
+  --surfaceContainer: #1D211D;
+  --surfaceContainerHigh: #272B28;
+  --surfaceContainerHighest: #323632;
+  --success: #52DEA1;
+  --onSuccess: #003823;
+  --successContainer: #005235;
+  --onSuccessContainer: #72FBBD;
+  --warning: #FFBA28;
+  --onWarning: #412D00;
+  --warningContainer: #5E4100;
+  --onWarningContainer: #FFDEAE;
+  --sp-futebol-society-container: #005310;
+  --sp-futebol-society-oncontainer: #9CF896;
+  --sp-futebol-society-accent: #80DB7C;
+  --sp-futsal-container: #4B3594;
+  --sp-futsal-oncontainer: #E9DDFF;
+  --sp-futsal-accent: #D2BBFF;
+  --sp-volei-container: #004A7A;
+  --sp-volei-oncontainer: #D3E4FF;
+  --sp-volei-accent: #A2C9FF;
+  --sp-volei-praia-container: #5A4300;
+  --sp-volei-praia-oncontainer: #FFDEA2;
+  --sp-volei-praia-accent: #EFC053;
+  --sp-futevolei-container: #00504F;
+  --sp-futevolei-oncontainer: #00FCF9;
+  --sp-futevolei-accent: #00DDDB;
+  --sp-beach-tennis-container: #91002B;
+  --sp-beach-tennis-oncontainer: #FFDADA;
+  --sp-beach-tennis-accent: #FFB3B5;
+  --sp-padel-container: #004D65;
+  --sp-padel-oncontainer: #BEE9FF;
+  --sp-padel-accent: #6AD3FF;
+  --sp-tenis-container: #424B00;
+  --sp-tenis-oncontainer: #DFEB73;
+  --sp-tenis-accent: #C2CF58;
+  --sp-basquete-container: #793100;
+  --sp-basquete-oncontainer: #FFDBC9;
+  --sp-basquete-accent: #FFB68E;
+  --sp-handebol-container: #8A005F;
+  --sp-handebol-oncontainer: #FFD8EB;
+  --sp-handebol-accent: #FFAED9;
+  --bk-aguardando-pagamento-bg: #5E4100;
+  --bk-aguardando-pagamento-fg: #FFDEAE;
+  --bk-confirmado-bg: #005235;
+  --bk-confirmado-fg: #72FBBD;
+  --bk-cancelado-bg: #93001A;
+  --bk-cancelado-fg: #FFDAD6;
+  --bk-expirado-bg: #323632;
+  --bk-expirado-fg: #BDCAC0;
+  --bk-concluido-bg: #00429B;
+  --bk-concluido-fg: #DFE0FF;
+  --slot-disponivel-bg: #0A100B;
+  --slot-disponivel-fg: #DEE4DF;
+  --slot-disponivel-bd: #88948A;
+  --slot-ocupado-bg: #272B28;
+  --slot-ocupado-fg: #BDCAC0;
+  --slot-ocupado-bd: #272B28;
+  --slot-pre-reservado-bg: #5E4100;
+  --slot-pre-reservado-fg: #FFDEAE;
+  --slot-pre-reservado-bd: #FFBA28;
+  --slot-selecionado-bg: #00E46E;
+  --slot-selecionado-fg: #003916;
+  --slot-selecionado-bd: #00E46E;
+  color-scheme: dark;
+}
+
+:root {
+  --fd: "Saira Condensed", "Roboto Condensed", sans-serif;
+  --ft: "Atkinson Hyperlegible Next", Roboto, system-ui, sans-serif;
+  --fm: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --apito: cubic-bezier(.34,1.4,.64,1);
+  --std: cubic-bezier(.2,0,0,1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--surfaceContainer); color: var(--onSurface); font: 400 16px/24px var(--ft); letter-spacing: .15px; -webkit-font-smoothing: antialiased; }
+.ms { font-family: "Material Symbols Rounded"; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr; font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24; flex: none; -webkit-font-smoothing: antialiased; }
+.ms.f { font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; }
+.ms.s16 { font-size: 16px; font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 20; }
+.ms.s20 { font-size: 20px; font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 20; }
+.ms.s16.f, .ms.s20.f { font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 20; }
+
+/* Tipografia (05 §5.2) */
+.dl { font: 700 60px/64px var(--fd); letter-spacing: -.5px; }
+.ds { font: 700 38px/44px var(--fd); }
+.hl { font: 600 34px/40px var(--fd); }
+.hm { font: 600 30px/36px var(--fd); }
+.hs { font: 600 26px/32px var(--fd); }
+.tl { font: 700 22px/28px var(--ft); }
+.tm { font: 700 16px/24px var(--ft); letter-spacing: .15px; }
+.ts { font: 700 14px/20px var(--ft); letter-spacing: .1px; }
+.bl { font: 400 16px/24px var(--ft); letter-spacing: .15px; }
+.bm { font: 400 14px/20px var(--ft); letter-spacing: .25px; }
+.bs { font: 400 12px/16px var(--ft); letter-spacing: .4px; }
+.ll { font: 600 14px/20px var(--ft); letter-spacing: .1px; }
+.lm { font: 600 12px/16px var(--ft); letter-spacing: .5px; }
+.lsm { font: 600 11px/16px var(--ft); letter-spacing: .5px; }
+.nscore { font: 700 44px/48px var(--fd); font-feature-settings: "tnum"; }
+.nprice { font: 700 28px/32px var(--fd); font-feature-settings: "tnum"; }
+.nprice20 { font: 700 20px/24px var(--fd); font-feature-settings: "tnum"; }
+.pixcode { font: 500 13px/20px var(--fm); }
+.tnum { font-feature-settings: "tnum"; }
+.v { color: var(--onSurfaceVariant); }
+.pri { color: var(--primary); }
+.m0 { margin: 0; }
+
+/* ---------- Página (prancha) ---------- */
+.board-head { max-width: 1840px; margin: 0 auto; padding: 40px 48px 8px; display: flex; gap: 32px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; }
+.board-head img { height: 40px; display: block; }
+.board-head h1 { font: 700 48px/52px var(--fd); margin: 20px 0 4px; letter-spacing: -.25px; }
+.board-head p { margin: 0; max-width: 72ch; color: var(--onSurfaceVariant); }
+.toggle { display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border-radius: 12px; border: 1px solid var(--outline); background: var(--surfaceContainerLowest); color: var(--onSurface); font: 600 14px/20px var(--ft); cursor: pointer; }
+.toggle:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.t-dark .board-head .logo-light { display: none; }
+.board-head .logo-dark { display: none; }
+.t-dark .board-head .logo-dark { display: block; }
+.board { max-width: 1840px; margin: 0 auto; padding: 32px 48px 64px; display: flex; flex-wrap: wrap; gap: 56px 48px; }
+figure.shot { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+figure.shot figcaption { max-width: 390px; }
+figure.shot figcaption b { display: block; font: 700 16px/24px var(--ft); }
+figure.shot figcaption code { font: 500 13px/20px var(--fm); color: var(--onSurfaceVariant); }
+figure.shot figcaption span { display: block; color: var(--onSurfaceVariant); font: 400 14px/20px var(--ft); margin-top: 2px; }
+.wide { flex-basis: 100%; }
+
+/* ---------- Moldura de celular 390 × 844 ---------- */
+.phone { width: 390px; height: 844px; border-radius: 48px; background: #191C19; padding: 10px; box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 24px 48px -24px rgba(0,0,0,.35); flex: none; }
+.screen { position: relative; width: 370px; height: 824px; border-radius: 38px; overflow: hidden; background: var(--surface); color: var(--onSurface); display: flex; flex-direction: column; }
+.sbar { height: 44px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 32px; font: 600 15px/1 var(--ft); color: var(--onSurface); }
+.sbar .icons { display: flex; gap: 6px; align-items: center; }
+.sbar .icons .ms { font-size: 18px; }
+.island { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 112px; height: 30px; background: #000; border-radius: 16px; z-index: 30; }
+.body { flex: 1; overflow: hidden; position: relative; }
+.pad { padding: 0 16px; }
+.gesture { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: var(--onSurface); opacity: .85; z-index: 40; }
+
+/* Top bar */
+.topbar { height: 64px; display: flex; align-items: center; gap: 4px; padding: 0 4px; flex: none; }
+.topbar .title { flex: 1; font: 700 22px/28px var(--ft); padding-left: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iconbtn { width: 48px; height: 48px; border-radius: 9999px; display: grid; place-items: center; color: var(--onSurfaceVariant); position: relative; }
+.iconbtn .dot { position: absolute; top: 8px; right: 8px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--error); color: var(--onError); font: 600 11px/16px var(--ft); text-align: center; }
+
+/* Botões (06 §5.1) */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border-radius: 12px; font: 600 14px/20px var(--ft); letter-spacing: .1px; border: 0; white-space: nowrap; }
+.btn.lg { height: 56px; }
+.btn.sm { height: 40px; padding: 0 16px; }
+.btn.full { display: flex; width: 100%; }
+.btn.primary { background: var(--primary); color: var(--onPrimary); }
+.btn.tonal { background: var(--primaryContainer); color: var(--onPrimaryContainer); }
+.btn.secondary { background: transparent; color: var(--primary); box-shadow: inset 0 0 0 1px var(--outline); }
+.btn.text { background: transparent; color: var(--primary); padding: 0 12px; }
+.btn.text.err { color: var(--error); }
+.btn .ms { font-size: 20px; }
+.btn.lg .ms { font-size: 24px; }
+
+/* Badges (06 §5.4, 05 §3.8) */
+.badge { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; border-radius: 4px; font: 600 12px/16px var(--ft); letter-spacing: .5px; white-space: nowrap; }
+.badge .ms { font-size: 16px; }
+.badge.lg { height: 32px; padding: 0 12px; }
+.badge.lg .ms { font-size: 20px; }
+.b-wait { background: var(--bk-aguardando-pagamento-bg); color: var(--bk-aguardando-pagamento-fg); }
+.b-ok { background: var(--bk-confirmado-bg); color: var(--bk-confirmado-fg); }
+.b-run { background: var(--tertiaryContainer); color: var(--onTertiaryContainer); }
+.b-block { background: var(--surfaceContainerHighest); color: var(--onSurfaceVariant); }
+.tag-org { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 4px; background: var(--secondaryContainer); color: var(--onSecondaryContainer); font: 600 12px/16px var(--ft); letter-spacing: .5px; }
+
+/* Chips de esporte (06 §5.3) */
+.chip { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 10px 0 8px; border-radius: 8px; font: 600 12px/16px var(--ft); letter-spacing: .5px; white-space: nowrap; }
+.chip .ms { font-size: 20px; }
+.sp-soc { background: var(--sp-futebol-society-container); color: var(--sp-futebol-society-oncontainer); }
+.sp-bt { background: var(--sp-beach-tennis-container); color: var(--sp-beach-tennis-oncontainer); }
+.sp-vol { background: var(--sp-volei-container); color: var(--sp-volei-oncontainer); }
+.sp-fs { background: var(--sp-futsal-container); color: var(--sp-futsal-oncontainer); }
+.fchip { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 8px 0 12px; border-radius: 8px; border: 1px solid var(--outline); background: var(--surfaceContainerLowest); color: var(--onSurfaceVariant); font: 600 12px/16px var(--ft); letter-spacing: .5px; white-space: nowrap; flex: none; }
+.fchip.on { background: var(--sp-futebol-society-container); color: var(--sp-futebol-society-oncontainer); border: 2px solid var(--sp-futebol-society-accent); }
+.fchip.plain.on { background: var(--secondaryContainer); color: var(--onSecondaryContainer); border: 0; }
+.fchip .ms { font-size: 18px; }
+
+/* Cards */
+.gcard { position: relative; background: var(--surfaceContainerLowest); border: 1px solid var(--outlineVariant); border-radius: 24px; padding: 16px 16px 16px 20px; overflow: hidden; }
+.gcard::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--acc, var(--sp-futebol-society-accent)); }
+.row { display: flex; align-items: center; gap: 8px; }
+.between { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.meta { display: flex; align-items: center; gap: 8px; color: var(--onSurfaceVariant); font: 400 14px/20px var(--ft); letter-spacing: .25px; }
+.meta .ms { font-size: 20px; }
+.sec { font: 700 14px/20px var(--ft); letter-spacing: .1px; color: var(--onSurfaceVariant); margin: 24px 0 8px; }
+
+/* Rateio (06 §5.8) */
+.track { display: flex; gap: 3px; height: 10px; }
+.track.c { height: 6px; }
+.track i { flex: 1; border-radius: 2px; background: var(--surfaceContainerHighest); box-shadow: inset 0 0 0 1px var(--outline); }
+.track i:first-child { border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
+.track i:last-child { border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+.track i.p { background: var(--primary); box-shadow: none; }
+.track i.pr { box-shadow: none; background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--primary) 40%, transparent) 0 3px, color-mix(in srgb, var(--primary) 18%, transparent) 3px 6px); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font: 600 12px/16px var(--ft); letter-spacing: .5px; color: var(--onSurfaceVariant); }
+.legend span { display: inline-flex; align-items: center; gap: 4px; }
+.legend i { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+
+/* Bottom nav (06 §5.15) */
+.bnav { height: 80px; flex: none; background: var(--surfaceContainer); display: flex; padding: 12px 8px 16px; }
+.bnav a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--onSurfaceVariant); font: 600 11px/16px var(--ft); letter-spacing: .5px; text-decoration: none; }
+.bnav .ind { width: 64px; height: 32px; border-radius: 9999px; display: grid; place-items: center; position: relative; }
+.bnav a.on { color: var(--onSurface); }
+.bnav a.on .ind { background: var(--primaryContainer); color: var(--onPrimaryContainer); }
+.bnav .bdg { position: absolute; top: 0; left: 36px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--error); color: var(--onError); font: 600 11px/16px var(--ft); text-align: center; }
+
+/* FAB */
+.fab { position: absolute; right: 16px; bottom: 96px; height: 56px; padding: 0 20px 0 16px; border-radius: 9999px; background: var(--primaryContainer); color: var(--onPrimaryContainer); display: inline-flex; align-items: center; gap: 12px; font: 600 14px/20px var(--ft); box-shadow: 0 3px 6px rgba(0,0,0,.18), 0 6px 12px -4px rgba(0,0,0,.18); z-index: 5; }
+
+/* Rodapé fixo */
+.foot { position: absolute; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--outlineVariant); padding: 16px 16px 28px; z-index: 6; }
+
+/* Contador */
+.timer-warn { color: var(--warning); }
+.timer-chip { display: inline-flex; align-items: center; gap: 4px; font: 600 14px/20px var(--ft); font-feature-settings: "tnum"; }
+
+/* Participantes */
+.prow { height: 64px; display: flex; align-items: center; gap: 16px; }
+.prow.self { background: var(--surfaceContainerLow); margin: 0 -16px; padding: 0 16px; }
+.av { width: 40px; height: 40px; border-radius: 9999px; display: grid; place-items: center; font: 700 14px/1 var(--ft); flex: none; background: var(--sp-futebol-society-container); color: var(--sp-futebol-society-oncontainer); }
+.av.sm { width: 32px; height: 32px; font-size: 12px; }
+.av.open { background: transparent; border: 1.5px dashed var(--outline); color: var(--onSurfaceVariant); }
+.prow .who { flex: 1; min-width: 0; }
+.st { display: flex; align-items: center; gap: 4px; font: 400 12px/16px var(--ft); letter-spacing: .4px; color: var(--onSurfaceVariant); }
+.st .ms { font-size: 16px; }
+.st.ok { color: var(--success); }
+.st.wait { color: var(--warning); }
+
+/* Slots (06 §5.7, 05 §3.9) */
+.slots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.slot { position: relative; min-height: 56px; border-radius: 12px; padding: 8px 12px; background: var(--slot-disponivel-bg); color: var(--slot-disponivel-fg); box-shadow: inset 0 0 0 1px var(--slot-disponivel-bd); }
+.slot .ms { position: absolute; top: 8px; right: 8px; font-size: 16px; }
+.slot.busy { background: var(--slot-ocupado-bg) repeating-linear-gradient(45deg, var(--outlineVariant) 0 1px, transparent 1px 6px); color: var(--slot-ocupado-fg); box-shadow: none; }
+.slot.busy { background-color: var(--slot-ocupado-bg); }
+.slot.hold { background: var(--slot-pre-reservado-bg); color: var(--slot-pre-reservado-fg); box-shadow: inset 0 0 0 1px var(--slot-pre-reservado-bd); }
+.slot.sel { background: var(--slot-selecionado-bg); color: var(--slot-selecionado-fg); box-shadow: none; }
+.days { display: flex; gap: 8px; overflow: hidden; }
+.day { width: 56px; height: 64px; flex: none; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surfaceContainerLowest); box-shadow: inset 0 0 0 1px var(--outline); }
+.day.on { background: var(--primary); color: var(--onPrimary); box-shadow: none; }
+.segm { display: inline-flex; height: 40px; border-radius: 12px; box-shadow: inset 0 0 0 1px var(--outline); overflow: hidden; }
+.segm > span { min-width: 64px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font: 600 14px/20px var(--ft); }
+.segm > span + span { border-left: 1px solid var(--outline); }
+.segm > span.on { background: var(--secondaryContainer); color: var(--onSecondaryContainer); }
+
+/* Stepper (criar jogo) */
+.stepper { display: flex; align-items: flex-start; padding: 4px 16px 0; }
+.stepper .st-i { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 64px; flex: none; text-align: center; }
+.stepper .st-c { width: 24px; height: 24px; border-radius: 9999px; display: grid; place-items: center; font: 700 12px/1 var(--ft); background: var(--primary); color: var(--onPrimary); }
+.stepper .st-c.todo { background: transparent; box-shadow: inset 0 0 0 2px var(--outline); color: var(--onSurfaceVariant); }
+.stepper .st-c .ms { font-size: 16px; }
+.stepper .ln { flex: 1; height: 2px; background: var(--primary); margin-top: 11px; }
+.stepper .ln.todo { background: var(--outlineVariant); }
+.stepper .lab { font: 600 11px/14px var(--ft); letter-spacing: .3px; color: var(--onSurfaceVariant); }
+.stepper .lab.cur { color: var(--onSurface); }
+.rule { position: relative; border-radius: 16px; background: var(--surfaceContainerLowest); box-shadow: inset 0 0 0 1px var(--outlineVariant); padding: 16px 16px 16px 52px; }
+.rule.on { box-shadow: inset 0 0 0 2px var(--primary); background: color-mix(in srgb, var(--primaryContainer) 12%, var(--surfaceContainerLowest)); }
+.radio { position: absolute; left: 16px; top: 18px; width: 20px; height: 20px; border-radius: 9999px; box-shadow: inset 0 0 0 2px var(--onSurfaceVariant); }
+.radio.on { box-shadow: inset 0 0 0 2px var(--primary); }
+.radio.on::after { content: ""; position: absolute; inset: 5px; border-radius: 9999px; background: var(--primary); }
+.radio.in { position: relative; left: auto; top: auto; flex: none; margin-top: 2px; }
+.rule .info { position: absolute; right: 4px; top: 4px; }
+.sub-opt { display: flex; gap: 12px; padding: 10px 0; }
+.chip-rec { display: inline-flex; height: 24px; align-items: center; padding: 0 8px; border-radius: 4px; background: var(--secondaryContainer); color: var(--onSecondaryContainer); font: 600 12px/16px var(--ft); letter-spacing: .5px; }
+
+/* Pix */
+.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.32); z-index: 10; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; top: 96px; background: var(--surfaceContainerLow); border-radius: 28px 28px 0 0; z-index: 11; padding: 16px 20px 0; overflow: hidden; }
+.handle { width: 32px; height: 4px; border-radius: 2px; background: var(--outlineVariant); margin: 0 auto 16px; }
+.codebox { display: flex; gap: 4px; align-items: flex-start; background: var(--surfaceContainerLowest); border: 1px solid var(--outlineVariant); border-radius: 12px; padding: 12px 4px 12px 12px; }
+.codebox .pixcode { flex: 1; word-break: break-all; max-height: 40px; overflow: hidden; }
+.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; gap: 4px; }
+.steps li { counter-increment: s; display: flex; align-items: center; gap: 12px; min-height: 32px; font: 400 14px/20px var(--ft); letter-spacing: .25px; }
+.steps li::before { content: counter(s); width: 24px; height: 24px; border-radius: 9999px; display: grid; place-items: center; background: var(--surfaceContainerHighest); font: 600 12px/1 var(--ft); flex: none; }
+.status-box { background: var(--surfaceContainer); border-radius: 16px; padding: 16px; }
+.spin { width: 20px; height: 20px; border-radius: 9999px; border: 2.5px solid color-mix(in srgb, var(--primary) 24%, transparent); border-top-color: var(--primary); flex: none; }
+
+/* Convite */
+.web-top { height: 56px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid var(--outlineVariant); background: var(--surface); }
+.web-top img { height: 20px; display: block; }
+.hero { position: relative; background: var(--surfaceContainerLow); padding: 24px 16px 20px; overflow: hidden; }
+.hero svg.court { position: absolute; right: -60px; top: -10px; width: 260px; height: 220px; }
+.share-card { background: var(--surfaceContainerLowest); border: 1px solid var(--outlineVariant); border-radius: 24px; padding: 20px; }
+.hr { height: 1px; background: var(--outlineVariant); margin: 16px 0; }
+
+/* Celebração */
+.celebrate { position: relative; background: var(--primaryContainer); color: var(--onPrimaryContainer); padding: 8px 16px 48px; overflow: hidden; }
+.celebrate svg.court { position: absolute; right: -90px; top: -30px; width: 300px; height: 300px; }
+.lift { margin: -24px 16px 0; position: relative; background: var(--surfaceContainerLowest); border-radius: 16px; padding: 16px; box-shadow: inset 0 0 0 1px var(--outlineVariant); }
+
+/* Arena */
+.now-row { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--outlineVariant); }
+.now-row:last-child { border-bottom: 0; }
+.now-row .court { width: 80px; flex: none; font: 700 14px/20px var(--ft); padding-top: 2px; }
+.alert { display: flex; gap: 12px; align-items: flex-start; background: var(--warningContainer); color: var(--onWarningContainer); border-radius: 16px; padding: 16px; }
+
+/* Desktop expanded */
+.desk { width: 1280px; height: 800px; border-radius: 16px; overflow: hidden; background: var(--surface); box-shadow: 0 0 0 1px var(--outlineVariant), 0 24px 48px -24px rgba(0,0,0,.35); display: flex; flex-direction: column; }
+.chrome { height: 40px; flex: none; background: var(--surfaceContainerHigh); display: flex; align-items: center; gap: 8px; padding: 0 16px; }
+.chrome i { width: 12px; height: 12px; border-radius: 9999px; background: var(--outlineVariant); display: inline-block; }
+.chrome .url { margin-left: 16px; height: 26px; border-radius: 13px; background: var(--surfaceContainerLowest); padding: 0 14px; display: inline-flex; align-items: center; font: 400 13px/1 var(--ft); color: var(--onSurfaceVariant); min-width: 420px; }
+.desk-main { flex: 1; display: flex; min-height: 0; }
+.rail { width: 80px; flex: none; background: var(--surface); display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 0; border-right: 1px solid var(--outlineVariant); }
+.rail a { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--onSurfaceVariant); font: 600 11px/16px var(--ft); letter-spacing: .5px; text-decoration: none; width: 80px; }
+.rail .ind { width: 56px; height: 32px; border-radius: 9999px; display: grid; place-items: center; }
+.rail a.on { color: var(--onSurface); }
+.rail a.on .ind { background: var(--primaryContainer); color: var(--onPrimaryContainer); }
+.rail .logo { width: 40px; height: 40px; margin-bottom: 12px; }
+.agenda { flex: 1; padding: 20px 24px 0; display: flex; flex-direction: column; min-width: 0; }
+.grid { display: grid; grid-template-columns: 56px repeat(4, 1fr); column-gap: 8px; }
+.grid .h { height: 48px; display: flex; align-items: center; font: 700 14px/20px var(--ft); position: sticky; top: 0; }
+.grid .t { height: 64px; font: 600 12px/16px var(--ft); color: var(--onSurfaceVariant); padding-top: 6px; font-feature-settings: "tnum"; }
+.cell { height: 64px; padding: 4px 0; }
+.cell > div { height: 56px; border-radius: 12px; padding: 7px 10px; position: relative; overflow: hidden; }
+.cell .l1 { display: flex; align-items: center; gap: 4px; font: 600 12px/16px var(--ft); letter-spacing: .3px; white-space: nowrap; }
+.cell .l1 .ms { font-size: 16px; }
+.cell .l2 { font: 400 12px/16px var(--ft); letter-spacing: .3px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c-free { box-shadow: inset 0 0 0 1px var(--outlineVariant); background: var(--surfaceContainerLowest); color: var(--onSurfaceVariant); }
+.c-free { background-image: none; }
+.c-ok { background: var(--bk-confirmado-bg); color: var(--bk-confirmado-fg); border-left: 4px solid var(--acc); }
+.c-run { background: var(--tertiaryContainer); color: var(--onTertiaryContainer); border-left: 4px solid var(--acc); }
+.c-hold { background: var(--slot-pre-reservado-bg); color: var(--slot-pre-reservado-fg); border-left: 4px solid var(--acc); }
+.c-block { background: var(--surfaceContainerHighest); color: var(--onSurfaceVariant); }
+.c-closed { background: var(--surfaceContainer) repeating-linear-gradient(45deg, var(--outlineVariant) 0 1px, transparent 1px 6px); color: var(--onSurfaceVariant); }
+.c-sel { box-shadow: 0 0 0 2px var(--primary); }
+.side { width: 320px; flex: none; background: var(--surfaceContainerLow); border-left: 1px solid var(--outlineVariant); padding: 24px; display: flex; flex-direction: column; gap: 24px; overflow: hidden; }
+.nowline { position: absolute; left: 56px; right: 0; height: 2px; background: var(--error); z-index: 3; }
+.nowline::before { content: ""; position: absolute; left: -4px; top: -3px; width: 8px; height: 8px; border-radius: 9999px; background: var(--error); }
+.kv { display: flex; justify-content: space-between; gap: 8px; font: 400 14px/20px var(--ft); letter-spacing: .25px; padding: 6px 0; }
+.kv b { font-weight: 600; font-feature-settings: "tnum"; }
+
+/* Fotos placeholder de arena (05 §8) */
+.ph { position: relative; background: var(--sp-futebol-society-container); overflow: hidden; }
+.ph svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.distance { position: absolute; left: 12px; bottom: 12px; height: 24px; padding: 0 8px; border-radius: 4px; background: rgba(0,0,0,.56); color: #fff; font: 600 12px/24px var(--ft); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .track i.p.last { animation: fill 300ms var(--apito) both; transform-origin: left; }
+  @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+}
+</style>
+</head>
+<body>
+<header class="board-head">
+  <div>
+    <svg class="logo-inline" style="height:40px;width:auto;display:block;color:var(--onSurface)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 64" width="310" height="64" role="img" aria-label="SportConnect">
+  <title>SportConnect</title>
+  <!-- Símbolo "Quique": S traçado por duas metades do círculo central da quadra, cruzando a linha de meio; a bola laranja marca o saque. Grade 48u, escala 64/48. -->
+  <g transform="scale(1.3333)">
+    <rect width="48" height="48" rx="12" fill="#191C19"/>
+    <line x1="7" y1="24" x2="41" y2="24" stroke="#F5FBF6" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#191C19" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#00E46E" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="37.5" cy="9.5" r="3.25" fill="#EE6800"/>
+  </g>
+  <path fill="currentColor" d="M81.794 48.04V42.244Q85.98 42.566 88.188 42.566Q89.706 42.566 90.44200000000001 42.451Q91.178 42.336 91.5 41.922Q91.822 41.6 91.914 41.048Q92.006 40.496 92.006 39.438Q92.006 37.92 91.845 37.275999999999996Q91.684 36.632 91.132 36.333Q90.58 36.034 89.246 35.804L85.244 35.068Q82.944 34.7 82.07 32.469Q81.196 30.238 81.196 26.19Q81.196 22.142 82.392 20.026Q83.588 17.91 85.612 17.197000000000003Q87.636 16.484 90.764 16.484Q94.26 16.484 98.21600000000001 17.312V23.108Q95.87 22.786 92.604 22.786Q91.03999999999999 22.786 90.304 22.878Q89.568 22.97 89.2 23.292Q88.832 23.568 88.69399999999999 24.166Q88.556 24.764 88.556 25.914Q88.556 27.156 88.67099999999999 27.708Q88.786 28.26 89.17699999999999 28.513Q89.568 28.766000000000002 90.488 28.95L94.26 29.64Q95.824 29.962 96.905 30.628999999999998Q97.986 31.296 98.63 32.998000000000005Q99.366 34.93 99.366 38.38Q99.366 42.934 98.239 45.211Q97.112 47.488 95.226 48.178Q93.34 48.868 90.258 48.868Q88.096 48.868 85.79599999999999 48.638000000000005Q83.496 48.408 81.794 48.04Z M102.756 25.04H109.334L109.518 27.708000000000002H109.932Q110.438 26.052 111.68 25.362000000000002Q112.922 24.672 114.532 24.672Q116.694 24.672 117.91300000000001 25.707Q119.132 26.742 119.684 29.318Q120.23599999999999 31.894000000000002 120.23599999999999 36.724000000000004Q120.23599999999999 41.416 119.72999999999999 44.015Q119.22399999999999 46.614 118.005 47.741Q116.786 48.868 114.578 48.868Q112.87599999999999 48.868 111.726 48.201Q110.576 47.534 109.978 46.062H109.61V57.608000000000004H102.756ZM113.428 36.769999999999996Q113.428 33.596000000000004 113.31299999999999 32.423Q113.198 31.25 112.853 30.951Q112.508 30.652 111.496 30.652Q110.714 30.652 110.346 30.905Q109.978 31.158 109.794 31.986Q109.65599999999999 32.538 109.633 33.803Q109.61 35.068 109.61 36.769999999999996Q109.61 40.68 109.74799999999999 41.37Q109.932 42.29 110.32300000000001 42.589Q110.714 42.888 111.496 42.888Q112.508 42.888 112.853 42.589Q113.198 42.29 113.31299999999999 41.117000000000004Q113.428 39.944 113.428 36.769999999999996Z M123.35 36.769999999999996Q123.35 31.48 123.87899999999999 29.088Q124.40799999999999 26.696 126.225 25.684Q128.042 24.672 132.136 24.672Q136.23 24.672 138.024 25.684Q139.81799999999998 26.696 140.34699999999998 29.088Q140.87599999999998 31.48 140.87599999999998 36.769999999999996Q140.87599999999998 42.06 140.34699999999998 44.452Q139.81799999999998 46.844 138.024 47.856Q136.23 48.868 132.136 48.868Q128.042 48.868 126.225 47.856Q124.40799999999999 46.844 123.87899999999999 44.452Q123.35 42.06 123.35 36.769999999999996ZM134.06799999999998 36.769999999999996Q134.06799999999998 33.412 133.95299999999997 32.17Q133.838 30.928 133.493 30.583Q133.148 30.238 132.136 30.238Q131.124 30.238 130.75599999999997 30.583Q130.38799999999998 30.928 130.296 32.147Q130.20399999999998 33.366 130.20399999999998 36.769999999999996Q130.20399999999998 40.174 130.296 41.393Q130.38799999999998 42.612 130.75599999999997 42.957Q131.124 43.302 132.136 43.302Q133.148 43.302 133.493 42.957Q133.838 42.612 133.95299999999997 41.370000000000005Q134.06799999999998 40.128 134.06799999999998 36.769999999999996Z M144.45 25.04H151.028L151.212 28.812H151.57999999999998Q152.31599999999997 26.512 153.558 25.592Q154.79999999999998 24.672 156.916 24.672V31.618Q154.892 31.618 153.696 32.124Q152.5 32.63 151.902 34.033Q151.30399999999997 35.436 151.30399999999997 38.058V48.5H144.45Z M161.272 48.5V30.606H158.512V25.04H161.272V18.232H168.172V25.04H171.80599999999998V30.606H168.172V48.5Z M184.34999999999997 48.868Q179.88799999999998 48.868 177.79499999999996 47.396Q175.70199999999997 45.924 175.03499999999997 42.611999999999995Q174.36799999999997 39.3 174.36799999999997 32.676Q174.36799999999997 26.098 175.05799999999996 22.786Q175.74799999999996 19.474 177.86399999999998 17.979Q179.97999999999996 16.484 184.34999999999997 16.484Q185.914 16.484 187.45499999999998 16.714Q188.99599999999998 16.944 189.86999999999998 17.266000000000002V23.062Q187.33999999999997 22.786 185.82199999999997 22.786Q183.70599999999996 22.786 182.94699999999997 23.361Q182.188 23.936 181.981 25.753Q181.77399999999997 27.57 181.77399999999997 32.676Q181.77399999999997 37.782 181.981 39.599Q182.188 41.416 182.94699999999997 41.991Q183.70599999999996 42.566 185.82199999999997 42.566Q188.30599999999998 42.566 189.962 42.29V48.04Q188.95 48.408 187.33999999999997 48.638000000000005Q185.72999999999996 48.868 184.34999999999997 48.868Z M192.938 36.769999999999996Q192.938 31.48 193.46699999999998 29.088Q193.99599999999998 26.696 195.813 25.684Q197.63 24.672 201.724 24.672Q205.81799999999998 24.672 207.61199999999997 25.684Q209.40599999999998 26.696 209.935 29.088Q210.464 31.48 210.464 36.769999999999996Q210.464 42.06 209.935 44.452Q209.40599999999998 46.844 207.61199999999997 47.856Q205.81799999999998 48.868 201.724 48.868Q197.63 48.868 195.813 47.856Q193.99599999999998 46.844 193.46699999999998 44.452Q192.938 42.06 192.938 36.769999999999996ZM203.65599999999998 36.769999999999996Q203.65599999999998 33.412 203.541 32.17Q203.426 30.928 203.081 30.583Q202.736 30.238 201.724 30.238Q200.712 30.238 200.344 30.583Q199.976 30.928 199.884 32.147Q199.79199999999997 33.366 199.79199999999997 36.769999999999996Q199.79199999999997 40.174 199.884 41.393Q199.976 42.612 200.344 42.957Q200.712 43.302 201.724 43.302Q202.736 43.302 203.081 42.957Q203.426 42.612 203.541 41.370000000000005Q203.65599999999998 40.128 203.65599999999998 36.769999999999996Z M224.43399999999997 35.896Q224.43399999999997 33.182 224.34199999999998 32.193Q224.24999999999997 31.204 223.92799999999997 30.928Q223.60599999999997 30.652 222.68599999999998 30.652Q221.766 30.652 221.421 31.020000000000003Q221.07599999999996 31.388 220.98399999999998 32.538000000000004Q220.89199999999997 33.688 220.89199999999997 36.632V48.5H214.03799999999998V25.04H220.61599999999999L220.79999999999998 27.754H221.16799999999998Q222.36399999999998 24.672 226.182 24.672Q228.344 24.672 229.44799999999998 25.546Q230.55199999999996 26.42 230.91999999999996 28.168Q231.28799999999998 29.916 231.28799999999998 32.998000000000005V48.5H224.43399999999997Z M245.67199999999997 35.896Q245.67199999999997 33.182 245.57999999999998 32.193Q245.48799999999997 31.204 245.16599999999997 30.928Q244.84399999999997 30.652 243.92399999999998 30.652Q243.004 30.652 242.659 31.020000000000003Q242.31399999999996 31.388 242.22199999999998 32.538000000000004Q242.12999999999997 33.688 242.12999999999997 36.632V48.5H235.27599999999998V25.04H241.85399999999998L242.03799999999998 27.754H242.40599999999998Q243.60199999999998 24.672 247.42 24.672Q249.582 24.672 250.68599999999998 25.546Q251.78999999999996 26.42 252.15799999999996 28.168Q252.52599999999998 29.916 252.52599999999998 32.998000000000005V48.5H245.67199999999997Z M272.936 38.656H262.816Q262.816 41.048 263.02299999999997 41.922Q263.22999999999996 42.796 263.989 43.049Q264.748 43.302 266.772 43.302Q269.30199999999996 43.302 272.38399999999996 43.072V48.178Q271.188 48.5 269.164 48.684Q267.14 48.868 265.162 48.868Q260.88399999999996 48.868 258.952 47.626000000000005Q257.02 46.384 256.514 43.992000000000004Q256.008 41.6 256.008 36.816Q256.008 32.078 256.537 29.64Q257.066 27.202 258.90599999999995 25.937Q260.746 24.672 264.702 24.672Q268.70399999999995 24.672 270.429 25.845Q272.154 27.018 272.54499999999996 29.317999999999998Q272.936 31.618 272.936 36.816ZM262.816 34.516H266.542Q266.542 32.354 266.42699999999996 31.48Q266.31199999999995 30.606 265.967 30.353Q265.62199999999996 30.1 264.702 30.1Q263.828 30.1 263.46 30.353Q263.092 30.606 262.95399999999995 31.503Q262.816 32.4 262.816 34.516Z M284.05400000000003 48.868Q280.558 48.868 278.83299999999997 47.557Q277.108 46.246 276.579 43.762Q276.05 41.278 276.05 36.769999999999996Q276.05 32.216 276.625 29.709000000000003Q277.2 27.202 278.925 25.937Q280.65000000000003 24.672 284.05400000000003 24.672Q286.998 24.672 289.298 25.316V30.468Q287.688 30.238 286.07800000000003 30.238Q284.56 30.238 283.962 30.628999999999998Q283.36400000000003 31.02 283.15700000000004 32.308Q282.95 33.596000000000004 282.95 36.769999999999996Q282.95 39.99 283.15700000000004 41.278000000000006Q283.36400000000003 42.566 283.962 42.934Q284.56 43.302 286.07800000000003 43.302Q287.642 43.302 289.39 43.072V48.178Q286.76800000000003 48.868 284.05400000000003 48.868Z M294.252 48.5V30.606H291.492V25.04H294.252V18.232H301.152V25.04H304.786V30.606H301.152V48.5Z"/>
+</svg>
+
+    <h1>Telas-chave do MVP</h1>
+    <p>Mockups de alta fidelidade do <code>10-ui-design.md</code>. Cores, tipos e textos saem do 05, do 06 e do 07 (com as decisões de reconciliação da §0). Molduras de 390 × 844; a última prancha mostra o painel da arena em expanded (1280 × 800).</p>
+  </div>
+  <button class="toggle" id="themeToggle" type="button" aria-pressed="false"><span class="ms s20" aria-hidden="true">dark_mode</span><span id="themeLabel">Ver tema escuro</span></button>
+</header>
+
+<main class="board">
+
+<!-- 1 · HOME -->
+<figure class="shot" id="shot-home">
+<div class="phone"><div class="screen">
+  <div class="island"></div>
+  <div class="sbar"><span>16:15</span><span class="icons"><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></div>
+  <div class="topbar" style="padding-left:16px"><div class="hs" style="flex:1">E aí, Rafa!</div><span class="iconbtn" aria-label="Notificações, 2 não lidas"><span class="ms">notifications</span><span class="dot">2</span></span></div>
+  <div class="body pad">
+    <div class="sec" style="margin-top:4px">Falta pagar</div>
+    <div class="gcard" style="--acc: var(--sp-beach-tennis-accent)">
+      <div class="between" style="flex-wrap:wrap; row-gap:8px"><span class="chip sp-bt"><span class="ms">sunny</span>Beach tennis</span><span class="badge b-wait"><span class="ms">hourglass_top</span>Pré-reserva · 2 de 4 pagas</span></div>
+      <div class="tm" style="margin-top:12px">Beach de sábado</div>
+      <div class="meta" style="margin-top:4px"><span class="ms">stadium</span>Arena Sol · Quadra 3</div>
+      <div class="meta" style="margin-top:2px"><span class="ms">schedule</span>sáb, 23 nov · 9h</div>
+      <div class="between" style="margin-top:12px">
+        <div><div class="bs v">Sua cota</div><div class="nprice20">R$ 31,50</div></div>
+        <div class="timer-chip timer-warn"><span class="ms s20">schedule</span>Prazo: hoje, 17h · 45min</div>
+      </div>
+      <a class="btn primary full" style="margin-top:12px">Pagar minha cota</a>
+    </div>
+    <div class="sec">Seus próximos jogos</div>
+    <div class="gcard">
+      <div class="between"><span class="chip sp-soc"><span class="ms">sports_soccer</span>Futebol society</span><span class="tag-org">Você organiza</span></div>
+      <div class="tm" style="margin-top:12px">Futebol da firma</div>
+      <div class="meta" style="margin-top:4px"><span class="ms">schedule</span>qui, 21 nov · 20h · Quadra 2</div>
+      <div class="between" style="margin-top:12px"><span class="badge b-wait"><span class="ms">hourglass_top</span>Pré-reserva · 8 de 12 pagas</span><span class="timer-chip v"><span class="ms s20">timer</span>1h 45min</span></div>
+      <div class="track c" style="margin-top:10px"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="pr"></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="gcard" style="margin-top:12px; --acc: var(--sp-volei-accent)">
+      <div class="between"><span class="chip sp-vol"><span class="ms">sports_volleyball</span>Vôlei</span><span class="badge b-ok"><span class="ms">check_circle</span>Confirmado</span></div>
+      <div class="tm" style="margin-top:12px">Vôlei de terça</div>
+      <div class="meta" style="margin-top:4px"><span class="ms">schedule</span>ter, 26 nov · 19h</div>
+    </div>
+  </div>
+  <span class="fab"><span class="ms">add</span>Criar jogo</span>
+  <nav class="bnav"><a class="on"><span class="ind"><span class="ms f">home</span></span>Início</a><a><span class="ind"><span class="ms">sports_score</span><span class="bdg">1</span></span>Jogos</a><a><span class="ind"><span class="ms">search</span></span>Buscar</a><a><span class="ind"><span class="ms">person</span></span>Perfil</a></nav>
+  <div class="gesture"></div>
+</div></div>
+<figcaption><b>Início</b><code>home</code><span>Ordem por urgência: cota a pagar → jogo que organizo em pré-reserva → confirmados. Rótulo de card decidido: "Pré-reserva · n de total pagas".</span></figcaption>
+</figure>
+
+<!-- 2 · EXPLORAR -->
+<figure class="shot" id="shot-explore">
+<div class="phone"><div class="screen">
+  <div class="island"></div>
+  <div class="sbar"><span>16:15</span><span class="icons"><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></div>
+  <div class="topbar"><span class="iconbtn"><span class="ms">arrow_back</span></span><div class="title">Buscar quadra</div></div>
+  <div class="body">
+    <div class="pad"><div class="row" style="height:56px; border-radius:9999px; background:var(--surfaceContainerLowest); box-shadow: inset 0 0 0 1px var(--outline); padding: 0 8px 0 16px; gap:12px"><span class="ms v">search</span><span class="bl v" style="flex:1">Arena, bairro ou cidade</span></div></div>
+    <div class="row" style="padding:12px 0 0 16px; gap:8px; overflow:hidden">
+      <span class="fchip on"><span class="ms">check</span><span class="ms">sports_soccer</span>Society<span class="ms">arrow_drop_down</span></span>
+      <span class="fchip plain on"><span class="ms">calendar_month</span>sáb, 23<span class="ms">arrow_drop_down</span></span>
+      <span class="fchip"><span class="ms">schedule</span>19h–22h<span class="ms">arrow_drop_down</span></span>
+      <span class="fchip">Coberta</span>
+    </div>
+    <div class="pad between" style="margin-top:16px"><span class="ts">7 quadras livres sáb, 23 nov</span><span class="btn text sm" style="padding:0 4px">Mais perto<span class="ms">arrow_drop_down</span></span></div>
+    <div class="pad" style="display:grid; gap:16px; margin-top:8px">
+      <article style="background:var(--surfaceContainerLowest); border:1px solid var(--outlineVariant); border-radius:24px; overflow:hidden">
+        <div class="ph" style="height:150px"><svg viewBox="0 0 340 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g fill="none" stroke="var(--sp-futebol-society-accent)" stroke-opacity=".45" stroke-width="2"><rect x="20" y="16" width="300" height="118" rx="2"/><line x1="170" y1="16" x2="170" y2="134"/><circle cx="170" cy="75" r="24"/><rect x="20" y="45" width="34" height="60"/><rect x="286" y="45" width="34" height="60"/></g></svg><span class="distance">1,2 km</span></div>
+        <div style="padding:16px">
+          <div class="tm">Arena Campo Bom</div>
+          <div class="bm v">Quadra 2 · Grama sintética · Coberta</div>
+          <div class="row" style="margin-top:8px; gap:12px; align-items:baseline"><span class="nprice20">a partir de R$ 240,00/h</span></div>
+          <div class="bs v">≈ R$ 20,00 por pessoa com 12 vagas</div>
+          <div class="row" style="margin-top:12px; gap:8px"><span class="slot ll" style="min-height:40px; padding:10px 14px">19h</span><span class="slot ll" style="min-height:40px; padding:10px 14px">20h</span><span class="slot ll" style="min-height:40px; padding:10px 14px">21h</span><span class="btn text sm" style="margin-left:auto">Ver todos</span></div>
+        </div>
+      </article>
+      <article style="background:var(--surfaceContainerLowest); border:1px solid var(--outlineVariant); border-radius:24px; overflow:hidden">
+        <div class="ph" style="height:150px"><svg viewBox="0 0 340 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g fill="none" stroke="var(--sp-futebol-society-accent)" stroke-opacity=".45" stroke-width="2"><rect x="20" y="16" width="300" height="118" rx="2"/><line x1="170" y1="16" x2="170" y2="134"/><circle cx="170" cy="75" r="24"/></g></svg><span class="distance">2,8 km</span></div>
+        <div style="padding:16px">
+          <div class="tm">Society do Zé</div>
+          <div class="bm v">Quadra 1 · Grama sintética · Descoberta</div>
+          <div class="nprice20" style="margin-top:8px">a partir de R$ 200,00/h</div>
+        </div>
+      </article>
+    </div>
+  </div>
+  <nav class="bnav"><a><span class="ind"><span class="ms">home</span></span>Início</a><a><span class="ind"><span class="ms">sports_score</span><span class="bdg">1</span></span>Jogos</a><a class="on"><span class="ind"><span class="ms f">search</span></span>Buscar</a><a><span class="ind"><span class="ms">person</span></span>Perfil</a></nav>
+  <div class="gesture"></div>
+</div></div>
+<figcaption><b>Buscar quadra</b><code>explore</code><span>Horários livres já no card (tocar leva direto ao horário). Preço com centavos e estimativa por pessoa.</span></figcaption>
+</figure>
+
+<!-- 3 · GRADE DE HORÁRIOS -->
+<figure class="shot" id="shot-slots">
+<div class="phone"><div class="screen">
+  <div class="island"></div>
+  <div class="sbar"><span>16:15</span><span class="icons"><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></div>
+  <div class="topbar"><span class="iconbtn"><span class="ms">arrow_back</span></span><div class="title">Escolha o horário</div></div>
+  <div class="body">
+    <div class="pad"><div class="ts">Arena Campo Bom · Quadra 2 <span class="ms s20" style="vertical-align:-5px">arrow_drop_down</span></div><div class="bs v">Grama sintética · Coberta · Society e futsal</div></div>
+    <div class="days pad" style="margin-top:16px">
+      <div class="day"><span class="lm">qui</span><span class="tm">21</span></div><div class="day"><span class="lm">sex</span><span class="tm">22</span></div><div class="day on"><span class="lm">sáb</span><span class="tm">23</span></div><div class="day"><span class="lm">dom</span><span class="tm">24</span></div><div class="day"><span class="lm">seg</span><span class="tm">25</span></div>
+    </div>
+    <div class="pad row" style="margin-top:16px; gap:12px"><span class="ts">Duração</span><span class="segm"><span class="on"><span class="ms s16">check</span>1h</span><span>1h30</span><span>2h</span></span></div>
+    <div class="pad legend" style="margin-top:14px; row-gap:8px">
+      <span><span class="ms s16">check_box_outline_blank</span>Livre</span><span><span class="ms s16">block</span>Ocupado</span><span><span class="ms s16">hourglass_top</span>Pré-reservado</span><span><span class="ms s16">check</span>Selecionado</span>
+    </div>
+    <div class="pad slots" style="margin-top:14px">
+      <div class="slot"><div class="ts">17h–18h</div><div class="bs">R$ 200,00</div></div>
+      <div class="slot"><div class="ts">18h–19h</div><div class="bs">R$ 200,00</div></div>
+      <div class="slot sel"><span class="ms">check</span><div class="ts">19h–20h</div><div class="bs">R$ 240,00</div></div>
+      <div class="slot hold"><span class="ms">hourglass_top</span><div class="ts">20h–21h</div><div class="bs">Libera às 18h40</div></div>
+      <div class="slot busy"><span class="ms">block</span><div class="ts">21h–22h</div><div class="bs">Ocupado</div></div>
+      <div class="slot"><div class="ts">22h–23h</div><div class="bs">R$ 240,00</div></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="tm">Quadra 2 · sáb, 23 nov · 19h · R$ 240,00</div>
+    <div class="bm v">≈ R$ 20,00 por pessoa com 12 vagas</div>
+    <div class="row" style="align-items:flex-start; margin-top:8px"><span class="ms s20" style="color:var(--tertiary)">info</span><span class="bs v">Ao continuar, seguramos este horário por 4h enquanto a galera paga.</span></div>
+    <a class="btn primary lg full" style="margin-top:12px">Reservar este horário</a>
+  </div>
+  <div class="gesture"></div>
+</div></div>
+<figcaption><b>Detalhe da arena → grade de horários</b><code>arena/{id} · slot-picker/{courtId}</code><span>Quatro estados com cor, ícone e texto (nunca só cor). Horas no formato do 07 ("19h–20h", "18h40").</span></figcaption>
+</figure>
+
+<!-- 4 · CRIAR JOGO, PASSO 3 -->
+<figure class="shot" id="shot-create">
+<div class="phone"><div class="screen">
+  <div class="island"></div>
+  <div class="sbar"><span>16:15</span><span class="icons"><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></div>
+  <div class="topbar"><span class="iconbtn"><span class="ms">arrow_back</span></span><div class="title">Criar jogo</div></div>
+  <div class="stepper" aria-label="Passo 3 de 3: Se alguém não pagar">
+    <div class="st-i"><span class="st-c"><span class="ms">check</span></span><span class="lab">Quadra e horário</span></div><div class="ln"></div>
+    <div class="st-i"><span class="st-c"><span class="ms">check</span></span><span class="lab">Vagas e rateio</span></div><div class="ln"></div>
+    <div class="st-i"><span class="st-c">3</span><span class="lab cur">Se alguém não pagar</span></div><div class="ln todo"></div>
+    <div class="st-i"><span class="st-c todo">4</span><span class="lab">Revisão</span></div>
+  </div>
+  <div class="body pad" style="padding-top:16px">
+    <div class="hs">E se alguém não pagar até o prazo?</div>
+    <p class="bm v m0" style="margin-top:4px">Escolha o que acontece. A galera vê essa regra antes de pagar.</p>
+    <div style="display:grid; gap:12px; margin-top:16px">
+      <div class="rule on"><span class="radio on"></span><span class="iconbtn info"><span class="ms s20">info</span></span>
+        <div class="row" style="flex-wrap:wrap; gap:8px; padding-right:36px"><span class="tm">Eu cubro o que faltar</span><span class="chip-rec">Recomendado</span></div>
+        <div class="bm v" style="margin-top:4px">O jogo acontece de qualquer jeito. Você paga as cotas que faltarem no prazo.</div>
+        <div class="bm" style="margin-top:6px">Ex.: se 2 pessoas não pagarem, você paga <b>R$ 40,00</b>.</div>
+        <div class="hr" style="margin:12px 0 4px"></div>
+        <div class="ts">Como você garante o que faltar?</div>
+        <div class="sub-opt"><span class="radio on in"></span><div><div class="row" style="gap:8px"><span class="ll">Cartão de crédito</span><span class="chip-rec">Recomendado</span></div><div class="bs v" style="margin-top:2px">Separamos até R$ 220,00 no limite. Só cobramos as cotas que faltarem no prazo.</div></div></div>
+        <div class="sub-opt" style="padding-top:2px"><span class="radio in"></span><div><div class="ll">Pix no fim do prazo</div></div></div>
+      </div>
+      <div class="rule"><span class="radio"></span><span class="iconbtn info"><span class="ms s20">info</span></span>
+        <div class="tm" style="padding-right:36px">Cancelar e devolver para todos</div>
+        <div class="bm v" style="margin-top:4px">Se faltar alguma cota no prazo, o jogo é cancelado e todo mundo recebe o dinheiro de volta.</div>
+        <div class="bm" style="margin-top:6px">Ex.: se 2 pessoas não pagarem, ninguém perde dinheiro, mas o jogo não acontece.</div>
+      </div>
+      <div class="rule"><span class="radio"></span><span class="iconbtn info"><span class="ms s20">info</span></span>
+        <div class="tm" style="padding-right:36px">Dividir o que faltar entre quem pagou</div>
+        <div class="bm v" style="margin-top:4px">O valor que faltar é dividido entre quem já pagou. Cada um precisa aceitar. Quem não aceitar recebe o dinheiro de volta.</div>
+        <div class="bm" style="margin-top:6px">Ex.: se 2 pessoas não pagarem, cada um dos 10 que pagaram paga mais <b>R$ 4,00</b>, se aceitar.</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><a class="btn primary lg full">Continuar</a></div>
+  <div class="gesture"></div>
+</div></div>
+<figcaption><b>Criar jogo · regra de não pagamento</b><code>game/create · passo 3</code><span>Regra A pré-selecionada com escolha de garantia (AB-06). Cada regra mostra exemplo em R$ (I27). Sem toggle de pagar a própria cota (I1).</span></figcaption>
+</figure>
+
+<!-- 5 · DETALHE DO JOGO -->
+<figure class="shot" id="shot-game">
+<div class="phone"><div class="screen">
+  <div class="island"></div>
+  <div class="sbar"><span>16:15</span><span class="icons"><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></div>
+  <div class="topbar"><span class="iconbtn"><span class="ms">arrow_back</span></span><div class="title"></div><span class="iconbtn"><span class="ms">share</span></span><span class="iconbtn"><span class="ms">more_vert</span></span></div>
+  <div class="body pad">
+    <span class="badge lg b-wait" style="margin-top:8px"><span class="ms">hourglass_top</span>Pré-reservado · aguardando pagamentos</span>
+    <div style="margin-top:12px"><span class="chip sp-soc"><span class="ms">sports_soccer</span>Futebol society</span></div>
+    <div class="hs" style="margin-top:8px">Futebol da firma</div>
+    <div class="meta" style="margin-top:8px"><span class="ms">calendar_month</span>qui, 21 nov · 20h–21h</div>
+    <div class="meta" style="margin-top:4px"><span class="ms">stadium</span>Arena Campo Bom · Quadra 2</div>
+    <div class="between" style="margin-top:0"><span class="meta"><span class="ms">location_on</span>Vila Mariana</span><span class="btn text sm">Como chegar</span></div>
+    <div style="background:var(--surfaceContainerLow); border-radius:16px; padding:16px; margin-top:16px">
+      <div class="row" style="gap:8px"><span class="ms" style="color:var(--onSurfaceVariant)">timer</span><span class="nscore">1h 45min</span></div>
+      <div class="bm v" style="margin-top:2px">Faltam 1h 45min pro prazo · até hoje, 18h</div>
+      <div class="hr" style="margin:12px 0"></div>
+      <div class="bm">Se ninguém mais pagar, você cobre <b class="tnum">R$ 80,00</b>.</div>
+    </div>
+    <div style="margin-top:20px" role="img" aria-label="8 de 12 cotas pagas, 160 de 240 reais">
+      <div class="row" style="align-items:baseline; gap:6px"><span class="nscore">8</span><span class="tm">de</span><span class="nscore">12</span><span class="tm">cotas pagas</span></div>
+      <div class="bl v tnum">R$ 160,00 de R$ 240,00</div>
+      <div class="track" style="margin-top:12px"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="pr"></i><i></i><i></i><i></i></div>
+      <div class="legend" style="margin-top:12px"><span><i style="background:var(--primary)"></i>Pagas</span><span><i style="background:repeating-linear-gradient(45deg, color-mix(in srgb, var(--primary) 40%, transparent) 0 3px, color-mix(in srgb, var(--primary) 18%, transparent) 3px 6px)"></i>Em análise</span><span><i style="background:var(--surfaceContainerHighest); box-shadow: inset 0 0 0 1px var(--outline)"></i>Faltam</span></div>
+    </div>
+    <a class="btn primary full" style="margin-top:20px"><span class="ms">notifications_active</span>Lembrar quem falta</a>
+    <a class="btn tonal full" style="margin-top:8px"><span class="ms">person_add</span>Convidar mais gente</a>
+    <div class="sec" style="margin-top:20px">Quem está no jogo</div>
+    <div class="prow self"><span class="av">R</span><div class="who"><div class="bl">Você · Organizador</div><div class="st ok"><span class="ms f">check_circle</span>Pagou às 13h10</div></div></div>
+    <div class="prow"><span class="av">C</span><div class="who"><div class="bl">Carla S.</div><div class="st wait"><span class="ms">hourglass_top</span>Pagamento em análise</div></div></div>
+    <div class="prow"><span class="av">M</span><div class="who"><div class="bl">Marcos T.</div><div class="st"><span class="ms">radio_button_unchecked</span>Falta pagar</div></div><a class="btn text sm">Lembrar</a></div>
+  </div>
+  <nav class="bnav"><a><span class="ind"><span class="ms">home</span></span>Início</a><a class="on"><span class="ind"><span class="ms f">sports_score</span><span class="bdg">1</span></span>Jogos</a><a><span class="ind"><span class="ms">search</span></span>Buscar</a><a><span class="ind"><span class="ms">person</span></span>Perfil</a></nav>
+  <div class="gesture"></div>
+</div></div>
+<figcaption><b>Detalhe do jogo · rateio 8/12</b><code>game/{id} · organizador</code><span>Um segmento por cota (o 9º está em análise). Contador junto da consequência em R$. Badge Large com o rótulo do PRD §9.1.</span></figcaption>
+</figure>
+
+<!-- 6 · PIX -->
+<figure class="shot" id="shot-pix">
+<div class="phone"><div class="screen">
+  <div class="island"></div>
+  <div class="sbar"><span>16:15</span><span class="icons"><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></div>
+  <div class="topbar"><span class="iconbtn"><span class="ms">close</span></span><div class="title">Pagar cota</div></div>
+  <div class="body">
+    <div class="row bm" style="height:40px; background:var(--surfaceContainer); padding:0 16px"><span class="ms s20">lock_clock</span>Sua vaga está segura por 9min</div>
+  </div>
+  <div class="scrim"></div>
+  <section class="sheet" aria-label="Pague com Pix">
+    <div class="handle"></div>
+    <div class="tl">Pague com Pix</div>
+    <div class="ds" style="margin-top:4px">R$ 21,50</div>
+    <div class="row bm v" style="gap:4px; margin-top:4px"><span class="ms s16">timer</span>O código vale por 9min</div>
+    <a class="btn primary lg full" style="margin-top:20px"><span class="ms">content_copy</span>Copiar código Pix</a>
+    <div class="codebox" style="margin-top:12px"><span class="pixcode">00020126580014br.gov.bcb.pix0136a1f4c2e8-7b3d-4e9a-9c51-2f8e6d0b4a7352040000530398654052150</span><span class="iconbtn" style="width:32px;height:32px"><span class="ms">expand_more</span></span></div>
+    <ol class="steps" style="margin-top:16px"><li>Abra o app do seu banco</li><li>Escolha Pix copia e cola</li><li>Cole o código e confirme</li></ol>
+    <div class="row bs v" style="gap:4px; margin-top:10px"><span class="ms s16">verified_user</span>Recebedor: SportConnect · pagamento intermediado pelo gateway</div>
+    <a class="btn secondary full" style="margin-top:14px"><span class="ms">qr_code_2</span>Mostrar QR Code</a>
+    <div class="status-box" style="margin-top:16px" aria-live="polite">
+      <div class="row ts"><span class="spin"></span>Aguardando seu Pix</div>
+      <div class="bm v" style="margin-top:4px">Assim que o banco confirmar, sua vaga fica garantida. Pode sair desta tela, a gente avisa.</div>
+    </div>
+    <div class="row" style="margin-top:12px"><a class="btn secondary">Já paguei</a><a class="btn text">Pagar com cartão</a></div>
+  </section>
+  <div class="gesture"></div>
+</div></div>
+<figcaption><b>Pagamento Pix</b><code>game/{id}/pay · SCPixPaymentSheet</code><span>Copiar código é o primário e o primeiro foco no celular; QR recolhido. Validade de 10min (I2), contador no formato do 07 (I12).</span></figcaption>
+</figure>
+
+<!-- 7 · CONVITE -->
+<figure class="shot" id="shot-invite">
+<div class="phone"><div class="screen">
+  <div class="island"></div>
+  <div class="sbar"><span>16:15</span><span class="icons"><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></div>
+  <div class="web-top"><svg style="height:20px;width:auto;display:block;color:var(--onSurface)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 64" width="310" height="64" role="img" aria-label="SportConnect">
+  <title>SportConnect</title>
+  <!-- Símbolo "Quique": S traçado por duas metades do círculo central da quadra, cruzando a linha de meio; a bola laranja marca o saque. Grade 48u, escala 64/48. -->
+  <g transform="scale(1.3333)">
+    <rect width="48" height="48" rx="12" fill="#191C19"/>
+    <line x1="7" y1="24" x2="41" y2="24" stroke="#F5FBF6" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#191C19" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#00E46E" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="37.5" cy="9.5" r="3.25" fill="#EE6800"/>
+  </g>
+  <path fill="currentColor" d="M81.794 48.04V42.244Q85.98 42.566 88.188 42.566Q89.706 42.566 90.44200000000001 42.451Q91.178 42.336 91.5 41.922Q91.822 41.6 91.914 41.048Q92.006 40.496 92.006 39.438Q92.006 37.92 91.845 37.275999999999996Q91.684 36.632 91.132 36.333Q90.58 36.034 89.246 35.804L85.244 35.068Q82.944 34.7 82.07 32.469Q81.196 30.238 81.196 26.19Q81.196 22.142 82.392 20.026Q83.588 17.91 85.612 17.197000000000003Q87.636 16.484 90.764 16.484Q94.26 16.484 98.21600000000001 17.312V23.108Q95.87 22.786 92.604 22.786Q91.03999999999999 22.786 90.304 22.878Q89.568 22.97 89.2 23.292Q88.832 23.568 88.69399999999999 24.166Q88.556 24.764 88.556 25.914Q88.556 27.156 88.67099999999999 27.708Q88.786 28.26 89.17699999999999 28.513Q89.568 28.766000000000002 90.488 28.95L94.26 29.64Q95.824 29.962 96.905 30.628999999999998Q97.986 31.296 98.63 32.998000000000005Q99.366 34.93 99.366 38.38Q99.366 42.934 98.239 45.211Q97.112 47.488 95.226 48.178Q93.34 48.868 90.258 48.868Q88.096 48.868 85.79599999999999 48.638000000000005Q83.496 48.408 81.794 48.04Z M102.756 25.04H109.334L109.518 27.708000000000002H109.932Q110.438 26.052 111.68 25.362000000000002Q112.922 24.672 114.532 24.672Q116.694 24.672 117.91300000000001 25.707Q119.132 26.742 119.684 29.318Q120.23599999999999 31.894000000000002 120.23599999999999 36.724000000000004Q120.23599999999999 41.416 119.72999999999999 44.015Q119.22399999999999 46.614 118.005 47.741Q116.786 48.868 114.578 48.868Q112.87599999999999 48.868 111.726 48.201Q110.576 47.534 109.978 46.062H109.61V57.608000000000004H102.756ZM113.428 36.769999999999996Q113.428 33.596000000000004 113.31299999999999 32.423Q113.198 31.25 112.853 30.951Q112.508 30.652 111.496 30.652Q110.714 30.652 110.346 30.905Q109.978 31.158 109.794 31.986Q109.65599999999999 32.538 109.633 33.803Q109.61 35.068 109.61 36.769999999999996Q109.61 40.68 109.74799999999999 41.37Q109.932 42.29 110.32300000000001 42.589Q110.714 42.888 111.496 42.888Q112.508 42.888 112.853 42.589Q113.198 42.29 113.31299999999999 41.117000000000004Q113.428 39.944 113.428 36.769999999999996Z M123.35 36.769999999999996Q123.35 31.48 123.87899999999999 29.088Q124.40799999999999 26.696 126.225 25.684Q128.042 24.672 132.136 24.672Q136.23 24.672 138.024 25.684Q139.81799999999998 26.696 140.34699999999998 29.088Q140.87599999999998 31.48 140.87599999999998 36.769999999999996Q140.87599999999998 42.06 140.34699999999998 44.452Q139.81799999999998 46.844 138.024 47.856Q136.23 48.868 132.136 48.868Q128.042 48.868 126.225 47.856Q124.40799999999999 46.844 123.87899999999999 44.452Q123.35 42.06 123.35 36.769999999999996ZM134.06799999999998 36.769999999999996Q134.06799999999998 33.412 133.95299999999997 32.17Q133.838 30.928 133.493 30.583Q133.148 30.238 132.136 30.238Q131.124 30.238 130.75599999999997 30.583Q130.38799999999998 30.928 130.296 32.147Q130.20399999999998 33.366 130.20399999999998 36.769999999999996Q130.20399999999998 40.174 130.296 41.393Q130.38799999999998 42.612 130.75599999999997 42.957Q131.124 43.302 132.136 43.302Q133.148 43.302 133.493 42.957Q133.838 42.612 133.95299999999997 41.370000000000005Q134.06799999999998 40.128 134.06799999999998 36.769999999999996Z M144.45 25.04H151.028L151.212 28.812H151.57999999999998Q152.31599999999997 26.512 153.558 25.592Q154.79999999999998 24.672 156.916 24.672V31.618Q154.892 31.618 153.696 32.124Q152.5 32.63 151.902 34.033Q151.30399999999997 35.436 151.30399999999997 38.058V48.5H144.45Z M161.272 48.5V30.606H158.512V25.04H161.272V18.232H168.172V25.04H171.80599999999998V30.606H168.172V48.5Z M184.34999999999997 48.868Q179.88799999999998 48.868 177.79499999999996 47.396Q175.70199999999997 45.924 175.03499999999997 42.611999999999995Q174.36799999999997 39.3 174.36799999999997 32.676Q174.36799999999997 26.098 175.05799999999996 22.786Q175.74799999999996 19.474 177.86399999999998 17.979Q179.97999999999996 16.484 184.34999999999997 16.484Q185.914 16.484 187.45499999999998 16.714Q188.99599999999998 16.944 189.86999999999998 17.266000000000002V23.062Q187.33999999999997 22.786 185.82199999999997 22.786Q183.70599999999996 22.786 182.94699999999997 23.361Q182.188 23.936 181.981 25.753Q181.77399999999997 27.57 181.77399999999997 32.676Q181.77399999999997 37.782 181.981 39.599Q182.188 41.416 182.94699999999997 41.991Q183.70599999999996 42.566 185.82199999999997 42.566Q188.30599999999998 42.566 189.962 42.29V48.04Q188.95 48.408 187.33999999999997 48.638000000000005Q185.72999999999996 48.868 184.34999999999997 48.868Z M192.938 36.769999999999996Q192.938 31.48 193.46699999999998 29.088Q193.99599999999998 26.696 195.813 25.684Q197.63 24.672 201.724 24.672Q205.81799999999998 24.672 207.61199999999997 25.684Q209.40599999999998 26.696 209.935 29.088Q210.464 31.48 210.464 36.769999999999996Q210.464 42.06 209.935 44.452Q209.40599999999998 46.844 207.61199999999997 47.856Q205.81799999999998 48.868 201.724 48.868Q197.63 48.868 195.813 47.856Q193.99599999999998 46.844 193.46699999999998 44.452Q192.938 42.06 192.938 36.769999999999996ZM203.65599999999998 36.769999999999996Q203.65599999999998 33.412 203.541 32.17Q203.426 30.928 203.081 30.583Q202.736 30.238 201.724 30.238Q200.712 30.238 200.344 30.583Q199.976 30.928 199.884 32.147Q199.79199999999997 33.366 199.79199999999997 36.769999999999996Q199.79199999999997 40.174 199.884 41.393Q199.976 42.612 200.344 42.957Q200.712 43.302 201.724 43.302Q202.736 43.302 203.081 42.957Q203.426 42.612 203.541 41.370000000000005Q203.65599999999998 40.128 203.65599999999998 36.769999999999996Z M224.43399999999997 35.896Q224.43399999999997 33.182 224.34199999999998 32.193Q224.24999999999997 31.204 223.92799999999997 30.928Q223.60599999999997 30.652 222.68599999999998 30.652Q221.766 30.652 221.421 31.020000000000003Q221.07599999999996 31.388 220.98399999999998 32.538000000000004Q220.89199999999997 33.688 220.89199999999997 36.632V48.5H214.03799999999998V25.04H220.61599999999999L220.79999999999998 27.754H221.16799999999998Q222.36399999999998 24.672 226.182 24.672Q228.344 24.672 229.44799999999998 25.546Q230.55199999999996 26.42 230.91999999999996 28.168Q231.28799999999998 29.916 231.28799999999998 32.998000000000005V48.5H224.43399999999997Z M245.67199999999997 35.896Q245.67199999999997 33.182 245.57999999999998 32.193Q245.48799999999997 31.204 245.16599999999997 30.928Q244.84399999999997 30.652 243.92399999999998 30.652Q243.004 30.652 242.659 31.020000000000003Q242.31399999999996 31.388 242.22199999999998 32.538000000000004Q242.12999999999997 33.688 242.12999999999997 36.632V48.5H235.27599999999998V25.04H241.85399999999998L242.03799999999998 27.754H242.40599999999998Q243.60199999999998 24.672 247.42 24.672Q249.582 24.672 250.68599999999998 25.546Q251.78999999999996 26.42 252.15799999999996 28.168Q252.52599999999998 29.916 252.52599999999998 32.998000000000005V48.5H245.67199999999997Z M272.936 38.656H262.816Q262.816 41.048 263.02299999999997 41.922Q263.22999999999996 42.796 263.989 43.049Q264.748 43.302 266.772 43.302Q269.30199999999996 43.302 272.38399999999996 43.072V48.178Q271.188 48.5 269.164 48.684Q267.14 48.868 265.162 48.868Q260.88399999999996 48.868 258.952 47.626000000000005Q257.02 46.384 256.514 43.992000000000004Q256.008 41.6 256.008 36.816Q256.008 32.078 256.537 29.64Q257.066 27.202 258.90599999999995 25.937Q260.746 24.672 264.702 24.672Q268.70399999999995 24.672 270.429 25.845Q272.154 27.018 272.54499999999996 29.317999999999998Q272.936 31.618 272.936 36.816ZM262.816 34.516H266.542Q266.542 32.354 266.42699999999996 31.48Q266.31199999999995 30.606 265.967 30.353Q265.62199999999996 30.1 264.702 30.1Q263.828 30.1 263.46 30.353Q263.092 30.606 262.95399999999995 31.503Q262.816 32.4 262.816 34.516Z M284.05400000000003 48.868Q280.558 48.868 278.83299999999997 47.557Q277.108 46.246 276.579 43.762Q276.05 41.278 276.05 36.769999999999996Q276.05 32.216 276.625 29.709000000000003Q277.2 27.202 278.925 25.937Q280.65000000000003 24.672 284.05400000000003 24.672Q286.998 24.672 289.298 25.316V30.468Q287.688 30.238 286.07800000000003 30.238Q284.56 30.238 283.962 30.628999999999998Q283.36400000000003 31.02 283.15700000000004 32.308Q282.95 33.596000000000004 282.95 36.769999999999996Q282.95 39.99 283.15700000000004 41.278000000000006Q283.36400000000003 42.566 283.962 42.934Q284.56 43.302 286.07800000000003 43.302Q287.642 43.302 289.39 43.072V48.178Q286.76800000000003 48.868 284.05400000000003 48.868Z M294.252 48.5V30.606H291.492V25.04H294.252V18.232H301.152V25.04H304.786V30.606H301.152V48.5Z"/>
+</svg>
+<span class="row ll v" style="gap:4px"><span class="ms s20">lock</span>Pagamento protegido</span></div>
+  <div class="body">
+    <div class="hero">
+      <svg class="court" viewBox="0 0 260 220" aria-hidden="true"><g fill="none" stroke="var(--outlineVariant)" stroke-width="2"><line x1="0" y1="110" x2="260" y2="110"/><circle cx="170" cy="110" r="56"/></g><circle cx="216" cy="44" r="6" fill="var(--secondary)" opacity=".9"/></svg>
+      <div class="ll" style="color:var(--secondary); position:relative">Convite pra jogar</div>
+      <div class="row" style="gap:12px; margin-top:8px; position:relative"><span class="av" style="box-shadow:0 0 0 2px var(--secondary)">R</span><span class="tl">Rafael te chamou pra jogar</span></div>
+      <div style="margin-top:14px; position:relative"><span class="chip sp-soc"><span class="ms">sports_soccer</span>Futebol society</span></div>
+      <div class="hs" style="margin-top:8px; position:relative">qui, 21 nov · 20h–21h</div>
+      <div class="bl" style="position:relative">Arena Campo Bom · Quadra 2</div>
+      <div class="between" style="position:relative"><span class="bm v">Vila Mariana, São Paulo</span><span class="btn text sm">Como chegar</span></div>
+    </div>
+    <div class="pad" style="margin-top:16px">
+      <div class="share-card">
+        <div class="ts">Sua cota</div>
+        <div class="ds" style="margin-top:2px">R$ 21,50</div>
+        <div class="row bm v">R$ 20,00 + R$ 1,50 de taxa <span class="ms s20">info</span></div>
+        <div class="hr"></div>
+        <div class="row bm" style="align-items:flex-start"><span class="ms s20 timer-warn">schedule</span><span>Pague até hoje, 18h pra garantir sua vaga <span class="v">· faltam 1h 45min</span></span></div>
+      </div>
+      <div class="tm" style="margin-top:20px">4 vagas abertas de 12</div>
+      <div class="track c" style="margin-top:8px"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i></i><i></i><i></i><i></i></div>
+      <div class="ts" style="margin-top:12px">Quem já pagou</div>
+      <div class="bm v">Rafael R., Ana L., Carla S., Léo M. e mais 4</div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="bs v">Você entra com seu celular. Leva menos de 1 minuto.</div>
+    <a class="btn primary lg full" style="margin-top:8px">Pagar R$ 21,50 e entrar</a>
+    <a class="btn text full" style="margin-top:4px">Não vou dessa vez</a>
+  </div>
+  <div class="gesture"></div>
+</div></div>
+<figcaption><b>Convite · primeira abertura</b><code>invite/{code} · web leve</code><span>Momento de marca estático: linha de meio-campo e a bola laranja do saque. "Pagamento protegido" em texto desde o primeiro pixel.</span></figcaption>
+</figure>
+
+<!-- 8 · FECHOU! -->
+<figure class="shot" id="shot-fechou">
+<div class="phone"><div class="screen">
+  <div class="island"></div>
+  <div class="sbar" style="background:var(--primaryContainer); color:var(--onPrimaryContainer)"><span>18:02</span><span class="icons"><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></div>
+  <div class="body">
+    <div class="celebrate">
+      <svg class="court" viewBox="0 0 300 300" aria-hidden="true"><g fill="none" stroke="var(--onPrimaryContainer)" stroke-opacity=".16" stroke-width="2"><line x1="0" y1="170" x2="300" y2="170"/><circle cx="170" cy="170" r="72"/><circle cx="170" cy="170" r="4" fill="var(--onPrimaryContainer)" fill-opacity=".16"/></g></svg>
+      <div class="topbar" style="margin:0 -12px; position:relative"><span class="iconbtn" style="color:var(--onPrimaryContainer)"><span class="ms">arrow_back</span></span><div class="title"></div><span class="iconbtn" style="color:var(--onPrimaryContainer)"><span class="ms">share</span></span></div>
+      <h2 class="dl m0" style="position:relative; margin-top:24px">Fechou!</h2>
+      <div class="hm" style="position:relative">Jogo confirmado!</div>
+      <p class="bl m0" style="position:relative; margin-top:8px; max-width:30ch">Todo mundo pagou e a quadra está garantida pra qui, 21 nov · 20h. A arena já foi avisada.</p>
+    </div>
+    <div class="lift">
+      <div class="between"><span class="badge lg b-ok"><span class="ms f">check_circle</span>Confirmado</span><span class="chip sp-soc"><span class="ms">sports_soccer</span>Society</span></div>
+      <div class="row" style="align-items:baseline; gap:6px; margin-top:12px"><span class="nscore">12</span><span class="tm">de</span><span class="nscore">12</span><span class="tm">cotas pagas</span></div>
+      <div class="bl v tnum">R$ 240,00 de R$ 240,00</div>
+      <div class="track" style="margin-top:12px"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p last"></i></div>
+    </div>
+    <div class="pad" style="margin-top:20px">
+      <div class="meta"><span class="ms">stadium</span>Arena Campo Bom · Quadra 2</div>
+      <div class="meta" style="margin-top:4px"><span class="ms">calendar_month</span>qui, 21 nov · 20h–21h</div>
+      <a class="btn primary full" style="margin-top:20px"><span class="ms">calendar_add_on</span>Adicionar à agenda</a>
+      <div class="row" style="margin-top:8px"><a class="btn secondary" style="flex:1"><span class="ms">directions</span>Como chegar</a><a class="btn text"><span class="ms">share</span>Avisar a galera</a></div>
+    </div>
+  </div>
+  <nav class="bnav"><a><span class="ind"><span class="ms">home</span></span>Início</a><a class="on"><span class="ind"><span class="ms f">sports_score</span></span>Jogos</a><a><span class="ind"><span class="ms">search</span></span>Buscar</a><a><span class="ind"><span class="ms">person</span></span>Perfil</a></nav>
+  <div class="gesture"></div>
+</div></div>
+<figcaption><b>"Fechou!" · todas as cotas pagas</b><code>game/{id} · CONFIRMADO</code><span>Único momento animado (700ms, easing "apito"). "Fechou!" é interjeição; o estado continua se chamando "Confirmado" (I18).</span></figcaption>
+</figure>
+
+<!-- 9 · MINHA ARENA COMPACT -->
+<figure class="shot" id="shot-arena">
+<div class="phone"><div class="screen">
+  <div class="island"></div>
+  <div class="sbar"><span>19:32</span><span class="icons"><span class="ms">signal_cellular_alt</span><span class="ms">wifi</span><span class="ms">battery_full</span></span></div>
+  <div class="topbar" style="padding-left:16px"><div class="tl" style="flex:1">Arena Campo Bom <span class="ms s20 v" style="vertical-align:-4px">arrow_drop_down</span></div><span class="iconbtn"><span class="ms">notifications</span></span></div>
+  <div class="body pad">
+    <div class="ts v">Painel · qui, 21 nov</div>
+    <div class="bl" style="margin-top:4px">Hoje: 9 jogos confirmados · 2 em pré-reserva</div>
+    <div class="sec">Agora</div>
+    <div class="now-row"><div class="court">Quadra 1</div><div><span class="badge b-run"><span class="ms f">play_circle</span>Em andamento</span><div class="bm v" style="margin-top:4px">19h–20h · Futsal · Bruno C. · 12 de 12 cotas pagas</div></div></div>
+    <div class="now-row"><div class="court">Quadra 2</div><div><span class="badge b-ok"><span class="ms f">check_circle</span>Confirmado</span><div class="bm v" style="margin-top:4px">20h · Society · Rafael R. · 12 de 12 cotas pagas</div></div></div>
+    <div class="now-row"><div class="court">Quadra 3</div><div><span class="badge b-wait"><span class="ms">hourglass_top</span>Pré-reserva até 20h</span><div class="bm v" style="margin-top:4px">22h · Beach tennis · Camila F. · 2 de 4 cotas pagas</div></div></div>
+    <div class="sec">Atenção (1)</div>
+    <div class="alert"><span class="ms">warning</span><div style="flex:1"><div class="bm">Quadra 3 sem horários a partir de 01/12/2026</div><a class="btn text sm" style="padding:0; height:32px; color:var(--onWarningContainer); text-decoration:underline">Publicar horários</a></div></div>
+    <div style="background:var(--surfaceContainerLow); border-radius:16px; padding:16px; margin-top:16px">
+      <div class="ts">Próximo repasse</div>
+      <div class="row" style="align-items:baseline; gap:8px; margin-top:2px"><span class="nprice">R$ 1.324,80</span><span class="bm v">em sex, 22 nov</span></div>
+    </div>
+    <div class="row" style="margin-top:16px"><a class="btn primary" style="flex:1; padding:0 12px"><span class="ms">block</span>Bloquear horário</a><a class="btn secondary" style="flex:1; padding:0 12px">Agenda completa</a></div>
+  </div>
+  <nav class="bnav"><a class="on"><span class="ind"><span class="ms f">calendar_month</span></span>Agenda</a><a><span class="ind"><span class="ms">stadium</span></span>Quadras</a><a><span class="ind"><span class="ms">payments</span></span>Repasses</a><a><span class="ind"><span class="ms">person</span></span>Perfil</a></nav>
+  <div class="gesture"></div>
+</div></div>
+<figcaption><b>Minha Arena · painel</b><code>arena-admin/dashboard · compact</code><span>"Quem joga hoje, pagou ou não, e o que precisa de mim?" Bloquear em 2 toques. Aba "Repasses" (I6). Sem emoji (contexto profissional).</span></figcaption>
+</figure>
+
+<!-- 10 · PAINEL EXPANDED -->
+<figure class="shot wide" id="shot-desk">
+<div class="desk">
+  <div class="chrome"><i></i><i></i><i></i><span class="url">sportconnect.app/arena/agenda?data=2026-11-21</span></div>
+  <div class="desk-main">
+    <nav class="rail">
+      <img class="logo" src="assets/app-icon.svg" alt="">
+      <a class="on"><span class="ind"><span class="ms f">space_dashboard</span></span>Painel</a>
+      <a><span class="ind"><span class="ms">calendar_month</span></span>Agenda</a>
+      <a><span class="ind"><span class="ms">stadium</span></span>Quadras</a>
+      <a><span class="ind"><span class="ms">payments</span></span>Repasses</a>
+      <a><span class="ind"><span class="ms">person</span></span>Perfil</a>
+    </nav>
+    <section class="agenda">
+      <div class="between">
+        <div class="row" style="gap:16px"><span class="hs">Agenda</span><span class="segm"><span class="on"><span class="ms s16">check</span>Dia</span><span>Semana</span></span>
+          <span class="row" style="gap:0"><span class="iconbtn"><span class="ms">chevron_left</span></span><span class="tm">qui, 21 nov</span><span class="iconbtn"><span class="ms">chevron_right</span></span></span><a class="btn text sm">Hoje</a></div>
+        <a class="btn primary"><span class="ms">block</span>Bloquear horário</a>
+      </div>
+      <div style="position:relative; margin-top:12px; flex:1; overflow:hidden">
+        <div class="grid">
+          <div class="h"></div><div class="h">Quadra 1 · Futsal</div><div class="h">Quadra 2 · Society</div><div class="h">Quadra 3 · Areia</div><div class="h">Quadra 4 · Vôlei</div>
+          <div class="t">18h</div>
+          <div class="cell"><div class="c-ok" style="--acc:var(--sp-futsal-accent)"><div class="l1"><span class="ms f">check_circle</span>Confirmado</div><div class="l2">Futsal · 12/12</div></div></div>
+          <div class="cell"><div class="c-free"><div class="l1"><span class="ms">check_box_outline_blank</span>Livre</div></div></div>
+          <div class="cell"><div class="c-block"><div class="l1"><span class="ms">block</span>Bloqueado</div><div class="l2">Aula</div></div></div>
+          <div class="cell"><div class="c-free"><div class="l1"><span class="ms">check_box_outline_blank</span>Livre</div></div></div>
+          <div class="t">19h</div>
+          <div class="cell"><div class="c-run" style="--acc:var(--sp-futsal-accent)"><div class="l1"><span class="ms f">play_circle</span>Em andamento</div><div class="l2">Futsal · Bruno C. · 12/12</div></div></div>
+          <div class="cell"><div class="c-ok" style="--acc:var(--sp-futebol-society-accent)"><div class="l1"><span class="ms f">check_circle</span>Confirmado</div><div class="l2">Society · 12/12</div></div></div>
+          <div class="cell"><div class="c-ok" style="--acc:var(--sp-beach-tennis-accent)"><div class="l1"><span class="ms f">check_circle</span>Confirmado</div><div class="l2">Beach tennis · 4/4</div></div></div>
+          <div class="cell"><div class="c-ok" style="--acc:var(--sp-volei-accent)"><div class="l1"><span class="ms f">check_circle</span>Confirmado</div><div class="l2">Vôlei · 12/12</div></div></div>
+          <div class="t">20h</div>
+          <div class="cell"><div class="c-free"><div class="l1"><span class="ms">check_box_outline_blank</span>Livre</div></div></div>
+          <div class="cell"><div class="c-ok c-sel" style="--acc:var(--sp-futebol-society-accent)"><div class="l1"><span class="ms f">check_circle</span>Confirmado</div><div class="l2">Society · Rafael R. · 12/12</div></div></div>
+          <div class="cell"><div class="c-free"><div class="l1"><span class="ms">check_box_outline_blank</span>Livre</div></div></div>
+          <div class="cell"><div class="c-ok" style="--acc:var(--sp-volei-accent)"><div class="l1"><span class="ms f">check_circle</span>Confirmado</div><div class="l2">Vôlei · 12/12</div></div></div>
+          <div class="t">21h</div>
+          <div class="cell"><div class="c-ok" style="--acc:var(--sp-futsal-accent)"><div class="l1"><span class="ms f">check_circle</span>Confirmado</div><div class="l2">Futsal · 10/10</div></div></div>
+          <div class="cell"><div class="c-free"><div class="l1"><span class="ms">check_box_outline_blank</span>Livre</div></div></div>
+          <div class="cell"><div class="c-free"><div class="l1"><span class="ms">check_box_outline_blank</span>Livre</div></div></div>
+          <div class="cell"><div class="c-ok" style="--acc:var(--sp-volei-accent)"><div class="l1"><span class="ms f">check_circle</span>Confirmado</div><div class="l2">Vôlei · 12/12</div></div></div>
+          <div class="t">22h</div>
+          <div class="cell"><div class="c-free"><div class="l1"><span class="ms">check_box_outline_blank</span>Livre</div></div></div>
+          <div class="cell"><div class="c-hold" style="--acc:var(--sp-futebol-society-accent)"><div class="l1"><span class="ms">hourglass_top</span>Pré-reserva até 20h</div><div class="l2">Society · 7/12</div></div></div>
+          <div class="cell"><div class="c-hold" style="--acc:var(--sp-beach-tennis-accent)"><div class="l1"><span class="ms">hourglass_top</span>Pré-reserva até 20h</div><div class="l2">Beach tennis · 2/4</div></div></div>
+          <div class="cell"><div class="c-free"><div class="l1"><span class="ms">check_box_outline_blank</span>Livre</div></div></div>
+          <div class="t">23h</div>
+          <div class="cell"><div class="c-closed"><div class="l1"><span class="ms">do_not_disturb_on</span>Fechado</div></div></div>
+          <div class="cell"><div class="c-free"><div class="l1"><span class="ms">check_box_outline_blank</span>Livre</div></div></div>
+          <div class="cell"><div class="c-closed"><div class="l1"><span class="ms">do_not_disturb_on</span>Fechado</div></div></div>
+          <div class="cell"><div class="c-closed"><div class="l1"><span class="ms">do_not_disturb_on</span>Fechado</div></div></div>
+        </div>
+        <div class="nowline" style="top:160px" aria-hidden="true"></div>
+      </div>
+    </section>
+    <aside class="side">
+      <div>
+        <div class="ts v">Resumo do dia</div>
+        <div class="tm" style="margin-top:8px">Confirmados: 9</div>
+        <div class="tm">Em pré-reserva: 2</div>
+        <div class="tm">Bloqueios: 1</div>
+      </div>
+      <div style="background:var(--surfaceContainerLowest); border-radius:16px; padding:16px; box-shadow: inset 0 0 0 1px var(--outlineVariant)">
+        <div class="between"><span class="ts">Reserva</span><span class="badge b-ok"><span class="ms f">check_circle</span>Confirmado</span></div>
+        <div class="tm" style="margin-top:8px">Society · Quadra 2</div>
+        <div class="bm v">qui, 21 nov · 20h–21h</div>
+        <div class="bm" style="margin-top:8px">Organizador: Rafael R.</div>
+        <div class="bm">12 de 12 cotas pagas</div>
+        <div class="track c" style="margin-top:8px"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i></div>
+        <div class="hr" style="margin:12px 0 4px"></div>
+        <div class="kv"><span>Valor das reservas</span><b>R$ 240,00</b></div>
+        <div class="kv"><span>Taxa SportConnect</span><b>− R$ 19,20</b></div>
+        <div class="kv" style="border-top:2px solid var(--outlineVariant); margin-top:4px; padding-top:8px"><span class="ts">Você recebe</span><b class="nprice20">R$ 220,80</b></div>
+        <a class="btn secondary full" style="margin-top:12px; color:var(--error)">Cancelar por força maior</a>
+      </div>
+      <div style="background:var(--surfaceContainerHighest); border-radius:16px; padding:16px">
+        <div class="ts">Próximo repasse</div>
+        <div class="row" style="align-items:baseline; gap:8px; margin-top:2px"><span class="nprice">R$ 1.324,80</span><span class="bm v">em sex, 22 nov</span></div>
+      </div>
+    </aside>
+  </div>
+</div>
+<figcaption style="max-width:none"><b>Painel da arena · expanded</b><code>arena-admin/dashboard · ≥ 840dp</code><span>Agenda do dia com todas as quadras em colunas, linha do "agora", borda esquerda na cor do esporte e status sempre com ícone + texto. Painel lateral de 320dp com o detalhe da reserva tocada; o operador não vê valores.</span></figcaption>
+</figure>
+
+</main>
+<script>
+(function(){
+  var root = document.documentElement, btn = document.getElementById('themeToggle'), lab = document.getElementById('themeLabel');
+  function apply(dark){
+    root.classList.toggle('t-dark', dark);
+    btn.setAttribute('aria-pressed', String(dark));
+    lab.textContent = dark ? 'Ver tema claro' : 'Ver tema escuro';
+    btn.querySelector('.ms').textContent = dark ? 'light_mode' : 'dark_mode';
+  }
+  btn.addEventListener('click', function(){ apply(!root.classList.contains('t-dark')); });
+  if (location.hash === '#dark') apply(true);
+})();
+</script>
+</body>
+</html>

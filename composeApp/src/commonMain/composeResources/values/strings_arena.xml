@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Strings EXCLUSIVAS do modo "Minha Arena" (feature/arenaadmin) que ainda nao existem em strings.xml.
+  Prefixo aadm_ para evitar colisao com chaves adicionadas em paralelo em strings.xml.
+  Chaves ja existentes (arena_*, payout_*, empty_arena_*, error_block_*...) sao reutilizadas de strings.xml.
+-->
+<resources>
+    <!-- Shell / navegacao -->
+    <string name="aadm_cd_arena_switcher">Trocar de arena</string>
+    <string name="aadm_no_arena_title">Você ainda não tem uma arena</string>
+    <string name="aadm_no_arena_body">Cadastre sua arena para receber reservas pelo SportConnect.</string>
+    <string name="aadm_no_arena_cta">Cadastrar arena</string>
+
+    <!-- Painel -->
+    <string name="aadm_now_free">Livre agora · sem jogos no resto do dia</string>
+    <string name="aadm_holds_empty">Nenhuma pré-reserva aguardando pagamento.</string>
+    <string name="aadm_hold_deadline">Prazo: %1$s</string>
+    <string name="aadm_occupancy">Ocupação: %1$d%</string>
+    <string name="aadm_revenue">Receita prevista: %1$s</string>
+    <string name="aadm_payout_projected">Estimativa pelos jogos confirmados</string>
+    <string name="aadm_select_booking_hint">Toque numa reserva da agenda para ver os detalhes aqui.</string>
+    <string name="aadm_cd_now_line">Agora, %1$s</string>
+    <string name="aadm_cd_cell">%1$s, %2$s, %3$s</string>
+
+    <!-- Agenda -->
+    <string name="aadm_cd_prev_day">Dia anterior</string>
+    <string name="aadm_cd_next_day">Próximo dia</string>
+    <string name="aadm_cd_prev_week">Semana anterior</string>
+    <string name="aadm_cd_next_week">Próxima semana</string>
+    <string name="aadm_week_range">%1$s – %2$s</string>
+    <string name="aadm_status_checkout">Reservando</string>
+    <string name="aadm_unblock_title">Liberar este horário?</string>
+    <string name="aadm_unblock_body">Motivo do bloqueio: %1$s. O horário volta a aparecer para os atletas.</string>
+    <string name="aadm_unblock_cta">Liberar horário</string>
+    <string name="aadm_unblocked_snackbar">Horário liberado</string>
+    <string name="aadm_block_court_label">Quadra</string>
+    <string name="aadm_block_time_label">Horário</string>
+    <string name="aadm_block_no_free">Nenhum horário livre nesta quadra no dia.</string>
+    <string name="aadm_action_failed">Não deu para concluir. Tente de novo.</string>
+
+    <!-- Reserva -->
+    <string name="aadm_booking_not_found_title">Reserva não encontrada</string>
+    <string name="aadm_booking_not_found_body">Ela pode ter sido cancelada ou o horário foi liberado.</string>
+    <string name="aadm_booking_participants">Participantes (%1$d de %2$d pagas)</string>
+    <string name="aadm_booking_values">Valores</string>
+    <string name="aadm_booking_fee_detail">%1$d% do plano da arena, descontado só do valor da quadra</string>
+    <string name="aadm_booking_cancelled">Reserva cancelada. Quem pagou recebe o dinheiro de volta.</string>
+    <string name="aadm_booking_contact_cd">Ligar para %1$s</string>
+    <string name="aadm_booking_external_body">Reserva feita fora do app (%1$s). Não há cotas nem repasse pelo SportConnect.</string>
+    <string name="aadm_booking_released">Horário liberado para novas reservas</string>
+    <string name="aadm_booking_open_spots">%1$d vagas abertas</string>
+    <string name="aadm_role_organizer">Organizador</string>
+    <string name="aadm_payout_on_date">em %1$s</string>
+
+    <!-- Quadras -->
+    <string name="aadm_courts_occupancy">%1$d% ocupada hoje</string>
+    <string name="aadm_court_new_title">Nova quadra</string>
+    <string name="aadm_court_type_label">Tipo de quadra</string>
+    <string name="aadm_court_surface_label">Piso</string>
+    <string name="aadm_court_covered">Quadra coberta</string>
+    <string name="aadm_court_capacity">Até %1$d atletas</string>
+    <string name="aadm_court_days_label">Dias de funcionamento</string>
+    <string name="aadm_court_open_label">Abre às</string>
+    <string name="aadm_court_close_label">Fecha às</string>
+    <string name="aadm_court_duration_label">Duração de cada horário</string>
+    <string name="aadm_court_duration_value">%1$d min</string>
+    <string name="aadm_court_peak_start_label">Pico começa às</string>
+    <string name="aadm_court_peak_end_label">Pico termina às</string>
+    <string name="aadm_court_heatmap_title">Preço por dia e hora</string>
+    <string name="aadm_court_view_grid">Ver em grade</string>
+    <string name="aadm_court_price_normal">Normal</string>
+    <string name="aadm_court_price_peak">Pico</string>
+    <string name="aadm_court_published">Horários publicados</string>
+    <string name="aadm_court_error_name">Informe o nome da quadra</string>
+    <string name="aadm_court_error_hours">O fechamento precisa ser depois da abertura</string>
+    <string name="aadm_court_error_price">Informe um preço maior que zero</string>
+    <string name="aadm_cd_decrease">Diminuir %1$s</string>
+    <string name="aadm_cd_increase">Aumentar %1$s</string>
+    <string name="aadm_court_type_society">Society sintético</string>
+    <string name="aadm_court_type_poli">Poliesportiva</string>
+    <string name="aadm_court_type_sand">Areia</string>
+    <string name="aadm_court_type_padel">Padel</string>
+    <string name="aadm_court_type_clay">Saibro</string>
+    <string name="aadm_court_type_hard">Piso rápido</string>
+    <string name="aadm_court_covered_yes">Coberta</string>
+    <string name="aadm_court_covered_no">Descoberta</string>
+
+    <!-- Repasses -->
+    <string name="aadm_payout_period_7">7 dias</string>
+    <string name="aadm_payout_period_30">30 dias</string>
+    <string name="aadm_payout_period_90">90 dias</string>
+    <string name="aadm_payout_period_all">Tudo</string>
+    <string name="aadm_payout_scheduled_total">Previsto</string>
+    <string name="aadm_payout_paid_total">Pago no período</string>
+    <string name="aadm_payout_col_date">Data</string>
+    <string name="aadm_payout_col_game">Jogo</string>
+    <string name="aadm_payout_col_gross">Bruto</string>
+    <string name="aadm_payout_col_fee">Taxa</string>
+    <string name="aadm_payout_col_net">Líquido</string>
+    <string name="aadm_payout_col_status">Status</string>
+    <string name="aadm_payout_detail_title">Detalhe do repasse</string>
+    <string name="aadm_payout_open_booking">Ver reserva</string>
+    <string name="aadm_payout_account_value">Pix · CNPJ %1$s</string>
+    <string name="aadm_payout_none_next">Nenhum repasse programado</string>
+    <string name="aadm_payout_held_banner">%1$d repasse retido. Confira a conta para receber.</string>
+
+    <!-- Onboarding da arena -->
+    <string name="aadm_onb_progress">%1$d de %2$d etapas concluídas</string>
+    <string name="aadm_onb_field_name">Nome da arena</string>
+    <string name="aadm_onb_field_doc">CPF do responsável</string>
+    <string name="aadm_onb_field_cep">CEP</string>
+    <string name="aadm_onb_field_pix">Chave Pix para receber</string>
+    <string name="aadm_onb_step_save">Salvar etapa</string>
+    <string name="aadm_onb_courts_body">Cadastre ao menos uma quadra com esportes e preço.</string>
+    <string name="aadm_onb_schedule_body">Defina os dias, os horários e as faixas de preço de cada quadra.</string>
+    <string name="aadm_onb_publish_hint">Conclua as 4 etapas para publicar.</string>
+    <string name="aadm_onb_error_name">Informe o nome da arena</string>
+    <string name="aadm_onb_error_doc">CPF incompleto</string>
+    <string name="aadm_onb_error_cep">CEP incompleto</string>
+    <string name="aadm_onb_go_dashboard">Ir para o Painel</string>
+    <string name="aadm_onb_step_number">Etapa %1$d</string>
+</resources>

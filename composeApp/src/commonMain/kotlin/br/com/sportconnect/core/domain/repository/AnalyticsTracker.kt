@@ -1,0 +1,61 @@
+package br.com.sportconnect.core.domain.repository
+
+/** Eventos do plano de analytics (docs/04-ux-metrics.md §5). */
+object AnalyticsEvents {
+    const val CONVITE_LINK_ABERTO = "convite_link_aberto"
+    const val JOGO_VISUALIZADO = "jogo_visualizado"
+    const val CADASTRO_INICIADO = "cadastro_iniciado"
+    const val OTP_SOLICITADO = "otp_solicitado"
+    const val OTP_VERIFICADO = "otp_verificado"
+    const val OTP_FALHOU = "otp_falhou"
+    const val CADASTRO_CONCLUIDO = "cadastro_concluido"
+    const val CONSENTIMENTO_ATUALIZADO = "consentimento_atualizado"
+    const val ARENA_CADASTRO_INICIADO = "arena_cadastro_iniciado"
+    const val ARENA_CADASTRO_CONCLUIDO = "arena_cadastro_concluido"
+    const val QUADRA_CADASTRADA = "quadra_cadastrada"
+    const val GRADE_HORARIOS_PUBLICADA = "grade_horarios_publicada"
+    const val CONTA_RECEBIMENTO_APROVADA = "conta_recebimento_aprovada"
+    const val HORARIO_BLOQUEADO = "horario_bloqueado"
+    const val BUSCA_REALIZADA = "busca_realizada"
+    const val SLOT_SELECIONADO = "slot_selecionado"
+    const val JOGO_CRIACAO_INICIADA = "jogo_criacao_iniciada"
+    const val JOGO_CONFIGURADO = "jogo_configurado"
+    const val CHECKOUT_INICIADO = "checkout_iniciado"
+    const val CHECKOUT_CONFLITO = "checkout_conflito"
+    const val METODO_PAGAMENTO_SELECIONADO = "metodo_pagamento_selecionado"
+    const val COBRANCA_GERADA = "cobranca_gerada"
+    const val PIX_CODIGO_COPIADO = "pix_codigo_copiado"
+    const val PAGAMENTO_CONFIRMADO = "pagamento_confirmado"
+    const val PAGAMENTO_FALHOU = "pagamento_falhou"
+    const val COTA_PAGA = "cota_paga"
+    const val PRE_RESERVA_ATIVADA = "pre_reserva_ativada"
+    const val CONVITE_COMPARTILHADO = "convite_compartilhado"
+    const val COBRANCA_PENDENTES_ENVIADA = "cobranca_pendentes_enviada"
+    const val LEMBRETE_ENVIADO = "lembrete_enviado"
+    const val NOTIFICACAO_ABERTA = "notificacao_aberta"
+    const val PRAZO_COTAS_ATINGIDO = "prazo_cotas_atingido"
+    const val POLITICA_APLICADA = "politica_aplicada"
+    const val RERRATEIO_RESPONDIDO = "rerrateio_respondido"
+    const val JOGO_CONFIRMADO = "jogo_confirmado"
+    const val RESERVA_EXPIRADA = "reserva_expirada"
+    const val JOGO_CANCELADO = "jogo_cancelado"
+    const val ATLETA_SAIU_DO_JOGO = "atleta_saiu_do_jogo"
+    const val REEMBOLSO_SOLICITADO = "reembolso_solicitado"
+    const val REEMBOLSO_CONCLUIDO = "reembolso_concluido"
+    const val JOGO_INICIADO = "jogo_iniciado"
+    const val JOGO_CONCLUIDO = "jogo_concluido"
+    const val REPASSE_LIQUIDADO = "repasse_liquidado"
+    const val AGENDA_ARENA_VISUALIZADA = "agenda_arena_visualizada"
+    const val PESQUISA_RESPONDIDA = "pesquisa_respondida"
+    const val ERRO_EXIBIDO = "erro_exibido"
+    const val APP_INSTALADO_APOS_CONVITE = "app_instalado_apos_convite"
+    const val LISTA_ESPERA_ENTROU = "lista_espera_entrou"
+    const val SUBSTITUICAO_CONCLUIDA = "substituicao_concluida"
+    const val AVALIACAO_ENVIADA = "avaliacao_enviada"
+}
+
+data class EventoAnalytics(val nome: String, val propriedades: Map<String, Any?>)
+
+interface AnalyticsTracker {
+    fun track(evento: String, propriedades: Map<String, Any?> = emptyMap())
+}
