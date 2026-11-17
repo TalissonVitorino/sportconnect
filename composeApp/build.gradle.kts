@@ -1,4 +1,4 @@
-import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -14,24 +14,36 @@ plugins {
 /**
  * Android fica HABILITADO por padrao. O AGP exige um Android SDK ja na fase de configuracao;
  * em maquinas sem SDK use `-PdisableAndroid=true` (ver README). Nesse modo o plugin
- * `com.android.application` e o target `androidTarget` simplesmente nao sao aplicados.
+ * `com.android.kotlin.multiplatform.library` e o target Android simplesmente nao sao aplicados
+ * (e o modulo `:androidApp` sai do build, ver settings.gradle.kts).
+ *
+ * Desde o AGP 9 o app Android vive no modulo `:androidApp`; este modulo e uma biblioteca KMP.
  */
 val androidEnabled: Boolean = providers.gradleProperty("disableAndroid")
     .map { !it.toBoolean() }
     .getOrElse(true)
 
 if (androidEnabled) {
-    apply(plugin = libs.plugins.androidApplication.get().pluginId)
+    apply(plugin = libs.plugins.androidMultiplatformLibrary.get().pluginId)
 } else {
     logger.lifecycle("SportConnect: alvo Android DESABILITADO (disableAndroid=true).")
 }
 
 kotlin {
     if (androidEnabled) {
-        androidTarget {
+        // Equivale a `androidLibrary { }`; o plugin e aplicado condicionalmente, entao sem accessor tipado.
+        (this as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryTarget>("androidLibrary") {
+            namespace = "br.com.sportconnect.shared"
+            compileSdk = libs.versions.android.compileSdk.get().toInt()
+            minSdk = libs.versions.android.minSdk.get().toInt()
             compilerOptions {
                 jvmTarget.set(JvmTarget.JVM_11)
             }
+            androidResources {
+                enable = true
+            }
+            // Roda o commonTest tambem na JVM do Android (`:composeApp:testAndroidHostTest`).
+            withHostTest {}
         }
     }
 
@@ -65,7 +77,7 @@ kotlin {
     }
 
     sourceSets {
-        val desktopMain by getting
+        val desktopMain = getByName("desktopMain")
 
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -100,9 +112,7 @@ kotlin {
         }
         if (androidEnabled) {
             androidMain.dependencies {
-                implementation(libs.androidx.activity.compose)
                 implementation(libs.kotlinx.coroutines.android)
-                implementation(libs.koin.android)
                 implementation(libs.ktor.client.okhttp)
             }
         }
@@ -121,34 +131,9 @@ kotlin {
 }
 
 if (androidEnabled) {
-    extensions.configure<ApplicationExtension> {
-        namespace = "br.com.sportconnect"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-        defaultConfig {
-            applicationId = "br.com.sportconnect.app"
-            minSdk = libs.versions.android.minSdk.get().toInt()
-            targetSdk = libs.versions.android.targetSdk.get().toInt()
-            versionCode = 1
-            versionName = "0.1.0"
-        }
-        packaging {
-            resources {
-                excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            }
-        }
-        buildTypes {
-            getByName("release") {
-                isMinifyEnabled = false
-            }
-        }
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
-        }
-    }
     dependencies {
-        "debugImplementation"(libs.compose.ui.tooling)
+        // O plugin Android-KMP nao tem build variants: tooling do Compose vai para o runtime classpath.
+        "androidRuntimeClasspath"(libs.compose.ui.tooling)
     }
 }
 

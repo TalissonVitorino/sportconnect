@@ -15,13 +15,13 @@ estados da reserva, reembolso), as telas do atleta/organizador e da arena, tudo 
 sportconnect/
 ├── settings.gradle.kts / build.gradle.kts / gradle.properties
 ├── gradle/libs.versions.toml          # version catalog (única fonte de versões)
-├── gradlew, gradlew.bat, gradle/wrapper/  # Gradle 8.14.3
-├── composeApp/                        # módulo KMP com o app inteiro
+├── gradlew, gradlew.bat, gradle/wrapper/  # Gradle 9.9.1
+├── androidApp/                        # app Android (com.android.application): MainActivity, Application, Manifest
+├── composeApp/                        # módulo KMP com o app inteiro (biblioteca Android-KMP no Android)
 │   └── src/
 │       ├── commonMain/kotlin/br/com/sportconnect/   # código compartilhado (ver pacotes abaixo)
 │       ├── commonMain/composeResources/             # strings/imagens (Compose Resources, classe Res)
 │       ├── commonTest/                              # testes kotlin.test (rodam em todos os alvos)
-│       ├── androidMain/   # MainActivity, SportConnectApplication, AndroidManifest.xml
 │       ├── iosMain/       # MainViewController() consumido pelo Swift
 │       ├── desktopMain/   # main.kt com Window
 │       └── wasmJsMain/    # main.kt com ComposeViewport + resources/index.html
@@ -34,7 +34,7 @@ sportconnect/
 
 ## Arquitetura de pacotes (`commonMain`)
 
-Um único módulo Gradle (`:composeApp`) organizado em camadas por pacote. As dependências apontam sempre
+Todo o código compartilhado fica no módulo `:composeApp` (o `:androidApp` só tem o entry point Android), organizado em camadas por pacote. As dependências apontam sempre
 "para dentro": `feature → domain ← data`, e `model` não depende de nada.
 
 ```
@@ -87,10 +87,10 @@ Pré-requisitos: JDK 17+ (testado com JDK 21). Use sempre o wrapper (`./gradlew`
 
 ### Android
 - Abra a pasta raiz no **Android Studio** (ou IntelliJ IDEA com plugin Kotlin Multiplatform) e rode a
-  configuração `composeApp`.
-- Pela linha de comando: `./gradlew :composeApp:assembleDebug` (APK em `composeApp/build/outputs/apk/debug/`)
-  ou `./gradlew :composeApp:installDebug` com um dispositivo/emulador conectado.
-- Requer Android SDK (compileSdk 36). Defina `sdk.dir` em `local.properties` ou `ANDROID_HOME`.
+  configuração `androidApp`.
+- Pela linha de comando: `./gradlew :androidApp:assembleDebug` (APK em `androidApp/build/outputs/apk/debug/`)
+  ou `./gradlew :androidApp:installDebug` com um dispositivo/emulador conectado.
+- Requer Android SDK (compileSdk 37). Defina `sdk.dir` em `local.properties` ou `ANDROID_HOME`.
 
 ### Desktop (JVM)
 ```bash
@@ -132,14 +132,14 @@ só a pasta `iosApp/`.
 ```bash
 ./gradlew :composeApp:desktopTest          # rápido, roda commonTest na JVM
 ./gradlew :composeApp:allTests             # todos os alvos disponíveis no host
-./gradlew :composeApp:testDebugUnitTest    # commonTest no Android (requer SDK)
+./gradlew :composeApp:testAndroidHostTest  # commonTest no Android (requer SDK)
 ```
 
 ## Máquinas sem Android SDK (`disableAndroid`)
 
-O alvo Android vem **habilitado por padrão** (`disableAndroid=false` em `gradle.properties`). Com o
-AGP 8.13 a configuração do projeto funciona sem SDK, mas tarefas que compilam Android falham. Para CI de
-desktop/web ou containers sem SDK, desligue o plugin Android e o target `androidTarget` por completo:
+O alvo Android vem **habilitado por padrão** (`disableAndroid=false` em `gradle.properties`). Para CI de
+desktop/web ou containers sem SDK, desligue o plugin Android-KMP, o target Android do `:composeApp` e o
+módulo `:androidApp` por completo:
 
 ```bash
 ./gradlew :composeApp:desktopTest -PdisableAndroid=true
@@ -151,8 +151,8 @@ ou, para valer sempre na sua máquina sem alterar o repositório, adicione em `~
 disableAndroid=true
 ```
 
-Com a propriedade ligada, o build registra `SportConnect: alvo Android DESABILITADO` e o `androidMain`
-é ignorado. Não faça commit de `disableAndroid=true` no `gradle.properties` do projeto.
+Com a propriedade ligada, o build registra `SportConnect: alvo Android DESABILITADO`, o `androidMain`
+é ignorado e o `:androidApp` sai do build. Não faça commit de `disableAndroid=true` no `gradle.properties` do projeto.
 
 ## Estado atual do projeto
 
@@ -164,7 +164,7 @@ Com a propriedade ligada, o build registra `SportConnect: alvo Android DESABILIT
 | Telas do atleta e organizador (`feature/*`) | Implementadas sobre dados fake |
 | Telas da Minha Arena (`feature/arenaadmin`) | Implementadas sobre dados fake |
 | Desktop e Web (Wasm) | Compilam; 143 testes passando em `desktopTest` |
-| Android e iOS | Configurados, **não compilados** (faltou SDK do Android e Xcode no ambiente de geração) |
+| Android e iOS | Android compila e gera APK (`:androidApp:assembleDebug`); iOS compila o framework Kotlin (app Xcode não testado aqui) |
 
 Não há backend nem gateway de pagamento reais: o Pix é simulado (`FakePaymentGateway`) e confirma sozinho após cerca de 3 s.
 
@@ -199,13 +199,13 @@ Transversais: `docs/08-design-ops.md` (processo do time) e `docs/00-brief.md` (c
 
 | Componente | Versão |
 |---|---|
-| Gradle (wrapper) | 8.14.3 |
+| Gradle (wrapper) | 9.9.1 |
 | Kotlin (KMP, Compose compiler, serialization) | 2.4.21 |
 | Compose Multiplatform (runtime/foundation/ui/resources) | 1.12.2 |
 | Compose Material 3 (`org.jetbrains.compose.material3`) | 1.9.0 |
 | Material Icons Extended (`org.jetbrains.compose.material`) | 1.7.3 (última publicada) |
-| Android Gradle Plugin | 8.13.2 |
-| Android compileSdk / targetSdk / minSdk | 36 / 36 / 24 |
+| Android Gradle Plugin (`com.android.application` + `com.android.kotlin.multiplatform.library`) | 9.5.1 |
+| Android compileSdk / targetSdk / minSdk | 37 / 37 / 24 |
 | androidx.activity:activity-compose | 1.13.0 |
 | JetBrains lifecycle-viewmodel-compose / runtime-compose | 2.11.0 |
 | JetBrains navigation-compose | 2.10.0 |
@@ -217,8 +217,10 @@ Transversais: `docs/08-design-ops.md` (processo do time) e `docs/00-brief.md` (c
 | iOS deployment target | 16.0 (alvos `iosArm64`, `iosSimulatorArm64`) |
 
 Observações:
-- O Kotlin 2.4.21 emite o aviso *"Deprecated Gradle Version"*: a partir do Kotlin 2.5.0 o mínimo será o
-  Gradle 8.14.4. Para atualizar, rode `./gradlew wrapper --gradle-version 8.14.4` (ou superior).
-- O AGP 9.x não foi usado porque exige Gradle 9 e muda o modelo de plugin Android para KMP
-  (`com.android.kotlin.multiplatform.library`). Fica como evolução futura junto com a migração para o Gradle 9.
+- Com o AGP 9 o plugin `com.android.application` não pode mais ser aplicado num módulo KMP. Por isso o
+  entry point Android foi para `:androidApp` (Kotlin embutido do AGP, sem `kotlin-android`) e o
+  `:composeApp` usa `com.android.kotlin.multiplatform.library` (sem build variants: o `ui-tooling` entra
+  via `androidRuntimeClasspath`).
+- O Gradle 9.9 ainda mostra avisos de depreciação vindos dos plugins do Kotlin 2.4 e do Compose
+  (atributos enum / hot reload); somem ao atualizar para o Kotlin 2.5 quando sair.
 - O alvo `iosX64` (simuladores em Macs Intel) não foi incluído.
