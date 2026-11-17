@@ -2,6 +2,8 @@ package br.com.sportconnect.di
 
 import br.com.sportconnect.core.data.InMemorySportRepository
 import br.com.sportconnect.core.data.fake.DemoData
+import br.com.sportconnect.core.data.local.AppPreferences
+import com.russhwolf.settings.Settings
 import br.com.sportconnect.core.data.fake.FakeArenaRepository
 import br.com.sportconnect.core.data.fake.FakeAuthRepository
 import br.com.sportconnect.core.data.fake.FakeGameRepository
@@ -49,17 +51,26 @@ import kotlin.time.Clock
 /** Escopo de aplicacao para jobs de fundo (webhooks, prazos). */
 val APP_SCOPE = named("appScope")
 
+/**
+ * Armazenamento local da plataforma (SharedPreferences/NSUserDefaults/java.util.prefs/localStorage).
+ * Separado do [dataModule] para os testes trocarem por um MapSettings em memoria.
+ */
+val settingsModule = module {
+    single<Settings> { Settings() }
+}
+
 /** Implementacoes de dados (fakes em memoria para a demo; trocar por Ktor depois). */
 val dataModule = module {
     single<Clock> { Clock.System }
     single<CoroutineScope>(APP_SCOPE) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     single { DemoData(get()) }
+    single { AppPreferences(get()) }
 
     singleOf(::InMemorySportRepository) bind SportRepository::class
     single { InMemoryAnalyticsTracker() } bind AnalyticsTracker::class
     single { FakeArenaRepository(get()) } bind ArenaRepository::class
     single { FakeGameRepository(get()) } bind GameRepository::class
-    single { FakeAuthRepository(get(), get(), get()) } bind AuthRepository::class
+    single { FakeAuthRepository(get(), get(), get(), get()) } bind AuthRepository::class
     single { FakePaymentGateway(get(), get(APP_SCOPE)) } bind PaymentGateway::class
 }
 

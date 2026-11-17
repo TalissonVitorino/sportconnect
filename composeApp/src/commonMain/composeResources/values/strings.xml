@@ -766,4 +766,20 @@
     <!-- 10-ui-design §0.1 -->
     <string name="error_checkout_expired_title">Seu tempo para pagar acabou</string>
     <string name="error_checkout_expired_body">Seguramos o horário por 10min. Confira se ele ainda está livre.</string>
+    <!-- 11-backlog-auditoria · sprint "Abertura e conta" (B5, B6, B14) — propostos, revisar com UX Writing/Jurídico -->
+    <string name="auth_code_body_whatsapp">Enviamos 6 números pelo WhatsApp para %1$s.</string>
+    <string name="auth_sending">Enviando…</string>
+    <string name="auth_terms_link_terms">Termos de Uso</string>
+    <string name="auth_terms_link_privacy">Política de Privacidade</string>
+    <string name="auth_marketing_optin">Quero receber novidades e promoções do SportConnect</string>
+    <string name="auth_name_too_short">Use pelo menos 2 letras.</string>
+    <string name="cd_otp_field">Código de 6 números</string>
+    <string name="legal_version">Versão %1$s</string>
+    <string name="legal_pending_body">O texto completo está em revisão jurídica e será publicado aqui antes do lançamento. Em resumo: usamos seu celular para identificar você, seus pagamentos ficam com o intermediador e você pode pedir a exclusão dos seus dados a qualquer momento em Perfil › Privacidade e dados.</string>
+    <string name="logout_dialog_title">Sair da conta?</string>
+    <string name="logout_dialog_body">Para entrar de novo, a gente manda um código pro seu celular. Seus jogos e pagamentos continuam salvos.</string>
+    <string name="logout_dialog_confirm">Sair</string>
+    <string name="profile_signed_out_title">Entre pra organizar e pagar</string>
+    <string name="profile_signed_out_body">Com o celular você cria jogos, paga sua cota e acompanha tudo por aqui.</string>
+    <string name="profile_sign_in">Entrar com celular</string>
 </resources>

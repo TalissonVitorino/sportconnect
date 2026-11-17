@@ -38,7 +38,7 @@ import org.koin.mp.KoinPlatform
  * (`koinViewModel { parametersOf(route) }`): cada rota e um tipo distinto, entao o Koin resolve sem ambiguidade.
  */
 val featureModule = module {
-    singleOf(::UiSessionStore)
+    single { UiSessionStore(get()) }
     singleOf(::AvisosLidosStore)
     factoryOf(::GetNotificationsUseCase)
     factoryOf(::GetMyPaymentsUseCase)
@@ -64,7 +64,7 @@ val featureModule = module {
 }
 
 /** Modo Atleta/Organizador ([featureModule]) + modo Minha Arena ([arenaAdminModule], feature/arenaadmin). */
-val appModules = listOf(dataModule, domainModule, featureModule, arenaAdminModule)
+val appModules = listOf(settingsModule, dataModule, domainModule, featureModule, arenaAdminModule)
 
 /**
  * Inicia o Koin uma unica vez (idempotente). Chamado pelos entry points de cada plataforma.

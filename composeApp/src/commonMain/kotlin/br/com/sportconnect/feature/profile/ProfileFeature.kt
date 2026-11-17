@@ -2,6 +2,18 @@
 
 package br.com.sportconnect.feature.profile
 
+import br.com.sportconnect.resources.profile_sign_in
+import br.com.sportconnect.resources.profile_signed_out_body
+import br.com.sportconnect.resources.profile_signed_out_title
+import br.com.sportconnect.resources.common_cancel
+import br.com.sportconnect.resources.logout_dialog_confirm
+import br.com.sportconnect.resources.logout_dialog_body
+import br.com.sportconnect.resources.logout_dialog_title
+import br.com.sportconnect.core.designsystem.component.SCDialogVariant
+import br.com.sportconnect.core.designsystem.component.SCDialog
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -190,6 +202,7 @@ data class ProfileActions(
     val notifications: () -> Unit = {},
     val switchMode: (AppMode) -> Unit = {},
     val loggedOut: () -> Unit = {},
+    val signIn: () -> Unit = {},
 )
 
 @Composable
@@ -213,19 +226,42 @@ fun ProfileScreen(
 ) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
+    var confirmLogout by rememberSaveable { mutableStateOf(false) }
+    if (confirmLogout) {
+        // B14: sair pedia so um toque num texto vermelho, sem confirmacao.
+        SCDialog(
+            title = stringResource(Res.string.logout_dialog_title),
+            body = stringResource(Res.string.logout_dialog_body),
+            onDismissRequest = { confirmLogout = false },
+            confirm = SCAction(stringResource(Res.string.logout_dialog_confirm), { confirmLogout = false; onLogout() }),
+            dismiss = SCAction(stringResource(Res.string.common_cancel), { confirmLogout = false }),
+            variant = SCDialogVariant.Destructive,
+            modifier = Modifier.testTag("profile_logout_dialog"),
+        )
+    }
     Scaffold(
         containerColor = c.surface,
         topBar = { SCTopBar(stringResource(Res.string.profile_title), variant = SCTopBarVariant.CenterAligned, navigation = null) },
     ) { padding ->
+        if (state.user == null) {
+            // Visitante (09 ficha 1): explora sem conta; o Perfil convida a entrar.
+            SCEmptyState(
+                title = stringResource(Res.string.profile_signed_out_title),
+                description = stringResource(Res.string.profile_signed_out_body),
+                primaryAction = SCAction(stringResource(Res.string.profile_sign_in), actions.signIn),
+                modifier = Modifier.padding(padding).testTag("profile_signed_out"),
+            )
+            return@Scaffold
+        }
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             CenteredContent(Modifier.padding(horizontal = 16.dp)) {
                 val u = state.user
                 Row(Modifier.fillMaxWidth().padding(vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    SCAvatar(AvatarUi(u?.nome ?: "?"), size = 64.dp)
+                    SCAvatar(AvatarUi(u.nome), size = 64.dp)
                     Spacer(Modifier.width(16.dp))
                     Column {
-                        Text(u?.nome.orEmpty(), style = t.titleLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
-                        Text(u?.celular?.let { PtBrFormat.maskedPhone(it) }.orEmpty(), style = t.bodyMedium, color = c.onSurfaceVariant)
+                        Text(u.nome, style = t.titleLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
+                        Text(PtBrFormat.maskedPhone(u.celular), style = t.bodyMedium, color = c.onSurfaceVariant)
                     }
                 }
                 if (state.hasArenaRole) {
@@ -272,7 +308,7 @@ fun ProfileScreen(
                     stringResource(Res.string.auth_logout),
                     style = t.labelLarge,
                     color = c.error,
-                    modifier = Modifier.heightIn(min = 48.dp).clickable(role = Role.Button, onClick = onLogout).padding(vertical = 14.dp).testTag("profile_logout"),
+                    modifier = Modifier.heightIn(min = 48.dp).clickable(role = Role.Button) { confirmLogout = true }.padding(vertical = 14.dp).testTag("profile_logout"),
                 )
                 Text(stringResource(Res.string.profile_version, "0.1.0"), style = t.bodySmall, color = c.onSurfaceVariant)
                 Spacer(Modifier.height(24.dp))

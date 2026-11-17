@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#191C19">
     <title>SportConnect</title>
+    <link rel="icon" type="image/svg+xml" href="app-icon.svg">
     <link type="text/css" rel="stylesheet" href="styles.css">
     <script type="application/javascript" src="composeApp.js"></script>
 </head>
 <body>
+    <!-- Loader exibido enquanto o Wasm baixa e compila; removido no primeiro frame do Compose (main.kt). -->
+    <div id="sc-loader" role="status" aria-label="Carregando o SportConnect">
+        <img src="app-icon.svg" alt="" width="96" height="96">
+        <div class="sc-bar"><span></span></div>
+    </div>
 </body>
 </html>

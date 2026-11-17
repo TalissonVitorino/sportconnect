@@ -55,6 +55,7 @@ dependencies {
     implementation(projects.composeApp)
 
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
     implementation(project.dependencies.platform(libs.koin.bom))

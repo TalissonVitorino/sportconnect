@@ -1,0 +1,60 @@
+package br.com.sportconnect.core.data.local
+
+import com.russhwolf.settings.Settings
+
+/**
+ * Preferencias locais do aparelho (multiplatform-settings: SharedPreferences no Android,
+ * NSUserDefaults no iOS, java.util.prefs no desktop e localStorage na web).
+ *
+ * Guarda so o necessario para abrir o app no lugar certo (B3 do backlog 11): se o onboarding ja foi
+ * visto e quem esta logado. Nada de dados sensiveis aqui; tokens reais vao para armazenamento seguro.
+ */
+class AppPreferences(private val settings: Settings) {
+
+    var onboardingDone: Boolean
+        get() = settings.getBoolean(KEY_ONBOARDING_DONE, false)
+        set(value) = settings.putBoolean(KEY_ONBOARDING_DONE, value)
+
+    /** Sessao salva (demo): id, nome e celular de quem estava logado; null = deslogado. */
+    var session: SavedSession?
+        get() {
+            val id = settings.getStringOrNull(KEY_SESSION_ID) ?: return null
+            return SavedSession(
+                id = id,
+                nome = settings.getStringOrNull(KEY_SESSION_NAME).orEmpty(),
+                celular = settings.getStringOrNull(KEY_SESSION_PHONE).orEmpty(),
+            )
+        }
+        set(value) {
+            if (value == null) {
+                settings.remove(KEY_SESSION_ID)
+                settings.remove(KEY_SESSION_NAME)
+                settings.remove(KEY_SESSION_PHONE)
+            } else {
+                settings.putString(KEY_SESSION_ID, value.id)
+                settings.putString(KEY_SESSION_NAME, value.nome)
+                settings.putString(KEY_SESSION_PHONE, value.celular)
+            }
+        }
+
+    /** Consentimentos LGPD aceitos neste aparelho (versao dos termos aceita e opt-in de marketing). */
+    var acceptedTermsVersion: String?
+        get() = settings.getStringOrNull(KEY_TERMS_VERSION)
+        set(value) = if (value == null) settings.remove(KEY_TERMS_VERSION) else settings.putString(KEY_TERMS_VERSION, value)
+
+    var marketingOptIn: Boolean
+        get() = settings.getBoolean(KEY_MARKETING, false)
+        set(value) = settings.putBoolean(KEY_MARKETING, value)
+
+    data class SavedSession(val id: String, val nome: String, val celular: String)
+
+    private companion object {
+        const val PREFIX = "sportconnect."
+        const val KEY_ONBOARDING_DONE = PREFIX + "onboarding_done"
+        const val KEY_SESSION_ID = PREFIX + "session_user_id"
+        const val KEY_SESSION_NAME = PREFIX + "session_user_name"
+        const val KEY_SESSION_PHONE = PREFIX + "session_user_phone"
+        const val KEY_TERMS_VERSION = PREFIX + "terms_version"
+        const val KEY_MARKETING = PREFIX + "marketing_opt_in"
+    }
+}

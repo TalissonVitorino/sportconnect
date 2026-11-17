@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
  * |-------------------------|----------------------------|------------|
  * | onboarding              | [Route.Onboarding]         | nao        |
  * | auth                    | [Route.Auth]               | nao        |
+ * | legal/{doc}             | [Route.Legal]              | nao        |
  * | home                    | [Route.Home]               | sim        |
  * | explore                 | [Route.Explore]            | sim        |
  * | arena/{id}              | [Route.ArenaDetail]        | sim        |
@@ -30,9 +31,16 @@ sealed interface Route {
     @Serializable
     data object Onboarding : Route
 
-    /** [payGameId]: depois do OTP, segue direto para `game/{id}/pay` (regra de retorno, 09 §2.5). */
+    /**
+     * Regra de retorno (09 §2.5): depois do OTP segue para onde a pessoa ia.
+     * [payGameId] -> `game/{id}/pay`; [createGame] -> `game/create` (com [slotId], se ja escolheu horario).
+     */
     @Serializable
-    data class Auth(val payGameId: String? = null) : Route
+    data class Auth(val payGameId: String? = null, val createGame: Boolean = false, val slotId: String? = null) : Route
+
+    /** Termos de Uso ou Politica de Privacidade (CT-05). [doc] = nome de [br.com.sportconnect.feature.auth.LegalDoc]. */
+    @Serializable
+    data class Legal(val doc: String) : Route
 
     @Serializable
     data object Home : Route

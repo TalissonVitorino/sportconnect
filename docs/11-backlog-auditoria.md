@@ -45,17 +45,17 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 
 | # | P | Tam | Tarefa | Detalhe |
 |---|---|---|---|---|
-| B1 | P0 | M | **Splash Android (SplashScreen API).** | `androidx.core:core-splashscreen`. Tema `Theme.SportConnect.Starting` com `windowSplashScreenBackground` = `primary` dos tokens, ícone = símbolo do `logo.svg` convertido em *vector drawable* animado (AVD ≤ 1 s), `postSplashScreenTheme` com tema que respeite claro/escuro (hoje o tema é `@android:style/Theme.Material.Light.NoActionBar`, que pisca branco no modo escuro). `installSplashScreen().setKeepOnScreenCondition { !sessionReady }` enquanto lê sessão/onboarding do disco. |
-| B2 | P0 | P | **Launch screen iOS.** | `Info.plist` tem `UILaunchScreen` vazio, então abre tela branca. Definir `UIColorName` (cor de fundo nos Assets, com variante escura) e `UIImageName` (símbolo do logo). |
-| B3 | P0 | M | **Gate de sessão ("roteador de abertura").** | Hoje `onboardingDone` e a sessão vivem só em memória (`UiSessionStore`, `FakeAuthRepository` já inicia logado). Resultado: o onboarding aparece em **toda** abertura. Persistir com `multiplatform-settings` ou DataStore KMP e decidir a rota inicial: 1ª vez → Onboarding; com sessão → Home (ou Painel, se o último modo foi Arena); visitante → Home como visitante (09 §3, ficha 1: "visitante pode explorar sem login"). |
-| B4 | P1 | P | **Loader na Web.** | O `index.html` fica em branco enquanto o Wasm baixa. Colocar logo + spinner em CSS no `<body>` e removê-lo no primeiro frame. |
+| B1 | ✅ P0 | M | **Splash Android (SplashScreen API).** | `androidx.core:core-splashscreen`. Tema `Theme.SportConnect.Starting` com `windowSplashScreenBackground` = `primary` dos tokens, ícone = símbolo do `logo.svg` convertido em *vector drawable* animado (AVD ≤ 1 s), `postSplashScreenTheme` com tema que respeite claro/escuro (hoje o tema é `@android:style/Theme.Material.Light.NoActionBar`, que pisca branco no modo escuro). `installSplashScreen().setKeepOnScreenCondition { !sessionReady }` enquanto lê sessão/onboarding do disco. |
+| B2 | ✅ P0 | P | **Launch screen iOS.** | `Info.plist` tem `UILaunchScreen` vazio, então abre tela branca. Definir `UIColorName` (cor de fundo nos Assets, com variante escura) e `UIImageName` (símbolo do logo). |
+| B3 | ✅ P0 | M | **Gate de sessão ("roteador de abertura").** | Hoje `onboardingDone` e a sessão vivem só em memória (`UiSessionStore`, `FakeAuthRepository` já inicia logado). Resultado: o onboarding aparece em **toda** abertura. Persistir com `multiplatform-settings` ou DataStore KMP e decidir a rota inicial: 1ª vez → Onboarding; com sessão → Home (ou Painel, se o último modo foi Arena); visitante → Home como visitante (09 §3, ficha 1: "visitante pode explorar sem login"). |
+| B4 | ✅ P1 | P | **Loader na Web.** | O `index.html` fica em branco enquanto o Wasm baixa. Colocar logo + spinner em CSS no `<body>` e removê-lo no primeiro frame. |
 
 ### B.2 Login e cadastro
 
 | # | P | Tam | Tarefa | Detalhe |
 |---|---|---|---|---|
-| B5 | P0 | M | **Completar a tela de login (`auth`)** conforme 09 ficha 2. | (a) "Receber pelo WhatsApp" chama o mesmo `sendCode` que SMS: passar o canal. (b) Estados de erro especificados e não implementados: `error_code_expired_*`, `error_too_many_attempts_*` (bloqueio de 15 min após 5 tentativas), `error_no_connection_*`; as strings já existem. (c) Campos bloqueados durante o loading. (d) **Autofill do código**: `ContentType.SmsOtpCode` (Android, SMS Retriever / User Consent API) e `textContentType = .oneTimeCode` (iOS). (e) Foco automático no OTP e `ImeAction.Done` no celular (hoje há **0** `ImeAction` no app inteiro). (f) Máscara visual `(11) 98765-4321` no campo (hoje só filtra dígitos). (g) Remover o `contentDescription` fixo "Código de 6 números" e usar string resource. |
-| B6 | P0 | M | **Cadastro: termos e consentimentos (LGPD, CT-05, US-003).** | Hoje `auth_terms` é texto solto, sem link e sem aceite registrado. Transformar em texto com links ("Termos de uso" e "Política de privacidade") abrindo uma tela/WebView, e registrar `Consentimento` no `Usuario` ao concluir o cadastro. Opt-in separado e desmarcado para marketing. |
+| B5 | ✅ P0 | M | **Completar a tela de login (`auth`)** conforme 09 ficha 2. | (a) "Receber pelo WhatsApp" chama o mesmo `sendCode` que SMS: passar o canal. (b) Estados de erro especificados e não implementados: `error_code_expired_*`, `error_too_many_attempts_*` (bloqueio de 15 min após 5 tentativas), `error_no_connection_*`; as strings já existem. (c) Campos bloqueados durante o loading. (d) **Autofill do código**: `ContentType.SmsOtpCode` (Android, SMS Retriever / User Consent API) e `textContentType = .oneTimeCode` (iOS). (e) Foco automático no OTP e `ImeAction.Done` no celular (hoje há **0** `ImeAction` no app inteiro). (f) ~~Máscara visual~~ — correção da auditoria: o `SCTextField` tipo `Phone` já aplicava a máscara. (g) Remover o `contentDescription` fixo "Código de 6 números" e usar string resource. |
+| B6 | ✅ P0 | M | **Cadastro: termos e consentimentos (LGPD, CT-05, US-003).** | Hoje `auth_terms` é texto solto, sem link e sem aceite registrado. Transformar em texto com links ("Termos de uso" e "Política de privacidade") abrindo uma tela/WebView, e registrar `Consentimento` no `Usuario` ao concluir o cadastro. Opt-in separado e desmarcado para marketing. |
 | B7 | P1 | M | **Cadastro: passo de perfil.** | Depois do nome: foto opcional (câmera/galeria) e esportes preferidos. O passo do nome hoje não tem voltar nem validação de tamanho mínimo (aceita 1 caractere). |
 | B8 | P1 | M | **Login social (Google / Apple) atrás de flag.** | Previsto em 09 (`auth_google`, `auth_apple`; as strings já existem). Se Google entrar no iOS, **Sign in with Apple passa a ser obrigatório** (App Store 4.8). |
 | B9 | P1 | P | **Login como sheet** no convite e no pagamento (09: "Também embutido como sheet"). | Hoje `GuestInvite → login` navega para a tela cheia `Route.Auth`. |
@@ -73,7 +73,7 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 | B11 | P0 | G | **Excluir conta** (obrigatório: App Store 5.1.1(v) e política do Google Play; LGPD art. 18). | Fluxo em `profile/privacy`: botão `profile_delete_account` → tela de consequências → diálogo `profile_delete_dialog_*` (strings já existem) → reautenticação por OTP → regra US-003 "com jogo ativo, a exclusão ocorre após conclusão/reembolso" → estado "exclusão agendada" → logout. Adicionar `AuthRepository.solicitarExclusao()` e o evento `conta_exclusao_solicitada`. Publicar também a **URL web de exclusão**, que o Play Console exige. |
 | B12 | P0 | M | **Tela `profile/privacy` — Privacidade e dados** (09 ficha 16; hoje o item no Perfil não faz nada). | Consentimentos com switch (marketing, localização, push) disparando `consentimento_atualizado`; "Baixar meus dados" (`profile_download_data`, RNF-11: JSON/CSV); links para Termos e Política; "Excluir conta". |
 | B13 | P0 | M | **Editar perfil.** | Não existe: o nome só é definido no 1º login. Tela com foto, nome/apelido, e-mail opcional e troca de celular (com novo OTP). Tocar no avatar do Perfil abre essa tela. |
-| B14 | P0 | P | **Confirmar "Sair".** | Hoje o logout é imediato com um toque num texto vermelho. Usar um `SCDialog` e mover o botão para o fim, separado. |
+| B14 | ✅ P0 | P | **Confirmar "Sair".** | Hoje o logout é imediato com um toque num texto vermelho. Usar um `SCDialog` e mover o botão para o fim, separado. |
 | B15 | P1 | M | **Itens mortos do Perfil.** | "Meus esportes", "Cartões salvos", "Privacidade e dados" e "Falar com o suporte" têm `onClick = {}`. Criar as telas ou esconder os itens até existirem: item que não responde passa a impressão de app quebrado. |
 | B16 | P2 | M | **Preferências**: tema (sistema/claro/escuro) e preferências de notificação por tipo. | `profile_notifications` hoje leva à lista de avisos, não às preferências. |
 | B17 | P2 | P | **Comprovante**: "Compartilhar" hoje só copia texto. Usar o *share sheet* nativo (expect/actual) e, depois, PDF. | `ReceiptScreen` |
@@ -114,8 +114,8 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 
 | # | P | Tam | Tarefa |
 |---|---|---|---|
-| D1 | P0 | P | **Ícone do app Android**: `androidApp/src/main/res` só tem `values/`, então o app usa o ícone padrão. Gerar *adaptive icon* (foreground/background + monochrome para Android 13+) a partir de `docs/assets/app-icon.svg` e declarar `android:icon`/`android:roundIcon`. |
-| D2 | P0 | P | **Ícone do app iOS**: `AppIcon.appiconset` só tem o `Contents.json` (sem imagem). Exportar 1024×1024 (variantes clara, escura e tinted no iOS 18+). |
+| D1 | ✅ P0 | P | **Ícone do app Android**: `androidApp/src/main/res` só tem `values/`, então o app usa o ícone padrão. Gerar *adaptive icon* (foreground/background + monochrome para Android 13+) a partir de `docs/assets/app-icon.svg` e declarar `android:icon`/`android:roundIcon`. |
+| D2 | ✅ P0 | P | **Ícone do app iOS**: `AppIcon.appiconset` só tem o `Contents.json` (sem imagem). Exportar 1024×1024 (variantes clara, escura e tinted no iOS 18+). |
 | D3 | ✅ P0 | P | **Tema Android próprio** (`Theme.SportConnect`, DayNight, sem ActionBar, barras transparentes) no lugar de `@android:style/Theme.Material.Light.NoActionBar`. Evita o flash branco no modo escuro e prepara o splash (B1). |
 | D4 | P1 | P | **Predictive back** (Android 14+): `android:enableOnBackInvokedCallback="true"` no manifest; com A1 feito, o navigation-compose já anima o gesto. |
 | D5 | P1 | P | **Deep links reais**: as rotas declaram `https://sportconnect.app/{a,g,j}`, mas o `AndroidManifest` não tem `intent-filter` com `autoVerify` e o iOS não tem Associated Domains. O convite por link (fluxo principal do produto) não abre o app. |
@@ -158,10 +158,20 @@ desenho), A6 (fake de pagamento 3 s → 1 s), C1, C2, C3, D3 (tema `Theme.SportC
 Extra encontrado no emulador: a Home e o Painel da arena desenhavam o título por baixo da status bar
 (barras de topo próprias sem `WindowInsets.statusBars`) — corrigido.
 
+**Sprint "Abertura e conta" — concluído em 17/11/2026:** B1 (SplashScreen API + saída animada), B2
+(launch screen iOS: `LaunchBackground` + `LaunchLogo`), B3 (`AppPreferences` com multiplatform-settings:
+onboarding e sessão salvos; instalação nova começa deslogada; criar jogo/pagar pedem login e voltam ao
+destino), B4 (loader da Web), B5 (canal WhatsApp, código expira em 10 min, bloqueio de 15 min após 5 erros,
+sem conexão, autofill `SmsOtpCode`/`PhoneNumber`, foco e ações do teclado, haptic no erro), B6 (links para
+Termos/Política em `legal/{doc}`, aceite e opt-in de marketing registrados no usuário), B14 (diálogo ao sair;
+Perfil de visitante com "Entrar com celular"), D1 (ícone adaptativo + monocromático + legado), D2 (AppIcon
+1024 sem alfa). Testes novos em `AuthRepositoryTest`.
+Pendentes do sprint: B9 (login como sheet) e a confirmação do autofill de SMS num aparelho real.
+
 ## Ordem sugerida (sprints)
 
 1. ~~**Sprint "Fluidez"**~~ ✅ (2–3 dias): A1, A2, A4, A5, A6, C1, C2, C3, D3 → o app já "parece outro".
-2. **Sprint "Abertura e conta"** (1 semana): B1, B2, B3, D1, D2, B5, B6, B14.
+2. ~~**Sprint "Abertura e conta"**~~ ✅ (1 semana): B1, B2, B3, D1, D2, B5, B6, B14.
 3. **Sprint "LGPD e lojas"** (1 semana): B11, B12, B13, B15, D5. **Sem B11 o app é rejeitado nas duas lojas.**
 4. **Sprint "Polimento"**: A3, A7–A10, C4–C17, B7–B10.
 5. Backlog: P2 restantes.

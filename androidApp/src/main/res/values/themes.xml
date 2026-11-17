@@ -9,4 +9,12 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
+
+    <!-- Splash (SplashScreen API; Android 12+ nativo, compat ate o 6). Mesmo fundo do ícone nos dois modos. -->
+    <style name="Theme.SportConnect.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="windowSplashScreenAnimationDuration">300</item>
+        <item name="postSplashScreenTheme">@style/Theme.SportConnect</item>
+    </style>
 </resources>

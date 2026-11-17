@@ -52,6 +52,8 @@ import br.com.sportconnect.feature.arena.ArenaDetailRoute
 import br.com.sportconnect.feature.arenaadmin.ArenaAdminRoute
 import br.com.sportconnect.feature.arenaadmin.arenaAdminGraph
 import br.com.sportconnect.feature.auth.AuthRoute
+import br.com.sportconnect.feature.auth.LegalDoc
+import br.com.sportconnect.feature.auth.LegalScreen
 import br.com.sportconnect.feature.common.UiSessionStore
 import br.com.sportconnect.feature.creategame.CreateGameActions
 import br.com.sportconnect.feature.creategame.CreateGameRoute
@@ -174,6 +176,17 @@ fun AppNavHost(
     }
 
     val profileVm: ProfileViewModel = koinViewModel()
+    val authRepo: AuthRepository = koinInject()
+
+    // Login so quando precisa (09 ficha 1): visitante explora a vontade; criar jogo e pagar pedem o celular
+    // e, depois do codigo, a pessoa volta exatamente para onde ia (09 §2.5).
+    fun goCreate(slotId: String? = null) {
+        if (authRepo.currentUser.value == null) nav.go(Route.Auth(createGame = true, slotId = slotId)) else nav.go(Route.GameCreate(slotId))
+    }
+
+    fun goPay(gameId: String, afterCreate: Boolean = false) {
+        if (authRepo.currentUser.value == null) nav.go(Route.Auth(payGameId = gameId)) else nav.go(Route.GamePay(gameId, afterCreate))
+    }
 
     SCAdaptiveNavigation(
         items = items,
@@ -188,7 +201,7 @@ fun AppNavHost(
         },
         header = {
             FloatingActionButton(
-                onClick = { nav.go(Route.GameCreate()) },
+                onClick = { goCreate() },
                 containerColor = SportConnectTheme.colors.primaryContainer,
                 contentColor = SportConnectTheme.colors.onPrimaryContainer,
                 modifier = Modifier.testTag("nav_fab_create_game"),
@@ -221,24 +234,33 @@ fun AppNavHost(
                         onClose = { if (!navController.popBackStack()) nav.resetTo(Route.Home) },
                         onDone = {
                             val pay = r.payGameId
-                            if (pay != null) nav.replace(Route.GamePay(pay)) else nav.resetTo(Route.Home)
+                            when {
+                                pay != null -> nav.replace(Route.GamePay(pay))
+                                r.createGame -> nav.replace(Route.GameCreate(r.slotId))
+                                else -> nav.resetTo(Route.Home)
+                            }
                         },
+                        onOpenLegal = { nav.go(Route.Legal(it.name)) },
                     )
+                }
+                composable<Route.Legal> { entry ->
+                    val doc = LegalDoc.entries.firstOrNull { it.name == entry.toRoute<Route.Legal>().doc } ?: LegalDoc.Terms
+                    LegalScreen(doc, onBack = nav::back)
                 }
                 composable<Route.Home> {
                     HomeRoute(
                         HomeActions(
                             openGame = { nav.go(Route.GameDetail(it)) },
-                            pay = { id, afterCreate -> nav.go(Route.GamePay(id, afterCreate)) },
+                            pay = { id, afterCreate -> goPay(id, afterCreate) },
                             resolve = { nav.go(Route.GameResolve(it)) },
-                            createGame = { nav.go(Route.GameCreate()) },
+                            createGame = { goCreate() },
                             findCourt = { nav.openTab(Route.Explore) },
                             notifications = { nav.go(Route.Notifications) },
                         ),
                     )
                 }
                 composable<Route.Explore> {
-                    ExploreRoute(ExploreActions(openArena = { nav.go(Route.ArenaDetail(it)) }, pickSlot = { nav.go(Route.GameCreate(it)) }))
+                    ExploreRoute(ExploreActions(openArena = { nav.go(Route.ArenaDetail(it)) }, pickSlot = { goCreate(it) }))
                 }
                 composable<Route.ArenaDetail>(
                     deepLinks = listOf(navDeepLink<Route.ArenaDetail>(basePath = "https://sportconnect.app/a")),
@@ -248,12 +270,12 @@ fun AppNavHost(
                         ArenaDetailActions(
                             back = nav::back,
                             openSlots = { court, date -> nav.go(Route.SlotPicker(court, date)) },
-                            createGame = { nav.go(Route.GameCreate(it)) },
+                            createGame = { goCreate(it) },
                         ),
                     )
                 }
                 composable<Route.SlotPicker> { entry ->
-                    SlotPickerRoute(entry.toRoute(), onBack = nav::back, onContinue = { nav.go(Route.GameCreate(it)) })
+                    SlotPickerRoute(entry.toRoute(), onBack = nav::back, onContinue = { goCreate(it) })
                 }
                 composable<Route.GameCreate> { entry ->
                     CreateGameRoute(
@@ -272,7 +294,7 @@ fun AppNavHost(
                         entry.toRoute(),
                         GameDetailActions(
                             back = { if (!navController.popBackStack()) nav.resetTo(Route.Home) },
-                            pay = { nav.go(Route.GamePay(it)) },
+                            pay = { goPay(it) },
                             invite = { nav.go(Route.GameInvite(it)) },
                             resolve = { nav.go(Route.GameResolve(it)) },
                             receipt = { nav.go(Route.Receipt(it)) },
@@ -305,7 +327,7 @@ fun AppNavHost(
                     GuestInviteRoute(
                         entry.toRoute(),
                         GuestInviteActions(
-                            pay = { nav.go(Route.GamePay(it)) },
+                            pay = { goPay(it) },
                             login = { nav.go(Route.Auth(payGameId = it)) },
                             seeGame = { nav.replace(Route.GameDetail(it)) },
                             close = { nav.resetTo(Route.Home) },
@@ -316,7 +338,7 @@ fun AppNavHost(
                     MyGamesRoute(
                         MyGamesActions(
                             openGame = { nav.go(Route.GameDetail(it)) },
-                            createGame = { nav.go(Route.GameCreate()) },
+                            createGame = { goCreate() },
                             repeat = { nav.go(Route.ArenaDetail(it.arenaId)) },
                         ),
                     )
@@ -329,6 +351,7 @@ fun AppNavHost(
                             notifications = { nav.go(Route.Notifications) },
                             switchMode = ::switchMode,
                             loggedOut = { nav.resetTo(Route.Auth()) },
+                            signIn = { nav.go(Route.Auth()) },
                         ),
                         vm = profileVm,
                     )

@@ -142,6 +142,28 @@ class AppScreenshotTest {
     }
 
     @Test
+    fun auth() {
+        compact("app-auth-phone-compact-light.png", height = 800) {
+            br.com.sportconnect.feature.auth.AuthScreen(br.com.sportconnect.feature.auth.AuthUiState(phone = "11987654321"))
+        }
+        compact("app-auth-code-error-compact-light.png", height = 800) {
+            br.com.sportconnect.feature.auth.AuthScreen(
+                br.com.sportconnect.feature.auth.AuthUiState(
+                    step = br.com.sportconnect.feature.auth.AuthStep.Code,
+                    phone = "11987654321",
+                    resendIn = 21,
+                    error = br.com.sportconnect.feature.auth.AuthError.CodeExpired,
+                ),
+            )
+        }
+        compact("app-auth-name-compact-light.png", height = 800) {
+            br.com.sportconnect.feature.auth.AuthScreen(
+                br.com.sportconnect.feature.auth.AuthUiState(step = br.com.sportconnect.feature.auth.AuthStep.Name, name = "Talisson"),
+            )
+        }
+    }
+
+    @Test
     fun explore() {
         asOrganizer()
         compact("app-explore-compact-light.png") { AppNavHost(startDestination = Route.Explore) }

@@ -72,7 +72,7 @@ class OnboardingViewModel(private val session: UiSessionStore, private val auth:
 
     /** Conclui; retorna true se ja ha sessao (vai para a Home) ou false (vai para `auth`). */
     fun finish(): Boolean {
-        session.onboardingDone.value = true
+        session.finishOnboarding()
         return auth.currentUser.value != null
     }
 
