@@ -23,6 +23,7 @@ class MapTileCache(private val urlTemplate: String, private val client: HttpClie
     private val inFlight = mutableSetOf<TileKey>()
     private val failed = mutableMapOf<TileKey, Int>()
     private val gate = Semaphore(6)
+    private var loggedErrors = 0
 
     /** Quantos dos [keys] falharam (para o aviso de "mapa indisponivel"). */
     fun failedCount(keys: Collection<TileKey>): Int = keys.count { (failed[it] ?: 0) > 0 && it !in tiles }
@@ -47,7 +48,8 @@ class MapTileCache(private val urlTemplate: String, private val client: HttpClie
             }
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
-        } catch (_: Throwable) {
+        } catch (e: Throwable) {
+            if ((failed[key] ?: 0) == 0 && loggedErrors++ < 3) println("SCMap: tile $key falhou: $e")
             failed[key] = (failed[key] ?: 0) + 1
         } finally {
             inFlight -= key

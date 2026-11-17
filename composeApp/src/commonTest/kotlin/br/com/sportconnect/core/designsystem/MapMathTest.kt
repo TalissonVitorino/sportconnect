@@ -33,7 +33,8 @@ class MapMathTest {
         val c = MapMath.project(-23.55, -46.63)
         val t1 = MapMath.visibleTiles(c, 13.0, 1f, 1024, 768)
         assertTrue(t1.size in 12..25)
-        assertTrue(MapMath.visibleTiles(c, 13.0, 3f, 1024, 768).all { it.z == 14 })
+        assertTrue(MapMath.visibleTiles(c, 13.0, 4f, 1024, 768).all { it.z == 14 })
+        assertTrue(MapMath.visibleTiles(c, 13.0, 2.6f, 1024, 768).all { it.z == 13 })
     }
 
     @Test

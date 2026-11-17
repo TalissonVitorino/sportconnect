@@ -517,7 +517,7 @@
     <string name="cd_search">Buscar</string>
     <string name="cd_filter">Filtrar resultados</string>
     <string name="cd_clear_text">Apagar texto</string>
-    <string name="cd_map_pin">Arena %1$s, a %2$s km</string>
+    <string name="cd_map_pin">%1$s, a %2$s km</string>
     <string name="cd_favorite_add">Salvar arena nos favoritos</string>
     <string name="cd_favorite_remove">Tirar arena dos favoritos</string>
     <string name="cd_notifications">Notificações</string>

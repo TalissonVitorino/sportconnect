@@ -41,8 +41,12 @@ object MapMath {
     /** Tamanho do mundo em px no [zoom] (tiles de 256 "dp" multiplicados pela densidade). */
     fun worldSizePx(zoom: Double, density: Float): Double = TILE_SIZE * density * pow2(zoom)
 
-    /** Zoom dos tiles a baixar: o mais nitido para a densidade da tela, ate 19. */
-    fun tileZoom(zoom: Double, density: Float): Int = floor(zoom + log2(density.toDouble().coerceAtLeast(1.0))).toInt().coerceIn(0, 19)
+    /**
+     * Zoom dos tiles a baixar, ate 19. Em telas densas usa tiles um pouco mais detalhados, mas sem chegar
+     * ao maximo: com tiles de 256 px, isso deixaria os nomes de ruas pequenos demais para ler.
+     */
+    fun tileZoom(zoom: Double, density: Float): Int =
+        floor(zoom + max(0.0, log2(density.toDouble().coerceAtLeast(1.0)) - 0.6)).toInt().coerceIn(0, 19)
 
     /** Tiles visiveis numa janela [widthPx] x [heightPx] centrada em [center]. */
     fun visibleTiles(center: WorldPoint, zoom: Double, density: Float, widthPx: Int, heightPx: Int): List<TileKey> {

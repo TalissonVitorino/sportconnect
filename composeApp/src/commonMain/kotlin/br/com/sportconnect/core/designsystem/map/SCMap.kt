@@ -2,6 +2,7 @@ package br.com.sportconnect.core.designsystem.map
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -237,26 +238,26 @@ private fun ZoomButton(icon: androidx.compose.ui.graphics.vector.ImageVector, cd
 @Composable
 private fun MapPinChip(pin: SCMapPin, selected: Boolean, onClick: () -> Unit, modifier: Modifier) {
     val c = SportConnectTheme.colors
-    Box(modifier) {
+    val bg = if (selected) c.primary else c.surface
+    // Chip com o preco e, logo abaixo, a ponta apontando para o local exato.
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Surface(
             onClick = onClick,
             shape = MaterialTheme.shapes.small,
-            color = if (selected) c.primary else c.surface,
+            color = bg,
             contentColor = if (selected) c.onPrimary else c.onSurface,
-            shadowElevation = if (selected) 6.dp else 3.dp,
-            modifier = Modifier.heightIn(min = 32.dp).padding(bottom = 6.dp)
+            shadowElevation = if (selected) 6.dp else 2.dp,
+            border = if (selected) null else androidx.compose.foundation.BorderStroke(1.dp, c.outlineVariant),
+            modifier = Modifier.heightIn(min = 32.dp)
                 .semantics { contentDescription = pin.description; role = Role.Button; this.selected = selected }
                 .testTag("map_pin_${pin.id}"),
         ) {
             Text(
-                pin.label, style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                pin.label, style = if (selected) MaterialTheme.typography.labelLarge else MaterialTheme.typography.labelMedium,
+                modifier = Modifier.padding(horizontal = if (selected) 12.dp else 8.dp, vertical = 6.dp),
             )
         }
-        // "Ponta" do pino.
-        Box(
-            Modifier.align(Alignment.BottomCenter).size(10.dp).shadow(2.dp, CircleShape)
-                .background(if (selected) c.primary else c.surface, CircleShape),
-        )
+        Box(Modifier.size(width = 2.dp, height = 6.dp).background(if (selected) c.primary else c.outline))
+        Box(Modifier.size(8.dp).shadow(1.dp, CircleShape).background(bg, CircleShape).border(2.dp, if (selected) c.primary else c.outline, CircleShape))
     }
 }

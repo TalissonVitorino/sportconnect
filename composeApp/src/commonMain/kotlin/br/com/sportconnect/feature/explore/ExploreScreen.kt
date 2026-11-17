@@ -2,6 +2,20 @@
 
 package br.com.sportconnect.feature.explore
 
+import br.com.sportconnect.resources.cd_map_pin
+import br.com.sportconnect.resources.search_list_view
+import br.com.sportconnect.resources.search_map_view
+import androidx.compose.material.icons.automirrored.rounded.List
+import androidx.compose.material.icons.rounded.Map
+import androidx.compose.ui.draw.clip
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.runtime.saveable.rememberSaveable
+import br.com.sportconnect.core.designsystem.map.rememberSCMapCamera
+import br.com.sportconnect.core.designsystem.map.SCMapPin
+import br.com.sportconnect.core.designsystem.map.SCMap
+import br.com.sportconnect.core.designsystem.map.MapTileCache
 import br.com.sportconnect.resources.search_price_up_to
 import br.com.sportconnect.resources.search_price_any
 import br.com.sportconnect.resources.search_period_night
@@ -116,7 +130,9 @@ data class ExploreActions(
 fun ExploreRoute(actions: ExploreActions, viewModel: ExploreViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val games: GameRepository = koinInject()
+    val tiles: MapTileCache = koinInject()
     ExploreScreen(
+        tiles = tiles,
         state = state,
         actions = actions,
         onQuery = viewModel::setQuery,
@@ -147,18 +163,26 @@ fun ExploreScreen(
     onPeriod: (DayPeriod?) -> Unit = {},
     onMaxPrice: (Money?) -> Unit = {},
     onSort: (ExploreSort) -> Unit = {},
+    /** M2: tiles do mapa; null (screenshots) = sem mapa. */
+    tiles: MapTileCache? = null,
 ) {
     val c = SportConnectTheme.colors
+    var mapMode by rememberSaveable { mutableStateOf(false) }
+    var selectedArena by rememberSaveable { mutableStateOf<String?>(null) }
+    val camera = rememberSCMapCamera()
+    val gridState = rememberLazyGridState()
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val wc = widthClassOf(maxWidth)
-        val columns = if (wc == WidthClass.Compact) 1 else 2
+        // M2: no expandido, lista e mapa lado a lado.
+        val split = tiles != null && wc == WidthClass.Expanded
+        val columns = if (wc == WidthClass.Compact || split) 1 else 2
         val hPad = if (wc == WidthClass.Compact) 16.dp else 24.dp
         Scaffold(
             containerColor = c.surface,
             topBar = { SCTopBar(stringResource(Res.string.search_title), navigation = null) },
         ) { padding ->
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
-                Column(Modifier.widthIn(max = if (wc == WidthClass.Expanded) 1040.dp else 760.dp).fillMaxSize()) {
+                Column(Modifier.widthIn(max = if (split) 1600.dp else if (wc == WidthClass.Expanded) 1040.dp else 760.dp).fillMaxSize()) {
                     SCTextField(
                         value = state.query,
                         onValueChange = onQuery,
@@ -194,6 +218,17 @@ fun ExploreScreen(
                                 DropdownMenuItem(text = { Text(stringResource(Res.string.search_sort_price)) }, onClick = { sortMenu = false; onSort(ExploreSort.PRICE) })
                             }
                         }
+                        // M2: alterna lista <-> mapa (no expandido os dois aparecem juntos).
+                        if (tiles != null && !split) {
+                            SCButton(
+                                stringResource(if (mapMode) Res.string.search_list_view else Res.string.search_map_view),
+                                { mapMode = !mapMode; selectedArena = null },
+                                variant = SCButtonVariant.Text,
+                                size = SCButtonSize.Small,
+                                leadingIcon = if (mapMode) Icons.AutoMirrored.Rounded.List else Icons.Rounded.Map,
+                                modifier = Modifier.testTag("explore_map_toggle"),
+                            )
+                        }
                     }
                     Crossfade(Triple(state.loading, state.error, state.results.isEmpty()), label = "results") { (loading, error, empty) ->
                         when {
@@ -208,17 +243,60 @@ fun ExploreScreen(
                                 primaryAction = SCAction(stringResource(Res.string.empty_search_cta), onClear),
                                 modifier = Modifier.testTag("explore_clear_filters"),
                             )
-                            else -> SCPullToRefresh(onRefresh, Modifier.fillMaxSize()) {
-                                LazyVerticalGrid(
-                                    columns = GridCells.Fixed(columns),
-                                    contentPadding = PaddingValues(start = hPad, end = hPad, top = 8.dp, bottom = 24.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                                    modifier = Modifier.fillMaxSize(),
-                                ) {
-                                    // A10: ao filtrar, os cards entram/saem/reordenam animados.
-                                    items(state.results, key = { it.quadra.id }) { r -> Box(Modifier.animateItem()) { CourtResultCard(r, actions, wc) } }
-                                    item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.size(8.dp)) }
+                            else -> {
+                                val list: @Composable (Modifier) -> Unit = { m ->
+                                    SCPullToRefresh(onRefresh, m) {
+                                        LazyVerticalGrid(
+                                            columns = GridCells.Fixed(columns),
+                                            state = gridState,
+                                            contentPadding = PaddingValues(start = hPad, end = hPad, top = 8.dp, bottom = 24.dp),
+                                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                                            modifier = Modifier.fillMaxSize(),
+                                        ) {
+                                            // A10: ao filtrar, os cards entram/saem/reordenam animados.
+                                            items(state.results, key = { it.quadra.id }) { r -> Box(Modifier.animateItem()) { CourtResultCard(r, actions, wc) } }
+                                            item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.size(8.dp)) }
+                                        }
+                                    }
+                                }
+                                val pins = arenaPins(state.results)
+                                val scope = rememberCoroutineScope()
+                                when {
+                                    tiles != null && split -> Row(Modifier.fillMaxSize()) {
+                                        list(Modifier.weight(1f).fillMaxSize())
+                                        SCMap(
+                                            camera, tiles, pins,
+                                            modifier = Modifier.weight(1f).fillMaxSize().padding(end = hPad, top = 8.dp, bottom = 16.dp).clip(MaterialTheme.shapes.extraLarge),
+                                            selectedPinId = selectedArena,
+                                            onPinClick = { pin ->
+                                                selectedArena = pin.id
+                                                val idx = state.results.indexOfFirst { it.arena.arena.id == pin.id }
+                                                if (idx >= 0) scope.launch { gridState.animateScrollToItem(idx) }
+                                            },
+                                            onMapClick = { selectedArena = null },
+                                        )
+                                    }
+                                    tiles != null && mapMode -> Box(Modifier.fillMaxSize().testTag("explore_map")) {
+                                        SCMap(
+                                            camera, tiles, pins, Modifier.fillMaxSize(),
+                                            selectedPinId = selectedArena,
+                                            onPinClick = { selectedArena = it.id },
+                                            onMapClick = { selectedArena = null },
+                                        )
+                                        // A quadra mais barata da arena: o mesmo preco do pino.
+                                        val sel = state.results.filter { it.arena.arena.id == selectedArena }
+                                            .minByOrNull { r -> r.freeSlots.minOfOrNull { it.preco } ?: r.quadra.precoHora }
+                                        androidx.compose.animation.AnimatedVisibility(
+                                            visible = sel != null,
+                                            enter = androidx.compose.animation.slideInVertically { it } + androidx.compose.animation.fadeIn(),
+                                            exit = androidx.compose.animation.slideOutVertically { it } + androidx.compose.animation.fadeOut(),
+                                            modifier = Modifier.align(Alignment.BottomCenter).padding(hPad),
+                                        ) {
+                                            if (sel != null) CourtResultCard(sel, actions, wc, SCCourtCardVariant.Map)
+                                        }
+                                    }
+                                    else -> list(Modifier.fillMaxSize())
                                 }
                             }
                         }
@@ -345,7 +423,7 @@ private fun FilterRow(
 }
 
 @Composable
-private fun CourtResultCard(r: CourtResult, actions: ExploreActions, wc: WidthClass) {
+private fun CourtResultCard(r: CourtResult, actions: ExploreActions, wc: WidthClass, variant: SCCourtCardVariant = SCCourtCardVariant.List) {
     val q = r.quadra
     val price = r.freeSlots.minOf { it.preco }
     val spots = q.esportes.first().esporte.vagasPadrao.coerceAtMost(q.esportes.first().capacidadeMax)
@@ -371,7 +449,25 @@ private fun CourtResultCard(r: CourtResult, actions: ExploreActions, wc: WidthCl
         ),
         onClick = { actions.openArena(r.arena.arena.id) },
         onSlotClick = { actions.pickSlot(it.id) },
-        variant = SCCourtCardVariant.List,
+        variant = variant,
         modifier = Modifier.fillMaxWidth().testTag("explore_court_card_${q.id}"),
     )
+}
+
+/** M2: um pino por arena, com o menor preco/hora entre as quadras do resultado. */
+@Composable
+private fun arenaPins(results: List<CourtResult>): List<SCMapPin> {
+    val template = stringResource(Res.string.cd_map_pin, "%1", "%2")
+    val fromTemplate = stringResource(Res.string.search_card_price_from, "%3")
+    return results.groupBy { it.arena.arena.id }.map { (id, rs) ->
+        val a = rs.first().arena
+        val min = rs.minOf { r -> r.freeSlots.minOfOrNull { it.preco } ?: r.quadra.precoHora }
+        SCMapPin(
+            id = id,
+            latitude = a.arena.localizacao.latitude,
+            longitude = a.arena.localizacao.longitude,
+            label = min.format().substringBefore(","),
+            description = template.replace("%1", a.arena.nome).replace("%2", a.distanciaFormatada.removeSuffix(" km")) + ", " + fromTemplate.replace("%3", min.format()),
+        )
+    }
 }
