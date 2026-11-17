@@ -871,4 +871,24 @@
     <string name="search_period_night">Noite (depois das 18h)</string>
     <string name="search_price_any">Qualquer preço</string>
     <string name="search_price_up_to">Até %1$s/h</string>
+    <!-- 11-backlog · E11 relatórios e regras da arena (propostos) -->
+    <string name="arena_reports_last_days">Últimos %1$d dias</string>
+    <string name="arena_reports_occupancy">Ocupação</string>
+    <string name="arena_reports_revenue">Receita líquida</string>
+    <string name="arena_reports_cancelled">Cancelados</string>
+    <string name="arena_reports_expired">Expirados</string>
+    <string name="arena_reports_by_court">Ocupação por quadra</string>
+    <string name="arena_reports_court_line">%1$d de %2$d horários reservados</string>
+    <string name="arena_settings_title">Regras da arena</string>
+    <string name="arena_settings_hold_label">Tempo de pré-reserva</string>
+    <string name="arena_settings_hold_help">Por quanto tempo seguramos o horário enquanto a galera paga. De 1 a 48 horas.</string>
+    <string name="arena_settings_cancel_label">Cancelamento grátis até</string>
+    <string name="arena_settings_cancel_help">Horas antes do jogo em que o organizador ainda cancela sem custo. De 0 a 72 horas.</string>
+    <string name="arena_settings_hours">%1$dh</string>
+    <string name="arena_settings_saved">Regras salvas</string>
+    <string name="arena_settings_team_note">Convidar operadores para a equipe chega com as contas de arena no servidor.</string>
+    <string name="cd_arena_reports">Relatórios</string>
+    <string name="cd_arena_settings">Regras da arena</string>
+    <string name="cd_decrease">Diminuir %1$s</string>
+    <string name="cd_increase">Aumentar %1$s</string>
 </resources>

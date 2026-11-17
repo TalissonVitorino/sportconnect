@@ -32,6 +32,14 @@ sealed interface ArenaAdminRoute {
     @Serializable
     data object Payouts : ArenaAdminRoute
 
+    /** Relatorios (09 ficha 24, US-063). */
+    @Serializable
+    data object Reports : ArenaAdminRoute
+
+    /** Regras da arena (09 ficha 25, US-015). */
+    @Serializable
+    data object Settings : ArenaAdminRoute
+
     /** Cadastro da arena (fluxo transacional, sem navegacao global). */
     @Serializable
     data object Onboarding : ArenaAdminRoute

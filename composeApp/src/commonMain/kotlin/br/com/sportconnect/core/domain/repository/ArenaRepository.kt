@@ -12,6 +12,8 @@ interface ArenaRepository {
     fun observeArenas(): Flow<List<Arena>>
     suspend fun arenas(): List<Arena>
     suspend fun arena(id: String): Arena?
+    /** Regras da arena (E11, US-015): duracao da pre-reserva, janela de cancelamento etc. */
+    suspend fun atualizarArena(id: String, transform: (Arena) -> Arena): Arena?
     suspend fun quadras(arenaId: String): List<Quadra>
     suspend fun quadra(id: String): Quadra?
 

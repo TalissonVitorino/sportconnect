@@ -1,5 +1,8 @@
 package br.com.sportconnect.feature.arenaadmin
 
+import br.com.sportconnect.core.domain.usecase.ArenaReportsUseCase
+import br.com.sportconnect.feature.arenaadmin.reports.ArenaSettingsViewModel
+import br.com.sportconnect.feature.arenaadmin.reports.ArenaReportsViewModel
 import br.com.sportconnect.feature.arenaadmin.booking.ArenaBookingViewModel
 import br.com.sportconnect.feature.arenaadmin.courts.ArenaCourtEditViewModel
 import br.com.sportconnect.feature.arenaadmin.courts.ArenaCourtStore
@@ -24,4 +27,7 @@ val arenaAdminModule = module {
     viewModel { (courtId: String) -> ArenaCourtEditViewModel(courtId.ifEmpty { null }, get(), get(), get(), get(), get()) }
     viewModel { ArenaPayoutsViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { ArenaOnboardingViewModel() }
+    viewModel { ArenaReportsViewModel(get(), get()) }
+    viewModel { ArenaSettingsViewModel(get(), get()) }
+    factory { ArenaReportsUseCase(get(), get(), get()) }
 }

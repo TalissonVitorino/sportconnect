@@ -112,6 +112,7 @@ val TipoQuadra.labelRes: StringResource
 fun ArenaCourtsScreen(
     nav: ArenaAdminNavigator,
     viewModel: ArenaCourtsViewModel = koinViewModel(),
+    photoStore: ArenaPhotoStore = koinInject(),
 ) {
     val state by viewModel.state.collectAsState()
     ArenaAdminScaffold(
@@ -144,7 +145,7 @@ fun ArenaCourtsScreen(
                     ) {
                         val photosArenaId = state.arenaId
                         if (state.canEdit && photosArenaId != null) {
-                            item(span = { GridItemSpan(maxLineSpan) }, key = "arena_photos") { ArenaPhotosSection(photosArenaId) }
+                            item(span = { GridItemSpan(maxLineSpan) }, key = "arena_photos") { ArenaPhotosSection(photosArenaId, photoStore) }
                         }
                         items(state.courts, key = { it.id }) { court ->
                             val occ = stringResource(Res.string.aadm_courts_occupancy, court.occupancyPct)
@@ -184,10 +185,9 @@ fun ArenaCourtsScreen(
 
 /** E9 (CT-01): fotos da arena — aparecem no carrossel da pagina da arena para os atletas. */
 @Composable
-private fun ArenaPhotosSection(arenaId: String) {
+private fun ArenaPhotosSection(arenaId: String, store: ArenaPhotoStore) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
-    val store: ArenaPhotoStore = koinInject()
     val photos = store.photos.collectAsStateWithLifecycle().value[arenaId].orEmpty()
     val scope = rememberCoroutineScope()
     LaunchedEffect(arenaId) { store.load(arenaId) }

@@ -1,5 +1,9 @@
 package br.com.sportconnect.feature.arenaadmin.dashboard
 
+import br.com.sportconnect.resources.cd_arena_settings
+import br.com.sportconnect.resources.cd_arena_reports
+import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.BarChart
 import br.com.sportconnect.resources.arena_alert_no_schedule_many
 import br.com.sportconnect.core.designsystem.component.SCButtonSize
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -153,7 +157,7 @@ fun ArenaDashboardScreen(
         selected = ArenaTab.Dashboard,
         nav = nav,
         snackbarHostState = snackbar,
-        topBar = { w -> if (w != ArenaWidth.Expanded) DashboardTopBar(state.arenaName) },
+        topBar = { w -> if (w != ArenaWidth.Expanded) DashboardTopBar(state.arenaName, nav::openReports, nav::openSettings) },
         bottomBar = { w -> if (w == ArenaWidth.Compact && state.load == LoadState.Ready) DashboardActions(viewModel, nav, Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) },
     ) { padding, width ->
         Box(Modifier.fillMaxSize().padding(padding)) {
@@ -172,7 +176,7 @@ fun ArenaDashboardScreen(
 }
 
 @Composable
-private fun DashboardTopBar(arenaName: String) {
+private fun DashboardTopBar(arenaName: String, onReports: () -> Unit = {}, onSettings: () -> Unit = {}) {
     val c = SportConnectTheme.colors
     Row(
         Modifier.fillMaxWidth().background(c.surface).windowInsetsPadding(WindowInsets.statusBars).heightIn(min = 64.dp).padding(start = 16.dp, end = 4.dp),
@@ -190,7 +194,9 @@ private fun DashboardTopBar(arenaName: String) {
         // Troca de arena e [F3]: icone presente, sem acao no MVP.
         Icon(Icons.Rounded.ArrowDropDown, stringResource(Res.string.aadm_cd_arena_switcher), tint = c.onSurfaceVariant)
         Spacer(Modifier.weight(1f))
-        IconButton(onClick = {}) { Icon(Icons.Outlined.Notifications, stringResource(Res.string.cd_notifications), tint = c.onSurfaceVariant) }
+        // E11: relatorios e regras da arena.
+        IconButton(onClick = onReports, modifier = Modifier.testTag("arena_open_reports")) { Icon(Icons.Rounded.BarChart, stringResource(Res.string.cd_arena_reports), tint = c.onSurfaceVariant) }
+        IconButton(onClick = onSettings, modifier = Modifier.testTag("arena_open_settings")) { Icon(Icons.Rounded.Tune, stringResource(Res.string.cd_arena_settings), tint = c.onSurfaceVariant) }
     }
 }
 
