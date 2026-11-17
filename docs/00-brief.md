@@ -38,6 +38,6 @@ Taxa por transação + taxa de conveniência pequena por cota (R$ 1–2) + assin
 - 01-ux-research.md · 02-service-design.md · 03-product-design-prd.md · 04-ux-metrics.md
 - 05-visual-design.md · 06-design-system.md · 07-ux-writing.md · 08-design-ops.md
 - 09-ux-design.md (arquitetura de informação, fluxos) · 10-ui-design.md (especificação de telas)
-Projeto KMP em `app/` (raiz do repositório = /home/claude/sportconnect).
+Projeto KMP na raiz do repositório (módulo `composeApp/`).
 
 Idioma de todos os documentos: **português do Brasil**.
