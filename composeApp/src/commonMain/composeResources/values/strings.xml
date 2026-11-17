@@ -894,4 +894,9 @@
     <!-- 11-backlog · E15 avaliação (propostos) -->
     <string name="rating_cta">Avaliar o jogo</string>
     <string name="cd_court_stars">%1$d de 5 estrelas</string>
+    <!-- 13-plano · M1 mapa (propostos) -->
+    <string name="map_attribution">© OpenStreetMap</string>
+    <string name="map_unavailable">Não deu pra carregar o mapa. Confira sua conexão.</string>
+    <string name="cd_map_zoom_in">Aproximar o mapa</string>
+    <string name="cd_map_zoom_out">Afastar o mapa</string>
 </resources>

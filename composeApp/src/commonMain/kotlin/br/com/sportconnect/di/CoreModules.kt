@@ -1,5 +1,7 @@
 package br.com.sportconnect.di
 
+import br.com.sportconnect.core.config.FeatureFlags
+import br.com.sportconnect.core.designsystem.map.MapTileCache
 import br.com.sportconnect.core.data.local.SocialStore
 import br.com.sportconnect.core.data.local.ArenaPhotoStore
 import br.com.sportconnect.core.data.local.ProfilePhotoStore
@@ -73,6 +75,7 @@ val dataModule = module {
     single { ProfilePhotoStore() }
     single { ArenaPhotoStore(get()) }
     single { SocialStore(get()) }
+    single { MapTileCache(FeatureFlags.MAP_TILE_URL) }
 
     singleOf(::InMemorySportRepository) bind SportRepository::class
     single { InMemoryAnalyticsTracker() } bind AnalyticsTracker::class
