@@ -1,5 +1,7 @@
 package br.com.sportconnect.feature.arenaadmin.dashboard
 
+import br.com.sportconnect.resources.arena_alert_no_schedule_many
+import br.com.sportconnect.core.designsystem.component.SCButtonSize
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.WindowInsets
@@ -180,9 +182,10 @@ private fun DashboardTopBar(arenaName: String) {
             arenaName,
             style = MaterialTheme.typography.titleLarge,
             color = c.onSurface,
-            maxLines = 1,
+            // C16: o nome inteiro em ate 2 linhas (antes "Arena Vila M…").
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f, fill = false).semantics { heading() },
+            modifier = Modifier.weight(1f, fill = false).padding(vertical = 8.dp).semantics { heading() },
         )
         // Troca de arena e [F3]: icone presente, sem acao no MVP.
         Icon(Icons.Rounded.ArrowDropDown, stringResource(Res.string.aadm_cd_arena_switcher), tint = c.onSurfaceVariant)
@@ -341,21 +344,53 @@ private fun AlertsSection(state: ArenaDashboardUiState, nav: ArenaAdminNavigator
     val t = MaterialTheme.typography
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ArenaSectionTitle(stringResource(Res.string.arena_attention_title, state.alerts.size))
-        state.alerts.forEach { a ->
-            val container = if (a.blocking) c.errorContainer else ext.warningContainer
-            val content = if (a.blocking) c.onErrorContainer else ext.onWarningContainer
-            Row(
-                Modifier.fillMaxWidth().clip(SCShape.small).background(container).padding(16.dp).testTag("arena_dash_alert_${a.id}"),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Icon(Icons.Rounded.Warning, null, tint = content, modifier = Modifier.size(24.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(Res.string.arena_alert_no_schedule, a.courtName, a.fromDate), style = t.bodyMedium, color = content)
-                    TextButton(onClick = { nav.openCourt(a.courtId) }, contentPadding = PaddingValues(0.dp)) {
-                        Text(stringResource(Res.string.arena_alert_publish), style = t.labelLarge, color = content, textDecoration = TextDecoration.Underline)
-                    }
-                }
-            }
+        // C16: alertas iguais (sem horarios a partir da mesma data) viram um card so, com uma acao.
+        val grouped = state.alerts.filter { !it.blocking }.groupBy { it.fromDate }.filter { it.value.size > 1 }
+        val single = state.alerts.filter { a -> grouped.values.none { g -> a in g } }
+        grouped.forEach { (fromDate, items) ->
+            AlertCard(
+                text = stringResource(Res.string.arena_alert_no_schedule_many, items.size, fromDate),
+                detail = items.joinToString(" · ") { it.courtName },
+                blocking = false,
+                tag = "arena_dash_alert_group_$fromDate",
+                onPublish = { nav.openTab(ArenaTab.Courts) },
+            )
+        }
+        single.forEach { a ->
+            AlertCard(
+                text = stringResource(Res.string.arena_alert_no_schedule, a.courtName, a.fromDate),
+                detail = null,
+                blocking = a.blocking,
+                tag = "arena_dash_alert_${a.id}",
+                onPublish = { nav.openCourt(a.courtId) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun AlertCard(text: String, detail: String?, blocking: Boolean, tag: String, onPublish: () -> Unit) {
+    val ext = SportConnectTheme.extendedColors
+    val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
+    val container = if (blocking) c.errorContainer else ext.warningContainer
+    val content = if (blocking) c.onErrorContainer else ext.onWarningContainer
+    Row(
+        Modifier.fillMaxWidth().clip(SCShape.small).background(container).padding(16.dp).testTag(tag),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Icon(Icons.Rounded.Warning, null, tint = content, modifier = Modifier.size(24.dp))
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(text, style = t.bodyMedium, color = content)
+            if (detail != null) Text(detail, style = t.bodySmall, color = content)
+            // Botao de verdade (48dp), em vez do link sublinhado pequeno.
+            SCButton(
+                stringResource(Res.string.arena_alert_publish),
+                onPublish,
+                variant = SCButtonVariant.Secondary,
+                size = SCButtonSize.Small,
+                modifier = Modifier.padding(top = 4.dp),
+            )
         }
     }
 }

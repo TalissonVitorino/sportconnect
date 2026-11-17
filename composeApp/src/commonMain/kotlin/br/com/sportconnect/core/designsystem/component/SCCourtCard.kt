@@ -121,7 +121,8 @@ fun SCCourtCard(
                 }
             }
             else -> Column {
-                Box(Modifier.fillMaxWidth().aspectRatio(16f / 9f)) {
+                // C6: 16:9 ocupava ~50% da tela no celular (1 resultado por vez). 2.4:1 mostra ~2 cards.
+                Box(Modifier.fillMaxWidth().aspectRatio(2.4f)) {
                     SCCourtPlaceholder(mainSport, Modifier.fillMaxWidth().fillMaxHeight())
                     if (court.distanceLabel != null) {
                         Row(

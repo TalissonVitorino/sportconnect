@@ -24,7 +24,8 @@ value class Money(val cents: Long) : Comparable<Money> {
         val reais = abs / 100
         val centavos = (abs % 100).toString().padStart(2, '0')
         val reaisStr = reais.toString().reversed().chunked(3).joinToString(".").reversed()
-        return (if (cents < 0) "-" else "") + "R$ $reaisStr,$centavos"
+        // Espaco nao separavel (U+00A0): "R$" nunca fica sozinho no fim da linha (C12).
+        return (if (cents < 0) "-" else "") + "R$\u00A0$reaisStr,$centavos"
     }
 
     override fun toString(): String = format()

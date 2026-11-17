@@ -85,6 +85,8 @@ fun SCSplitProgress(
     total: Money? = null,
     variant: SCSplitProgressVariant = SCSplitProgressVariant.Full,
     showLegend: Boolean = variant == SCSplitProgressVariant.Full,
+    /** false = so a barra (o rotulo "x de y cotas pagas" ja aparece em outro lugar, ex.: selo do card). */
+    showLabel: Boolean = true,
     expired: Boolean = false,
     onCompleteAnimationEnd: (() -> Unit)? = null,
 ) {
@@ -146,7 +148,9 @@ fun SCSplitProgress(
     ) {
         // DS-PATCH (10 §6.3 / I13): rotulo do 07 `split_progress` ("8 de 12 cotas pagas"); no Full os numeros vao em numericScore.
         val label = stringResource(Res.string.split_progress, paid, totalShares)
-        if (compact) {
+        if (compact && !showLabel) {
+            // So a barra; a leitura de acessibilidade (a11y) continua com a contagem completa.
+        } else if (compact) {
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(label, style = t.titleSmall, color = c.onSurface)
                 if (collected != null && total != null) {

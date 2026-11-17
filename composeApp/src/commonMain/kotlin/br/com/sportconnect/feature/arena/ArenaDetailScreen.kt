@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.arena
 
+import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -318,7 +319,7 @@ private fun CourtBlock(q: Quadra, slots: List<Slot>, actions: ArenaDetailActions
             if (slots.isEmpty()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(Res.string.arena_detail_no_slots_today), style = t.bodyMedium, color = c.onSurfaceVariant, modifier = Modifier.weight(1f))
-                    SCButton(stringResource(Res.string.arena_detail_see_tomorrow), { actions.openSlots(q.id, "tomorrow") }, variant = SCButtonVariant.Text, size = SCButtonSize.Small)
+                    SCButton(stringResource(Res.string.arena_detail_see_tomorrow), { actions.openSlots(q.id, "tomorrow") }, variant = SCButtonVariant.Text, size = SCButtonSize.Small, modifier = Modifier.scAlignTextButtonStart())
                 }
             } else {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -331,7 +332,7 @@ private fun CourtBlock(q: Quadra, slots: List<Slot>, actions: ArenaDetailActions
                             contentAlignment = Alignment.Center,
                         ) { Text(PtBrFormat.hour(s.inicio), style = t.labelLarge, color = c.onSurface) }
                     }
-                    SCButton(stringResource(Res.string.common_see_all), { actions.openSlots(q.id, null) }, variant = SCButtonVariant.Text, size = SCButtonSize.Small)
+                    SCButton(stringResource(Res.string.common_see_all), { actions.openSlots(q.id, null) }, variant = SCButtonVariant.Text, size = SCButtonSize.Small, modifier = Modifier.scAlignTextButtonStart())
                 }
             }
         }

@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.invite
 
+import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -592,7 +593,7 @@ private fun RuleInfo(j: Jogo, onSeeRules: () -> Unit) {
     )
     Spacer(Modifier.height(8.dp))
     Text(stringResource(Res.string.guest_leave_policy), style = t.bodyMedium, color = c.onSurfaceVariant)
-    SCButton(stringResource(Res.string.guest_see_rules), onSeeRules, variant = SCButtonVariant.Text, size = SCButtonSize.Small, modifier = Modifier.testTag("guest_see_rules"))
+    SCButton(stringResource(Res.string.guest_see_rules), onSeeRules, variant = SCButtonVariant.Text, size = SCButtonSize.Small, modifier = Modifier.scAlignTextButtonStart().testTag("guest_see_rules"))
 }
 
 @Composable

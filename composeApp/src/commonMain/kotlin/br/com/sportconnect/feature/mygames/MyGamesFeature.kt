@@ -2,6 +2,10 @@
 
 package br.com.sportconnect.feature.mygames
 
+import br.com.sportconnect.core.designsystem.component.sharedGameTitleKey
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.domain.repository.GameRepository
+import br.com.sportconnect.core.designsystem.component.SCPullToRefresh
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -125,7 +129,8 @@ data class MyGamesActions(
 @Composable
 fun MyGamesRoute(actions: MyGamesActions, vm: MyGamesViewModel = koinViewModel()) {
     val state by vm.uiState.collectAsStateWithLifecycle()
-    MyGamesScreen(state, actions, vm::selectTab, vm::selectSport)
+    val games: GameRepository = koinInject()
+    MyGamesScreen(state, actions, vm::selectTab, vm::selectSport, onRefresh = games::sincronizar)
 }
 
 /** Meus jogos (10 §2.13): abas Proximos/Anteriores, filtro por esporte, cabecalhos por semana. */
@@ -135,6 +140,7 @@ fun MyGamesScreen(
     actions: MyGamesActions = MyGamesActions(),
     onTab: (Int) -> Unit = {},
     onSport: (Sport) -> Unit = {},
+    onRefresh: suspend () -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -168,15 +174,19 @@ fun MyGamesScreen(
                         )
                         else -> {
                             val grouped = state.visible.groupBy { weekStart(br.com.sportconnect.core.model.PtBrFormat.date(it.inicio)) }
-                            LazyColumn(
-                                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                            ) {
-                                grouped.forEach { (week, games) ->
-                                    item(key = "w$week") {
-                                        SectionHeader("Semana de ${br.com.sportconnect.core.model.PtBrFormat.dayMonth(week)}", Modifier.padding(top = 12.dp))
+                            SCPullToRefresh(onRefresh, Modifier.fillMaxSize()) {
+                                LazyColumn(
+                                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                                    modifier = Modifier.fillMaxSize(),
+                                ) {
+                                    grouped.forEach { (week, games) ->
+                                        item(key = "w$week") {
+                                            SectionHeader("Semana de ${br.com.sportconnect.core.model.PtBrFormat.dayMonth(week)}", Modifier.padding(top = 12.dp).animateItem())
+                                        }
+                                        // A10: itens entram/saem/trocam de lugar animados (ex.: ao trocar o filtro).
+                                        items(games, key = { it.id }) { j -> Box(Modifier.animateItem()) { MyGameCard(j, state, actions, wc) } }
                                     }
-                                    items(games, key = { it.id }) { j -> MyGameCard(j, state, actions, wc) }
                                 }
                             }
                         }
@@ -205,6 +215,7 @@ private fun MyGameCard(j: Jogo, state: MyGamesUiState, actions: MyGamesActions, 
             onClick = { actions.openGame(j.id) },
             variant = if (organizer) SCGameCardVariant.Organizer else SCGameCardVariant.Participant,
             modifier = Modifier.fillMaxWidth().testTag("mygames_card_${j.id}"),
+            sharedTitleKey = sharedGameTitleKey(j.id),
         )
         if (state.tab == 1 && organizer) {
             SCButton(

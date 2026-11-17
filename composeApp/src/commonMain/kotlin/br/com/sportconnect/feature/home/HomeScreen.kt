@@ -1,5 +1,9 @@
 package br.com.sportconnect.feature.home
 
+import br.com.sportconnect.core.designsystem.component.sharedGameTitleKey
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.domain.repository.GameRepository
+import br.com.sportconnect.core.designsystem.component.SCPullToRefresh
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.WindowInsets
@@ -94,7 +98,9 @@ data class HomeActions(
 @Composable
 fun HomeRoute(actions: HomeActions, viewModel: HomeViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val games: GameRepository = koinInject()
     HomeScreen(
+        onRefresh = games::sincronizar,
         state = state,
         actions = actions.copy(createGame = { viewModel.onCreateGame(); actions.createGame() }),
         onRetry = viewModel::retry,
@@ -106,7 +112,7 @@ fun HomeRoute(actions: HomeActions, viewModel: HomeViewModel = koinViewModel()) 
  * FAB estendido "Criar jogo" (oculto no estado vazio, §3.3). Expanded: 2 colunas de cards.
  */
 @Composable
-fun HomeScreen(state: HomeUiState, actions: HomeActions, onRetry: () -> Unit = {}) {
+fun HomeScreen(state: HomeUiState, actions: HomeActions, onRetry: () -> Unit = {}, onRefresh: suspend () -> Unit = {}) {
     val c = SportConnectTheme.colors
     val gridState = rememberLazyGridState()
     val expandedFab by remember { derivedStateOf { gridState.firstVisibleItemIndex == 0 } }
@@ -153,7 +159,9 @@ fun HomeScreen(state: HomeUiState, actions: HomeActions, onRetry: () -> Unit = {
                     HomeUiState.Loading -> HomeLoading(Modifier.widthIn(max = 640.dp).fillMaxWidth().padding(16.dp))
                     HomeUiState.Error -> LoadErrorState(onRetry)
                     is HomeUiState.Empty -> HomeEmpty(actions)
-                    is HomeUiState.Content -> HomeContent(state, actions, wc, gridState)
+                    is HomeUiState.Content -> SCPullToRefresh(onRefresh, Modifier.fillMaxSize()) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) { HomeContent(state, actions, wc, gridState) }
+                    }
                 }
             }
         }
@@ -237,7 +245,7 @@ private fun HomeContent(state: HomeUiState.Content, actions: HomeActions, wc: Wi
                 SCButton(
                     stringResource(Res.string.home_cta_find_court),
                     actions.findCourt,
-                    variant = SCButtonVariant.Secondary,
+                    variant = SCButtonVariant.Text,
                     leadingIcon = Icons.Rounded.Search,
                     modifier = Modifier.testTag("home_find_court"),
                 )
@@ -266,7 +274,8 @@ private fun LazyGridScope.items(
             key = "${section.name}_${g.jogo.id}",
             span = { if (fullWidthSingle) GridItemSpan(maxLineSpan) else GridItemSpan(1) },
         ) {
-            HomeGameCard(g, state, actions, section)
+            // A10: quando um jogo muda de secao (ex.: pagou -> sai de "Falta pagar"), o card anima.
+            Box(Modifier.animateItem()) { HomeGameCard(g, state, actions, section) }
         }
     }
 }
@@ -303,6 +312,7 @@ private fun HomeGameCard(g: HomeGame, state: HomeUiState.Content, actions: HomeA
         variant = if (organizer && section == Section.Upcoming) SCGameCardVariant.Organizer else SCGameCardVariant.Participant,
         primaryAction = primary,
         modifier = Modifier.fillMaxWidth().testTag("home_game_card_${j.id}"),
+        sharedTitleKey = sharedGameTitleKey(j.id),
     )
 }
 

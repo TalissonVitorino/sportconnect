@@ -1,5 +1,6 @@
 package br.com.sportconnect.core.designsystem.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -83,6 +84,8 @@ fun SCGameCard(
     modifier: Modifier = Modifier,
     variant: SCGameCardVariant = SCGameCardVariant.Participant,
     primaryAction: SCAction? = null,
+    /** Chave do titulo para a transicao compartilhada com o detalhe ([sharedGameTitleKey]). */
+    sharedTitleKey: String? = null,
 ) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
@@ -102,33 +105,28 @@ fun SCGameCard(
     ) {
         val stripe = sc.accent
         Row(Modifier.drawBehind { drawRect(stripe, size = Size(4.dp.toPx(), size.height)) }) {
-            Column(Modifier.weight(1f).padding(start = 20.dp, top = 16.dp, end = 16.dp, bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (game.roleTag != null) {
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        SCSportChip(game.sport)
-                        Spacer(Modifier.weight(1f))
+            Column(Modifier.weight(1f).padding(start = 18.dp, top = 14.dp, end = 14.dp, bottom = 14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                // C4: esporte (icone + faixa lateral), status e papel na mesma linha quando cabem. FlowRow:
+                // o selo nunca e espremido; se "Voce organiza" nao couber, desce para a linha de baixo.
+                FlowRow(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                ) {
+                    SCSportChip(game.sport, variant = SCSportChipVariant.Compact)
+                    if (game.statusLabel != null) SCStatusBadge(game.status, label = game.statusLabel) else SCStatusBadge(game.status)
+                    if (game.roleTag != null) {
                         Text(
                             game.roleTag,
                             style = t.labelMedium,
                             color = c.onSecondaryContainer,
+                            maxLines = 1,
                             modifier = Modifier.background(c.secondaryContainer, SCShape.badge).padding(horizontal = 8.dp, vertical = 4.dp),
                         )
                     }
-                    if (game.statusLabel != null) SCStatusBadge(game.status, label = game.statusLabel) else SCStatusBadge(game.status)
-                } else FlowRow(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                    itemVerticalAlignment = Alignment.CenterVertically,
-                ) {
-                    SCSportChip(game.sport)
-                    if (game.statusLabel != null) {
-                        SCStatusBadge(game.status, label = game.statusLabel)
-                    } else {
-                        SCStatusBadge(game.status)
-                    }
                 }
-                Text(game.title, style = t.titleMedium, color = c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(game.title, style = t.titleMedium, color = c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.scSharedBounds(sharedTitleKey))
                 Column(Modifier.alpha(secondaryAlpha), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     InfoLine(Icons.Rounded.Stadium, "${game.arenaName} · ${game.courtName}")
                     InfoLine(Icons.Rounded.Schedule, game.dateTimeLabel)
@@ -141,6 +139,8 @@ fun SCGameCard(
                         processing = game.processingCount,
                         variant = SCSplitProgressVariant.Compact,
                         expired = game.status == SCReservationTone.Expired,
+                        // O selo contextual ja traz "8 de 12 pagas": nao repete o rotulo da barra.
+                        showLabel = game.statusLabel == null,
                         modifier = Modifier.padding(top = 4.dp),
                     )
                 }

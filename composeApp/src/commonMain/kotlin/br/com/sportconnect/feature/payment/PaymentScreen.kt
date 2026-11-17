@@ -2,6 +2,17 @@
 
 package br.com.sportconnect.feature.payment
 
+import br.com.sportconnect.core.designsystem.theme.SCMotion
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -261,26 +272,24 @@ fun PaymentScreen(
                             }
                         }
                     }
-                    else -> {
-                        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                    else -> AnimatedContent(
+                        targetState = waiting,
+                        transitionSpec = {
+                            // C14: antes era um "sheet" com alca que nao arrastava, sobre um scrim cinza.
+                            // Agora o Pix entra como tela propria, subindo de leve.
+                            (slideInVertically(tween(SCMotion.Medium4, easing = SCMotion.EmphasizedDecelerate)) { it / 8 } + fadeIn(tween(SCMotion.Medium1))) togetherWith
+                                fadeOut(tween(SCMotion.Short3))
+                        },
+                        label = "pix-wait",
+                    ) { isWaiting ->
+                        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).then(if (isWaiting) Modifier.testTag("pix_sheet") else Modifier)) {
                             CenteredContent(Modifier.padding(horizontal = if (wc == WidthClass.Compact) 0.dp else 24.dp)) {
-                                Summary(state, onSelectMethod, enabled = !waiting)
-                            }
-                        }
-                        if (waiting) {
-                            // "Sheet" do Pix sobre o resumo (scrim 32%, topo radius.xxl, alca 32x4).
-                            Box(Modifier.fillMaxSize().background(c.scrim.copy(alpha = 0.32f)))
-                            Column(
-                                Modifier.align(Alignment.BottomCenter).widthIn(max = 560.dp).fillMaxWidth()
-                                    .fillMaxHeight(0.94f)
-                                    .background(c.surfaceContainerLow, SCShape.sheet)
-                                    .verticalScroll(rememberScrollState())
-                                    .testTag("pix_sheet"),
-                            ) {
-                                Box(Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp), contentAlignment = Alignment.Center) {
-                                    Box(Modifier.size(32.dp, 4.dp).background(c.outlineVariant, CircleShape))
+                                if (isWaiting) {
+                                    Spacer(Modifier.height(8.dp))
+                                    PixSheetContent(state, share, onCopied, onCheckNow, onRegenerate, onPayWithCard)
+                                } else {
+                                    Summary(state, onSelectMethod, enabled = true)
                                 }
-                                PixSheetContent(state, share, onCopied, onCheckNow, onRegenerate, onPayWithCard)
                             }
                         }
                     }
@@ -438,6 +447,7 @@ private fun PixSheetContent(
     var expanded by remember { mutableStateOf(false) }
     var showQr by remember { mutableStateOf(false) }
     val expired = state.phase is PixPhase.Expired
+    val haptics = LocalHapticFeedback.current
     Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 24.dp)) {
         Text(stringResource(Res.string.pix_title), style = t.titleLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
         Spacer(Modifier.height(4.dp))
@@ -462,7 +472,7 @@ private fun PixSheetContent(
         }
         SCButton(
             if (state.copied) stringResource(Res.string.pix_code_copied_button) else stringResource(Res.string.pix_copy_code),
-            { share.copy(code); onCopied() },
+            { share.copy(code); haptics.performHapticFeedback(HapticFeedbackType.Confirm); onCopied() },
             size = SCButtonSize.Large,
             fullWidth = true,
             leadingIcon = if (state.copied) Icons.Rounded.Check else Icons.Rounded.ContentCopy,
@@ -546,10 +556,10 @@ private fun PixSheetContent(
             Text(stringResource(Res.string.pix_waiting_body), style = t.bodyMedium, color = c.onSurfaceVariant)
         }
         Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SCButton(stringResource(Res.string.pix_waiting_check), onCheckNow, variant = SCButtonVariant.Secondary)
-            SCButton(stringResource(Res.string.pix_pay_with_card), onPayWithCard, variant = SCButtonVariant.Text)
-        }
+        // C14: empilhados e com largura total; antes ficavam lado a lado com pesos visuais confusos.
+        SCButton(stringResource(Res.string.pix_waiting_check), onCheckNow, variant = SCButtonVariant.Secondary, fullWidth = true, modifier = Modifier.testTag("pix_check_now"))
+        Spacer(Modifier.height(4.dp))
+        SCButton(stringResource(Res.string.pix_pay_with_card), onPayWithCard, variant = SCButtonVariant.Text, fullWidth = true)
     }
 }
 
@@ -560,17 +570,28 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
     val t = MaterialTheme.typography
     val reduced = SportConnectTheme.reducedMotion
     var shown by remember { mutableStateOf(reduced) }
-    LaunchedEffect(Unit) { shown = true }
-    val scale by animateFloatAsState(if (shown) 1f else 0.8f)
+    val haptics = LocalHapticFeedback.current
+    LaunchedEffect(Unit) {
+        shown = true
+        haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+    }
+    // C15: check "pula" (spring com overshoot) e o conteudo fica centralizado na altura.
+    val scale by animateFloatAsState(
+        if (shown) 1f else 0.6f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
+    )
     val j = state.jogo
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+    Column(
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).heightIn(min = maxHeight),
+        verticalArrangement = Arrangement.Center,
+    ) {
         CenteredContent(Modifier.padding(24.dp)) {
             Column(
                 Modifier.fillMaxWidth().semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Assertive },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Spacer(Modifier.height(32.dp))
-                Icon(Icons.Rounded.CheckCircle, null, tint = ext.success, modifier = Modifier.size(64.dp).scale(scale))
+                Icon(Icons.Rounded.CheckCircle, null, tint = ext.success, modifier = Modifier.size(72.dp).scale(scale))
                 Spacer(Modifier.height(16.dp))
                 Text(stringResource(Res.string.pix_paid_title), style = t.headlineLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
                 Spacer(Modifier.height(8.dp))
@@ -601,6 +622,7 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
                 )
             }
         }
+    }
     }
 }
 

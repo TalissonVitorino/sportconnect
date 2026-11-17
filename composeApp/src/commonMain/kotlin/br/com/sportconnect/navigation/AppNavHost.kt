@@ -1,5 +1,11 @@
+@file:OptIn(androidx.compose.animation.ExperimentalSharedTransitionApi::class)
+
 package br.com.sportconnect.navigation
 
+import br.com.sportconnect.core.designsystem.component.LocalSCNavAnimatedScope
+import br.com.sportconnect.core.designsystem.component.LocalSCSharedTransitionScope
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -229,6 +235,8 @@ fun AppNavHost(
         drawerBreakpoint = Dp.Infinity,
     ) { contentModifier ->
         Box(contentModifier.fillMaxSize()) {
+            SharedTransitionLayout {
+            CompositionLocalProvider(LocalSCSharedTransitionScope provides this) {
             NavHost(
                 navController = navController,
                 startDestination = start,
@@ -266,6 +274,7 @@ fun AppNavHost(
                     LegalScreen(doc, onBack = nav::back)
                 }
                 composable<Route.Home> {
+                    CompositionLocalProvider(LocalSCNavAnimatedScope provides this) {
                     HomeRoute(
                         HomeActions(
                             openGame = { nav.go(Route.GameDetail(it)) },
@@ -276,6 +285,7 @@ fun AppNavHost(
                             notifications = { nav.go(Route.Notifications) },
                         ),
                     )
+                    }
                 }
                 composable<Route.Explore> {
                     ExploreRoute(ExploreActions(openArena = { nav.go(Route.ArenaDetail(it)) }, pickSlot = { goCreate(it) }))
@@ -308,6 +318,7 @@ fun AppNavHost(
                 composable<Route.GameDetail>(
                     deepLinks = listOf(navDeepLink<Route.GameDetail>(basePath = "https://sportconnect.app/g")),
                 ) { entry ->
+                    CompositionLocalProvider(LocalSCNavAnimatedScope provides this) {
                     GameDetailRoute(
                         entry.toRoute(),
                         GameDetailActions(
@@ -318,6 +329,7 @@ fun AppNavHost(
                             receipt = { nav.go(Route.Receipt(it)) },
                         ),
                     )
+                    }
                 }
                 composable<Route.GameInvite> { entry ->
                     OrganizerInviteRoute(
@@ -353,6 +365,7 @@ fun AppNavHost(
                     )
                 }
                 composable<Route.MyGames> {
+                    CompositionLocalProvider(LocalSCNavAnimatedScope provides this) {
                     MyGamesRoute(
                         MyGamesActions(
                             openGame = { nav.go(Route.GameDetail(it)) },
@@ -360,6 +373,7 @@ fun AppNavHost(
                             repeat = { nav.go(Route.ArenaDetail(it.arenaId)) },
                         ),
                     )
+                    }
                 }
                 composable<Route.Profile> {
                     ProfileRoute(
@@ -400,6 +414,8 @@ fun AppNavHost(
 
                 // Modo "Minha Arena" (feature/arenaadmin). "Perfil" da arena abre o Perfil, que tem o seletor de modo.
                 arenaAdminGraph(navController, onExitArenaMode = { nav.go(Route.Profile) })
+            }
+            }
             }
             SCSnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(bottom = 88.dp))
         }

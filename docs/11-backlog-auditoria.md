@@ -26,14 +26,14 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 |---|---|---|---|---|---|
 | A1 | ✅ P0 | P | **Definir transições do `NavHost`.** Hoje não há `enterTransition`/`exitTransition`, e o padrão do navigation-compose é um *fade* de **700 ms** a cada troca de tela. Usar *slide + fade* de 250–300 ms para telas em pilha (`SCMotion.Medium2`), *fade-through* de ~200 ms entre abas e *slide-up* para fluxos modais (pagar, criar jogo, convite). | `navigation/AppNavHost.kt` (`NavHost(...)`) | A navegação inteira parece "arrastada". É a mudança de maior ganho com menor esforço. |
 | A2 | ✅ P0 | P | **Testar desempenho só em build release.** No `debug` o Compose roda sem otimização e chega a ser 2–5× mais lento. Ligar `isMinifyEnabled = true` + `isShrinkResources = true` no `release`, adicionar `proguard-rules.pro` (kotlinx.serialization, Ktor, Koin) e criar o build type `benchmark` (release assinado com debug) para testar no aparelho. | `androidApp/build.gradle.kts` | Se você avaliou a fluidez no botão ▶ do Android Studio (debug), boa parte da lentidão vem daí. |
-| A3 | P0 | M | **Baseline Profile + Startup Profile.** Criar o módulo `:baselineprofile` (plugin `androidx.baselineprofile`) com a jornada Splash → Home → Jogo → Pagar e gerar perfis para `:androidApp`. | novo módulo | Reduz o *jank* da primeira abertura de cada tela em 20–40% e acelera o cold start. |
+| A3 | ✅ P0 | M | **Baseline Profile + Startup Profile.** Criar o módulo `:baselineprofile` (plugin `androidx.baselineprofile`) com a jornada Splash → Home → Jogo → Pagar e gerar perfis para `:androidApp`. | novo módulo | Reduz o *jank* da primeira abertura de cada tela em 20–40% e acelera o cold start. |
 | A4 | ✅ P0 | P | **Animar a entrada e saída da barra de navegação.** Hoje `showNavigation` liga e desliga a bottom bar de uma vez quando se entra em pagar/criar jogo, e o conteúdo "pula" 80 dp. Usar `AnimatedVisibility(slideInVertically + fadeIn)`. | `SCNavigation.kt` (`SCAdaptiveNavigation`) | Salto visual em toda entrada e saída de fluxo transacional. |
 | A5 | ✅ P0 | P | **Listras animadas do rateio recompõem a cada frame.** `stripePhase` lê o `animateFloat(...).value` durante a composição. Mover a leitura para a fase de desenho (`drawWithCache`/`Modifier.drawBehind { phase() }` recebendo um lambda). | `SCSplitProgress.kt:112-117` | Com uma cota "em análise", o card inteiro recompõe a 60/120 fps. Isso aparece na Home, no Jogo e no Convite. |
 | A6 | ✅ P0 | P | **Eliminar esperas artificiais do fake.** `FakePaymentGateway` confirma em 3 s e `checkNow()` espera mais 600 ms. Para a demo, use 1 s e mostre progresso; para testes manuais, use 0. | `FakePaymentGateway.kt:34`, `PaymentViewModel.kt:167` | O usuário de teste lê isso como "app lento". |
-| A7 | P1 | P | **Feedback tátil (haptics)** ao: selecionar horário, copiar Pix, confirmar pagamento, "Fechou!" e trocar aba. Hoje há 0 usos de `LocalHapticFeedback`. | componentes SC* | Dá sensação de resposta imediata. |
-| A8 | P1 | M | **Pull-to-refresh** (`PullToRefreshBox`) na Home, Meus jogos, Explorar, Avisos, Agenda e Repasses. Hoje não existe em nenhuma tela. | telas de lista | Padrão esperado. Sem ele, a pessoa não tem como "forçar" atualização. |
-| A9 | P1 | M | **Transições compartilhadas** (`SharedTransitionLayout`): card do jogo → detalhe (título, badge e barra de rateio) e card da quadra → detalhe da arena (imagem). | Home/MyGames → GameDetail; Explore → Arena | Continuidade visual; é o que faz o app "parecer nativo e fluido". |
-| A10 | P1 | P | **Animar mudanças de conteúdo**: `animateItem()` nos itens das `Lazy*` (Home, Agenda, Avisos) e `AnimatedContent` nos estados loading → conteúdo (hoje só há troca seca em 6 arquivos). | telas de lista | Itens aparecem e somem sem transição. |
+| A7 | ✅ P1 | P | **Feedback tátil (haptics)** ao: selecionar horário, copiar Pix, confirmar pagamento, "Fechou!" e trocar aba. Hoje há 0 usos de `LocalHapticFeedback`. | componentes SC* | Dá sensação de resposta imediata. |
+| A8 | ✅ P1 | M | **Pull-to-refresh** (`PullToRefreshBox`) na Home, Meus jogos, Explorar, Avisos, Agenda e Repasses. Hoje não existe em nenhuma tela. | telas de lista | Padrão esperado. Sem ele, a pessoa não tem como "forçar" atualização. |
+| A9 | ✅ P1 | M | **Transições compartilhadas** (`SharedTransitionLayout`): card do jogo → detalhe (título, badge e barra de rateio) e card da quadra → detalhe da arena (imagem). | Home/MyGames → GameDetail; Explore → Arena | Continuidade visual; é o que faz o app "parecer nativo e fluido". |
+| A10 | ✅ P1 | P | **Animar mudanças de conteúdo**: `animateItem()` nos itens das `Lazy*` (Home, Agenda, Avisos) e `AnimatedContent` nos estados loading → conteúdo (hoje só há troca seca em 6 arquivos). | telas de lista | Itens aparecem e somem sem transição. |
 | A11 | P2 | P | **Proteção contra toque duplo na navegação** (`nav.go` dispara duas telas iguais com toque rápido em rotas com argumentos diferentes). Ignorar `navigate` se o `lifecycle` da entrada atual não estiver `RESUMED`. | `AppNavigator.go` | Duplicação de telas na pilha. |
 | A12 | P2 | P | Usar `LocalSCClock` em vez de `Clock.System.now()` dentro de composables. | `PaymentScreen.kt:581` | Consistência e testabilidade. |
 
@@ -64,7 +64,7 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 
 | # | P | Tam | Tarefa | Detalhe |
 |---|---|---|---|---|
-| B10 | P1 | M | **Passos de esportes e localização** do onboarding (09 ficha 1). | Hoje o onboarding tem só o carrossel de 3 telas, e as 3 usam a **mesma ilustração** (`SCIllustration.Court`). Faltam a seleção de esportes (chips; strings `onboarding_sports_*` já existem) e a permissão de localização com finalidade explícita (`onboarding_location_*`), com *fallback* "Digitar minha cidade". Criar uma ilustração por passo. Permitir swipe (`HorizontalPager`): hoje só avança pelo botão. |
+| B10 | ✅ P1 | M | **Passos de esportes e localização** do onboarding (09 ficha 1). | Hoje o onboarding tem só o carrossel de 3 telas, e as 3 usam a **mesma ilustração** (`SCIllustration.Court`). Faltam a seleção de esportes (chips; strings `onboarding_sports_*` já existem) e a permissão de localização com finalidade explícita (`onboarding_location_*`), com *fallback* "Digitar minha cidade". Criar uma ilustração por passo. Permitir swipe (`HorizontalPager`): hoje só avança pelo botão. |
 
 ### B.4 Conta, privacidade e exclusão
 
@@ -87,20 +87,20 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 | C1 | ✅ P0 | P | Pix pago | **Texto duplicado**: "6 de 12 cotas pagas" aparece 2× (título manual + rótulo interno do `SCSplitProgress`). Além disso, o título soma `paid + covered` e o componente usa só `paid`, então os números podem divergir. Remover o `Text` em `PaymentScreen.kt:582`. |
 | C2 | ✅ P0 | P | Convite / "Fechou!" | **A arte decorativa (círculo de quadra) cruza o título e o corpo do texto** ("Rafael te chamou pra jogar", "a quadra está garantida pra"). Limitar a arte à metade direita **atrás** de uma área sem texto, ou reduzir a opacidade para ≤ 12% e cortar com `clipToBounds`. |
 | C3 | ✅ P0 | P | Home expandida (tablet/desktop) | **O FAB da rail encosta no topo da janela** (sem respiro de status bar/insets). Aplicar `windowInsetsPadding(WindowInsets.safeDrawing)` + 8–12 dp na rail; usar o `ExtendedFloatingActionButton` "Criar jogo" com rótulo na rail. |
-| C4 | P1 | M | Home (compacta) | **Cards muito altos (~270 dp)**: só cabem 2 por tela. Juntar o chip de esporte, o "Você organiza" e o status numa única linha (ícone do esporte no lugar do chip com texto); a barra de rateio já repete "8 de 12", então tirar do badge. Meta: ~180 dp por card. |
-| C5 | P1 | P | Home | O botão "Buscar quadra" e o FAB "Criar jogo" competem no rodapé; o FAB cobre o fim da lista. Mover "Buscar quadra" para um atalho no topo (ou retirá-lo, já que existe a aba "Buscar"). |
-| C6 | P1 | M | Explorar | **Imagem do card ocupa ~50% da altura**: só cabe 1 resultado por tela. Reduzir a mídia para 16:9 com altura máx. de 140 dp, ou layout horizontal (miniatura 96 dp à esquerda) como opção "lista compacta". Os cards também repetem a mesma ilustração e a mesma distância. |
-| C7 | P1 | P | Explorar | O filtro "Esporte" deveria vir pré-preenchido com os esportes do onboarding; "Mais perto" parece link e deveria ser um seletor de ordenação (chip com menu). |
+| C4 | ✅ P1 | M | Home (compacta) | **Cards muito altos (~270 dp)**: só cabem 2 por tela. Juntar o chip de esporte, o "Você organiza" e o status numa única linha (ícone do esporte no lugar do chip com texto); a barra de rateio já repete "8 de 12", então tirar do badge. Meta: ~180 dp por card. |
+| C5 | ✅ P1 | P | Home | O botão "Buscar quadra" e o FAB "Criar jogo" competem no rodapé; o FAB cobre o fim da lista. Mover "Buscar quadra" para um atalho no topo (ou retirá-lo, já que existe a aba "Buscar"). |
+| C6 | ✅ P1 | M | Explorar | **Imagem do card ocupa ~50% da altura**: só cabe 1 resultado por tela. Reduzir a mídia para 16:9 com altura máx. de 140 dp, ou layout horizontal (miniatura 96 dp à esquerda) como opção "lista compacta". Os cards também repetem a mesma ilustração e a mesma distância. |
+| C7 | ✅ P1 | P | Explorar | O filtro "Esporte" deveria vir pré-preenchido com os esportes do onboarding; "Mais perto" parece link e deveria ser um seletor de ordenação (chip com menu). |
 | C8 | P1 | P | Arena | O CTA fixo "Ver horários" é ambíguo (de qual quadra?). Cada quadra já tem horários e "Ver todos": trocar o CTA fixo por "Escolher quadra e horário" com rolagem até a lista, ou remover. A bottom nav + CTA fixo consomem ~180 dp. |
-| C9 | P1 | P | Arena / Convite | "Ver todos" e "Ver regras" (botões de texto) ficam **recuados ~16 dp** em relação ao conteúdo (padding interno do TextButton). Compensar com `Modifier.offset(x = -12.dp)` ou usar a variante sem padding horizontal. |
-| C10 | P1 | P | **Global: cor de seleção inconsistente** | Seleções aparecem em **pêssego** (`secondaryContainer`: duração no slot picker, "Dia/Semana" na agenda, período nos repasses, "hoje" no Explorar) e em **verde** (data, horário, aba). Escolher uma só para estado selecionado (recomendo `primaryContainer` verde) e deixar o pêssego para destaque/"Recomendado". |
-| C11 | P1 | P | Escolher horário | A legenda ocupa 2 linhas; colocar em 1 linha rolável ou num ícone "?" (tooltip). Rolar automaticamente até o 1º horário disponível ≥ agora (hoje começa às 7h). |
-| C12 | P1 | P | Criar jogo — passo 3 | Valor quebrado entre linhas ("R$ ⏎ 46,66"): usar espaço não separável (` `) em `formatBrl()`. Rótulos do stepper quebram em 2 linhas: mostrar só o rótulo do passo atual no compacto. |
-| C13 | P1 | P | Jogo (detalhe) | Dois botões primários seguidos ("Lembrar quem falta" verde-escuro + "Convidar mais gente" verde-neon): manter 1 primário e o outro como `Tonal`. Status e esporte empilhados em 2 linhas: juntar em 1. |
-| C14 | P1 | P | Pagar (Pix) | A tela abre um *bottom sheet* sobre uma tela cinza (scrim) sem conteúdo útil atrás: renderizar como tela normal. Em tablet/desktop, **mostrar o QR Code por padrão** (a pessoa paga com o celular). "Já paguei" (outlined) e "Pagar com cartão" (texto) ficam lado a lado com pesos visuais confusos: empilhar. |
-| C15 | P1 | P | Pix pago | O conteúdo fica no topo com 50% de tela vazia: centralizar verticalmente e animar o check (escala + haptic). |
-| C16 | P1 | P | Painel da arena | O nome da arena trunca ("Arena Vila M…"): usar `titleLarge` em até 2 linhas ou mostrar só o nome curto. Três cards "Atenção" quase idênticos: agrupar ("3 quadras sem horários a partir de 26/11 · Publicar"). "Publicar horários" sublinhado tem área de toque pequena: virar botão de 48 dp. |
-| C17 | P1 | P | Agenda da arena | Os horários "Livre" não parecem tocáveis: dar uma ação explícita ("+ Bloquear" / "Reservar") ou um *affordance* de toque. Rolar até a hora atual ao abrir. |
+| C9 | ✅ P1 | P | Arena / Convite | "Ver todos" e "Ver regras" (botões de texto) ficam **recuados ~16 dp** em relação ao conteúdo (padding interno do TextButton). Compensar com `Modifier.offset(x = -12.dp)` ou usar a variante sem padding horizontal. |
+| C10 | ✅ P1 | P | **Global: cor de seleção inconsistente** | Seleções aparecem em **pêssego** (`secondaryContainer`: duração no slot picker, "Dia/Semana" na agenda, período nos repasses, "hoje" no Explorar) e em **verde** (data, horário, aba). Escolher uma só para estado selecionado (recomendo `primaryContainer` verde) e deixar o pêssego para destaque/"Recomendado". |
+| C11 | ✅ P1 | P | Escolher horário | A legenda ocupa 2 linhas; colocar em 1 linha rolável ou num ícone "?" (tooltip). Rolar automaticamente até o 1º horário disponível ≥ agora (hoje começa às 7h). |
+| C12 | ✅ P1 | P | Criar jogo — passo 3 | Valor quebrado entre linhas ("R$ ⏎ 46,66"): usar espaço não separável (` `) em `formatBrl()`. Rótulos do stepper quebram em 2 linhas: mostrar só o rótulo do passo atual no compacto. |
+| C13 | ✅ P1 | P | Jogo (detalhe) | Dois botões primários seguidos ("Lembrar quem falta" verde-escuro + "Convidar mais gente" verde-neon): manter 1 primário e o outro como `Tonal`. Status e esporte empilhados em 2 linhas: juntar em 1. |
+| C14 | ✅ P1 | P | Pagar (Pix) | A tela abre um *bottom sheet* sobre uma tela cinza (scrim) sem conteúdo útil atrás: renderizar como tela normal. Em tablet/desktop, **mostrar o QR Code por padrão** (a pessoa paga com o celular). "Já paguei" (outlined) e "Pagar com cartão" (texto) ficam lado a lado com pesos visuais confusos: empilhar. |
+| C15 | ✅ P1 | P | Pix pago | O conteúdo fica no topo com 50% de tela vazia: centralizar verticalmente e animar o check (escala + haptic). |
+| C16 | ✅ P1 | P | Painel da arena | O nome da arena trunca ("Arena Vila M…"): usar `titleLarge` em até 2 linhas ou mostrar só o nome curto. Três cards "Atenção" quase idênticos: agrupar ("3 quadras sem horários a partir de 26/11 · Publicar"). "Publicar horários" sublinhado tem área de toque pequena: virar botão de 48 dp. |
+| C17 | ✅ P1 | P | Agenda da arena | Os horários "Livre" não parecem tocáveis: dar uma ação explícita ("+ Bloquear" / "Reservar") ou um *affordance* de toque. Rolar até a hora atual ao abrir. |
 | C18 | P2 | P | Cadastro da arena | CPF e CEP sem máscara, placeholder nem teclado numérico; CEP deveria preencher o endereço (ViaCEP). |
 | C19 | P2 | P | Repasses | Os valores usam a fonte mono (Atkinson Mono), diferente do resto do app (Saira). Padronizar com `numericPrice`. |
 | C20 | P2 | P | Avatares | O empilhamento corta as iniciais ("BL(", "CM("): aumentar o *overlap* negativo ou o diâmetro para 32 dp. |
@@ -176,17 +176,31 @@ Suporte com FAQ/WhatsApp/e-mail; nenhum item do Perfil está mais morto), D5 (Ap
 + `singleTask`, `onOpenURL` no iOS, `ExternalUriHandler`; modelos de `assetlinks.json` e
 `apple-app-site-association` em `docs/deeplinks/`). Eventos novos no 04: 53–55. Testes em `AccountUseCasesTest`.
 
-Pendências fora do código (para publicar):
+Pendências fora do código (para publicar) — passo a passo em [`12-checklist-publicacao.md`](12-checklist-publicacao.md):
 - Publicar `assetlinks.json` e `apple-app-site-association` no domínio, com a SHA-256 da chave do Play e o Team ID.
 - No Xcode, ativar *Associated Domains* usando `iosApp/iosApp/iosApp.entitlements`.
 - Página web de exclusão de conta exigida pelo Play Console (ver `docs/deeplinks/README.md`).
 - Trocar o WhatsApp e o e-mail de suporte provisórios (`SupportContacts`) pelos oficiais.
 - Jurídico: textos de exclusão, termos e privacidade.
 
+**Sprint "Polimento" — concluído em 17/11/2026:** A3 (módulo `:baselineprofile`, perfil de ~31 mil regras
+em `androidApp/src/main/generated/baselineProfiles`), A7 (haptics: horário, Pix, "Fechou!", onboarding, erro de
+código), A8 (`SCPullToRefresh` na Home, Meus jogos, Explorar e Avisos + `GameRepository.sincronizar()`), A9
+(título do jogo compartilhado card → detalhe, `SharedTransitionLayout`), A10 (`animateItem` nas listas), B10
+(onboarding com arrastar, ilustração por página e passo de esportes; localização fica para quando a busca usar
+distância real), C4 (card de jogo ~20% mais baixo), C5, C6, C7 (favoritos primeiro na busca), C9, C10
+(`SCSelection`: seleção sempre verde), C11, C12 (`R$` com espaço não separável), C13, C14 (Pix como tela, não
+"sheet" falso), C15, C16 (alertas agrupados, nome da arena em 2 linhas), C17.
+Também: bundle id do iOS corrigido, launch screen sem quadrado, `PrivacyInfo.xcprivacy`, app iOS testado no
+simulador.
+
+Ainda em aberto: B7 (foto no cadastro), B8 (Google/Apple), B9 (login como sheet), C8 (CTA da arena), D4
+(predictive back), D6, D7 e os P2 de C (C18–C23) e A11/A12. Ver também a seção E.
+
 ## Ordem sugerida (sprints)
 
 1. ~~**Sprint "Fluidez"**~~ ✅ (2–3 dias): A1, A2, A4, A5, A6, C1, C2, C3, D3 → o app já "parece outro".
 2. ~~**Sprint "Abertura e conta"**~~ ✅ (1 semana): B1, B2, B3, D1, D2, B5, B6, B14.
 3. ~~**Sprint "LGPD e lojas"**~~ ✅ (1 semana): B11, B12, B13, B15, D5. **Sem B11 o app é rejeitado nas duas lojas.**
-4. **Sprint "Polimento"**: A3, A7–A10, C4–C17, B7–B10.
+4. ~~**Sprint "Polimento"**~~ ✅: A3, A7–A10, C4–C17, B7–B10.
 5. Backlog: P2 restantes.

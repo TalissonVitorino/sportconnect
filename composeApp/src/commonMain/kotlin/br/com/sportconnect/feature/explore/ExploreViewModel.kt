@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.explore
 
+import br.com.sportconnect.core.data.local.AppPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.sportconnect.core.domain.usecase.ArenaProxima
@@ -48,7 +49,10 @@ class ExploreViewModel(
     private val arenaDetail: GetArenaDetailUseCase,
     private val slots: GetAvailableSlotsUseCase,
     private val clock: Clock,
+    private val prefs: AppPreferences? = null,
 ) : ViewModel() {
+    /** "Meus esportes" (onboarding/perfil): quadras desses esportes aparecem primeiro (C7/B10). */
+    private val favorites: Set<Sport> get() = prefs?.favoriteSports.orEmpty().mapNotNull { n -> Sport.entries.firstOrNull { it.name == n } }.toSet()
     private val today = clock.now().toLocalDateTime(FusoSaoPaulo).date
     private val _uiState = MutableStateFlow(ExploreUiState(date = today, today = today))
     val uiState: StateFlow<ExploreUiState> = _uiState.asStateFlow()
@@ -106,7 +110,12 @@ class ExploreViewModel(
                         .filter { it.freeSlots.isNotEmpty() }
                 }
             }.fold(
-                onSuccess = { list -> _uiState.update { it.copy(loading = false, results = list) } },
+                onSuccess = { list ->
+                    val fav = favorites
+                    // Ordenacao estavel: favoritos primeiro, o resto mantem a ordem (distancia).
+                    val ordered = if (fav.isEmpty()) list else list.sortedByDescending { r -> fav.any { r.quadra.suporta(it) } }
+                    _uiState.update { it.copy(loading = false, results = ordered) }
+                },
                 onFailure = { _uiState.update { it.copy(loading = false, error = true) } },
             )
         }

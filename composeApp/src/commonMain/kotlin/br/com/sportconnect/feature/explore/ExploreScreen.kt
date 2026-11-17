@@ -2,6 +2,10 @@
 
 package br.com.sportconnect.feature.explore
 
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.domain.repository.GameRepository
+import br.com.sportconnect.core.designsystem.component.SCPullToRefresh
+import br.com.sportconnect.core.designsystem.theme.SCSelection
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +37,6 @@ import androidx.compose.material.icons.rounded.SportsSoccer
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -101,6 +104,7 @@ data class ExploreActions(
 @Composable
 fun ExploreRoute(actions: ExploreActions, viewModel: ExploreViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val games: GameRepository = koinInject()
     ExploreScreen(
         state = state,
         actions = actions,
@@ -110,6 +114,7 @@ fun ExploreRoute(actions: ExploreActions, viewModel: ExploreViewModel = koinView
         onCovered = viewModel::toggleCovered,
         onClear = viewModel::clearFilters,
         onRetry = viewModel::retry,
+        onRefresh = games::sincronizar,
     )
 }
 
@@ -124,6 +129,7 @@ fun ExploreScreen(
     onCovered: () -> Unit = {},
     onClear: () -> Unit = {},
     onRetry: () -> Unit = {},
+    onRefresh: suspend () -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -177,15 +183,18 @@ fun ExploreScreen(
                                 primaryAction = SCAction(stringResource(Res.string.empty_search_cta), onClear),
                                 modifier = Modifier.testTag("explore_clear_filters"),
                             )
-                            else -> LazyVerticalGrid(
-                                columns = GridCells.Fixed(columns),
-                                contentPadding = PaddingValues(start = hPad, end = hPad, top = 8.dp, bottom = 24.dp),
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                modifier = Modifier.fillMaxSize(),
-                            ) {
-                                items(state.results, key = { it.quadra.id }) { r -> CourtResultCard(r, actions, wc) }
-                                item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.size(8.dp)) }
+                            else -> SCPullToRefresh(onRefresh, Modifier.fillMaxSize()) {
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(columns),
+                                    contentPadding = PaddingValues(start = hPad, end = hPad, top = 8.dp, bottom = 24.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                    modifier = Modifier.fillMaxSize(),
+                                ) {
+                                    // A10: ao filtrar, os cards entram/saem/reordenam animados.
+                                    items(state.results, key = { it.quadra.id }) { r -> Box(Modifier.animateItem()) { CourtResultCard(r, actions, wc) } }
+                                    item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.size(8.dp)) }
+                                }
                             }
                         }
                     }
@@ -206,12 +215,7 @@ private fun FilterRow(
     val c = SportConnectTheme.colors
     var sportMenu by remember { mutableStateOf(false) }
     var dateMenu by remember { mutableStateOf(false) }
-    val chipColors = FilterChipDefaults.filterChipColors(
-        selectedContainerColor = c.primaryContainer,
-        selectedLabelColor = c.onPrimaryContainer,
-        selectedLeadingIconColor = c.onPrimaryContainer,
-        selectedTrailingIconColor = c.onPrimaryContainer,
-    )
+    val chipColors = SCSelection.filterChipColors()
     Row(
         Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(start = hPad, top = 12.dp, bottom = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -247,16 +251,7 @@ private fun FilterRow(
                 label = { Text(PtBrFormat.relativeDay(state.date, state.today)) },
                 leadingIcon = { Icon(Icons.Rounded.CalendarMonth, null, Modifier.size(18.dp)) },
                 trailingIcon = { Icon(Icons.Rounded.ArrowDropDown, null, Modifier.size(18.dp)) },
-                colors = FilterChipDefaults.filterChipColors(
-                    containerColor = c.secondaryContainer,
-                    labelColor = c.onSecondaryContainer,
-                    iconColor = c.onSecondaryContainer,
-                    selectedContainerColor = c.secondaryContainer,
-                    selectedLabelColor = c.onSecondaryContainer,
-                    selectedLeadingIconColor = c.onSecondaryContainer,
-                    selectedTrailingIconColor = c.onSecondaryContainer,
-                ),
-                border = null,
+                colors = chipColors,
                 modifier = Modifier.testTag("explore_filter_date"),
             )
             DropdownMenu(expanded = dateMenu, onDismissRequest = { dateMenu = false }) {

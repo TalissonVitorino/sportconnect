@@ -36,4 +36,5 @@ include(":composeApp")
 // App Android (entry point). Fica fora do build quando `disableAndroid=true` (maquinas sem Android SDK).
 if (!providers.gradleProperty("disableAndroid").map { it.toBoolean() }.getOrElse(false)) {
     include(":androidApp")
+    include(":baselineprofile")
 }

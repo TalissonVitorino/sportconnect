@@ -699,6 +699,7 @@
     <string name="arena_attention_title">Atenção (%1$d)</string>
     <string name="arena_alert_no_schedule">%1$s sem horários a partir de %2$s</string>
     <string name="arena_alert_publish">Publicar horários</string>
+    <string name="arena_alert_no_schedule_many">%1$d quadras sem horários a partir de %2$s</string>
     <string name="arena_schedule_status_in_progress">Em andamento</string>
     <string name="arena_schedule_status_free">Livre</string>
     <string name="arena_schedule_status_closed">Fechado</string>

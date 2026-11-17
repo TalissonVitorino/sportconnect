@@ -2,6 +2,10 @@
 
 package br.com.sportconnect.feature.game
 
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import br.com.sportconnect.core.designsystem.component.scSharedBounds
+import br.com.sportconnect.core.designsystem.component.sharedGameTitleKey
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
@@ -259,6 +263,9 @@ fun GameDetailScreen(
     val content = state as? GameDetailUiState.Content
     val celebrating = content?.celebrate == true
     val share = rememberShareActions()
+    // A7: "Fechou!" com toque de confirmacao (uma vez, quando a celebracao aparece).
+    val haptics = LocalHapticFeedback.current
+    LaunchedEffect(celebrating) { if (celebrating) haptics.performHapticFeedback(HapticFeedbackType.Confirm) }
 
     Scaffold(
         containerColor = c.surface,
@@ -430,7 +437,7 @@ private fun ColumnScope.MainColumn(
     Spacer(Modifier.size(12.dp))
     SCSportChip(j.esporte)
     Spacer(Modifier.size(8.dp))
-    Text(j.titulo, style = MaterialTheme.typography.headlineSmall, color = c.onSurface, maxLines = 2, modifier = Modifier.semantics { heading() })
+    Text(j.titulo, style = MaterialTheme.typography.headlineSmall, color = c.onSurface, maxLines = 2, modifier = Modifier.scSharedBounds(sharedGameTitleKey(j.id)).semantics { heading() })
     Spacer(Modifier.size(8.dp))
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         MetaLine(Icons.Rounded.CalendarMonth, PtBrFormat.dateTimeRange(j.inicio, j.fim))
@@ -494,16 +501,18 @@ private fun ColumnScope.MainColumn(
                 leadingIcon = Icons.Rounded.NotificationsActive,
                 modifier = Modifier.testTag("game_remind_all"),
             )
+            // C13: um primario por tela. "Convidar mais gente" e secundario (antes Tonal neon, competia
+            // com o primario) e so aparece quando o principal nao e o proprio convite.
+            Spacer(Modifier.size(8.dp))
+            SCButton(
+                stringResource(Res.string.game_invite_more),
+                { onShareInvite(j.id) },
+                variant = SCButtonVariant.Secondary,
+                fullWidth = true,
+                leadingIcon = Icons.Rounded.PersonAdd,
+                modifier = Modifier.testTag("game_invite_more"),
+            )
         }
-        Spacer(Modifier.size(8.dp))
-        SCButton(
-            stringResource(Res.string.game_invite_more),
-            { onShareInvite(j.id) },
-            variant = SCButtonVariant.Tonal,
-            fullWidth = true,
-            leadingIcon = Icons.Rounded.PersonAdd,
-            modifier = Modifier.testTag("game_invite_more"),
-        )
     }
     if (j.status == StatusReserva.CONFIRMADO) {
         Spacer(Modifier.size(24.dp))

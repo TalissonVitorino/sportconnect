@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.auth
 
+import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -442,7 +443,7 @@ private fun CodeStep(state: AuthUiState, onCode: (String) -> Unit, onChangeNumbe
         style = t.bodyLarge,
         color = c.onSurfaceVariant,
     )
-    SCButton(stringResource(Res.string.auth_code_wrong_number), onChangeNumber, variant = SCButtonVariant.Text, modifier = Modifier.testTag("auth_change_number"))
+    SCButton(stringResource(Res.string.auth_code_wrong_number), onChangeNumber, variant = SCButtonVariant.Text, modifier = Modifier.scAlignTextButtonStart().testTag("auth_change_number"))
     Spacer(Modifier.height(16.dp))
     val blocked = state.error is AuthError.TooManyAttempts
     OtpField(state.code, onCode, isError = state.error == AuthError.CodeInvalid || state.error == AuthError.CodeExpired, enabled = !state.loading && !blocked)

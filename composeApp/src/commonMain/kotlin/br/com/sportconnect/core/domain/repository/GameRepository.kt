@@ -6,6 +6,9 @@ import br.com.sportconnect.core.model.ListaEspera
 import kotlinx.coroutines.flow.Flow
 
 interface GameRepository {
+    /** Busca o estado mais recente no servidor ("puxar para atualizar"). Os flows ja sao em tempo real. */
+    suspend fun sincronizar() {}
+
     /** Todos os jogos, em tempo real (progresso das cotas etc.). */
     fun observeGames(): Flow<List<Jogo>>
     /** Um jogo em tempo real; emite null se nao existir. */

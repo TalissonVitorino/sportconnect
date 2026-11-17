@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.arenaadmin.payouts
 
+import br.com.sportconnect.core.designsystem.theme.SCSelection
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -420,7 +421,7 @@ private fun TableRow(item: PayoutItemUi, selected: Boolean, onClick: () -> Unit)
     val t = MaterialTheme.typography
     Row(
         Modifier.fillMaxWidth().heightIn(min = 56.dp)
-            .background(if (selected) c.secondaryContainer else Color.Transparent)
+            .background(if (selected) c.primaryContainer.copy(alpha = 0.35f) else Color.Transparent)
             .clickable(role = Role.Button, onClick = onClick)
             .testTag("payouts_item_${item.id}")
             .padding(horizontal = 12.dp),

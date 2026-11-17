@@ -2,6 +2,10 @@
 
 package br.com.sportconnect.feature.profile
 
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.domain.repository.GameRepository
+import br.com.sportconnect.core.designsystem.component.SCPullToRefresh
+import br.com.sportconnect.core.designsystem.theme.SCSelection
 import br.com.sportconnect.resources.cd_edit_profile
 import androidx.compose.material.icons.rounded.Edit
 import br.com.sportconnect.resources.profile_sign_in
@@ -289,12 +293,14 @@ fun ProfileScreen(
                             onClick = { onSwitch(AppMode.Athlete) },
                             enabled = !state.switching,
                             shape = SegmentedButtonDefaults.itemShape(0, 2),
+                            colors = SCSelection.segmentedColors(),
                         ) { Text(stringResource(Res.string.profile_mode_athlete)) }
                         SegmentedButton(
                             selected = true,
                             onClick = { onSwitch(AppMode.Arena) },
                             enabled = !state.switching,
                             shape = SegmentedButtonDefaults.itemShape(1, 2),
+                            colors = SCSelection.segmentedColors(),
                         ) { Text(stringResource(Res.string.profile_mode_arena)) }
                     }
                     Spacer(Modifier.height(16.dp))
@@ -480,7 +486,8 @@ class NotificationsViewModel(private val getNotifications: GetNotificationsUseCa
 @Composable
 fun NotificationsRoute(onBack: () -> Unit, onOpenGame: (String) -> Unit, vm: NotificationsViewModel = koinViewModel()) {
     val state by vm.uiState.collectAsStateWithLifecycle()
-    NotificationsScreen(state, onBack, onOpenGame, vm::markAll)
+    val games: GameRepository = koinInject()
+    NotificationsScreen(state, onBack, onOpenGame, vm::markAll, onRefresh = games::sincronizar)
 }
 
 /** Avisos (10 §2.15): itens por dia, icone por tipo, nao lidos com ponto. */
@@ -490,6 +497,7 @@ fun NotificationsScreen(
     onBack: () -> Unit = {},
     onOpenGame: (String) -> Unit = {},
     onMarkAll: () -> Unit = {},
+    onRefresh: suspend () -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     val ext = SportConnectTheme.extendedColors
@@ -510,7 +518,8 @@ fun NotificationsScreen(
             return@Scaffold
         }
         val unreadLabel = stringResource(Res.string.notifications_unread_label)
-        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
+        SCPullToRefresh(onRefresh, Modifier.fillMaxSize().padding(padding)) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             LazyColumn(Modifier.widthIn(max = 640.dp).fillMaxSize()) {
                 state.items.groupBy { PtBrFormat.relativeDay(PtBrFormat.date(it.em), PtBrFormat.date(state.now)) }.forEach { (day, items) ->
                     item(key = "d$day") { SectionHeader(day.replaceFirstChar { it.uppercase() }, Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp)) }
@@ -558,4 +567,5 @@ fun NotificationsScreen(
             }
         }
     }
+        }
 }

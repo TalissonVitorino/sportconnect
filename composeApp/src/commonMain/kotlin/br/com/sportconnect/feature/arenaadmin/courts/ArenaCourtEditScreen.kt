@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.arenaadmin.courts
 
+import br.com.sportconnect.core.designsystem.theme.SCSelection
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +25,6 @@ import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -265,7 +265,7 @@ private fun HoursSection(state: CourtEditUiState, vm: ArenaCourtEditViewModel) {
                     label = { Text(ArenaFormat.weekdayShort(d)) },
                     leadingIcon = if (sel) ({ Icon(Icons.Rounded.Check, null, Modifier.size(18.dp)) }) else null,
                     shape = SCShape.chip,
-                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = c.secondaryContainer, selectedLabelColor = c.onSecondaryContainer),
+                    colors = SCSelection.filterChipColors(),
                     modifier = Modifier.testTag("court_day_${d.name}"),
                 )
             }

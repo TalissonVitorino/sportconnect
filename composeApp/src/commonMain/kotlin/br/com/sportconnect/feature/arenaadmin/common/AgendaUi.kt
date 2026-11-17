@@ -1,5 +1,7 @@
 package br.com.sportconnect.feature.arenaadmin.common
 
+import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -239,6 +241,12 @@ fun AgendaListRow(
                 cell.detailLine(withOrganizer = true)?.let { add(it) }
             }.joinToString()
             if (line2.isNotEmpty()) Text(line2, style = t.bodyMedium, color = c.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        }
+        // C17: horario livre mostra que da para agir (bloquear/reservar); antes parecia so informativo.
+        if (cell.status == AgendaCellStatus.Free) {
+            Icon(Icons.Rounded.AddCircleOutline, null, tint = c.primary, modifier = Modifier.size(24.dp))
+        } else if (clickable) {
+            Icon(Icons.Rounded.ChevronRight, null, tint = c.onSurfaceVariant, modifier = Modifier.size(24.dp))
         }
         Spacer(Modifier.width(0.dp))
     }

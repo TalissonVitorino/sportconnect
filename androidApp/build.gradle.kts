@@ -2,6 +2,7 @@ plugins {
     // AGP 9 traz Kotlin embutido: nao e preciso aplicar org.jetbrains.kotlin.android.
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -56,6 +57,9 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
+    // Instala o Baseline Profile no aparelho (A3): codigo das jornadas principais ja vem compilado.
+    implementation(libs.androidx.profileinstaller)
+    "baselineProfile"(projects.baselineprofile)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
     implementation(project.dependencies.platform(libs.koin.bom))
@@ -63,4 +67,10 @@ dependencies {
     implementation(libs.koin.android)
 
     debugImplementation(libs.compose.ui.tooling)
+}
+
+// A3: perfil gerado em src/main/generated/baselineProfiles (versionado). Regerar com
+// `./gradlew :androidApp:generateBaselineProfile` com um emulador/aparelho conectado (API 33+).
+baselineProfile {
+    mergeIntoMain = true
 }

@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.arenaadmin.common
 
+import br.com.sportconnect.core.designsystem.theme.SCSelection
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -96,10 +97,7 @@ fun AgendaDeskHeader(
                     onClick = { onMode(m) },
                     shape = SegmentedButtonDefaults.itemShape(i, AgendaMode.entries.size),
                     modifier = Modifier.testTag(if (m == AgendaMode.Day) "schedule_mode_day" else "schedule_mode_week"),
-                    colors = SegmentedButtonDefaults.colors(
-                        activeContainerColor = c.secondaryContainer,
-                        activeContentColor = c.onSecondaryContainer,
-                    ),
+                    colors = SCSelection.segmentedColors(),
                 ) { Text(stringResource(if (m == AgendaMode.Day) Res.string.arena_schedule_day else Res.string.arena_schedule_week)) }
             }
         }
