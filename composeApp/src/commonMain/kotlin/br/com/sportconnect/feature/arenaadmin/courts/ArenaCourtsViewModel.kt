@@ -54,6 +54,7 @@ data class CourtItemUi(
 data class ArenaCourtsUiState(
     val load: LoadState = LoadState.Loading,
     val arenaName: String = "",
+    val arenaId: String? = null,
     val courts: List<CourtItemUi> = emptyList(),
     /** Operador ve a lista sem FAB nem edicao. */
     val canEdit: Boolean = true,
@@ -81,6 +82,7 @@ class ArenaCourtsViewModel(
                         ArenaCourtsUiState(
                             load = LoadState.Ready,
                             arenaName = arena?.nome.orEmpty(),
+                            arenaId = arenaId,
                             courts = store.merge(arenaId, base, overrides).map { q ->
                                 val s = byCourt[q.id].orEmpty()
                                 val offered = s.count { it.status != SlotStatus.BLOQUEADO }

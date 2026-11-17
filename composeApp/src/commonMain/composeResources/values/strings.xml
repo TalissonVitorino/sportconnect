@@ -859,4 +859,9 @@
     <string name="reminders_card_body">Avisamos 2h e 30min antes de a sua cota vencer e na véspera do jogo.</string>
     <string name="reminders_enable">Ativar lembretes</string>
     <string name="common_not_now">Agora não</string>
+    <!-- 11-backlog · E9 fotos da arena (propostos) -->
+    <string name="arena_photos_title">Fotos da arena</string>
+    <string name="arena_photos_hint">Até 5 fotos. Mostre a quadra inteira, com boa luz e sem pessoas identificáveis.</string>
+    <string name="arena_photos_add">Adicionar fotos</string>
+    <string name="cd_remove_photo">Remover foto %1$d</string>
 </resources>

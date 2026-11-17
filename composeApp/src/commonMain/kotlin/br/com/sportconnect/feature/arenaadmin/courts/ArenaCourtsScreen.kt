@@ -1,5 +1,42 @@
 package br.com.sportconnect.feature.arenaadmin.courts
 
+import br.com.sportconnect.resources.cd_remove_photo
+import br.com.sportconnect.resources.arena_photos_add
+import br.com.sportconnect.resources.arena_photos_hint
+import br.com.sportconnect.resources.arena_photos_title
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import br.com.sportconnect.core.designsystem.component.SCButtonVariant
+import br.com.sportconnect.core.designsystem.component.SCButton
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material.icons.rounded.AddAPhoto
+import androidx.compose.material.icons.rounded.Cancel
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
+import kotlinx.coroutines.launch
+import io.github.vinceglb.filekit.readBytes
+import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
+import io.github.vinceglb.filekit.dialogs.FileKitMode
+import io.github.vinceglb.filekit.dialogs.FileKitType
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.data.local.ArenaPhotoStore
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -105,6 +142,10 @@ fun ArenaCourtsScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxSize().testTag("courts_list"),
                     ) {
+                        val photosArenaId = state.arenaId
+                        if (state.canEdit && photosArenaId != null) {
+                            item(span = { GridItemSpan(maxLineSpan) }, key = "arena_photos") { ArenaPhotosSection(photosArenaId) }
+                        }
                         items(state.courts, key = { it.id }) { court ->
                             val occ = stringResource(Res.string.aadm_courts_occupancy, court.occupancyPct)
                             SCCourtCard(
@@ -135,6 +176,45 @@ fun ArenaCourtsScreen(
                     contentColor = SportConnectTheme.colors.onPrimaryContainer,
                     shape = SCShape.small,
                     modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp).testTag("courts_add"),
+                )
+            }
+        }
+    }
+}
+
+/** E9 (CT-01): fotos da arena — aparecem no carrossel da pagina da arena para os atletas. */
+@Composable
+private fun ArenaPhotosSection(arenaId: String) {
+    val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
+    val store: ArenaPhotoStore = koinInject()
+    val photos = store.photos.collectAsStateWithLifecycle().value[arenaId].orEmpty()
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(arenaId) { store.load(arenaId) }
+    val picker = rememberFilePickerLauncher(type = FileKitType.Image, mode = FileKitMode.Multiple(maxItems = ArenaPhotoStore.MAX)) { files ->
+        if (!files.isNullOrEmpty()) scope.launch { store.add(arenaId, files.map { it.readBytes() }) }
+    }
+    Column(Modifier.fillMaxWidth().testTag("arena_photos"), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(stringResource(Res.string.arena_photos_title), style = t.titleMedium, color = c.onSurface, modifier = Modifier.semantics { heading() })
+        Text(stringResource(Res.string.arena_photos_hint), style = t.bodySmall, color = c.onSurfaceVariant)
+        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            photos.forEachIndexed { i, img ->
+                Box(Modifier.size(112.dp, 72.dp).clip(MaterialTheme.shapes.medium)) {
+                    Image(img, null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                    val cd = stringResource(Res.string.cd_remove_photo, i + 1)
+                    IconButton(
+                        onClick = { scope.launch { store.remove(arenaId, i) } },
+                        modifier = Modifier.align(Alignment.TopEnd).size(32.dp).semantics { contentDescription = cd },
+                    ) {
+                        Icon(Icons.Rounded.Cancel, null, tint = Color.White, modifier = Modifier.background(Color.Black.copy(alpha = 0.5f), CircleShape))
+                    }
+                }
+            }
+            if (photos.size < ArenaPhotoStore.MAX) {
+                SCButton(
+                    stringResource(Res.string.arena_photos_add), { picker.launch() },
+                    variant = SCButtonVariant.Secondary, leadingIcon = Icons.Rounded.AddAPhoto,
+                    modifier = Modifier.height(72.dp).testTag("arena_photos_add"),
                 )
             }
         }
