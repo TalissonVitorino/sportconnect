@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.navigation
 
+import androidx.lifecycle.Lifecycle
 import br.com.sportconnect.core.designsystem.component.LocalSCNavAnimatedScope
 import br.com.sportconnect.core.designsystem.component.LocalSCSharedTransitionScope
 import androidx.compose.runtime.CompositionLocalProvider
@@ -424,7 +425,14 @@ fun AppNavHost(
 
 /** Acoes de navegacao (encapsula o NavHostController; facilita previews/testes). */
 class AppNavigator(private val nc: NavHostController) {
-    fun go(route: Any) = nc.navigate(route) { launchSingleTop = true }
+    /**
+     * A11: ignora o toque enquanto a tela atual nao esta RESUMED (ex.: durante a transicao). Evita abrir a
+     * mesma tela duas vezes com toque duplo, mesmo com argumentos diferentes (launchSingleTop nao cobre).
+     */
+    fun go(route: Any) {
+        if (nc.currentBackStackEntry?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) == false) return
+        nc.navigate(route) { launchSingleTop = true }
+    }
 
     fun back() {
         if (!nc.popBackStack()) resetTo(Route.Home)

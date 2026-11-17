@@ -13,8 +13,8 @@ android {
         applicationId = "br.com.sportconnect.app"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = providers.gradleProperty("sportconnect.versionCode").get().toInt()
+        versionName = providers.gradleProperty("sportconnect.versionName").get()
     }
     packaging {
         resources {

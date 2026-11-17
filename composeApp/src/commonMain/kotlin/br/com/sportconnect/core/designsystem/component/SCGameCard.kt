@@ -146,7 +146,7 @@ fun SCGameCard(
                 }
                 Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     if (game.participants.isNotEmpty()) {
-                        SCAvatarStack(game.participants, paymentAware = variant == SCGameCardVariant.Organizer, size = 28.dp)
+                        SCAvatarStack(game.participants, paymentAware = variant == SCGameCardVariant.Organizer, size = 32.dp)
                         Spacer(Modifier.width(12.dp))
                     }
                     Column(Modifier.weight(1f)) {

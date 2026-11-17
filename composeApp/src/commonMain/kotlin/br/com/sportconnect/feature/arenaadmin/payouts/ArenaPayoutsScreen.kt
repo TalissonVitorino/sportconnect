@@ -322,7 +322,7 @@ private fun PayoutRow(item: PayoutItemUi, onClick: () -> Unit) {
                 PayoutStatusChip(item.status)
             }
         }
-        Text(item.net.formatBrl(), style = t.titleMedium, color = c.onSurface)
+        Text(item.net.formatBrl(), style = SportConnectTheme.typographyExt.numericPriceSmall, color = c.onSurface)
     }
 }
 

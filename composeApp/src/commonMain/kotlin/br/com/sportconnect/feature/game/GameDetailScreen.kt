@@ -203,18 +203,19 @@ fun GameDetailRoute(route: Route.GameDetail, actions: GameDetailActions) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val share = rememberShareActions()
+    val clock = LocalSCClock.current
     LaunchedEffect(viewModel) {
         viewModel.events.collect { ev ->
             when (ev) {
                 is GameDetailEvent.RemindAll -> {
                     val j = ev.jogo
-                    val prazo = j.reserva.prazoCotas?.let { PtBrFormat.relative(it, kotlin.time.Clock.System.now()) } ?: ""
+                    val prazo = j.reserva.prazoCotas?.let { PtBrFormat.relative(it, clock.now()) } ?: ""
                     share.whatsapp(getString(Res.string.wa_group_reminder, ev.pending, j.titulo, prazo, inviteUrl(j.codigoConvite)))
                     snackbar.showSC(getString(Res.string.split_remind_sent, ev.pending), SCSnackbarKind.Success)
                 }
                 is GameDetailEvent.RemindOne -> {
                     val j = ev.jogo
-                    val prazo = j.reserva.prazoCotas?.let { PtBrFormat.relative(it, kotlin.time.Clock.System.now()) } ?: ""
+                    val prazo = j.reserva.prazoCotas?.let { PtBrFormat.relative(it, clock.now()) } ?: ""
                     val cota = (j.valorCotaConvidado + TaxaConveniencia.PIX).format()
                     share.whatsapp(getString(Res.string.wa_payment_reminder_2h, ev.name.substringBefore(' '), j.titulo, cota, prazo, inviteUrl(j.codigoConvite)))
                 }

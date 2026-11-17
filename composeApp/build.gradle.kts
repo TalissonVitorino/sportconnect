@@ -29,7 +29,31 @@ if (androidEnabled) {
     logger.lifecycle("SportConnect: alvo Android DESABILITADO (disableAndroid=true).")
 }
 
+// C23: versao do app gerada a partir do gradle.properties (antes "0.1.0" fixo no Perfil).
+val appVersionName = providers.gradleProperty("sportconnect.versionName")
+val generateAppInfo = tasks.register("generateAppInfo") {
+    val outDir = layout.buildDirectory.dir("generated/appinfo/kotlin")
+    val version = appVersionName
+    inputs.property("versionName", version)
+    outputs.dir(outDir)
+    doLast {
+        val file = outDir.get().file("br/com/sportconnect/AppInfo.kt").asFile
+        file.parentFile.mkdirs()
+        file.writeText(
+            """
+            |package br.com.sportconnect
+            |
+            |/** Gerado pelo Gradle (composeApp/build.gradle.kts, tarefa generateAppInfo). Nao edite. */
+            |object AppInfo {
+            |    const val VERSION_NAME: String = "${version.get()}"
+            |}
+            |""".trimMargin(),
+        )
+    }
+}
+
 kotlin {
+    sourceSets.commonMain { kotlin.srcDir(generateAppInfo) }
     if (androidEnabled) {
         // Equivale a `androidLibrary { }`; o plugin e aplicado condicionalmente, entao sem accessor tipado.
         (this as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryTarget>("androidLibrary") {

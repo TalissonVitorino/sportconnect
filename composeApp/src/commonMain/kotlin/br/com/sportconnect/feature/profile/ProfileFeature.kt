@@ -2,6 +2,9 @@
 
 package br.com.sportconnect.feature.profile
 
+import br.com.sportconnect.AppInfo
+import br.com.sportconnect.core.designsystem.component.SCSkeletonShape
+import br.com.sportconnect.core.designsystem.component.SCSkeleton
 import org.koin.compose.koinInject
 import br.com.sportconnect.core.domain.repository.GameRepository
 import br.com.sportconnect.core.designsystem.component.SCPullToRefresh
@@ -331,7 +334,7 @@ fun ProfileScreen(
                     color = c.error,
                     modifier = Modifier.heightIn(min = 48.dp).clickable(role = Role.Button) { confirmLogout = true }.padding(vertical = 14.dp).testTag("profile_logout"),
                 )
-                Text(stringResource(Res.string.profile_version, "0.1.0"), style = t.bodySmall, color = c.onSurfaceVariant)
+                Text(stringResource(Res.string.profile_version, AppInfo.VERSION_NAME), style = t.bodySmall, color = c.onSurfaceVariant)
                 Spacer(Modifier.height(24.dp))
             }
         }
@@ -438,7 +441,13 @@ fun ReceiptScreen(p: MeuPagamento?, onBack: () -> Unit = {}) {
     val t = MaterialTheme.typography
     val share = rememberShareActions()
     Scaffold(containerColor = c.surface, topBar = { SCTopBar(stringResource(Res.string.receipt_title), onNavigationClick = onBack) }) { padding ->
-        if (p == null) return@Scaffold
+        if (p == null) {
+            // C22: esqueleto enquanto o comprovante carrega (antes a tela ficava em branco).
+            CenteredContent(Modifier.padding(padding).padding(16.dp)) {
+                SCSkeleton(SCSkeletonShape.Box(height = 280.dp), Modifier.fillMaxWidth())
+            }
+            return@Scaffold
+        }
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             CenteredContent(Modifier.padding(16.dp)) {
                 Column(

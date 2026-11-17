@@ -91,7 +91,8 @@ fun SCAvatarStack(
     val extra = people.size - shown.size
     val names = shown.joinToString(", ") { it.name.substringBefore(' ') }
     val cd = if (extra > 0) "$names ${stringResource(Res.string.ds_avatar_more, extra)}" else names
-    val overlap = 8.dp
+    // C20: sobreposicao proporcional (antes 8dp fixos cortavam as iniciais em avatares pequenos).
+    val overlap = size * 0.2f
     Row(
         modifier = modifier
             .then(if (onClick != null) Modifier.minimumInteractiveComponentSize().clip(SCShape.full).clickable(onClick = onClick) else Modifier)

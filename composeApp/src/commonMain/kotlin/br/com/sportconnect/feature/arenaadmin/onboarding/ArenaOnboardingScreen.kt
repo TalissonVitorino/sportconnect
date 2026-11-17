@@ -205,8 +205,8 @@ private fun StepForm(step: OnboardingStep, state: ArenaOnboardingUiState, vm: Ar
         when (step) {
             OnboardingStep.Info -> {
                 SCTextField(state.name, vm::setName, stringResource(Res.string.aadm_onb_field_name), Modifier.fillMaxWidth(), errorText = if (err && state.nameError) stringResource(Res.string.aadm_onb_error_name) else null)
-                SCTextField(state.document, vm::setDocument, stringResource(Res.string.aadm_onb_field_doc), Modifier.fillMaxWidth(), type = SCTextFieldType.Cpf, errorText = if (err && state.documentError) stringResource(Res.string.aadm_onb_error_doc) else null)
-                SCTextField(state.cep, vm::setCep, stringResource(Res.string.aadm_onb_field_cep), Modifier.fillMaxWidth(), errorText = if (err && state.cepError) stringResource(Res.string.aadm_onb_error_cep) else null)
+                SCTextField(state.document, vm::setDocument, stringResource(Res.string.aadm_onb_field_doc), Modifier.fillMaxWidth(), type = SCTextFieldType.Cpf, placeholder = "000.000.000-00", errorText = if (err && state.documentError) stringResource(Res.string.aadm_onb_error_doc) else null)
+                SCTextField(state.cep, vm::setCep, stringResource(Res.string.aadm_onb_field_cep), Modifier.fillMaxWidth(), type = SCTextFieldType.Cep, placeholder = "00000-000", errorText = if (err && state.cepError) stringResource(Res.string.aadm_onb_error_cep) else null)
             }
             OnboardingStep.Courts -> {
                 Text(stringResource(Res.string.aadm_onb_courts_body), style = t.bodyMedium, color = c.onSurfaceVariant)

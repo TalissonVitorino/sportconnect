@@ -121,7 +121,10 @@ fun ArenaDetailScreen(state: ArenaDetailUiState, actions: ArenaDetailActions = A
         Scaffold(
             containerColor = c.surface,
             bottomBar = {
-                if (content != null && firstCourt != null && wc != WidthClass.Expanded) {
+                // C8: com varias quadras o CTA fixo era ambiguo ("Ver horarios" de qual?) e cada card ja tem horarios e
+                // "Ver todos". Fica so quando ha uma quadra.
+                val singleCourt = content?.detail?.quadras?.count { content.sport == null || it.suporta(content.sport) } == 1
+                if (content != null && firstCourt != null && singleCourt && wc != WidthClass.Expanded) {
                     BottomActionBar {
                         SCButton(
                             stringResource(Res.string.arena_detail_see_times),

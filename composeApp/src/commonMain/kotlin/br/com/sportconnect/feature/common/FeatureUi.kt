@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.common
 
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -133,6 +134,8 @@ fun BottomActionBar(
                 Column(
                     Modifier.widthIn(max = ContentMaxWidth).fillMaxWidth()
                         .windowInsetsPadding(WindowInsets.navigationBars)
+                        // C21: sobe junto com o teclado (o CTA nao fica escondido em formularios).
+                        .imePadding()
                         .padding(horizontal = pad, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     content = content,

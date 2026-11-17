@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import br.com.sportconnect.core.designsystem.theme.SCShape
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
 
-enum class SCTextFieldType { Text, Money, Phone, Cpf, Search, Multiline }
+enum class SCTextFieldType { Text, Money, Phone, Cpf, Cep, Search, Multiline }
 
 /**
  * Campo de texto (06 §5.2). Rotulo SEMPRE visivel acima do campo (nome acessivel),
@@ -86,19 +86,21 @@ fun SCTextField(
     val digitLimit = when (type) {
         SCTextFieldType.Phone -> 11
         SCTextFieldType.Cpf -> 11
+        SCTextFieldType.Cep -> 8
         SCTextFieldType.Money -> 11
         else -> null
     }
     val effectiveMax = maxLength ?: digitLimit
-    val digitsOnly = type == SCTextFieldType.Money || type == SCTextFieldType.Phone || type == SCTextFieldType.Cpf
+    val digitsOnly = type == SCTextFieldType.Money || type == SCTextFieldType.Phone || type == SCTextFieldType.Cpf || type == SCTextFieldType.Cep
     val transformation: VisualTransformation = when (type) {
         SCTextFieldType.Money -> MoneyVisualTransformation
         SCTextFieldType.Phone -> MaskVisualTransformation("(##) # ####-####")
         SCTextFieldType.Cpf -> MaskVisualTransformation("###.###.###-##")
+        SCTextFieldType.Cep -> MaskVisualTransformation("#####-###")
         else -> VisualTransformation.None
     }
     val kbOptions = when (type) {
-        SCTextFieldType.Money, SCTextFieldType.Cpf -> keyboardOptions.copy(keyboardType = KeyboardType.Number)
+        SCTextFieldType.Money, SCTextFieldType.Cpf, SCTextFieldType.Cep -> keyboardOptions.copy(keyboardType = KeyboardType.Number)
         SCTextFieldType.Phone -> keyboardOptions.copy(keyboardType = KeyboardType.Phone)
         else -> keyboardOptions
     }
