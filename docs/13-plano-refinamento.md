@@ -17,7 +17,7 @@
 | W. Web | 1 | 2 | — | W1–W3 |
 | X. Plataformas (Android, iOS, desktop) | — | 3 | 1 | X1–X4 |
 | A. Acessibilidade | — | 4 | — | A1–A4 |
-| T. Telas e fluxos | — | 5 | 4 | T1–T9 |
+| T. Telas e fluxos | — | 6 | 4 | T1–T10 |
 | Q. Qualidade | — | 1 | 1 | Q1–Q2 |
 
 **Como a revisão foi feita:** 101 dos 909 textos do 07 ainda não aparecem no código — cada grupo deles aponta
@@ -48,7 +48,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 | # | P | Tam | Tarefa | Onde | Por quê |
 |---|---|---|---|---|---|
 | W1 | ✅ P0 | M | **URL e histórico do navegador**: a rota atual aparece na barra de endereço, "voltar/avançar" do navegador funcionam, e abrir `/j/{código}`, `/g/{id}` ou `/a/{id}` direto na web leva à tela certa (hoje sempre abre o onboarding/Home). | `wasmJsMain/main.kt`, `navigation/` | O fluxo principal da web (US-001: convidado abre o link e paga sem instalar) **não funciona** pela URL. |
-| W2 | P1 | P | **"Usar minha localização" na web** via `navigator.geolocation` (hoje a web só aceita cidade digitada). | `core/platform/DeviceLocation.wasmJs.kt` | Paridade com Android/iOS; a busca por distância depende disso. |
+| W2 | ✅ P1 | P | **"Usar minha localização" na web** via `navigator.geolocation` (hoje a web só aceita cidade digitada). | `core/platform/DeviceLocation.wasmJs.kt` | Paridade com Android/iOS; a busca por distância depende disso. |
 | W3 | P1 | P | **PWA e cabeçalho**: `manifest.webmanifest` (nome, ícones, cores), `apple-touch-icon`, `theme-color` claro/escuro e descrição. | `wasmJsMain/resources/` | "Adicionar à tela inicial" e aparência correta no celular. |
 
 ## X. Plataformas
@@ -81,6 +81,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 | T6 | P2 | P | **Reembolso que falhou** (`error_refund_failed_*`): estado no comprovante com ação de ajuda. | `ReceiptScreen` | Estado previsto no 07 §4 sem tela. |
 | T7 | P2 | P | **Presença no perfil** (US-131, `profile_attendance`): "Presença: 9 de 10 jogos" a partir das avaliações (E15). | perfil | Fecha o ciclo do E15. |
 | T8 | P2 | M | **Passar minha vaga** (US-111): atleta pago em jogo confirmado oferece a vaga à lista de espera; quando alguém paga, ele é reembolsado sem taxa (`WaitlistManager.substituir` já existe). | game detail | Regra pronta no domínio, sem tela. |
+| T10 | P1 | P | **Saudação do visitante** mostra "E aí, !" (nome vazio) → "E aí!" / saudação de visitante. | `HomeScreen` | Visto na web sem login. |
 | T9 | P2 | M | **Cadastro da arena completo** (US-010/012): endereço com CEP, telefone, comodidades e horário de funcionamento; ao publicar, a arena aparece na busca. Hoje o cadastro não salva nada. | `arenaadmin/onboarding` | Fluxo de entrada da arena. |
 
 ## Q. Qualidade
@@ -112,3 +113,4 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 - **M1** ✅ `SCMap` em `core/designsystem/map/` (projeção, `MapTileCache` com LRU e 6 downloads simultâneos, gestos, pinos, zoom, atribuição). Testes em `MapMathTest`.
 - **M2** ✅ Busca com mapa: "Ver no mapa"/"Ver em lista" no celular (pino → card compacto da quadra mais barata da arena) e lista + mapa lado a lado no expandido (pino rola a lista). Verificado na web e no Android (no emulador, o relógio atrasado quebrava o TLS — não é defeito do app).
 - **M3** ✅ Mini-mapa estático na página da arena (`SCMap(interactive = false)`), toque abre a rota.
+- **W2** ✅ "Usar minha localização" na web (`navigator.geolocation`; negado → cidade digitada).
