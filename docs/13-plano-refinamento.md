@@ -41,7 +41,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 |---|---|---|---|---|---|
 | M1 | ✅ P0 | G | **Componente `SCMap`**: projeção Web Mercator, cache de tiles em memória (LRU), arrastar, zoom por pinça, duplo toque e roda do mouse, botões +/− (alvos de 48 dp), pinos com preço (`SCMapPin`), pino selecionado, atribuição "© OpenStreetMap" sempre visível, estado sem conexão. Testes da projeção e do enquadramento. | `core/designsystem/component/SCMap.kt` | Base de M2 e M3. Precisa ser igual nas 4 plataformas. |
 | M2 | ✅ P1 | M | **Busca com mapa**: no compacto, botão "Ver no mapa" (`search_map_view`) alterna lista ↔ mapa, e tocar no pino mostra o card da quadra por cima; no expandido, lista à esquerda e mapa à direita, sincronizados (selecionar card destaca o pino e vice-versa). Os filtros valem para os dois. | `feature/explore/` | US-200 e o 09 ficha 4. No expandido a busca hoje mostra só 2 cards por tela (ver T4). |
-| M3 | P1 | P | **Mini-mapa na página da arena** com o pino e "Como chegar"; tocar abre o app de mapas. | `feature/arena/ArenaDetailScreen.kt` | O endereço hoje é só texto. |
+| M3 | ✅ P1 | P | **Mini-mapa na página da arena** com o pino e "Como chegar"; tocar abre o app de mapas. | `feature/arena/ArenaDetailScreen.kt` | O endereço hoje é só texto. |
 
 ## W. Web
 
@@ -111,3 +111,4 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 - **W1** ✅ URL e histórico na web (`WebLinks`, `bindToBrowserNavigation`); links entram numa fila até o `NavHost` ter grafo — corrige também a abertura a frio em qualquer plataforma. Hospedagem: 12 §13.
 - **M1** ✅ `SCMap` em `core/designsystem/map/` (projeção, `MapTileCache` com LRU e 6 downloads simultâneos, gestos, pinos, zoom, atribuição). Testes em `MapMathTest`.
 - **M2** ✅ Busca com mapa: "Ver no mapa"/"Ver em lista" no celular (pino → card compacto da quadra mais barata da arena) e lista + mapa lado a lado no expandido (pino rola a lista). Verificado na web e no Android (no emulador, o relógio atrasado quebrava o TLS — não é defeito do app).
+- **M3** ✅ Mini-mapa estático na página da arena (`SCMap(interactive = false)`), toque abre a rota.

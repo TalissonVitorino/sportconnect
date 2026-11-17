@@ -2,6 +2,11 @@
 
 package br.com.sportconnect.feature.arena
 
+import br.com.sportconnect.resources.cd_directions
+import br.com.sportconnect.core.designsystem.map.rememberSCMapCamera
+import br.com.sportconnect.core.designsystem.map.SCMapPin
+import br.com.sportconnect.core.designsystem.map.SCMap
+import br.com.sportconnect.core.designsystem.map.MapTileCache
 import br.com.sportconnect.resources.arena_detail_amenity_lighting
 import br.com.sportconnect.resources.arena_detail_amenity_bar
 import br.com.sportconnect.resources.arena_detail_amenity_locker
@@ -279,6 +284,21 @@ private fun ArenaInfo(state: ArenaDetailUiState.Content, actions: ArenaDetailAct
                 )
             }
         }
+        // M3: mini-mapa com o pino; tocar abre o app de mapas (mesmo destino do "Como chegar").
+        val tiles: MapTileCache = koinInject()
+        val camera = rememberSCMapCamera(a.localizacao.latitude, a.localizacao.longitude, 15.0)
+        val pinDesc = stringResource(Res.string.cd_directions)
+        Spacer(Modifier.height(12.dp))
+        SCMap(
+            camera, tiles,
+            listOf(SCMapPin(a.id, a.localizacao.latitude, a.localizacao.longitude, a.endereco.bairro.ifBlank { a.nome }, pinDesc)),
+            modifier = Modifier.fillMaxWidth().height(150.dp).clip(MaterialTheme.shapes.large).testTag("arena_minimap"),
+            selectedPinId = a.id,
+            onPinClick = { share.openUrl(mapsUrl("${a.nome}, ${a.endereco.resumo}")) },
+            onMapClick = { share.openUrl(mapsUrl("${a.nome}, ${a.endereco.resumo}")) },
+            interactive = false,
+            fitPinsOnStart = false,
+        )
         Spacer(Modifier.height(16.dp))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             state.detail.esportes.sortedBy { it.ordinal }.forEach { s ->

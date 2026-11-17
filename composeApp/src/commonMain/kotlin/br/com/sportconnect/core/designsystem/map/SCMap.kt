@@ -1,5 +1,6 @@
 package br.com.sportconnect.core.designsystem.map
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -120,6 +121,10 @@ fun SCMap(
     onPinClick: (SCMapPin) -> Unit = {},
     onMapClick: () -> Unit = {},
     fitPinsOnStart: Boolean = true,
+    /** false = previa estatica (dentro de paginas com rolagem): sem gestos nem +/−; toque chama [onMapClick]. */
+    interactive: Boolean = true,
+    /** Zoom maximo ao enquadrar os pinos (um pino so: aproxima ate aqui). */
+    fitMaxZoom: Double = 15.0,
 ) {
     val c = SportConnectTheme.colors
     val density = LocalDensity.current.density
@@ -127,7 +132,7 @@ fun SCMap(
     var fitted by rememberSaveable { mutableStateOf(!fitPinsOnStart) }
     LaunchedEffect(size, pins.isNotEmpty()) {
         if (!fitted && size.width > 0 && pins.isNotEmpty()) {
-            val (center, zoom) = MapMath.fit(pins.map { MapMath.project(it.latitude, it.longitude) }, size.width, size.height, density, 56f * density)
+            val (center, zoom) = MapMath.fit(pins.map { MapMath.project(it.latitude, it.longitude) }, size.width, size.height, density, 56f * density, fitMaxZoom)
             camera.center = center
             camera.zoom = zoom
             fitted = true
@@ -139,9 +144,12 @@ fun SCMap(
     LaunchedEffect(visible) { coroutineScope { visible.forEach { k -> launch { tiles.load(k) } } } }
     val unavailable = visible.isNotEmpty() && tiles.failedCount(visible) == visible.size
 
-    Box(modifier.clipToBounds().background(c.surfaceContainer).onSizeChanged { size = it }.testTag("sc_map")) {
+    Box(
+        modifier.clipToBounds().background(c.surfaceContainer).onSizeChanged { size = it }.testTag("sc_map")
+            .then(if (interactive) Modifier else Modifier.clickable(onClick = onMapClick)),
+    ) {
         Canvas(
-            Modifier.fillMaxSize()
+            if (!interactive) Modifier.fillMaxSize() else Modifier.fillMaxSize()
                 .pointerInput(density) {
                     detectTransformGestures { centroid, pan, zoom, _ ->
                         if (zoom != 1f) camera.zoomBy(zoom, centroid, IntSize(this.size.width, this.size.height), density)
@@ -205,7 +213,7 @@ fun SCMap(
                 layout(cons.maxWidth, cons.maxHeight) { pl.place((px - pl.width / 2.0).roundToInt(), (py - pl.height).roundToInt()) }
             })
         }
-        Column(Modifier.align(Alignment.TopEnd).padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (interactive) Column(Modifier.align(Alignment.TopEnd).padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             ZoomButton(Icons.Rounded.Add, stringResource(Res.string.cd_map_zoom_in), "map_zoom_in") {
                 camera.zoomBy(2f, Offset(size.width / 2f, size.height / 2f), size, density)
             }
