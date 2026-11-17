@@ -175,7 +175,17 @@ fun AppNavHost(
     startDestination: Any? = null,
 ) {
     val session: UiSessionStore = koinInject()
-    val start = remember { startDestination ?: if (session.onboardingDone.value) Route.Home else Route.Onboarding }
+    val startAuth: AuthRepository = koinInject()
+    // B3: com sessao de arena, abre no Painel. Na Home de atleta a barra fica oculta para gestores e a pessoa
+    // ficava presa sem navegacao.
+    val start = remember {
+        startDestination ?: when {
+            !session.onboardingDone.value -> Route.Onboarding
+            startAuth.currentUser.value?.papeis?.any { it == PapelUsuario.GESTOR_ARENA || it == PapelUsuario.OPERADOR_ARENA } == true ->
+                ArenaAdminRoute.Dashboard
+            else -> Route.Home
+        }
+    }
     val shell: ShellViewModel = koinViewModel()
     val shellState by shell.state.collectAsStateWithLifecycle()
     val backStack by navController.currentBackStackEntryAsState()
