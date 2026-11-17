@@ -1,5 +1,7 @@
 # Links do app (App Links / Universal Links)
 
+> Passo a passo completo de publicação (contas, chaves, servidor, Xcode, lojas): [`../12-checklist-publicacao.md`](../12-checklist-publicacao.md).
+
 O app abre direto os links que o SportConnect compartilha:
 
 | Link | Tela | Rota |
