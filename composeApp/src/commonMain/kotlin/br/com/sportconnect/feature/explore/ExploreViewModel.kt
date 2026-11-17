@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.explore
 
+import br.com.sportconnect.core.model.GeoPonto
 import br.com.sportconnect.core.data.local.AppPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -95,7 +96,9 @@ class ExploreViewModel(
         _uiState.update { it.copy(loading = true, error = false) }
         job = viewModelScope.launch {
             runCatching {
-                val arenas = nearby(esporte = s.sport)
+                // B10: distancia a partir da localizacao (ou cidade) salva no onboarding; sem ela, centro de SP.
+                val origem = prefs?.searchOrigin?.let { GeoPonto(it.latitude, it.longitude) }
+                val arenas = nearby(origem = origem, esporte = s.sport)
                 val q = s.query.trim().lowercase()
                 arenas.filter {
                     q.isEmpty() || it.arena.nome.lowercase().contains(q) || it.arena.endereco.bairro.lowercase().contains(q) ||

@@ -54,6 +54,25 @@ class AppPreferences(private val settings: Settings) {
         get() = settings.getStringOrNull(KEY_SPORTS)?.split(',')?.filter { it.isNotBlank() }?.toSet().orEmpty()
         set(value) = settings.putString(KEY_SPORTS, value.joinToString(","))
 
+    /** Onde buscar quadras (B10): coordenadas do aparelho ou do centro da cidade digitada. */
+    var searchOrigin: SavedOrigin?
+        get() {
+            val lat = settings.getDoubleOrNull(KEY_LAT) ?: return null
+            val lon = settings.getDoubleOrNull(KEY_LON) ?: return null
+            return SavedOrigin(lat, lon, settings.getStringOrNull(KEY_CITY))
+        }
+        set(value) {
+            if (value == null) {
+                settings.remove(KEY_LAT); settings.remove(KEY_LON); settings.remove(KEY_CITY)
+            } else {
+                settings.putDouble(KEY_LAT, value.latitude)
+                settings.putDouble(KEY_LON, value.longitude)
+                if (value.city == null) settings.remove(KEY_CITY) else settings.putString(KEY_CITY, value.city)
+            }
+        }
+
+    data class SavedOrigin(val latitude: Double, val longitude: Double, val city: String?)
+
     data class SavedSession(val id: String, val nome: String, val celular: String, val email: String? = null)
 
     private companion object {
@@ -66,5 +85,8 @@ class AppPreferences(private val settings: Settings) {
         const val KEY_TERMS_VERSION = PREFIX + "terms_version"
         const val KEY_MARKETING = PREFIX + "marketing_opt_in"
         const val KEY_SPORTS = PREFIX + "favorite_sports"
+        const val KEY_LAT = PREFIX + "origin_lat"
+        const val KEY_LON = PREFIX + "origin_lon"
+        const val KEY_CITY = PREFIX + "origin_city"
     }
 }

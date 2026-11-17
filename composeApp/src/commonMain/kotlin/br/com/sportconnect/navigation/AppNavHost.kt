@@ -1,7 +1,13 @@
-@file:OptIn(androidx.compose.animation.ExperimentalSharedTransitionApi::class)
+@file:OptIn(androidx.compose.animation.ExperimentalSharedTransitionApi::class, androidx.compose.material3.ExperimentalMaterial3Api::class)
 
 package br.com.sportconnect.navigation
 
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ModalBottomSheet
 import androidx.lifecycle.Lifecycle
 import br.com.sportconnect.core.designsystem.component.LocalSCNavAnimatedScope
 import br.com.sportconnect.core.designsystem.component.LocalSCSharedTransitionScope
@@ -205,12 +211,21 @@ fun AppNavHost(
 
     // Login so quando precisa (09 ficha 1): visitante explora a vontade; criar jogo e pagar pedem o celular
     // e, depois do codigo, a pessoa volta exatamente para onde ia (09 §2.5).
+    // B9: o login pedido no meio de um fluxo abre como sheet sobre a tela atual (09 ficha 2), sem perder o
+    // contexto (o convite/arena continua atras). Depois do codigo segue para onde a pessoa ia.
+    var pendingLogin by remember { mutableStateOf<AfterLogin?>(null) }
+    var loginSheetNonce by remember { mutableStateOf(0) }
+    fun requireLogin(next: AfterLogin) {
+        loginSheetNonce++
+        pendingLogin = next
+    }
+
     fun goCreate(slotId: String? = null) {
-        if (authRepo.currentUser.value == null) nav.go(Route.Auth(createGame = true, slotId = slotId)) else nav.go(Route.GameCreate(slotId))
+        if (authRepo.currentUser.value == null) requireLogin(AfterLogin.Create(slotId)) else nav.go(Route.GameCreate(slotId))
     }
 
     fun goPay(gameId: String, afterCreate: Boolean = false) {
-        if (authRepo.currentUser.value == null) nav.go(Route.Auth(payGameId = gameId)) else nav.go(Route.GamePay(gameId, afterCreate))
+        if (authRepo.currentUser.value == null) requireLogin(AfterLogin.Pay(gameId)) else nav.go(Route.GamePay(gameId, afterCreate))
     }
 
     SCAdaptiveNavigation(
@@ -359,7 +374,7 @@ fun AppNavHost(
                         entry.toRoute(),
                         GuestInviteActions(
                             pay = { goPay(it) },
-                            login = { nav.go(Route.Auth(payGameId = it)) },
+                            login = { requireLogin(AfterLogin.Pay(it)) },
                             seeGame = { nav.replace(Route.GameDetail(it)) },
                             close = { nav.resetTo(Route.Home) },
                         ),
@@ -421,6 +436,37 @@ fun AppNavHost(
             SCSnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(bottom = 88.dp))
         }
     }
+
+    pendingLogin?.let { target ->
+        ModalBottomSheet(
+            onDismissRequest = { pendingLogin = null },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            containerColor = SportConnectTheme.colors.surface,
+            modifier = Modifier.testTag("auth_sheet"),
+        ) {
+            Box(Modifier.fillMaxWidth().fillMaxHeight(0.92f)) {
+                AuthRoute(
+                    onClose = { pendingLogin = null },
+                    onDone = {
+                        pendingLogin = null
+                        when (target) {
+                            is AfterLogin.Pay -> nav.go(Route.GamePay(target.gameId))
+                            is AfterLogin.Create -> nav.go(Route.GameCreate(target.slotId))
+                        }
+                    },
+                    onOpenLegal = { pendingLogin = null; nav.go(Route.Legal(it.name)) },
+                    // Chave nova a cada abertura: o ViewModel anterior ja terminou (done = true).
+                    vm = koinViewModel(key = "auth-sheet-$loginSheetNonce"),
+                )
+            }
+        }
+    }
+}
+
+/** Para onde seguir depois do login pedido no meio de um fluxo (09 §2.5). */
+private sealed interface AfterLogin {
+    data class Pay(val gameId: String) : AfterLogin
+    data class Create(val slotId: String?) : AfterLogin
 }
 
 /** Acoes de navegacao (encapsula o NavHostController; facilita previews/testes). */

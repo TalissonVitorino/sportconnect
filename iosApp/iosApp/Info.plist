@@ -29,6 +29,8 @@
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Usamos sua localização só para mostrar arenas próximas. Não compartilhamos com ninguém.</string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

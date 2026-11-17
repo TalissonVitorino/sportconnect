@@ -140,6 +140,8 @@ kotlin {
         }
         if (androidEnabled) {
             androidMain.dependencies {
+                // Pedido de permissao (localizacao) a partir do Compose.
+                implementation(libs.androidx.activity.compose)
                 implementation(libs.kotlinx.coroutines.android)
                 implementation(libs.ktor.client.okhttp)
             }

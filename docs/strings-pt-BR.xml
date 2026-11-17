@@ -829,6 +829,14 @@
     <string name="support_email">Mandar e-mail</string>
     <string name="support_whatsapp_message">Oi! Preciso de ajuda com o SportConnect.</string>
     <string name="cd_edit_profile">Editar perfil</string>
+    <!-- 11-backlog · B10 localização (propostos) -->
+    <string name="onboarding_location_city_label">Sua cidade</string>
+    <string name="onboarding_location_city_placeholder">Ex.: São Paulo</string>
+    <string name="onboarding_location_found">Pronto! Vamos mostrar quadras perto de você.</string>
+    <string name="onboarding_location_city_set">Vamos mostrar quadras em %1$s.</string>
+    <string name="onboarding_location_unavailable">Não conseguimos sua localização agora. Digite sua cidade.</string>
+    <string name="onboarding_location_city_unknown">Ainda não temos arenas em %1$s. Por enquanto, vamos mostrar as de São Paulo.</string>
+    <string name="onboarding_location_locating">Buscando sua localização…</string>
 
     <!-- ===== Minha Arena (strings_arena.xml) ===== -->
     <!-- Shell / navegacao -->
