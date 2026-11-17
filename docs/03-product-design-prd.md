@@ -223,6 +223,27 @@ Legenda de prioridade dentro do MVP: **P0** = não lança sem; **P1** = entra no
 
 ---
 
+### 6.4 Requisitos de conteúdo (além de texto de interface)
+
+Plano de **Escopo** (Garrett): o texto de interface está no [07-ux-writing.md](./07-ux-writing.md). Esta seção cobre o conteúdo que a plataforma, as arenas e o jurídico precisam fornecer. Itens marcados com ⚖️ exigem revisão jurídica antes de ir ao ar.
+
+| ID | Conteúdo | Quem produz | Requisitos | Fase |
+|---|---|---|---|---|
+| CT-01 | Fotos da arena e das quadras | Arena (upload) | Mínimo de 1 foto da arena e 1 por quadra para publicar (hoje o cadastro não exige; a lista usa um desenho de quadra no lugar). JPEG ou PNG, até 5 MB, proporção 16:9 ou 4:3, compressão no envio. Texto alternativo gerado a partir do nome da quadra e do esporte. Moderação básica (sem rostos de terceiros em destaque, sem dados pessoais visíveis) | MVP |
+| CT-02 | Descrição e comodidades da arena | Arena | Até 400 caracteres de descrição. Comodidades em lista fechada (vestiário, estacionamento, bar, churrasqueira, iluminação, acessibilidade). Endereço completo, com ponto no mapa e instruções de chegada ("Como chegar") | MVP |
+| CT-03 | Regras e formato por esporte | Plataforma | Para cada um dos 10 esportes: número mínimo e máximo de vagas (RN-05), duração padrão, formato em uma linha (ex.: "5 contra 5 + goleiros"), material necessário e observações de segurança. Exibido no criar jogo e no detalhe do jogo | MVP |
+| CT-04 | Regras da arena | Arena | Texto livre curto: calçado permitido, atraso tolerado, uso de colete, consumo no local. Exibido no detalhe do jogo e no convite, sempre antes do pagamento ("Ver regras") | MVP |
+| CT-05 | Termos de uso e Política de privacidade ⚖️ | Plataforma + jurídico | Texto completo e versionado, com data de vigência. Aceite registrado no cadastro (LGPD, US-003). Resumo em linguagem simples na tela de convite | MVP |
+| CT-06 | Política de cancelamento e reembolso ⚖️ | Plataforma + jurídico | Versão completa e resumo em uma tela. Exibida **antes** do pagamento e aceita explicitamente (ver [02-service-design.md](./02-service-design.md) §5). Coerente com as RN-18 a RN-25 e com o CDC | MVP |
+| CT-07 | Contrato e termos para a arena ⚖️ | Plataforma + jurídico | Termo de adesão com taxas, prazos de repasse, responsabilidade em cancelamentos pela arena e tratamento de dados dos atletas. Aceite no cadastro da arena (US-010) | MVP |
+| CT-08 | Ajuda e perguntas frequentes | Plataforma | Mínimo de 12 respostas curtas cobrindo: como o rateio funciona, o que acontece se alguém não pagar, prazos do Pix, reembolso, cancelamento por chuva, como chegar. Acesso a partir do detalhe do jogo, do pagamento e do perfil | MVP |
+| CT-09 | Comprovante e extrato | Sistema | Comprovante com identificador da transação, valor, taxa de conveniência discriminada, data e hora, recebedor. Extrato da arena com bruto, taxa e líquido (RN-30) | MVP |
+| CT-10 | Mensagens externas (WhatsApp, push, e-mail) | Plataforma | Modelos aprovados pela API do WhatsApp, com os textos do 07. Prévia do link do convite (título, descrição e imagem) com o nome do jogo, esporte, data e vagas restantes | MVP |
+| CT-11 | Ilustrações e estados vazios | Design | Conjunto do design system (06) para: sem jogos, sem resultados, sem conexão, erro. Ilustrações próprias dos esportes sem ícone no Material Symbols (futevôlei, padel, beach tennis) | Fase 2 |
+| CT-12 | Conteúdo de onboarding por esporte | Plataforma | Dicas curtas por esporte para quem joga pela primeira vez | Fase 2 |
+
+**Responsabilidade e governança:** cada item tem um responsável e uma versão. Conteúdo de arena é revisado antes de aparecer na busca (CT-01, CT-02, CT-04). Textos jurídicos têm data de vigência e histórico de aceite por usuário.
+
 ## 7. Critérios de aceite do MVP (Gherkin)
 
 ```gherkin

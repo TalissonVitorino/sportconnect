@@ -52,6 +52,8 @@ object AnalyticsEvents {
     const val LISTA_ESPERA_ENTROU = "lista_espera_entrou"
     const val SUBSTITUICAO_CONCLUIDA = "substituicao_concluida"
     const val AVALIACAO_ENVIADA = "avaliacao_enviada"
+    const val ARENA_VISUALIZADA = "arena_visualizada"
+    const val EXTRATO_EXPORTADO = "extrato_exportado"
 }
 
 data class EventoAnalytics(val nome: String, val propriedades: Map<String, Any?>)

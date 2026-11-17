@@ -1,11 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  SportConnect - strings pt-BR (Compose Multiplatform resources)
-  Gerado a partir de docs/07-ux-writing.md. Não editar textos aqui sem atualizar o catálogo.
-  Destino: app/composeApp/src/commonMain/composeResources/values/strings.xml
-  Placeholders: %1$s = texto/valor já formatado; %1$d = inteiro.
+  CÓPIA DE REFERÊNCIA para o time de UX Writing e de produto.
+  GERADO a partir de composeApp/src/commonMain/composeResources/values/strings.xml + strings_arena.xml.
+  A fonte de verdade é o app: não edite este arquivo; edite os de composeResources e regenere.
 -->
 <resources>
+    <!-- Esqueleto (chaves pre-existentes do app) -->
+    <string name="app_name">SportConnect</string>
+    <string name="home_tagline">Seu jogo, sua quadra, o rateio resolvido.</string>
+
+    <!-- Design System (`ds_`): rotulos acessiveis e nomes padrao usados pelos componentes SC* -->
+    <string name="ds_loading">Carregando</string>
+    <string name="ds_status_prefix">Status: %1$s</string>
+    <string name="ds_booking_awaiting_payment">Aguardando pagamento</string>
+    <string name="ds_booking_confirmed">Confirmado</string>
+    <string name="ds_booking_cancelled">Cancelado</string>
+    <string name="ds_booking_expired">Expirado</string>
+    <string name="ds_booking_completed">Concluído</string>
+    <string name="ds_slot_available">Disponível</string>
+    <string name="ds_slot_busy">Ocupado</string>
+    <string name="ds_slot_on_hold">Pré-reservado</string>
+    <string name="ds_slot_selected">Selecionado</string>
+    <string name="ds_slot_releases_at">Libera às %1$s</string>
+    <string name="ds_share_paid">Pagou</string>
+    <string name="ds_share_pending">Falta pagar</string>
+    <string name="ds_share_processing">Pagamento em análise</string>
+    <string name="ds_share_covered">Coberta pelo organizador</string>
+    <string name="ds_share_refunded">Reembolsada</string>
+    <string name="ds_split_legend_paid">Pagas</string>
+    <string name="ds_split_legend_processing">Em análise</string>
+    <string name="ds_split_legend_covered">Cobertas</string>
+    <string name="ds_split_legend_pending">Pendentes</string>
+    <string name="ds_split_count">%1$d de %2$d pagos</string>
+    <string name="ds_countdown_expired">Prazo encerrado</string>
+    <string name="ds_avatar_more">e mais %1$d participantes</string>
+    <string name="ds_you">Você</string>
+    <string name="ds_open_spot">Vaga aberta</string>
+    <string name="ds_pix_waiting">Aguardando pagamento…</string>
+    <string name="ds_pix_processing">Confirmando com o banco…</string>
+    <string name="ds_pix_paid">Pagamento recebido</string>
+    <string name="ds_pix_expired">Código expirado</string>
+    <string name="ds_pix_copied">Código copiado</string>
+    <string name="ds_pix_pay_with_card">Pagar com cartão</string>
+    <string name="ds_pix_steps">1. Abra o app do seu banco · 2. Escolha Pix copia e cola · 3. Cole e confirme</string>
+    <string name="ds_pix_expires_label">para o código expirar</string>
+    <string name="ds_show_more">Ver código completo</string>
+    <string name="ds_show_less">Recolher código</string>
+    <string name="ds_sport_futebol_society">Futebol society</string>
+    <string name="ds_sport_futsal">Futsal</string>
+    <string name="ds_sport_volei">Vôlei</string>
+    <string name="ds_sport_volei_praia">Vôlei de praia</string>
+    <string name="ds_sport_futevolei">Futevôlei</string>
+    <string name="ds_sport_beach_tennis">Beach tennis</string>
+    <string name="ds_sport_padel">Padel</string>
+    <string name="ds_sport_tenis">Tênis</string>
+    <string name="ds_sport_basquete">Basquete</string>
+    <string name="ds_sport_handebol">Handebol</string>
+
 
     <!-- 3.1 Comum (`common_`) -->
     <string name="common_continue">Continuar</string>
@@ -119,7 +170,7 @@
     <string name="slot_on_hold">Pré-reservado</string>
     <string name="slot_price">%1$s</string>
     <string name="slot_summary">%1$s · %2$s · %3$s</string>
-    <string name="slot_too_soon_hint">Jogos com menos de 2h de antecedência precisam ser pagos na hora.</string>
+    <string name="slot_too_soon_hint">Para dividir o valor, reserve com pelo menos 2h30 de antecedência. Mais perto do jogo, só com pagamento integral.</string>
     <string name="slot_select_cta">Reservar este horário</string>
     <string name="slot_hold_notice">Ao continuar, seguramos este horário por %1$s enquanto a galera paga.</string>
 
@@ -135,7 +186,7 @@
     <string name="game_create_spots_helper">Contando com você. O valor da quadra é dividido por esse número.</string>
     <string name="game_create_split_preview">%1$s ÷ %2$d vagas = %3$s por pessoa</string>
     <string name="game_create_fee_notice">Cada atleta paga também %1$s de taxa de conveniência.</string>
-    <string name="game_create_organizer_pays_own">Pagar minha cota agora</string>
+    <!-- DEPRECIADA (10-ui-design §0.2) --><string name="game_create_organizer_pays_own">Pagar minha cota agora</string>
     <string name="game_create_deadline_label">Prazo para todo mundo pagar</string>
     <string name="game_create_deadline_value">Até %1$s</string>
     <string name="game_create_deadline_helper">O horário fica pré-reservado até lá. O prazo máximo é 2h antes do jogo.</string>
@@ -151,7 +202,7 @@
     <string name="game_create_rule_recommended">Recomendado</string>
     <string name="game_create_review_title">Confira antes de criar</string>
     <string name="game_create_total_label">Valor da quadra</string>
-    <string name="game_create_cta">Criar jogo e chamar a galera</string>
+    <!-- DEPRECIADA (10-ui-design §0.2) --><string name="game_create_cta">Criar jogo e chamar a galera</string>
     <string name="game_create_success">Jogo criado! Agora é só mandar o link.</string>
 
     <!-- 3.9 Convite (`invite_`) -->
@@ -356,8 +407,8 @@
     <string name="error_no_connection_body">Confira o Wi-Fi ou os dados móveis e tente de novo. Se você já pagou, seu pagamento está seguro.</string>
     <string name="error_server_title">Não conseguimos carregar agora</string>
     <string name="error_server_body">O problema é do nosso lado. Tente de novo em alguns segundos.</string>
-    <string name="error_hold_expired_title">A pré-reserva expirou</string>
-    <string name="error_hold_expired_body">Seguramos o horário por 10min enquanto você criava o jogo. Confira se ele ainda está livre.</string>
+    <!-- DEPRECIADA (10-ui-design §0.2) --><string name="error_hold_expired_title">A pré-reserva expirou</string>
+    <!-- DEPRECIADA (10-ui-design §0.2) --><string name="error_hold_expired_body">Seguramos o horário por 10min enquanto você criava o jogo. Confira se ele ainda está livre.</string>
     <string name="error_game_full_title">As vagas acabaram</string>
     <string name="error_game_full_body">Alguém pagou a última cota antes de você. Nada foi cobrado. Entre na lista de espera.</string>
     <string name="error_game_cancelled_title">Esse jogo foi cancelado</string>
@@ -367,7 +418,7 @@
     <string name="error_code_invalid_title">Código incorreto</string>
     <string name="error_code_invalid_body">Confira os 6 números da mensagem e digite de novo.</string>
     <string name="error_code_expired_title">O código expirou</string>
-    <string name="error_code_expired_body">Códigos valem por 5min. Peça um novo.</string>
+    <string name="error_code_expired_body">Códigos valem por 10min. Peça um novo.</string>
     <string name="error_phone_invalid_title">Número de celular inválido</string>
     <string name="error_phone_invalid_body">Digite o DDD e os 9 dígitos, por exemplo (11) 98765-4321.</string>
     <string name="error_too_many_attempts_title">Muitas tentativas seguidas</string>
@@ -380,7 +431,7 @@
     <string name="error_refund_failed_body">A conta de origem não aceitou a devolução. Informe uma chave Pix para recebermos o reembolso.</string>
     <string name="error_refund_failed_action">Informar chave Pix</string>
     <string name="error_deadline_too_short_title">Não dá tempo de ratear</string>
-    <string name="error_deadline_too_short_body">Faltam menos de 2h para o jogo. Pague o valor total agora ou escolha outro horário.</string>
+    <string name="error_deadline_too_short_body">Falta pouco tempo para o jogo. Para ratear, reserve com pelo menos 2h30 de antecedência, ou pague o valor total agora.</string>
     <string name="error_price_changed_title">O preço do horário mudou</string>
     <string name="error_price_changed_body">A arena atualizou o valor para %1$s. Confira o novo rateio antes de continuar.</string>
     <string name="error_location_denied_title">Sem acesso à localização</string>
@@ -493,4 +544,340 @@
     <string name="wa_game_confirmed">Jogo confirmado! ⚽\n📍 %1$s\n🗓 %2$s\nTodo mundo pagou e a quadra está garantida. Bom jogo!\n%3$s</string>
     <string name="wa_game_cancelled">O jogo de %1$s na %2$s foi cancelado.\nMotivo: %3$s.\nSe você pagou, devolvemos %4$s para a mesma conta. Cai em até 1 dia útil.\n%5$s</string>
     <string name="wa_resplit_request">%1$s, faltaram %2$d cotas no jogo de %3$s.\nPra o jogo acontecer, cada pagante precisa colocar mais %4$s.\nResponda até %5$s. Se não aceitar, devolvemos sua cota.\n%6$s</string>
+
+    <!-- 10-ui-design §0.3: strings novas -->
+    <!-- Navegação e modo -->
+    <string name="nav_home">Início</string>
+    <string name="nav_games">Jogos</string>
+    <string name="nav_search">Buscar</string>
+    <string name="nav_profile">Perfil</string>
+    <string name="cd_nav_badge">%1$s, %2$d pendências</string>
+    <string name="profile_use_as">Usar como</string>
+    <string name="profile_mode_athlete">Atleta</string>
+    <string name="profile_mode_arena">Minha Arena</string>
+    <string name="mode_switched_arena">Você está no modo Minha Arena</string>
+    <string name="mode_switched_athlete">Você está no modo Atleta</string>
+    <string name="offline_banner">Sem conexão — exibindo dados de %1$s</string>
+    <string name="online_banner">Conectado</string>
+    <string name="common_undo">Desfazer</string>
+    <string name="common_updated_now">Atualizado agora</string>
+    <!-- Status do jogo (badge Large, push, e-mail) -->
+    <string name="game_status_awaiting">Pré-reservado · aguardando pagamentos</string>
+    <string name="game_status_confirmed">Confirmado</string>
+    <string name="game_status_in_progress">Em andamento</string>
+    <string name="game_status_done">Concluído</string>
+    <string name="game_status_cancelled">Cancelado</string>
+    <string name="game_status_expired">Expirado</string>
+    <string name="cd_game_status">Status: %1$s</string>
+    <!-- Home e Meus jogos -->
+    <string name="home_section_decision">Precisa da sua resposta</string>
+    <string name="home_role_organizer">Você organiza</string>
+    <string name="my_games_title">Meus jogos</string>
+    <string name="my_games_tab_upcoming">Próximos</string>
+    <string name="my_games_tab_past">Anteriores</string>
+    <string name="my_games_repeat">Repetir este jogo</string>
+    <string name="common_per_person_estimate">≈ %1$s por pessoa com %2$d vagas</string>
+    <!-- Arena (atleta) e horário -->
+    <string name="arena_detail_no_slots_today">Nenhum horário livre hoje</string>
+    <string name="arena_detail_see_tomorrow">Ver amanhã</string>
+    <string name="arena_detail_unpublished_title">Essa arena não está recebendo reservas agora</string>
+    <string name="arena_detail_unpublished_cta">Voltar para a busca</string>
+    <string name="arena_detail_price_range">%1$s–%2$s/h</string>
+    <string name="cd_arena_share">Compartilhar arena</string>
+    <string name="slot_hold_releases">Libera às %1$s</string>
+    <string name="slot_empty_day">Nenhum horário livre neste dia</string>
+    <string name="slot_next_free_day">Ver %1$s</string>
+    <string name="slot_taken_live">Esse horário acabou de ser escolhido</string>
+    <string name="slot_full_payment_tag">Pagamento integral</string>
+    <string name="slot_selection_error">Escolha horários seguidos, de 1h a 3h.</string>
+    <!-- Criar jogo -->
+    <string name="game_create_step_counter">Passo %1$d de %2$d: %3$s</string>
+    <string name="game_create_empty_slot_cta">Escolher quadra e horário</string>
+    <string name="game_create_spots_range_error">Para %1$s, escolha entre %2$d e %3$d vagas</string>
+    <string name="game_create_share_min_error">Cada cota precisa ser de pelo menos %1$s. Diminua o número de vagas.</string>
+    <string name="game_create_rounding_note">Sua cota: %1$s, inclui %2$s de arredondamento</string>
+    <string name="game_create_rule_unavailable">Precisa de pelo menos %1$s até o jogo</string>
+    <string name="game_create_rule_cancel_example">Ex.: se 2 pessoas não pagarem, ninguém perde dinheiro, mas o jogo não acontece.</string>
+    <string name="game_create_rule_resplit_example">Ex.: se 2 pessoas não pagarem, cada um dos %1$d que pagaram paga mais %2$s, se aceitar.</string>
+    <string name="game_create_guarantee_title">Como você garante o que faltar?</string>
+    <string name="game_create_guarantee_card">Cartão de crédito</string>
+    <string name="game_create_guarantee_card_body">Separamos até %1$s no limite. Só cobramos as cotas que faltarem no prazo.</string>
+    <string name="game_create_guarantee_pix">Pix no fim do prazo</string>
+    <string name="game_create_guarantee_pix_body">Você recebe um Pix com o valor que faltar. Se não pagar até %1$s, o jogo é cancelado e todo mundo recebe o dinheiro de volta.</string>
+    <string name="game_create_resplit_cap_label">Limite a mais por pessoa</string>
+    <string name="game_create_resplit_cap_helper">Ninguém paga mais que %1$s a mais. Se precisar passar disso, o jogo é cancelado e todo mundo recebe o dinheiro de volta.</string>
+    <string name="game_create_review_court_line">Quadra (%1$s)</string>
+    <string name="game_create_review_spots_line">Vagas</string>
+    <string name="game_create_review_each_share">Cota de cada atleta</string>
+    <string name="game_create_review_your_share">Sua cota</string>
+    <string name="game_create_review_pay_now">Você paga agora</string>
+    <string name="game_create_review_rule">Regra: %1$s</string>
+    <string name="game_create_review_deadline">Prazo das cotas: %1$s</string>
+    <string name="game_create_pay_and_hold_cta">Pagar e pré-reservar</string>
+    <string name="game_create_pay_and_hold_note">Você paga sua cota agora e o horário fica pré-reservado até %1$s.</string>
+    <string name="game_create_exit_title">Sair sem criar o jogo?</string>
+    <string name="game_create_exit_body">O rascunho fica salvo por 7 dias.</string>
+    <string name="game_create_exit_confirm">Sair</string>
+    <string name="game_create_exit_keep">Continuar criando</string>
+    <string name="game_create_calculating">Calculando…</string>
+    <!-- Convite (organizador) e detalhe do jogo -->
+    <string name="invite_generating_link">Gerando link…</string>
+    <string name="invite_see_game">Ver o jogo</string>
+    <string name="invite_link_preview_label">Assim o link aparece no WhatsApp</string>
+    <string name="game_realtime_hint">Quem pagar aparece aqui na hora.</string>
+    <string name="game_invite_more">Convidar mais gente</string>
+    <string name="game_participants_title">Quem está no jogo</string>
+    <string name="game_your_payment_title">Seu pagamento</string>
+    <string name="game_your_payment_paid">%1$s · Pago às %2$s</string>
+    <string name="game_resolution_banner">Prazo das cotas encerrado. Resolvendo a regra.</string>
+    <string name="game_resolution_open">Ver o que falta</string>
+    <string name="game_new_payment_chip">%1$d novo pagamento</string>
+    <string name="split_remind_one">Lembrar</string>
+    <string name="cd_remind_person">Lembrar %1$s de pagar</string>
+    <string name="split_remind_limit">Você já lembrou %1$s. Dá pra lembrar de novo às %2$s.</string>
+    <string name="split_status_covered">Coberta pelo organizador</string>
+    <string name="split_status_refunded">Reembolsada</string>
+    <string name="split_status_paid_at">Pagou às %1$s</string>
+    <string name="split_legend_paid">Pagas</string>
+    <string name="split_legend_processing">Em análise</string>
+    <string name="split_legend_pending">Faltam</string>
+    <string name="split_legend_covered">Cobertas</string>
+    <string name="split_rule_row">Regra: %1$s</string>
+    <string name="split_role_organizer">Organizador</string>
+    <string name="split_self_name">Você</string>
+    <string name="cancel_organizer_cannot_leave">Quem organiza não sai do jogo. Se precisar, cancele o jogo e todo mundo recebe o dinheiro de volta.</string>
+    <string name="cancel_outside_window">Não dá mais para cancelar pelo app: faltam menos de %1$s para o jogo. Fale com a arena.</string>
+    <string name="cancel_leave_refund_value">%1$s (a taxa de conveniência não é devolvida)</string>
+    <string name="wa_group_reminder">Faltam %1$d cotas pro jogo de %2$s e o prazo é %3$s.\nQuem ainda não pagou, paga pelo link:\n%4$s</string>
+    <!-- Pagamento -->
+    <string name="payment_title">Pagar cota</string>
+    <string name="payment_spot_held">Sua vaga está segura por %1$s</string>
+    <string name="payment_pix_cta">Pagar %1$s com Pix</string>
+    <string name="payment_generating_pix">Gerando seu Pix…</string>
+    <string name="payment_card_fee_hint">%1$s de taxa</string>
+    <string name="payment_no_fee_note">Sem taxa de conveniência: quem salva o jogo não paga taxa.</string>
+    <string name="pix_receiver">Recebedor: %1$s</string>
+    <string name="pix_processing">Confirmando com o banco…</string>
+    <string name="pix_code_copied_button">Código copiado</string>
+    <string name="pix_see_game">Ver o jogo</string>
+    <string name="pix_pay_with_card">Pagar com cartão</string>
+    <string name="cd_pix_code_expand">Mostrar código Pix completo</string>
+    <string name="pix_step_1">Abra o app do seu banco</string>
+    <string name="pix_step_2">Escolha Pix copia e cola</string>
+    <string name="pix_step_3">Cole o código e confirme</string>
+    <string name="payment_close_title">Já fez o Pix?</string>
+    <string name="payment_close_body">Se você já pagou, não pague de novo: a gente avisa assim que o banco confirmar.</string>
+    <string name="payment_close_confirm">Sair</string>
+    <string name="payment_close_keep">Continuar aqui</string>
+    <string name="payment_app_offer_title">Receba avisos do jogo no app</string>
+    <string name="payment_app_offer_cta">Baixar o app</string>
+    <string name="payment_app_offer_dismiss">Agora não</string>
+    <!-- Convite (convidado) -->
+    <string name="guest_protected_payment">Pagamento protegido</string>
+    <string name="guest_game_full_title">Jogo completo</string>
+    <string name="guest_game_full_body">Todas as vagas já foram pagas. Nada foi cobrado de você.</string>
+    <string name="guest_who_is_in_more">e mais %1$d</string>
+    <string name="guest_leave_policy">Desistiu antes de o jogo ser confirmado? Você recebe a cota de volta.</string>
+    <string name="guest_see_rules">Ver regras</string>
+    <string name="guest_open_in_app">Abrir no app</string>
+    <string name="guest_declined">Tudo certo. Quer avisar %1$s?</string>
+    <string name="guest_declined_notify">Avisar no WhatsApp</string>
+    <!-- Resolução (fim do prazo) -->
+    <string name="resolve_cover_residual_cta">Cobrir %1$s</string>
+    <string name="resolve_accepted_count">%1$d de %2$d já aceitaram</string>
+    <string name="resolve_covers_consequence">Se você não pagar até %1$s, o jogo é cancelado e todo mundo recebe o dinheiro de volta.</string>
+    <string name="countdown_processing">Processando o prazo…</string>
+    <!-- Confirmação e momentos de marca -->
+    <string name="confirmed_brand_word">Fechou!</string>
+    <string name="home_empty_hint">Escolha a quadra, mande o link e cada um paga a sua parte.</string>
+    <string name="guest_first_open_kicker">Convite pra jogar</string>
+    <!-- Minha Arena -->
+    <string name="arena_now_title">Agora</string>
+    <string name="arena_holds_title">Pré-reservas</string>
+    <string name="arena_attention_title">Atenção (%1$d)</string>
+    <string name="arena_alert_no_schedule">%1$s sem horários a partir de %2$s</string>
+    <string name="arena_alert_publish">Publicar horários</string>
+    <string name="arena_schedule_status_in_progress">Em andamento</string>
+    <string name="arena_schedule_status_free">Livre</string>
+    <string name="arena_schedule_status_closed">Fechado</string>
+    <string name="arena_schedule_day">Dia</string>
+    <string name="arena_schedule_week">Semana</string>
+    <string name="arena_schedule_today">Hoje</string>
+    <string name="arena_schedule_see_all">Agenda completa</string>
+    <string name="arena_summary_title">Resumo do dia</string>
+    <string name="arena_summary_confirmed">Confirmados: %1$d</string>
+    <string name="arena_summary_holds">Em pré-reserva: %1$d</string>
+    <string name="arena_summary_blocked">Bloqueios: %1$d</string>
+    <string name="arena_block_reason_phone">Reserva por telefone</string>
+    <string name="arena_block_reason_maintenance">Manutenção</string>
+    <string name="arena_block_reason_class">Aula</string>
+    <string name="arena_block_reason_other">Outro</string>
+    <string name="arena_blocked_snackbar">Horário bloqueado</string>
+    <string name="error_block_active_booking_title">Esse horário tem uma reserva</string>
+    <string name="error_block_active_booking_body">Para liberar, cancele a reserva. Todos que pagaram recebem o dinheiro de volta.</string>
+    <string name="arena_booking_title">Reserva</string>
+    <string name="arena_booking_net_preview">Líquido previsto: %1$s</string>
+    <string name="arena_booking_cancel_cta">Cancelar por força maior</string>
+    <string name="arena_booking_cancel_title">Cancelar esta reserva?</string>
+    <string name="arena_booking_cancel_body">Todos que pagaram recebem o dinheiro de volta, incluindo a taxa. O cancelamento conta no seu índice de confiabilidade.</string>
+    <string name="arena_booking_cancel_reason">Motivo (obrigatório)</string>
+    <string name="arena_booking_reason_weather">Clima</string>
+    <string name="arena_booking_reason_maintenance">Manutenção</string>
+    <string name="arena_booking_reason_force">Força maior</string>
+    <string name="arena_booking_reason_other">Outro</string>
+    <string name="arena_booking_cancel_confirm">Cancelar reserva</string>
+    <string name="arena_booking_keep">Manter reserva</string>
+    <string name="arena_court_section_court">Quadra</string>
+    <string name="arena_court_section_hours">Funcionamento</string>
+    <string name="arena_court_section_prices">Preços</string>
+    <string name="arena_court_generated_preview">Serão gerados %1$d horários nos próximos %2$d dias</string>
+    <string name="arena_court_publish_schedule">Publicar horários</string>
+    <string name="arena_court_error_sports">Selecione ao menos um esporte</string>
+    <string name="arena_court_error_overlap">Essas faixas de preço se sobrepõem. Ajuste os horários.</string>
+    <string name="arena_court_price_change_note">O novo preço não muda horários já reservados.</string>
+    <string name="arena_onb_title">Cadastre sua arena</string>
+    <string name="arena_onb_step_info">Dados da arena</string>
+    <string name="arena_onb_step_courts">Quadras</string>
+    <string name="arena_onb_step_schedule">Horários e preços</string>
+    <string name="arena_onb_step_done">Concluída</string>
+    <string name="arena_onb_step_pending">Pendente</string>
+    <string name="arena_onb_status_draft">Em configuração</string>
+    <string name="arena_onb_status_live">Publicada</string>
+    <string name="arena_onb_publish">Publicar arena</string>
+    <string name="arena_onb_help">Pedir ajuda para configurar</string>
+    <string name="arena_onb_success_title">Recebimentos ativos</string>
+    <string name="arena_onb_success_body">Sua arena já aparece na busca.</string>
+    <string name="payout_period_filter">Período</string>
+    <string name="payout_exported">Extrato exportado</string>
+    <string name="payout_export_cd">Exportar extrato em CSV</string>
+    <string name="payout_expected_date">Previsto para %1$s</string>
+    <string name="payout_paid_date">Pago em %1$s</string>
+    <string name="payout_fix_account">Corrigir conta para receber</string>
+    <!-- Perfil, avisos e comprovante -->
+    <string name="notifications_title">Avisos</string>
+    <string name="notifications_mark_all">Marcar todas como lidas</string>
+    <string name="notifications_unread_label">não lida</string>
+    <string name="receipt_title">Comprovante</string>
+    <string name="receipt_transaction_id">Identificador da transação</string>
+    <string name="receipt_paid_at">Pago em %1$s</string>
+    <string name="profile_have_arena">Tenho uma arena</string>
+    <!-- 10-ui-design §0.1 -->
+    <string name="error_checkout_expired_title">Seu tempo para pagar acabou</string>
+    <string name="error_checkout_expired_body">Seguramos o horário por 10min. Confira se ele ainda está livre.</string>
+
+    <!-- ===== Minha Arena (strings_arena.xml) ===== -->
+    <!-- Shell / navegacao -->
+    <string name="aadm_cd_arena_switcher">Trocar de arena</string>
+    <string name="aadm_no_arena_title">Você ainda não tem uma arena</string>
+    <string name="aadm_no_arena_body">Cadastre sua arena para receber reservas pelo SportConnect.</string>
+    <string name="aadm_no_arena_cta">Cadastrar arena</string>
+
+    <!-- Painel -->
+    <string name="aadm_now_free">Livre agora · sem jogos no resto do dia</string>
+    <string name="aadm_holds_empty">Nenhuma pré-reserva aguardando pagamento.</string>
+    <string name="aadm_hold_deadline">Prazo: %1$s</string>
+    <string name="aadm_occupancy">Ocupação: %1$d%</string>
+    <string name="aadm_revenue">Receita prevista: %1$s</string>
+    <string name="aadm_payout_projected">Estimativa pelos jogos confirmados</string>
+    <string name="aadm_select_booking_hint">Toque numa reserva da agenda para ver os detalhes aqui.</string>
+    <string name="aadm_cd_now_line">Agora, %1$s</string>
+    <string name="aadm_cd_cell">%1$s, %2$s, %3$s</string>
+
+    <!-- Agenda -->
+    <string name="aadm_cd_prev_day">Dia anterior</string>
+    <string name="aadm_cd_next_day">Próximo dia</string>
+    <string name="aadm_cd_prev_week">Semana anterior</string>
+    <string name="aadm_cd_next_week">Próxima semana</string>
+    <string name="aadm_week_range">%1$s – %2$s</string>
+    <string name="aadm_status_checkout">Reservando</string>
+    <string name="aadm_unblock_title">Liberar este horário?</string>
+    <string name="aadm_unblock_body">Motivo do bloqueio: %1$s. O horário volta a aparecer para os atletas.</string>
+    <string name="aadm_unblock_cta">Liberar horário</string>
+    <string name="aadm_unblocked_snackbar">Horário liberado</string>
+    <string name="aadm_block_court_label">Quadra</string>
+    <string name="aadm_block_time_label">Horário</string>
+    <string name="aadm_block_no_free">Nenhum horário livre nesta quadra no dia.</string>
+    <string name="aadm_action_failed">Não deu para concluir. Tente de novo.</string>
+
+    <!-- Reserva -->
+    <string name="aadm_booking_not_found_title">Reserva não encontrada</string>
+    <string name="aadm_booking_not_found_body">Ela pode ter sido cancelada ou o horário foi liberado.</string>
+    <string name="aadm_booking_participants">Participantes (%1$d de %2$d pagas)</string>
+    <string name="aadm_booking_values">Valores</string>
+    <string name="aadm_booking_fee_detail">%1$d% do plano da arena, descontado só do valor da quadra</string>
+    <string name="aadm_booking_cancelled">Reserva cancelada. Quem pagou recebe o dinheiro de volta.</string>
+    <string name="aadm_booking_contact_cd">Ligar para %1$s</string>
+    <string name="aadm_booking_external_body">Reserva feita fora do app (%1$s). Não há cotas nem repasse pelo SportConnect.</string>
+    <string name="aadm_booking_released">Horário liberado para novas reservas</string>
+    <string name="aadm_booking_open_spots">%1$d vagas abertas</string>
+    <string name="aadm_role_organizer">Organizador</string>
+    <string name="aadm_payout_on_date">em %1$s</string>
+
+    <!-- Quadras -->
+    <string name="aadm_courts_occupancy">%1$d% ocupada hoje</string>
+    <string name="aadm_court_new_title">Nova quadra</string>
+    <string name="aadm_court_type_label">Tipo de quadra</string>
+    <string name="aadm_court_surface_label">Piso</string>
+    <string name="aadm_court_covered">Quadra coberta</string>
+    <string name="aadm_court_capacity">Até %1$d atletas</string>
+    <string name="aadm_court_days_label">Dias de funcionamento</string>
+    <string name="aadm_court_open_label">Abre às</string>
+    <string name="aadm_court_close_label">Fecha às</string>
+    <string name="aadm_court_duration_label">Duração de cada horário</string>
+    <string name="aadm_court_duration_value">%1$d min</string>
+    <string name="aadm_court_peak_start_label">Pico começa às</string>
+    <string name="aadm_court_peak_end_label">Pico termina às</string>
+    <string name="aadm_court_heatmap_title">Preço por dia e hora</string>
+    <string name="aadm_court_view_grid">Ver em grade</string>
+    <string name="aadm_court_price_normal">Normal</string>
+    <string name="aadm_court_price_peak">Pico</string>
+    <string name="aadm_court_published">Horários publicados</string>
+    <string name="aadm_court_error_name">Informe o nome da quadra</string>
+    <string name="aadm_court_error_hours">O fechamento precisa ser depois da abertura</string>
+    <string name="aadm_court_error_price">Informe um preço maior que zero</string>
+    <string name="aadm_cd_decrease">Diminuir %1$s</string>
+    <string name="aadm_cd_increase">Aumentar %1$s</string>
+    <string name="aadm_court_type_society">Society sintético</string>
+    <string name="aadm_court_type_poli">Poliesportiva</string>
+    <string name="aadm_court_type_sand">Areia</string>
+    <string name="aadm_court_type_padel">Padel</string>
+    <string name="aadm_court_type_clay">Saibro</string>
+    <string name="aadm_court_type_hard">Piso rápido</string>
+    <string name="aadm_court_covered_yes">Coberta</string>
+    <string name="aadm_court_covered_no">Descoberta</string>
+
+    <!-- Repasses -->
+    <string name="aadm_payout_period_7">7 dias</string>
+    <string name="aadm_payout_period_30">30 dias</string>
+    <string name="aadm_payout_period_90">90 dias</string>
+    <string name="aadm_payout_period_all">Tudo</string>
+    <string name="aadm_payout_scheduled_total">Previsto</string>
+    <string name="aadm_payout_paid_total">Pago no período</string>
+    <string name="aadm_payout_col_date">Data</string>
+    <string name="aadm_payout_col_game">Jogo</string>
+    <string name="aadm_payout_col_gross">Bruto</string>
+    <string name="aadm_payout_col_fee">Taxa</string>
+    <string name="aadm_payout_col_net">Líquido</string>
+    <string name="aadm_payout_col_status">Status</string>
+    <string name="aadm_payout_detail_title">Detalhe do repasse</string>
+    <string name="aadm_payout_open_booking">Ver reserva</string>
+    <string name="aadm_payout_account_value">Pix · CNPJ %1$s</string>
+    <string name="aadm_payout_none_next">Nenhum repasse programado</string>
+    <string name="aadm_payout_held_banner">%1$d repasse retido. Confira a conta para receber.</string>
+
+    <!-- Onboarding da arena -->
+    <string name="aadm_onb_progress">%1$d de %2$d etapas concluídas</string>
+    <string name="aadm_onb_field_name">Nome da arena</string>
+    <string name="aadm_onb_field_doc">CPF do responsável</string>
+    <string name="aadm_onb_field_cep">CEP</string>
+    <string name="aadm_onb_field_pix">Chave Pix para receber</string>
+    <string name="aadm_onb_step_save">Salvar etapa</string>
+    <string name="aadm_onb_courts_body">Cadastre ao menos uma quadra com esportes e preço.</string>
+    <string name="aadm_onb_schedule_body">Defina os dias, os horários e as faixas de preço de cada quadra.</string>
+    <string name="aadm_onb_publish_hint">Conclua as 4 etapas para publicar.</string>
+    <string name="aadm_onb_error_name">Informe o nome da arena</string>
+    <string name="aadm_onb_error_doc">CPF incompleto</string>
+    <string name="aadm_onb_error_cep">CEP incompleto</string>
+    <string name="aadm_onb_go_dashboard">Ir para o Painel</string>
+    <string name="aadm_onb_step_number">Etapa %1$d</string>
 </resources>

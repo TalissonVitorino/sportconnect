@@ -259,6 +259,10 @@ Nota: no piloto com onboarding assistido, a meta C1→C7 sobe para ≥ 60% em 14
 | 48 | `lista_espera_entrou` *(Fase 2)* | S | Entrada na lista de espera | `jogo_id`, `posicao` |
 | 49 | `substituicao_concluida` *(Fase 2)* | S | Substituto pagou (RN-26) | `jogo_id`, `origem_substituto` (indicado/lista_espera), `horas_ate_jogo` |
 | 50 | `avaliacao_enviada` *(Fase 2)* | S | Avaliação pós-jogo | `jogo_id`, `tipo` (atleta/arena), `nota` |
+| 51 | `arena_visualizada` | C | Tela de detalhe da arena renderizada (atleta/organizador) | `arena_id`, `origem` (busca/home/link/jogo), `qtd_quadras`, `preco_min_centavos`, `slots_livres_hoje` |
+| 52 | `extrato_exportado` | C | Exportação do extrato de repasses (CSV) | `periodo_dias` (7, 30, 90 ou -1 = todos), `qtd_repasses` (a arena e o papel vêm do contexto global do tracker) |
+
+> **Nota de implementação (evento 44):** `agenda_arena_visualizada` deve ser emitido **uma vez por abertura da tela** (ou por troca de visão dia/semana), e não a cada assinatura de dados. Na visão de semana, a implementação atual assina 7 vezes o painel da arena; é preciso desduplicar antes de ligar o tracking real.
 
 ### 6.3 Governança do tracking
 - Plano versionado junto ao código (`analytics/eventos.yaml` — a criar pela engenharia) com testes que validam esquema.

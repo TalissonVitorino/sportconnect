@@ -2,6 +2,7 @@ package br.com.sportconnect.feature.arena
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.com.sportconnect.core.domain.repository.AnalyticsEvents
 import br.com.sportconnect.core.domain.repository.AnalyticsTracker
 import br.com.sportconnect.core.domain.usecase.ArenaDetalhe
 import br.com.sportconnect.core.domain.usecase.GetArenaDetailUseCase
@@ -51,8 +52,7 @@ class ArenaDetailViewModel(
                 d == null -> _uiState.value = ArenaDetailUiState.NotFound
                 d.arena.status != StatusArena.ATIVA -> _uiState.value = ArenaDetailUiState.Unpublished
                 else -> {
-                    // I9: evento proposto pelo 09 (pendente no 04).
-                    analytics.track("arena_visualizada", mapOf("arena_id" to d.arena.id, "origem" to "busca"))
+                    analytics.track(AnalyticsEvents.ARENA_VISUALIZADA, mapOf("arena_id" to d.arena.id, "origem" to "busca"))
                     _uiState.value = ArenaDetailUiState.Content(d, null, emptyMap())
                     observeSlots(null)
                 }

@@ -178,11 +178,9 @@ Não há backend nem gateway de pagamento reais: o Pix é simulado (`FakePayment
 
 - Escolher o gateway de pagamento (precisa de split, Pix e pré-autorização de cartão com captura parcial) e saber se ele exige CPF de quem paga.
 - Definir quem emite nota fiscal.
-- Revisão jurídica (CDC) dos prazos, multas e textos de dinheiro e reembolso. Prazos, taxas e percentuais dos documentos são propostas, não validados.
+- Redigir os termos de uso, a política de privacidade e o termo de adesão da arena (CT-05 a CT-07 do PRD) e fazer a revisão jurídica (CDC) dos prazos, multas e textos de dinheiro e reembolso. Prazos, taxas e percentuais dos documentos são propostas, não validados.
 - Validar com usuários reais as hipóteses do `docs/01-ux-research.md`.
-- Alinhar o `docs/02-service-design.md` ao modelo de prazos do PRD (`docs/03`).
-- Incluir os eventos `arena_visualizada` e `extrato_exportado` no `docs/04-ux-metrics.md`.
-- O `docs/strings-pt-BR.xml` é o catálogo original. A fonte de verdade do app é `composeApp/src/commonMain/composeResources/values/` (`strings.xml` e `strings_arena.xml`).
+- A fonte de verdade das strings é `composeApp/src/commonMain/composeResources/values/` (`strings.xml` e `strings_arena.xml`). O `docs/strings-pt-BR.xml` é uma cópia gerada por `python3 tools/sync_strings_doc.py`; não edite à mão.
 
 ## Rastreabilidade: os 5 planos dos Elementos da Experiência do Usuário (Garrett)
 
@@ -194,7 +192,7 @@ Não há backend nem gateway de pagamento reais: o Pix é simulado (`FakePayment
 | Esqueleto | Design de interface; navegação; design da informação | `docs/09-ux-design.md` (wireframes), `docs/10-ui-design.md`, `docs/06-design-system.md`, pacote `navigation/` |
 | Superfície | Design sensorial | `docs/05-visual-design.md`, `docs/style-guide.html`, `docs/ui-mockups.html`, pacote `core/designsystem/` |
 
-Transversais: `docs/08-design-ops.md` (processo do time) e `docs/00-brief.md` (contexto). Lacuna conhecida no plano de Escopo: requisitos de conteúdo além de texto (fotos de arenas, regras por esporte e termos de uso) ainda não foram especificados.
+Transversais: `docs/08-design-ops.md` (processo do time) e `docs/00-brief.md` (contexto). Os requisitos de conteúdo além de texto (fotos de arenas, regras por esporte, termos de uso, ajuda) estão em `docs/03-product-design-prd.md`, seção 6.4; os textos jurídicos ainda precisam ser redigidos e revisados.
 
 ## Versões
 

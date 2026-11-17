@@ -2,6 +2,7 @@ package br.com.sportconnect.feature.arenaadmin.payouts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.com.sportconnect.core.domain.repository.AnalyticsEvents
 import br.com.sportconnect.core.domain.repository.AnalyticsTracker
 import br.com.sportconnect.core.domain.repository.ArenaRepository
 import br.com.sportconnect.core.domain.repository.AuthRepository
@@ -157,7 +158,7 @@ class ArenaPayoutsViewModel(
     fun export() {
         val s = _state.value
         val csv = buildCsv(s.items)
-        analytics?.track("extrato_exportado", mapOf("periodo_dias" to (s.period.days ?: -1), "linhas" to s.items.size))
+        analytics?.track(AnalyticsEvents.EXTRATO_EXPORTADO, mapOf("periodo_dias" to (s.period.days ?: -1), "qtd_repasses" to s.items.size))
         _state.update { it.copy(exportCsv = csv) }
     }
 

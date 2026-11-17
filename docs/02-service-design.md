@@ -2,6 +2,7 @@
 
 > **Status:** proposta v1.0 (pré-validação). Políticas e prazos são **propostas** a validar com a pesquisa ([01-ux-research.md](./01-ux-research.md), hipóteses H3, H4, H5, H12) e com revisão jurídica (CDC, LGPD, regras do gateway e do Pix).
 > **Base:** [00-brief.md](./00-brief.md) · **Data:** nov/2026
+> **v1.1 (17/11/2026):** o modelo de prazos e os nomes dos estados foram alinhados ao PRD ([03-product-design-prd.md](./03-product-design-prd.md), RN-09 a RN-12). Em caso de divergência, vale o PRD.
 
 ---
 
@@ -39,7 +40,9 @@
 |---|---|
 | **T** | Horário de início do jogo. |
 | **Hold** | Pré-reserva do horário na agenda da arena enquanto as cotas são pagas. |
-| **Prazo do hold (Tₕ)** | `min(criação + 4h, T − 2h)` (padrão do brief). Organizador pode encurtar; nunca ultrapassa T − 2h. |
+| **Ativação** | Instante em que a cota do organizador está paga (e, na política A com cartão, a pré-autorização foi aprovada). É quando o horário vira pré-reserva e os prazos começam a contar (PRD, RN-09). |
+| **Prazo do hold (H)** | `min(ativação + duração_hold, T − 2h)`. A duração padrão é 4h e a arena pode configurá-la entre 1h e 48h (PRD, RN-10). Nunca ultrapassa T − 2h. |
+| **Prazo das cotas (P)** | Último instante para os atletas pagarem. Política A com Pix e política C: `P = H − 30 min` (janela de resolução). Política A com cartão e política B: `P = H` (PRD, RN-11). |
 | **Cota** | Valor total ÷ nº de vagas (ex.: R$ 240 ÷ 12 = R$ 20) + taxa de conveniência (R$ 1–2). |
 | **Regra de não pagamento** | Escolhida na criação: **(a) organizador cobre a diferença** (padrão), **(b) cancelar e reembolsar todos**, **(c) re-ratear entre pagantes** (exige aceite de cada pagante). |
 | **Retenção** | Valor pago fica no gateway com split programado; não é liberado à arena antes do jogo. |
@@ -50,9 +53,10 @@
 **Linha do tempo padrão (jogo quinta 20h, criado segunda 10h):**
 
 ```
-Seg 10:00  Criação + HOLD ──► Seg 14:00 Tₕ (fim do hold, 4h)
-                                   │ 100% pago? ──sim──► CONFIRMADO
-                                   └─não──► aplica regra (a/b/c)
+Seg 10:00  Ativação (cota do organizador paga) ──► Seg 14:00 H (fim do hold, 4h)
+                                   Seg 13:30 P (política A-Pix ou C; nas demais, P = H)
+                                   │ 100% pago? ──sim──► CONFIRMADO (a qualquer momento antes de P)
+                                   └─não──► aplica regra (a/b/c) em P; resolução até H
 Qui 18:00  T−2h  (limite absoluto de hold; lembretes finais)
 Qui 20:00  T     (check-in, jogo)
 Qui 21:00  Fim do jogo
@@ -60,7 +64,7 @@ Sex 09:00  Tc    (fim da janela de contestação)
 Sex/Seg    Repasse D+1 útil à arena
 ```
 
-> **Jogos de última hora:** se `T − agora < 2h30`, não há hold coletivo: o organizador paga o total na criação (cartão/Pix) e o app pode, opcionalmente, cobrar as cotas para reembolsá-lo (modo "reembolso ao organizador").
+> **Jogos de última hora:** o rateio exige que a janela de coleta (`P − ativação`) tenha pelo menos 30 min (PRD, RN-12). Na prática: ativação até T − 2h30 (política B ou A com cartão) ou até T − 3h (A com Pix ou C). Perto do jogo, o organizador só pode reservar com **pagamento integral**: paga o valor total sozinho e o jogo nasce `CONFIRMADO`, sem rateio. O modo "reembolso ao organizador" (cobrar as cotas depois para devolver ao organizador) fica **fora do MVP**.
 
 ---
 
@@ -86,7 +90,7 @@ flowchart TB
     end
     LOV{{"──── linha de visibilidade ────"}}
     subgraph BS[Backstage - Sistema]
-        B1[Cria HOLD com lock otimista na agenda] --> B2[Calcula cotas e agenda timers Tₕ, T−2h, Tc] --> B3[Gera cobranças com split programado] --> B4[Recebe webhooks do gateway, idempotente] --> B5[Avalia 100% pago ou aplica regra] --> B6[Confirma reserva / dispara reembolsos] --> B7[Libera split após Tc]
+        B1[Cria HOLD (na ativação) com lock otimista na agenda] --> B2[Calcula cotas e agenda timers P, H, T−2h, Tc] --> B3[Gera cobranças com split programado] --> B4[Recebe webhooks do gateway, idempotente] --> B5[Avalia 100% pago ou aplica regra] --> B6[Confirma reserva / dispara reembolsos] --> B7[Libera split após Tc]
     end
     subgraph SP[Processos de suporte]
         S1[Gateway: cobrança Pix, cartão, split, estorno] 
@@ -110,21 +114,21 @@ flowchart TB
 
 ```mermaid
 stateDiagram-v2
-    [*] --> HOLD: organizador cria jogo
-    HOLD --> CONFIRMADO: 100% das cotas pagas
-    HOLD --> CONFIRMADO: Tₕ + regra (a) organizador cobre
-    HOLD --> AGUARDANDO_ACEITE: Tₕ + regra (c) re-ratear
-    AGUARDANDO_ACEITE --> CONFIRMADO: todos os pagantes aceitam e pagam a diferença
-    AGUARDANDO_ACEITE --> CANCELADO: recusa ou timeout (máx. T−2h)
-    HOLD --> CANCELADO: Tₕ + regra (b) / organizador cancela
-    CONFIRMADO --> CANCELADO_ARENA: chuva / manutenção
-    CONFIRMADO --> EM_JOGO: check-in em T
-    EM_JOGO --> REALIZADO: fim do horário
-    REALIZADO --> EM_CONTESTACAO: incidente reportado até Tc
-    EM_CONTESTACAO --> REALIZADO: resolvido
-    REALIZADO --> REPASSADO: Tc + D+1 útil
+    [*] --> RASCUNHO: organizador cria jogo
+    RASCUNHO --> AGUARDANDO_PAGAMENTOS: ativação (cota do organizador paga)
+    AGUARDANDO_PAGAMENTOS --> CONFIRMADO: 100% das cotas pagas (antes de P)
+    AGUARDANDO_PAGAMENTOS --> CONFIRMADO: P + política A (organizador cobre)
+    AGUARDANDO_PAGAMENTOS --> CONFIRMADO: P + política C (todos aceitam e pagam a diferença)
+    AGUARDANDO_PAGAMENTOS --> EXPIRADO: prazo sem pagamento completo (política B ou resolução falhou)
+    AGUARDANDO_PAGAMENTOS --> CANCELADO: organizador cancela
+    CONFIRMADO --> CANCELADO: arena cancela (chuva / manutenção) ou organizador cancela
+    CONFIRMADO --> EM_ANDAMENTO: início do jogo (T)
+    EM_ANDAMENTO --> CONCLUIDO: fim do horário
+    CONCLUIDO --> EM_CONTESTACAO: incidente reportado até Tc
+    EM_CONTESTACAO --> CONCLUIDO: resolvido
+    CONCLUIDO --> REPASSADO: Tc + D+1 útil
     CANCELADO --> REEMBOLSADO
-    CANCELADO_ARENA --> REEMBOLSADO
+    EXPIRADO --> REEMBOLSADO
     REPASSADO --> [*]
     REEMBOLSADO --> [*]
 ```
@@ -134,12 +138,12 @@ stateDiagram-v2
 | Etapa | Evidências físicas | Ações do atleta | Ações do organizador | Frontstage (app/web) | ┆ Backstage (sistema) | Processos de suporte | Fail points (ver §7) |
 |---|---|---|---|---|---|---|---|
 | **1. Descobrir horário** | Grade de horários com preço por quadra/esporte | — | Escolhe esporte, arena, quadra, data, hora | Busca com disponibilidade em tempo real; preço total e por pessoa estimado | Consulta agenda (cache curto + leitura confirmatória) | Arena mantém agenda, preços e bloqueios atualizados | FP1 agenda desatualizada |
-| **2. Criar jogo + HOLD** | Tela "Horário segurado até 14:00" com contador | — | Define nº de vagas, regra (a/b/c), visibilidade (privado / vagas abertas – Fase 2); aceita políticas | Resumo: total, cota (R$ 20 + R$ 1,50), prazo Tₕ, política de cancelamento em linguagem simples | Cria HOLD com lock transacional (sem overbooking); calcula Tₕ; agenda timers (lembretes 50%/80% do prazo, Tₕ, T−2h, T, Tc) | Arena recebe notificação "Horário em pré-reserva" (sem ação necessária) | FP2 corrida por horário; FP3 organizador não entende regra |
+| **2. Criar jogo + HOLD** | Tela "Horário segurado até 14:00" com contador | — | Define nº de vagas, regra (a/b/c), visibilidade (privado / vagas abertas – Fase 2); aceita políticas | Resumo: total, cota (R$ 20 + R$ 1,50), prazos P e H, política de cancelamento em linguagem simples | Cria HOLD com lock transacional (sem overbooking); calcula P e H; agenda timers (lembretes 50%/80% do prazo, P, H, T−2h, T, Tc) | Arena recebe notificação "Horário em pré-reserva" (sem ação necessária) | FP2 corrida por horário; FP3 organizador não entende regra |
 | **3. Convidar (rateio)** | Card de link no WhatsApp com prévia (esporte, arena, data, R$/pessoa, "X de 12 pagos") | Recebe link no grupo | Compartilha link no grupo (deep link + Open Graph) | Página do jogo pública via link assinado; barra de progresso; lista de confirmados | Gera token do convite; registra vagas | WhatsApp (compartilhamento nativo pelo organizador) | FP4 link visto como golpe |
-| **4. Pagar cota** | QR Pix + copia-e-cola; comprovante na tela; mensagem "Cota paga ✓" no WhatsApp | Informa nome + celular (OTP por WhatsApp/SMS); escolhe Pix (padrão) ou cartão; paga | Acompanha quem pagou; pode lembrar faltantes com 1 toque | Checkout Pix com expiração alinhada a Tₕ; status em tempo real | Cria cobrança no gateway com **split programado** (arena / plataforma) e retenção até liberação; reserva a vaga por 15 min durante o checkout | Gateway gera QR dinâmico; banco do atleta | FP5 Pix pago e webhook atrasado; FP6 pagamento em duplicidade; FP7 vaga ultrapassada |
+| **4. Pagar cota** | QR Pix + copia-e-cola; comprovante na tela; mensagem "Cota paga ✓" no WhatsApp | Informa nome + celular (OTP por WhatsApp/SMS); escolhe Pix (padrão) ou cartão; paga | Acompanha quem pagou; pode lembrar faltantes com 1 toque | Checkout Pix com expiração de até 10 min (nunca depois de P); status em tempo real | Cria cobrança no gateway com **split programado** (arena / plataforma) e retenção até liberação; reserva a vaga por 10 min durante o checkout (PRD, RN-19) | Gateway gera QR dinâmico; banco do atleta | FP5 Pix pago e webhook atrasado; FP6 pagamento em duplicidade; FP7 vaga ultrapassada |
 | **5. Conciliar** | Barra "10/12 pagos" | — | Recebe aviso "faltam 2, prazo em 1h" | Atualização ao vivo (push/WebSocket) | Webhook idempotente (chave = id da cobrança); reconciliação ativa a cada 5 min para cobranças pendentes; trata pagamentos após expiração (estorno automático) | Gateway (webhooks, API de consulta) | FP5, FP8 webhook perdido |
 | **6a. Confirmação** | Mensagem "Jogo CONFIRMADO ✅" + ingresso com QR | Recebe confirmação, adiciona à agenda | Recebe confirmação; vê resumo financeiro | Status CONFIRMADO; política de cancelamento pós-confirmação destacada | Converte HOLD → RESERVA; dispara notificações; registra evento auditável | Arena: reserva aparece no painel como "Pago ✓"; WhatsApp API envia templates aprovados | FP9 notificação não entregue |
-| **6b. Prazo vencido sem 100%** | Mensagem com opções claras e contagem | (Regra c) aceita ou recusa pagar diferença | (Regra a) paga a diferença em 1 toque; (b) nada a fazer; pode **estender** o hold uma vez se Tₕ < T−2h | Tela de decisão com valores exatos | Aplica regra; (a) gera cobrança da diferença ao organizador com prazo de 30 min (senão cai para b); (b) cancela e estorna todos; (c) envia pedido de aceite aos pagantes | Gateway (nova cobrança ou estornos em lote) | FP10 organizador não paga diferença; FP11 re-rateio sem aceite |
+| **6b. Prazo vencido sem 100%** | Mensagem com opções claras e contagem | (Regra c) aceita ou recusa pagar diferença | (Regra a) paga a diferença em 1 toque; (b) nada a fazer | Tela de decisão com valores exatos | Aplica regra; (a) gera cobrança da diferença ao organizador com prazo de 30 min (senão cai para b); (b) cancela e estorna todos; (c) envia pedido de aceite aos pagantes | Gateway (nova cobrança ou estornos em lote) | FP10 organizador não paga diferença; FP11 re-rateio sem aceite |
 | **7. Pré-jogo** | Lembrete T−24h e T−2h com endereço e mapa | Lê lembrete; pode transferir vaga (Fase 2) | Vê lista final | Página do jogo com endereço, quadra, regras da arena | Timers de lembrete; congela lista em T−2h | Arena prepara quadra; recepção vê lista do turno | FP12 quadra indisponível (ver §4.6) |
 | **8. Jogo / check-in** | QR na recepção; tela do ingresso | Faz check-in (QR ou geolocalização) e joga | Faz check-in | Ingresso com QR; botão "reportar problema" | Registra check-in (evidência para no-show/disputa) | Recepção valida pelo painel; arena controla tempo e iluminação | FP13 internet ruim na arena |
 | **9. Pós-jogo / contestação** | Pedido de avaliação (Fase 2) | Avalia (opcional) | Pode reportar incidente até Tc | Formulário de incidente com fotos | Abre janela Tc = fim + 12h; bloqueia repasse se incidente aberto | Suporte humano analisa incidentes | FP14 disputa sem evidência |
@@ -240,11 +244,11 @@ sequenceDiagram
 
 | Item | Política proposta |
 |---|---|
-| Duração do hold | Padrão 4h; máximo até T − 2h; organizador pode reduzir. |
-| Extensão do hold | 1 extensão de até +2h, se respeitar T − 2h e a arena permitir. |
-| Holds simultâneos por organizador | Máx. 2 ativos (evita "segurar" horários nobres). |
-| Organizador cobre diferença (regra a) | Prazo de 30 min após Tₕ para pagar; senão, cai para regra (b). |
-| Re-rateio (regra c) | Diferença dividida entre pagantes; cada um aceita; prazo até `min(Tₕ + 1h, T − 2h)`; se alguém recusar → regra (a) se organizador aceitar, senão (b). |
+| Duração do hold | Padrão 4h, que a arena pode configurar entre 1h e 48h; o hold termina no máximo em T − 2h (PRD, RN-10). |
+| Extensão do hold | **Proposta fora do MVP** (não consta no PRD): 1 extensão de até +2h, se respeitar T − 2h e a arena permitir. Avaliar após o MVP. |
+| Holds simultâneos por organizador | **Proposta fora do MVP** (não consta no PRD): máx. 2 ativos, para evitar "segurar" horários nobres. Avaliar com dados de uso. |
+| Organizador cobre diferença (regra a) | Janela de resolução de 30 min entre P e H para pagar o que falta (com Pix); com cartão, a captura é imediata em P. Se não pagar, o jogo expira e vale a regra (b) (PRD, RN-14). |
+| Re-rateio (regra c) | Diferença dividida entre os pagantes, e cada um precisa aceitar. O pedido de aceite vai de P até H (`P = H − 30 min`). Se alguém recusar, aplica-se o fallback do PRD (RN-16) (organizador cobre ou cancelamento com reembolso). |
 | Pagamento após expiração | Estorno automático integral. |
 | Taxa de conveniência | R$ 1,50 por cota (proposta; testar R$ 1–2). |
 
@@ -252,7 +256,7 @@ sequenceDiagram
 
 | Quem / o quê | Quando | Reembolso ao atleta | Arena recebe | Taxa de conveniência | Multa / consequência |
 |---|---|---|---|---|---|
-| Jogo não fecha no hold (regra b) | Em Tₕ | **100%** | 0 | Devolvida | — |
+| Jogo não fecha no hold (regra b) | Em P (= H nessa regra) | **100%** | 0 | Devolvida | — |
 | Atleta desiste antes da confirmação | Durante hold | 100% da cota | 0 | Retida | — |
 | Atleta desiste após confirmação | ≥ 24h antes | 100% **se a vaga for preenchida**; senão 0% | 100% | Retida | — |
 | Atleta desiste após confirmação | < 24h | 0% (pode transferir vaga) | 100% | Retida | — |
