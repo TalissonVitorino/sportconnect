@@ -452,7 +452,7 @@ fun AppNavHost(
                 composable<Route.SavedCards> { SavedCardsScreen(onBack = nav::back) }
                 composable<Route.Support> { SupportScreen(onBack = nav::back) }
                 composable<Route.ProfilePayments> { PaymentsRoute(onBack = nav::back, onReceipt = { nav.go(Route.Receipt(it)) }) }
-                composable<Route.Receipt> { entry -> ReceiptRoute(entry.toRoute(), onBack = nav::back) }
+                composable<Route.Receipt> { entry -> ReceiptRoute(entry.toRoute(), onBack = nav::back, onHelp = { nav.go(Route.Support) }) }
                 composable<Route.Notifications> { NotificationsRoute(onBack = nav::back, onOpenGame = { nav.go(Route.GameDetail(it)) }) }
 
                 // Modo "Minha Arena" (feature/arenaadmin). "Perfil" da arena abre o Perfil, que tem o seletor de modo.

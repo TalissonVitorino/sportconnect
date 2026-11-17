@@ -75,7 +75,8 @@ sealed interface GameDetailEvent {
     data class RemindAll(val jogo: Jogo, val pending: Int) : GameDetailEvent
     data class RemindOne(val jogo: Jogo, val name: String) : GameDetailEvent
     data class RemindLimited(val name: String, val nextAt: Instant) : GameDetailEvent
-    data object Cancelled : GameDetailEvent
+    /** [reason]: motivo digitado no cancelamento (vai na mensagem do WhatsApp para a galera, E13). */
+    data class Cancelled(val reason: String?) : GameDetailEvent
     data object Left : GameDetailEvent
     data class Failure(val message: String) : GameDetailEvent
 }
@@ -175,7 +176,7 @@ class GameDetailViewModel(
 
     fun cancel(reason: String? = null) = runBusy {
         cancelGame(route.id, reason).fold(
-            onSuccess = { GameDetailEvent.Cancelled },
+            onSuccess = { GameDetailEvent.Cancelled(reason?.takeIf { it.isNotBlank() }) },
             onFailure = { GameDetailEvent.Failure(it.message ?: "") },
         )
     }

@@ -2,6 +2,23 @@
 
 package br.com.sportconnect.feature.profile
 
+import br.com.sportconnect.resources.refund_help
+import br.com.sportconnect.resources.refund_fee_note
+import br.com.sportconnect.resources.refund_pix_eta
+import br.com.sportconnect.resources.refund_card_eta
+import br.com.sportconnect.resources.refund_done
+import br.com.sportconnect.resources.refund_status_processing
+import br.com.sportconnect.resources.refund_requested
+import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
+import androidx.compose.material.icons.rounded.RadioButtonUnchecked
+import androidx.compose.material.icons.rounded.Schedule
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.combine
+import br.com.sportconnect.core.model.MetodoPagamento
+import br.com.sportconnect.core.model.StatusReserva
+import br.com.sportconnect.core.model.StatusPagamento
+import br.com.sportconnect.core.domain.repository.PaymentGateway
 import br.com.sportconnect.core.data.local.ProfilePhotoStore
 import br.com.sportconnect.AppInfo
 import br.com.sportconnect.core.designsystem.component.SCSkeletonShape
@@ -359,16 +376,30 @@ private fun ProfileItem(icon: ImageVector, label: String, id: String, onClick: (
 
 // =================================================================== pagamentos e comprovante
 
-data class PaymentsUiState(val loading: Boolean = true, val items: List<MeuPagamento> = emptyList())
+data class PaymentsUiState(
+    val loading: Boolean = true,
+    val items: List<MeuPagamento> = emptyList(),
+    /** Pagamentos com estorno em andamento no gateway (E6): chip "Reembolso · Em andamento". */
+    val refundsInProgress: Set<String> = emptySet(),
+)
 
-class PaymentsViewModel(getMyPayments: GetMyPaymentsUseCase) : ViewModel() {
+class PaymentsViewModel(getMyPayments: GetMyPaymentsUseCase, private val gateway: PaymentGateway) : ViewModel() {
     private val _uiState = MutableStateFlow(PaymentsUiState())
     val uiState: StateFlow<PaymentsUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch { getMyPayments().collect { list -> _uiState.value = PaymentsUiState(false, list) } }
+        viewModelScope.launch {
+            getMyPayments().collect { list ->
+                val inProgress = list.filter { gateway.pagamento(it.pagamentoId)?.status == StatusPagamento.ESTORNO_EM_PROCESSAMENTO }
+                    .map { it.pagamentoId }.toSet()
+                _uiState.value = PaymentsUiState(false, list, inProgress)
+            }
+        }
     }
 }
+
+/** Situacao do reembolso de um pagamento (E6, US-053). */
+data class RefundUi(val done: Boolean, val doneAt: Instant?)
 
 @Composable
 fun PaymentsRoute(onBack: () -> Unit, onReceipt: (String) -> Unit, vm: PaymentsViewModel = koinViewModel()) {
@@ -399,14 +430,20 @@ fun PaymentsScreen(state: PaymentsUiState, onBack: () -> Unit = {}, onReceipt: (
                             Column(Modifier.weight(1f)) {
                                 Text(p.jogo.titulo, style = t.bodyLarge, color = c.onSurface)
                                 Text("${PtBrFormat.date(PtBrFormat.date(p.pagoEm))} · ${p.metodo.rotulo}", style = t.bodyMedium, color = c.onSurfaceVariant)
-                                if (p.reembolsado) {
+                                val refundInProgress = p.pagamentoId in state.refundsInProgress
+                                if (p.reembolsado || refundInProgress) {
                                     Row(
                                         Modifier.padding(top = 4.dp).background(ext.successContainer, MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Icon(Icons.Rounded.CheckCircle, null, tint = ext.onSuccessContainer, modifier = Modifier.size(14.dp))
                                         Spacer(Modifier.width(4.dp))
-                                        Text(stringResource(Res.string.refund_title) + " · " + stringResource(Res.string.refund_status_done), style = t.labelMedium, color = ext.onSuccessContainer)
+                                        Text(
+                                            stringResource(Res.string.refund_title) + " · " +
+                                                stringResource(if (refundInProgress) Res.string.refund_status_processing else Res.string.refund_status_done),
+                                            style = t.labelMedium,
+                                            color = ext.onSuccessContainer,
+                                        )
                                     }
                                 }
                             }
@@ -420,25 +457,36 @@ fun PaymentsScreen(state: PaymentsUiState, onBack: () -> Unit = {}, onReceipt: (
     }
 }
 
-class ReceiptViewModel(private val route: Route.Receipt, getMyPayments: GetMyPaymentsUseCase) : ViewModel() {
-    private val _uiState = MutableStateFlow<MeuPagamento?>(null)
-    val uiState: StateFlow<MeuPagamento?> = _uiState.asStateFlow()
+data class ReceiptUiState(val payment: MeuPagamento? = null, val refund: RefundUi? = null)
 
-    init {
-        viewModelScope.launch { getMyPayments().collect { list -> _uiState.value = list.firstOrNull { it.pagamentoId == route.paymentId } } }
-    }
+class ReceiptViewModel(
+    private val route: Route.Receipt,
+    getMyPayments: GetMyPaymentsUseCase,
+    gateway: PaymentGateway,
+) : ViewModel() {
+    val uiState: StateFlow<ReceiptUiState> = combine(getMyPayments(), gateway.observePagamento(route.paymentId)) { list, pg ->
+        val p = list.firstOrNull { it.pagamentoId == route.paymentId }
+        // O gateway sabe do estorno em tempo real; a cota marcada REEMBOLSADA cobre os dados semeados.
+        val refund = when {
+            pg?.status == StatusPagamento.ESTORNADO -> RefundUi(done = true, doneAt = pg.estornadoEm)
+            pg?.status == StatusPagamento.ESTORNO_EM_PROCESSAMENTO -> RefundUi(done = false, doneAt = null)
+            p?.reembolsado == true -> RefundUi(done = true, doneAt = null)
+            else -> null
+        }
+        ReceiptUiState(p, refund)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, ReceiptUiState())
 }
 
 @Composable
-fun ReceiptRoute(route: Route.Receipt, onBack: () -> Unit) {
+fun ReceiptRoute(route: Route.Receipt, onBack: () -> Unit, onHelp: () -> Unit = {}) {
     val vm: ReceiptViewModel = koinViewModel(key = "receipt-${route.paymentId}") { parametersOf(route) }
-    val p by vm.uiState.collectAsStateWithLifecycle()
-    ReceiptScreen(p, onBack)
+    val state by vm.uiState.collectAsStateWithLifecycle()
+    ReceiptScreen(state.payment, onBack, refund = state.refund, onHelp = onHelp)
 }
 
 /** Comprovante (10 §2.14). */
 @Composable
-fun ReceiptScreen(p: MeuPagamento?, onBack: () -> Unit = {}) {
+fun ReceiptScreen(p: MeuPagamento?, onBack: () -> Unit = {}, refund: RefundUi? = null, onHelp: () -> Unit = {}) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
     val share = rememberShareActions()
@@ -470,6 +518,10 @@ fun ReceiptScreen(p: MeuPagamento?, onBack: () -> Unit = {}) {
                     Spacer(Modifier.height(16.dp))
                     Text(stringResource(Res.string.receipt_transaction_id), style = t.titleSmall, color = c.onSurface)
                     Text(p.pagamentoId, style = SportConnectTheme.typographyExt.pixCode, color = c.onSurfaceVariant)
+                }
+                if (refund != null) {
+                    Spacer(Modifier.height(16.dp))
+                    RefundTimeline(p, refund, onHelp)
                 }
                 Spacer(Modifier.height(16.dp))
                 val text = "${p.jogo.titulo} · ${p.total.format()} · ${p.pagamentoId}"
@@ -579,4 +631,55 @@ fun NotificationsScreen(
         }
     }
         }
+}
+
+/** E6/US-053: pedido -> em andamento -> concluido, com o prazo do metodo e o atalho para o suporte. */
+@Composable
+private fun RefundTimeline(p: MeuPagamento, refund: RefundUi, onHelp: () -> Unit) {
+    val c = SportConnectTheme.colors
+    val ext = SportConnectTheme.extendedColors
+    val t = MaterialTheme.typography
+    val value = (if (p.jogo.status == StatusReserva.CANCELADO) p.total else p.valorCota).format()
+    Column(
+        Modifier.fillMaxWidth().background(c.surfaceContainerLow, MaterialTheme.shapes.large).padding(16.dp).testTag("receipt_refund"),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(stringResource(Res.string.refund_title), style = t.titleMedium, color = c.onSurface, modifier = Modifier.semantics { heading() })
+        RefundStep(stringResource(Res.string.refund_requested, value), done = true, current = false)
+        RefundStep(stringResource(Res.string.refund_status_processing), done = refund.done, current = !refund.done)
+        RefundStep(
+            if (refund.done) stringResource(Res.string.refund_done, value, refund.doneAt?.let { PtBrFormat.dateTime(it) } ?: stringResource(Res.string.refund_status_done))
+            else stringResource(Res.string.refund_status_done),
+            done = refund.done,
+            current = false,
+        )
+        Text(
+            stringResource(if (p.metodo == MetodoPagamento.CARTAO) Res.string.refund_card_eta else Res.string.refund_pix_eta),
+            style = t.bodyMedium, color = c.onSurfaceVariant,
+        )
+        if (p.jogo.status == StatusReserva.CANCELADO) {
+            Text(stringResource(Res.string.refund_fee_note), style = t.bodySmall, color = c.onSurfaceVariant)
+        }
+        SCButton(stringResource(Res.string.refund_help), onHelp, variant = SCButtonVariant.Text, modifier = Modifier.scAlignTextButtonStart().testTag("refund_help"))
+    }
+}
+
+@Composable
+private fun RefundStep(text: String, done: Boolean, current: Boolean) {
+    val c = SportConnectTheme.colors
+    val ext = SportConnectTheme.extendedColors
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            when {
+                done -> Icons.Rounded.CheckCircle
+                current -> Icons.Rounded.Schedule
+                else -> Icons.Rounded.RadioButtonUnchecked
+            },
+            null,
+            tint = if (done) ext.success else if (current) c.primary else c.outline,
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.width(12.dp))
+        Text(text, style = MaterialTheme.typography.bodyMedium, color = if (done || current) c.onSurface else c.onSurfaceVariant)
+    }
 }

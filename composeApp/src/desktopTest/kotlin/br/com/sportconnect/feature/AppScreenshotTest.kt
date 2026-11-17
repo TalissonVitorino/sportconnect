@@ -182,6 +182,16 @@ class AppScreenshotTest {
     }
 
     @Test
+    fun refund() {
+        asOrganizer()
+        val payments = runBlocking { koin.get<br.com.sportconnect.core.domain.usecase.GetMyPaymentsUseCase>()().first() }
+        val p = payments.first()
+        compact("app-receipt-refund-compact-light.png", height = 1100) {
+            br.com.sportconnect.feature.profile.ReceiptScreen(p, refund = br.com.sportconnect.feature.profile.RefundUi(done = false, doneAt = null))
+        }
+    }
+
+    @Test
     fun explore() {
         asOrganizer()
         compact("app-explore-compact-light.png") { AppNavHost(startDestination = Route.Explore) }

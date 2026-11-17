@@ -2,6 +2,12 @@
 
 package br.com.sportconnect.feature.game
 
+import br.com.sportconnect.resources.cancel_reason_label
+import br.com.sportconnect.resources.wa_game_cancelled
+import br.com.sportconnect.resources.cancel_done_body
+import br.com.sportconnect.core.designsystem.component.SCTextField
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import br.com.sportconnect.core.designsystem.component.scSharedBounds
@@ -221,7 +227,24 @@ fun GameDetailRoute(route: Route.GameDetail, actions: GameDetailActions) {
                 }
                 is GameDetailEvent.RemindLimited ->
                     snackbar.showSC(getString(Res.string.split_remind_limit, ev.name.substringBefore(' '), PtBrFormat.hour(ev.nextAt)))
-                GameDetailEvent.Cancelled -> snackbar.showSC(getString(Res.string.cancel_done_title), SCSnackbarKind.Success)
+                is GameDetailEvent.Cancelled -> {
+                    // E13: "Jogo cancelado" + texto do 07 e atalho para avisar no WhatsApp com o motivo.
+                    val result = snackbar.showSC(
+                        getString(Res.string.cancel_done_title) + ". " + getString(Res.string.cancel_done_body),
+                        SCSnackbarKind.Success,
+                        actionLabel = getString(Res.string.confirmed_share),
+                    )
+                    val j = (viewModel.uiState.value as? GameDetailUiState.Content)?.jogo
+                    if (result == SnackbarResult.ActionPerformed && j != null) {
+                        share.whatsapp(
+                            getString(
+                                Res.string.wa_game_cancelled,
+                                PtBrFormat.dateTime(j.inicio), j.arenaNome,
+                                ev.reason ?: "-", j.valorCotaConvidado.format(), inviteUrl(j.codigoConvite),
+                            ),
+                        )
+                    }
+                }
                 GameDetailEvent.Left -> snackbar.showSC(getString(Res.string.cancel_leave_game), SCSnackbarKind.Success)
                 is GameDetailEvent.Failure -> snackbar.showSC(ev.message, SCSnackbarKind.Error)
             }
@@ -238,7 +261,7 @@ fun GameDetailRoute(route: Route.GameDetail, actions: GameDetailActions) {
             viewModel.onInviteShared("whatsapp")
             actions.invite(j)
         },
-        onCancel = { viewModel.cancel() },
+        onCancel = { reason -> viewModel.cancel(reason) },
         onLeave = viewModel::leave,
     )
 }
@@ -253,7 +276,7 @@ fun GameDetailScreen(
     onRemindAll: () -> Unit = {},
     onRemindOne: (ParticipantUi) -> Unit = {},
     onShareInvite: (String) -> Unit = {},
-    onCancel: () -> Unit = {},
+    onCancel: (String?) -> Unit = {},
     onLeave: () -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
@@ -354,14 +377,23 @@ fun GameDetailScreen(
     }
 
     if (content != null && showCancel) {
+        var reason by rememberSaveable { mutableStateOf("") }
         SCDialog(
             title = stringResource(Res.string.cancel_dialog_title, content.jogo.titulo),
             body = stringResource(Res.string.cancel_dialog_body),
             onDismissRequest = { showCancel = false },
             variant = SCDialogVariant.Destructive,
-            confirm = SCAction(stringResource(Res.string.cancel_dialog_confirm), { showCancel = false; onCancel() }),
+            confirm = SCAction(stringResource(Res.string.cancel_dialog_confirm), { showCancel = false; onCancel(reason) }),
             dismiss = SCAction(stringResource(Res.string.cancel_dialog_keep), { showCancel = false }),
-        )
+        ) {
+            // E13: motivo opcional, visivel para a galera (vai no aviso do WhatsApp).
+            SCTextField(
+                value = reason,
+                onValueChange = { reason = it.take(120) },
+                label = stringResource(Res.string.cancel_reason_label),
+                modifier = Modifier.fillMaxWidth().testTag("cancel_reason"),
+            )
+        }
     }
     if (content != null && showLeave) {
         val refund = stringResource(Res.string.cancel_leave_refund_value, (content.myPaidShare?.valor ?: content.jogo.valorCotaConvidado).format())
