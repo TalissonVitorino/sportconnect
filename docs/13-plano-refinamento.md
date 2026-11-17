@@ -87,7 +87,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 
 | # | P | Tam | Tarefa | Onde | Por quê |
 |---|---|---|---|---|---|
-| Q1 | P1 | P | **Checagem das 4 plataformas num comando** (`./gradlew checkAll`): testes, build Android, framework iOS, desktop e web. | `build.gradle.kts` | Evita que uma plataforma quebre sem ninguém ver (a E9 subiu com um teste falhando). |
+| Q1 | ✅ P1 | P | **Checagem das 4 plataformas num comando** (`./gradlew checkAll`): testes, build Android, framework iOS, desktop e web. | `build.gradle.kts` | Evita que uma plataforma quebre sem ninguém ver (a E9 subiu com um teste falhando). |
 | Q2 | P2 | P | Trocar `LocalClipboardManager` (obsoleto) por `LocalClipboard`. | `FeatureUi.kt` e telas | Aviso de depreciação em todas as plataformas. |
 
 ---
@@ -107,4 +107,4 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 
 ## Andamento
 
-_(preenchido conforme os itens são concluídos)_
+- **Q1** ✅ `./gradlew checkAll`: testes + Android + iOS (simulador) + desktop + web (~3 min).

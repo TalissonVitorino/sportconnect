@@ -10,3 +10,19 @@ plugins {
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
 }
+
+/**
+ * Q1 (doc 13): checa as 4 plataformas num comando so — testes compartilhados (JVM), app Android,
+ * framework iOS (simulador), desktop e web. Rodar antes de cada commit: `./gradlew checkAll`.
+ */
+tasks.register("checkAll") {
+    group = "verification"
+    description = "Testes + builds de Android, iOS (simulador), desktop e web."
+    dependsOn(
+        ":composeApp:desktopTest",
+        ":androidApp:assembleDebug",
+        ":composeApp:linkDebugFrameworkIosSimulatorArm64",
+        ":composeApp:compileKotlinDesktop",
+        ":composeApp:wasmJsBrowserDistribution",
+    )
+}
