@@ -1,5 +1,6 @@
 package br.com.sportconnect.di
 
+import br.com.sportconnect.core.platform.platformModule
 import br.com.sportconnect.feature.account.DeleteAccountViewModel
 import br.com.sportconnect.feature.account.EditProfileViewModel
 import br.com.sportconnect.feature.account.PrivacyViewModel
@@ -72,7 +73,7 @@ val featureModule = module {
 }
 
 /** Modo Atleta/Organizador ([featureModule]) + modo Minha Arena ([arenaAdminModule], feature/arenaadmin). */
-val appModules = listOf(settingsModule, dataModule, domainModule, featureModule, arenaAdminModule)
+val appModules = listOf(settingsModule, platformModule, dataModule, domainModule, featureModule, arenaAdminModule)
 
 /**
  * Inicia o Koin uma unica vez (idempotente). Chamado pelos entry points de cada plataforma.

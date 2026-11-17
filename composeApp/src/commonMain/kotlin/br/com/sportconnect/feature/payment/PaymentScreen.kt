@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.payment
 
+import br.com.sportconnect.feature.common.LocalOnline
 import br.com.sportconnect.core.designsystem.theme.SCMotion
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -235,7 +236,7 @@ fun PaymentScreen(
                             size = SCButtonSize.Large,
                             fullWidth = true,
                             loading = state.phase is PixPhase.Generating,
-                            enabled = !state.loading && !waiting,
+                            enabled = !state.loading && !waiting && LocalOnline.current,
                             modifier = Modifier.testTag("pay_pix_cta"),
                         )
                     }

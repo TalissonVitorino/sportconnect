@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.invite
 
+import br.com.sportconnect.feature.common.LocalOnline
 import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -626,6 +627,7 @@ private fun GuestFooter(
                 { if (state.loggedIn) actions.pay(j.id) else actions.login(j.id) },
                 size = SCButtonSize.Large,
                 fullWidth = true,
+                enabled = LocalOnline.current,
                 modifier = Modifier.testTag("guest_cta_pay"),
             )
             SCButton(

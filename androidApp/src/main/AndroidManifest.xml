@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- E7: saber se ha conexao (banner offline, acoes de dinheiro desligadas). -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- B10: localizacao aproximada so para ordenar arenas por distancia (pedida no onboarding, com finalidade). -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

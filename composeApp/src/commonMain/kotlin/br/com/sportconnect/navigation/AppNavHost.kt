@@ -2,6 +2,15 @@
 
 package br.com.sportconnect.navigation
 
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.layout.Column
+import br.com.sportconnect.feature.common.OfflineBanner
+import br.com.sportconnect.feature.common.LocalOnline
+import br.com.sportconnect.core.domain.repository.GameRepository
+import br.com.sportconnect.core.platform.ConnectivityMonitor
 import br.com.sportconnect.resources.profile_photo_error
 import br.com.sportconnect.feature.common.ProfilePhotoHost
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -231,6 +240,17 @@ fun AppNavHost(
     }
 
     val photoErrorMsg = stringResource(Res.string.profile_photo_error)
+    // E7: conexao. Ao voltar, sincroniza os dados (o que mudou enquanto estava offline).
+    val connectivity: ConnectivityMonitor = koinInject()
+    val online by connectivity.online.collectAsStateWithLifecycle()
+    val gamesRepo: GameRepository = koinInject()
+    LaunchedEffect(online) { if (online) runCatching { gamesRepo.sincronizar() } }
+    CompositionLocalProvider(LocalOnline provides online) {
+    Column(Modifier.fillMaxSize()) {
+    var bannerVisible by remember { mutableStateOf(false) }
+    OfflineBanner(online, onVisibleChange = { bannerVisible = it })
+    // Com o banner visivel ele ja ocupa a status bar: as telas abaixo nao descontam de novo.
+    Box(Modifier.weight(1f).then(if (bannerVisible) Modifier.consumeWindowInsets(WindowInsets.statusBars) else Modifier)) {
     ProfilePhotoHost(onError = { scope.launch { snackbar.showSC(photoErrorMsg, SCSnackbarKind.Error) } }) {
     SCAdaptiveNavigation(
         items = items,
@@ -464,6 +484,9 @@ fun AppNavHost(
                 )
             }
         }
+    }
+    }
+    }
     }
     }
 }
