@@ -291,6 +291,19 @@ Precisam de **push remoto**, porque nascem de eventos no servidor:
 
 **Como conferir:** abra a versão web no celular, entre num jogo como convidado e toque em "Abrir no app".
 
+## 13. Hospedagem da versão web
+
+**O que é:** a versão web abre convites e jogos direto pela URL (`/j/<código>`, `/g/<id>`, `/a/<id>`).
+
+**Onde:** no serviço que hospedar `composeApp/build/dist/wasmJs/productionExecutable/` (gerado por `./gradlew :composeApp:wasmJsBrowserDistribution`).
+
+**Como fazer:**
+1. Configure o "fallback" de página única: qualquer caminho que não seja arquivo devolve o `index.html` (Firebase Hosting: `rewrites` para `/index.html`; Netlify: `/* /index.html 200`; Nginx: `try_files $uri /index.html`).
+2. Sirva os arquivos `.wasm` com o tipo `application/wasm`.
+3. Mantenha `/.well-known/assetlinks.json` e `apple-app-site-association` fora do fallback (seções 4 e 5).
+
+**Como conferir:** abra `https://sportconnect.app/j/RACHA8` num navegador sem o app: deve aparecer o convite.
+
 ## Ordem sugerida
 
 1. Itens **1, 2 e 3** (contas e chaves) — destravam todo o resto.

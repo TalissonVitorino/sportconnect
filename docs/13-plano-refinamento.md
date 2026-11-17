@@ -47,7 +47,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 
 | # | P | Tam | Tarefa | Onde | Por quê |
 |---|---|---|---|---|---|
-| W1 | P0 | M | **URL e histórico do navegador**: a rota atual aparece na barra de endereço, "voltar/avançar" do navegador funcionam, e abrir `/j/{código}`, `/g/{id}` ou `/a/{id}` direto na web leva à tela certa (hoje sempre abre o onboarding/Home). | `wasmJsMain/main.kt`, `navigation/` | O fluxo principal da web (US-001: convidado abre o link e paga sem instalar) **não funciona** pela URL. |
+| W1 | ✅ P0 | M | **URL e histórico do navegador**: a rota atual aparece na barra de endereço, "voltar/avançar" do navegador funcionam, e abrir `/j/{código}`, `/g/{id}` ou `/a/{id}` direto na web leva à tela certa (hoje sempre abre o onboarding/Home). | `wasmJsMain/main.kt`, `navigation/` | O fluxo principal da web (US-001: convidado abre o link e paga sem instalar) **não funciona** pela URL. |
 | W2 | P1 | P | **"Usar minha localização" na web** via `navigator.geolocation` (hoje a web só aceita cidade digitada). | `core/platform/DeviceLocation.wasmJs.kt` | Paridade com Android/iOS; a busca por distância depende disso. |
 | W3 | P1 | P | **PWA e cabeçalho**: `manifest.webmanifest` (nome, ícones, cores), `apple-touch-icon`, `theme-color` claro/escuro e descrição. | `wasmJsMain/resources/` | "Adicionar à tela inicial" e aparência correta no celular. |
 
@@ -108,3 +108,4 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 ## Andamento
 
 - **Q1** ✅ `./gradlew checkAll`: testes + Android + iOS (simulador) + desktop + web (~3 min).
+- **W1** ✅ URL e histórico na web (`WebLinks`, `bindToBrowserNavigation`); links entram numa fila até o `NavHost` ter grafo — corrige também a abertura a frio em qualquer plataforma. Hospedagem: 12 §13.

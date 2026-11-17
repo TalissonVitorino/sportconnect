@@ -1,5 +1,6 @@
 package br.com.sportconnect
 
+import androidx.navigation.NavController
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
@@ -11,8 +12,8 @@ import br.com.sportconnect.navigation.AppNavHost
  */
 @Composable
 @Preview
-fun App() {
+fun App(onNavHostReady: suspend (NavController) -> Unit = {}) {
     SportConnectTheme {
-        AppNavHost()
+        AppNavHost(onNavHostReady = onNavHostReady)
     }
 }

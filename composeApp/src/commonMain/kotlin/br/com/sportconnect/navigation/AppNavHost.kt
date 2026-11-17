@@ -2,6 +2,9 @@
 
 package br.com.sportconnect.navigation
 
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.channels.Channel
+import androidx.navigation.NavController
 import br.com.sportconnect.feature.common.ReminderSync
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.WindowInsets
@@ -173,6 +176,8 @@ private fun NavDestination.athleteTab(): AthleteTab? = when {
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     startDestination: Any? = null,
+    /** Web (W1): liga o historico do navegador ao NavController. */
+    onNavHostReady: suspend (NavController) -> Unit = {},
 ) {
     val session: UiSessionStore = koinInject()
     val startAuth: AuthRepository = koinInject()
@@ -197,8 +202,21 @@ fun AppNavHost(
     // Links externos (convite, jogo, arena) com o app ja aberto ou vindos do iOS.
     // So limpa o listener se ainda for o desta casca: num link a frio o Android recria a Activity e a casca
     // antiga e descartada depois da nova ja ter se registrado.
+    // W1: o link pode chegar antes de o NavHost ter grafo (abertura a frio na web); entra numa fila e so
+    // navega depois que existe a primeira tela.
+    val links = remember(navController) { Channel<String>(Channel.UNLIMITED) }
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.first()
+        for (uri in links) {
+            runCatching { navController.navigate(NavUri(uri)) }.onFailure { println("Link nao aberto: $uri -> $it") }
+        }
+    }
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.first()
+        onNavHostReady(navController)
+    }
     DisposableEffect(navController) {
-        val listener: (String) -> Unit = { uri -> runCatching { navController.navigate(NavUri(uri)) } }
+        val listener: (String) -> Unit = { uri -> links.trySend(uri) }
         ExternalUriHandler.listener = listener
         onDispose { if (ExternalUriHandler.listener === listener) ExternalUriHandler.listener = null }
     }
