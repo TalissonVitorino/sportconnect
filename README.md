@@ -5,8 +5,9 @@ Plataforma para organizar esportes amadores: formação de times, agendamento de
 Contexto completo do produto em [`docs/00-brief.md`](docs/00-brief.md).
 
 Este repositório contém o app **Kotlin Multiplatform + Compose Multiplatform** com UI 100% compartilhada para
-**Android, iOS, Desktop (JVM) e Web (Wasm)**. No estado atual é um esqueleto de build: uma tela placeholder,
-navegação, DI e um caso de uso de domínio (rateio) com testes.
+**Android, iOS, Desktop (JVM) e Web (Wasm)**. No estado atual já tem o design system, as regras de negócio (rateio, prazos,
+estados da reserva, reembolso), as telas do atleta/organizador e da arena, tudo sobre dados fictícios
+(sem backend nem gateway reais). Veja o quadro "Estado atual do projeto" mais abaixo.
 
 ## Estrutura
 
@@ -59,12 +60,12 @@ Um único módulo Gradle (`:composeApp`) organizado em camadas por pacote. As de
 
 | Pacote | Responsabilidade | Hoje contém |
 |---|---|---|
-| `core/model` | Entidades e value objects puros, serializáveis | `Sport`, `Money` (centavos de BRL) |
-| `core/domain` | Regras de negócio e contratos de repositório | `SplitCostUseCase` (rateio), `SportRepository` |
-| `core/data` | Implementações de repositório (remoto/local) | `InMemorySportRepository` |
-| `core/designsystem` | Tema Material 3 e componentes do design system | `SportConnectTheme` (placeholder) |
-| `feature/<nome>` | Uma pasta por funcionalidade: `XxxScreen` + `XxxViewModel` (+ UiState) | `feature/home` |
-| `navigation` | Grafo de navegação e rotas | `Route`, `AppNavHost` |
+| `core/model` | Entidades e value objects puros, serializáveis | `Sport`, `Money` (centavos de BRL), `Jogo`, `Reserva`, `Cota`, `Arena`, `Slot`, `Pagamento`, `Repasse` |
+| `core/domain` | Regras de negócio e contratos de repositório | `SplitCostUseCase` (rateio), `HoldDeadlineCalculator`, `ReservationStateMachine`, `RefundPolicy`, `WaitlistManager`, `PayoutCalculator`, casos de uso das telas e interfaces de repositório |
+| `core/data` | Implementações de repositório (remoto/local) | Repositórios fictícios em memória (`core/data/fake`): arenas, jogos, Pix simulado, autenticação |
+| `core/designsystem` | Tema Material 3 e componentes do design system | `SportConnectTheme` (claro e escuro), 19 componentes `SC*`, catálogo e logo |
+| `feature/<nome>` | Uma pasta por funcionalidade: `XxxScreen` + `XxxViewModel` (+ UiState) | `home`, `explore`, `arena`, `slots`, `creategame`, `game`, `payment`, `invite`, `resolve`, `mygames`, `profile`, `auth`, `onboarding` e `arenaadmin` (Minha Arena) |
+| `navigation` | Grafo de navegação e rotas | Rotas type-safe, `AppNavHost` e navegação adaptativa (barra inferior e rail) |
 | `di` | Módulos Koin e `initKoin()` (chamado por cada plataforma) | `dataModule`, `domainModule`, `featureModule` |
 
 Decisões e trade-offs:
@@ -75,8 +76,8 @@ Decisões e trade-offs:
 - **Koin** para DI por ser multiplataforma, sem geração de código, e com `koinViewModel()` para Compose.
 - **Navegação/ViewModel da JetBrains** (`org.jetbrains.androidx.*`) para manter a mesma API do Jetpack em
   todos os alvos.
-- **Dinheiro em centavos (`Long`)**, nunca `Double`: o rateio distribui os centavos restantes nas primeiras
-  cotas para que a soma das cotas seja sempre igual ao total.
+- **Dinheiro em centavos (`Long`)**, nunca `Double`: no rateio, a sobra de centavos vai para a cota do
+  organizador (PRD, RN-04), para que a soma das cotas seja sempre igual ao total.
 - **Ktor** já está declarado (core, content-negotiation, logging, engines OkHttp/Darwin/JS), pronto para o
   `core/data` remoto.
 
