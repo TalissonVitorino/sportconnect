@@ -2,6 +2,16 @@
 
 package br.com.sportconnect.feature.account
 
+import br.com.sportconnect.resources.profile_photo_remove
+import br.com.sportconnect.resources.profile_photo_change
+import br.com.sportconnect.resources.profile_photo_add
+import androidx.compose.material.icons.rounded.AddAPhoto
+import br.com.sportconnect.core.designsystem.component.AvatarUi
+import br.com.sportconnect.core.designsystem.component.SCAvatar
+import br.com.sportconnect.feature.common.LocalPickProfilePhoto
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.data.local.ProfilePhotoStore
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -456,9 +466,13 @@ fun EditProfileRoute(onBack: () -> Unit, vm: EditProfileViewModel = koinViewMode
             state.phoneChanged -> { snackbar.showSC(phoneMsg, SCSnackbarKind.Success); vm.consumeSaved() }
         }
     }
+    val photo by koinInject<ProfilePhotoStore>().photo.collectAsStateWithLifecycle()
     EditProfileScreen(
         state, snackbar, onBack, vm::setName, vm::setEmail, vm::save,
         vm::startPhoneChange, vm::cancelPhoneChange, vm::setNewPhone, vm::sendPhoneCode, vm::setPhoneCode,
+        photo = photo,
+        onPickPhoto = LocalPickProfilePhoto.current,
+        onRemovePhoto = vm::removePhoto,
     )
 }
 
@@ -476,6 +490,9 @@ fun EditProfileScreen(
     onNewPhone: (String) -> Unit = {},
     onSendPhoneCode: () -> Unit = {},
     onPhoneCode: (String) -> Unit = {},
+    photo: ImageBitmap? = null,
+    onPickPhoto: () -> Unit = {},
+    onRemovePhoto: () -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
@@ -495,6 +512,24 @@ fun EditProfileScreen(
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             CenteredContent(Modifier.padding(16.dp)) {
+                // B7: foto de perfil (trocar/remover).
+                Row(Modifier.fillMaxWidth().padding(bottom = 20.dp), verticalAlignment = Alignment.CenterVertically) {
+                    SCAvatar(AvatarUi(state.name.ifBlank { "?" }, photo = photo), size = 80.dp)
+                    Spacer(Modifier.width(16.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        SCButton(
+                            stringResource(if (photo == null) Res.string.profile_photo_add else Res.string.profile_photo_change),
+                            onPickPhoto, variant = SCButtonVariant.Secondary, size = SCButtonSize.Small,
+                            leadingIcon = Icons.Rounded.AddAPhoto, modifier = Modifier.testTag("profile_photo_change"),
+                        )
+                        if (photo != null) {
+                            SCButton(
+                                stringResource(Res.string.profile_photo_remove), onRemovePhoto,
+                                variant = SCButtonVariant.Text, size = SCButtonSize.Small, modifier = Modifier.testTag("profile_photo_remove"),
+                            )
+                        }
+                    }
+                }
                 SCTextField(
                     value = state.name, onValueChange = onName,
                     label = stringResource(Res.string.auth_name_label),

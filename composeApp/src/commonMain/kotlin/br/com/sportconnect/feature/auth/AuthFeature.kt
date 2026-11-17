@@ -2,6 +2,17 @@
 
 package br.com.sportconnect.feature.auth
 
+import br.com.sportconnect.resources.profile_photo_hint
+import br.com.sportconnect.resources.profile_photo_change
+import br.com.sportconnect.resources.profile_photo_add
+import androidx.compose.material.icons.rounded.AddAPhoto
+import androidx.compose.material.icons.Icons
+import br.com.sportconnect.core.designsystem.component.AvatarUi
+import br.com.sportconnect.core.designsystem.component.SCAvatar
+import br.com.sportconnect.feature.common.LocalPickProfilePhoto
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.data.local.ProfilePhotoStore
+import androidx.compose.ui.graphics.ImageBitmap
 import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -284,8 +295,11 @@ fun AuthRoute(
     vm: AuthViewModel = koinViewModel(),
 ) {
     val state by vm.uiState.collectAsStateWithLifecycle()
+    val photo by koinInject<ProfilePhotoStore>().photo.collectAsStateWithLifecycle()
     LaunchedEffect(state.done) { if (state.done) onDone() }
     AuthScreen(
+        photo = photo,
+        onPickPhoto = LocalPickProfilePhoto.current,
         state = state,
         onClose = onClose,
         onPhone = vm::setPhone,
@@ -317,6 +331,8 @@ fun AuthScreen(
     onFinishName: () -> Unit = {},
     onOpenLegal: (LegalDoc) -> Unit = {},
     minutesUntil: (Instant) -> Int = { AuthRules.BLOQUEIO_MIN },
+    photo: ImageBitmap? = null,
+    onPickPhoto: () -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
@@ -384,7 +400,7 @@ fun AuthScreen(
                     when (step) {
                         AuthStep.Phone -> PhoneStep(state, onPhone, onSend)
                         AuthStep.Code -> CodeStep(state, onCode, onChangeNumber, minutesUntil)
-                        AuthStep.Name -> NameStep(state, onName, onMarketing, onFinishName)
+                        AuthStep.Name -> NameStep(state, onName, onMarketing, onFinishName, photo, onPickPhoto)
                     }
                 }
             }
@@ -460,13 +476,37 @@ private fun CodeStep(state: AuthUiState, onCode: (String) -> Unit, onChangeNumbe
 }
 
 @Composable
-private fun NameStep(state: AuthUiState, onName: (String) -> Unit, onMarketing: (Boolean) -> Unit, onFinish: () -> Unit) {
+private fun NameStep(
+    state: AuthUiState,
+    onName: (String) -> Unit,
+    onMarketing: (Boolean) -> Unit,
+    onFinish: () -> Unit,
+    photo: ImageBitmap?,
+    onPickPhoto: () -> Unit,
+) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }
     Text(stringResource(Res.string.auth_name_title), style = t.headlineMedium, color = c.onSurface, modifier = Modifier.semantics { heading() })
-    Spacer(Modifier.height(24.dp))
+    Spacer(Modifier.height(20.dp))
+    // B7: foto opcional no cadastro (aparece na lista do jogo).
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        SCAvatar(AvatarUi(state.name.ifBlank { "?" }, photo = photo), size = 72.dp)
+        Spacer(Modifier.width(16.dp))
+        Column {
+            SCButton(
+                stringResource(if (photo == null) Res.string.profile_photo_add else Res.string.profile_photo_change),
+                onPickPhoto,
+                variant = SCButtonVariant.Secondary,
+                size = SCButtonSize.Small,
+                leadingIcon = Icons.Rounded.AddAPhoto,
+                modifier = Modifier.testTag("auth_photo"),
+            )
+            Text(stringResource(Res.string.profile_photo_hint), style = t.bodySmall, color = c.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
+        }
+    }
+    Spacer(Modifier.height(20.dp))
     SCTextField(
         value = state.name,
         onValueChange = onName,

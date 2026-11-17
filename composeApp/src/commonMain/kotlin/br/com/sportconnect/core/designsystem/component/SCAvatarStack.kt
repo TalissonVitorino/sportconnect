@@ -1,5 +1,8 @@
 package br.com.sportconnect.core.designsystem.component
 
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -42,6 +45,8 @@ data class AvatarUi(
     val paid: Boolean = false,
     val containerColor: Color? = null,
     val contentColor: Color? = null,
+    /** Foto ja decodificada (B7); null = iniciais. */
+    val photo: ImageBitmap? = null,
 )
 
 /** Avatar circular com iniciais. Decorativo por padrao (o nome costuma estar ao lado). */
@@ -63,12 +68,16 @@ fun SCAvatar(
             .background(bg),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            initialsOf(person.name),
-            color = fg,
-            style = MaterialTheme.typography.labelLarge.copy(fontSize = (size.value * 0.36f).sp, lineHeight = (size.value * 0.4f).sp),
-            maxLines = 1,
-        )
+        if (person.photo != null) {
+            Image(person.photo, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.matchParentSize())
+        } else {
+            Text(
+                initialsOf(person.name),
+                color = fg,
+                style = MaterialTheme.typography.labelLarge.copy(fontSize = (size.value * 0.36f).sp, lineHeight = (size.value * 0.4f).sp),
+                maxLines = 1,
+            )
+        }
     }
 }
 

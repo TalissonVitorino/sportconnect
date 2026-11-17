@@ -2,6 +2,8 @@
 
 package br.com.sportconnect.navigation
 
+import br.com.sportconnect.resources.profile_photo_error
+import br.com.sportconnect.feature.common.ProfilePhotoHost
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.setValue
@@ -228,6 +230,8 @@ fun AppNavHost(
         if (authRepo.currentUser.value == null) requireLogin(AfterLogin.Pay(gameId)) else nav.go(Route.GamePay(gameId, afterCreate))
     }
 
+    val photoErrorMsg = stringResource(Res.string.profile_photo_error)
+    ProfilePhotoHost(onError = { scope.launch { snackbar.showSC(photoErrorMsg, SCSnackbarKind.Error) } }) {
     SCAdaptiveNavigation(
         items = items,
         selectedRoute = tab?.key.orEmpty(),
@@ -460,6 +464,7 @@ fun AppNavHost(
                 )
             }
         }
+    }
     }
 }
 

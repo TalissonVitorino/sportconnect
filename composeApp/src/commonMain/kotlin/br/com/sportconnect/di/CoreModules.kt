@@ -1,5 +1,6 @@
 package br.com.sportconnect.di
 
+import br.com.sportconnect.core.data.local.ProfilePhotoStore
 import br.com.sportconnect.core.data.InMemorySportRepository
 import br.com.sportconnect.core.data.fake.DemoData
 import br.com.sportconnect.core.data.local.AppPreferences
@@ -67,6 +68,7 @@ val dataModule = module {
     single<CoroutineScope>(APP_SCOPE) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     single { DemoData(get()) }
     single { AppPreferences(get()) }
+    single { ProfilePhotoStore() }
 
     singleOf(::InMemorySportRepository) bind SportRepository::class
     single { InMemoryAnalyticsTracker() } bind AnalyticsTracker::class

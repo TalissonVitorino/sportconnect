@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.account
 
+import br.com.sportconnect.core.data.local.ProfilePhotoStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.sportconnect.core.data.local.AppPreferences
@@ -96,6 +97,7 @@ data class DeleteAccountUiState(
 class DeleteAccountViewModel(
     private val auth: AuthRepository,
     private val deleteAccount: DeleteAccountUseCase,
+    private val photos: ProfilePhotoStore,
 ) : ViewModel() {
     private val _local = MutableStateFlow(DeleteAccountUiState())
     val uiState: StateFlow<DeleteAccountUiState> = combine(_local, deleteAccount.jogosQueSeguram(), auth.currentUser) { s, jogos, u ->
@@ -144,8 +146,13 @@ class DeleteAccountViewModel(
                 return@launch
             }
             val pending = s.pendingGames
+            val uid = auth.currentUser.value?.id
             deleteAccount().fold(
-                onSuccess = { r -> _local.update { it.copy(loading = false, step = DeleteStep.Done, scheduledAfter = r.agendadaApos, pendingGames = pending) } },
+                onSuccess = { r ->
+                    // A foto sai junto com os dados pessoais.
+                    uid?.let { photos.remove(it) }
+                    _local.update { it.copy(loading = false, step = DeleteStep.Done, scheduledAfter = r.agendadaApos, pendingGames = pending) }
+                },
                 onFailure = { _local.update { it.copy(loading = false, error = CodeError.Invalid) } },
             )
         }
@@ -178,7 +185,13 @@ data class EditProfileUiState(
 class EditProfileViewModel(
     private val auth: AuthRepository,
     private val analytics: AnalyticsTracker,
+    private val photos: ProfilePhotoStore,
 ) : ViewModel() {
+    fun removePhoto() {
+        val uid = auth.currentUser.value?.id ?: return
+        viewModelScope.launch { photos.remove(uid) }
+    }
+
     private val _uiState = MutableStateFlow(EditProfileUiState())
     val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
 

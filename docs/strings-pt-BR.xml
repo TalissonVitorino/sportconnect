@@ -837,6 +837,12 @@
     <string name="onboarding_location_unavailable">Não conseguimos sua localização agora. Digite sua cidade.</string>
     <string name="onboarding_location_city_unknown">Ainda não temos arenas em %1$s. Por enquanto, vamos mostrar as de São Paulo.</string>
     <string name="onboarding_location_locating">Buscando sua localização…</string>
+    <!-- 11-backlog · B7 foto de perfil (propostos) -->
+    <string name="profile_photo_add">Adicionar foto</string>
+    <string name="profile_photo_change">Trocar foto</string>
+    <string name="profile_photo_remove">Remover foto</string>
+    <string name="profile_photo_error">Não deu pra usar essa foto. Tente outra.</string>
+    <string name="profile_photo_hint">Opcional. Ajuda a galera a te reconhecer no jogo.</string>
 
     <!-- ===== Minha Arena (strings_arena.xml) ===== -->
     <!-- Shell / navegacao -->

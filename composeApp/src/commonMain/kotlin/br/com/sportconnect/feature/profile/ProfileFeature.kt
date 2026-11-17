@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.profile
 
+import br.com.sportconnect.core.data.local.ProfilePhotoStore
 import br.com.sportconnect.AppInfo
 import br.com.sportconnect.core.designsystem.component.SCSkeletonShape
 import br.com.sportconnect.core.designsystem.component.SCSkeleton
@@ -241,6 +242,7 @@ fun ProfileScreen(
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
     var confirmLogout by rememberSaveable { mutableStateOf(false) }
+    val photo by koinInject<ProfilePhotoStore>().photo.collectAsStateWithLifecycle()
     if (confirmLogout) {
         // B14: sair pedia so um toque num texto vermelho, sem confirmacao.
         SCDialog(
@@ -277,7 +279,7 @@ fun ProfileScreen(
                         .padding(vertical = 16.dp).testTag("profile_header"),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    SCAvatar(AvatarUi(u.nome), size = 64.dp)
+                    SCAvatar(AvatarUi(u.nome, photo = photo), size = 64.dp)
                     Spacer(Modifier.width(16.dp))
                     Column {
                         Text(u.nome, style = t.titleLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
