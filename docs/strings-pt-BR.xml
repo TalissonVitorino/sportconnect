@@ -843,6 +843,15 @@
     <string name="profile_photo_remove">Remover foto</string>
     <string name="profile_photo_hint">Opcional. Ajuda a galera a te reconhecer no jogo.</string>
     <string name="common_or">ou</string>
+    <!-- 11-backlog · E5 cartão (propostos) -->
+    <string name="card_number_invalid">Confira o número do cartão.</string>
+    <string name="card_expiry_invalid">Use mês e ano, por exemplo 08/29.</string>
+    <string name="card_cvv_invalid">Confira o código de segurança (3 ou 4 números no verso).</string>
+    <string name="card_saved_item">%1$s •••• %2$s</string>
+    <string name="card_saved_expiry">Validade %1$s</string>
+    <string name="card_remove">Remover</string>
+    <string name="card_name_invalid">Escreva o nome como está no cartão.</string>
+    <string name="card_secure_note">Os dados do cartão vão direto para o intermediador de pagamento. O SportConnect não guarda o número nem o código.</string>
 
     <!-- ===== Minha Arena (strings_arena.xml) ===== -->
     <!-- Shell / navegacao -->

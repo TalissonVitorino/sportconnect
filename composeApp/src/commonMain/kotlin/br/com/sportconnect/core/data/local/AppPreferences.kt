@@ -71,6 +71,16 @@ class AppPreferences(private val settings: Settings) {
             }
         }
 
+    /** Cartoes salvos (E5): so bandeira, final e validade — nunca numero completo nem CVV. */
+    var savedCards: List<SavedCard>
+        get() = settings.getStringOrNull(KEY_CARDS).orEmpty().split(';').mapNotNull { e ->
+            val p = e.split('|')
+            if (p.size == 3) SavedCard(p[0], p[1], p[2]) else null
+        }
+        set(value) = settings.putString(KEY_CARDS, value.joinToString(";") { "${it.brand}|${it.last4}|${it.expiry}" })
+
+    data class SavedCard(val brand: String, val last4: String, val expiry: String)
+
     data class SavedOrigin(val latitude: Double, val longitude: Double, val city: String?)
 
     data class SavedSession(val id: String, val nome: String, val celular: String, val email: String? = null)
@@ -86,6 +96,7 @@ class AppPreferences(private val settings: Settings) {
         const val KEY_MARKETING = PREFIX + "marketing_opt_in"
         const val KEY_SPORTS = PREFIX + "favorite_sports"
         const val KEY_LAT = PREFIX + "origin_lat"
+        const val KEY_CARDS = PREFIX + "saved_cards"
         const val KEY_LON = PREFIX + "origin_lon"
         const val KEY_CITY = PREFIX + "origin_city"
     }

@@ -2,6 +2,35 @@
 
 package br.com.sportconnect.feature.payment
 
+import br.com.sportconnect.resources.card_name_invalid
+import br.com.sportconnect.resources.common_back
+import br.com.sportconnect.resources.error_card_expired_body
+import br.com.sportconnect.resources.error_card_expired_title
+import br.com.sportconnect.resources.error_payment_declined_action
+import br.com.sportconnect.resources.error_payment_declined_body
+import br.com.sportconnect.resources.error_payment_declined_title
+import br.com.sportconnect.resources.card_secure_note
+import br.com.sportconnect.resources.card_cvv_invalid
+import br.com.sportconnect.resources.card_expiry_invalid
+import br.com.sportconnect.resources.card_number_invalid
+import br.com.sportconnect.resources.card_save_toggle
+import br.com.sportconnect.resources.card_name_label
+import br.com.sportconnect.resources.card_cvv_label
+import br.com.sportconnect.resources.card_expiry_label
+import br.com.sportconnect.resources.card_number_label
+import br.com.sportconnect.core.model.FusoSaoPaulo
+import kotlinx.datetime.toLocalDateTime
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material3.Checkbox
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
+import br.com.sportconnect.core.designsystem.component.SCTextFieldType
+import br.com.sportconnect.core.designsystem.component.SCTextField
+import br.com.sportconnect.core.domain.CardValidation
+import br.com.sportconnect.core.domain.CardBrand
 import kotlin.time.Duration.Companion.minutes
 import androidx.compose.runtime.produceState
 import br.com.sportconnect.resources.profile_sign_in
@@ -201,6 +230,9 @@ fun PaymentRoute(route: Route.GamePay, actions: PaymentActions) {
         onCheckNow = vm::checkNow,
         onRegenerate = vm::regenerate,
         onPayWithCard = vm::payWithCard,
+        onCard = vm::updateCard,
+        onSwitchToPix = vm::switchToPix,
+        onBackToForm = vm::backToForm,
     )
 }
 
@@ -215,6 +247,9 @@ fun PaymentScreen(
     onCheckNow: () -> Unit = {},
     onRegenerate: () -> Unit = {},
     onPayWithCard: () -> Unit = {},
+    onCard: ((CardForm) -> CardForm) -> Unit = {},
+    onSwitchToPix: () -> Unit = {},
+    onBackToForm: () -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     val snackbar = remember { SnackbarHostState() }
@@ -258,12 +293,12 @@ fun PaymentScreen(
             Box(Modifier.fillMaxSize().padding(padding)) {
                 when {
                     state.paid -> PaidContent(state, actions)
-                    state.phase is PixPhase.Error -> ErrorContent(state.phase, state, actions, onRegenerate)
+                    state.phase is PixPhase.Error -> ErrorContent(state.phase, state, actions, onRegenerate, onSwitchToPix, onBackToForm)
                     wc == WidthClass.Expanded && waiting -> Row(
                         Modifier.fillMaxSize().padding(24.dp),
                         horizontalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterHorizontally),
                     ) {
-                        Column(Modifier.widthIn(max = 456.dp).weight(1f)) { Summary(state, onSelectMethod, enabled = false) }
+                        Column(Modifier.widthIn(max = 456.dp).weight(1f)) { Summary(state, onSelectMethod, enabled = false, onCard = onCard) }
                         Column(
                             Modifier.widthIn(max = 456.dp).weight(1f).fillMaxHeight()
                                 .background(c.surfaceContainerLow, MaterialTheme.shapes.extraLarge)
@@ -301,7 +336,7 @@ fun PaymentScreen(
                                     Spacer(Modifier.height(8.dp))
                                     PixSheetContent(state, share, onCopied, onCheckNow, onRegenerate, onPayWithCard)
                                 } else {
-                                    Summary(state, onSelectMethod, enabled = true)
+                                    Summary(state, onSelectMethod, enabled = true, onCard = onCard)
                                 }
                             }
                         }
@@ -340,7 +375,7 @@ private fun PixPhase.toSc(): SCPixState = when (this) {
 }
 
 @Composable
-private fun Summary(state: PaymentUiState, onSelectMethod: (MetodoPagamento) -> Unit, enabled: Boolean) {
+private fun Summary(state: PaymentUiState, onSelectMethod: (MetodoPagamento) -> Unit, enabled: Boolean, onCard: ((CardForm) -> CardForm) -> Unit = {}) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
     Column {
@@ -395,6 +430,9 @@ private fun Summary(state: PaymentUiState, onSelectMethod: (MetodoPagamento) -> 
                     enabled = enabled,
                     tag = "pay_method_card",
                 ) { onSelectMethod(MetodoPagamento.CARTAO) }
+            }
+            AnimatedVisibility(state.method == MetodoPagamento.CARTAO && enabled) {
+                CardFormFields(state.card, onCard)
             }
         }
     }
@@ -653,7 +691,27 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
 }
 
 @Composable
-private fun ErrorContent(phase: PixPhase.Error, state: PaymentUiState, actions: PaymentActions, onRetry: () -> Unit) {
+private fun ErrorContent(
+    phase: PixPhase.Error,
+    state: PaymentUiState,
+    actions: PaymentActions,
+    onRetry: () -> Unit,
+    onSwitchToPix: () -> Unit = {},
+    onBackToForm: () -> Unit = {},
+) {
+    if (phase.code == "CARTAO_RECUSADO" || phase.code == "CARTAO_VENCIDO") {
+        // E4/E5: recusado -> sugere Pix; vencido -> volta para corrigir a validade.
+        val declined = phase.code == "CARTAO_RECUSADO"
+        br.com.sportconnect.core.designsystem.component.SCEmptyState(
+            title = stringResource(if (declined) Res.string.error_payment_declined_title else Res.string.error_card_expired_title),
+            description = stringResource(if (declined) Res.string.error_payment_declined_body else Res.string.error_card_expired_body),
+            illustration = br.com.sportconnect.core.designsystem.component.SCIllustration.Error,
+            primaryAction = if (declined) SCAction(stringResource(Res.string.error_payment_declined_action), onSwitchToPix) else SCAction(stringResource(Res.string.common_back), onBackToForm),
+            secondaryAction = if (declined) SCAction(stringResource(Res.string.common_back), onBackToForm) else null,
+            modifier = Modifier.testTag(if (declined) "pay_card_declined" else "pay_card_expired"),
+        )
+        return
+    }
     if (phase.code == "NAO_AUTENTICADO") {
         // E4: sessao expirou no meio do pagamento -> entrar de novo e voltar para ca.
         br.com.sportconnect.core.designsystem.component.SCEmptyState(
@@ -679,4 +737,72 @@ private fun ErrorContent(phase: PixPhase.Error, state: PaymentUiState, actions: 
         secondaryAction = if (phase.code == "JA_PAGOU" || phase.code == "SEM_VAGAS") null else SCAction(stringResource(Res.string.pix_new_code), onRetry),
         modifier = Modifier.testTag(if (phase.code == "JA_PAGOU") "pix_already_paid" else "pay_error"),
     )
+}
+
+/** E5: formulario do cartao. Erros so aparecem depois da 1a tentativa de pagar. */
+@Composable
+private fun CardFormFields(card: CardForm, onCard: ((CardForm) -> CardForm) -> Unit) {
+    val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
+    val today = LocalSCClock.current.now().toLocalDateTime(FusoSaoPaulo).date
+    val expiryState = CardValidation.expiryState(card.expiry, today)
+    Column(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp).testTag("card_form"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        SCTextField(
+            value = card.number,
+            onValueChange = { v -> onCard { it.copy(number = v) } },
+            label = stringResource(Res.string.card_number_label),
+            type = SCTextFieldType.CardNumber,
+            supportingText = card.brand.takeIf { card.number.length >= 4 && it != CardBrand.OUTRA }?.label,
+            errorText = if (card.showErrors && !card.numberOk) stringResource(Res.string.card_number_invalid) else null,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.CreditCardNumber }.testTag("card_number"),
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            SCTextField(
+                value = card.expiry,
+                onValueChange = { v -> onCard { it.copy(expiry = v) } },
+                label = stringResource(Res.string.card_expiry_label),
+                type = SCTextFieldType.CardExpiry,
+                placeholder = "MM/AA",
+                errorText = when {
+                    !card.showErrors -> null
+                    expiryState == CardValidation.ExpiryState.Expired -> stringResource(Res.string.error_card_expired_title)
+                    expiryState != CardValidation.ExpiryState.Ok -> stringResource(Res.string.card_expiry_invalid)
+                    else -> null
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                modifier = Modifier.weight(1f).semantics { contentType = ContentType.CreditCardExpirationDate }.testTag("card_expiry"),
+            )
+            SCTextField(
+                value = card.cvv,
+                onValueChange = { v -> onCard { it.copy(cvv = v) } },
+                label = stringResource(Res.string.card_cvv_label),
+                type = SCTextFieldType.Cvv,
+                errorText = if (card.showErrors && !card.cvvOk) stringResource(Res.string.card_cvv_invalid) else null,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                modifier = Modifier.weight(1f).semantics { contentType = ContentType.CreditCardSecurityCode }.testTag("card_cvv"),
+            )
+        }
+        SCTextField(
+            value = card.name,
+            onValueChange = { v -> onCard { it.copy(name = v.take(40)) } },
+            label = stringResource(Res.string.card_name_label),
+            errorText = if (card.showErrors && !card.nameOk) stringResource(Res.string.card_name_invalid) else null,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters, imeAction = ImeAction.Done),
+            modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.PersonFullName }.testTag("card_name"),
+        )
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(role = Role.Checkbox) { onCard { it.copy(save = !it.save) } }.testTag("card_save"),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(checked = card.save, onCheckedChange = null)
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(Res.string.card_save_toggle), style = t.bodyMedium, color = c.onSurface)
+        }
+        Row(verticalAlignment = Alignment.Top) {
+            Icon(Icons.Rounded.Lock, null, tint = c.onSurfaceVariant, modifier = Modifier.size(16.dp).padding(top = 2.dp))
+            Spacer(Modifier.width(6.dp))
+            Text(stringResource(Res.string.card_secure_note), style = t.bodySmall, color = c.onSurfaceVariant)
+        }
+    }
 }

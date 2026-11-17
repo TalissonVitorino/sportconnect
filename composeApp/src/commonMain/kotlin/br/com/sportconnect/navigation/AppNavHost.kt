@@ -81,7 +81,7 @@ import br.com.sportconnect.feature.arenaadmin.arenaAdminGraph
 import br.com.sportconnect.feature.account.DeleteAccountRoute
 import br.com.sportconnect.feature.account.EditProfileRoute
 import br.com.sportconnect.feature.account.PrivacyRoute
-import br.com.sportconnect.feature.account.SavedCardsScreen
+import br.com.sportconnect.feature.account.SavedCardsRoute
 import br.com.sportconnect.feature.account.SportsRoute
 import br.com.sportconnect.feature.account.SupportScreen
 import br.com.sportconnect.feature.auth.AuthRoute
@@ -449,7 +449,7 @@ fun AppNavHost(
                 }
                 composable<Route.ProfileEdit> { EditProfileRoute(onBack = nav::back) }
                 composable<Route.ProfileSports> { SportsRoute(onBack = nav::back) }
-                composable<Route.SavedCards> { SavedCardsScreen(onBack = nav::back) }
+                composable<Route.SavedCards> { SavedCardsRoute(onBack = nav::back) }
                 composable<Route.Support> { SupportScreen(onBack = nav::back) }
                 composable<Route.ProfilePayments> { PaymentsRoute(onBack = nav::back, onReceipt = { nav.go(Route.Receipt(it)) }) }
                 composable<Route.Receipt> { entry -> ReceiptRoute(entry.toRoute(), onBack = nav::back, onHelp = { nav.go(Route.Support) }) }

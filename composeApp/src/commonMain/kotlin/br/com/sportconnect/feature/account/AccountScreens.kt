@@ -2,6 +2,12 @@
 
 package br.com.sportconnect.feature.account
 
+import br.com.sportconnect.resources.card_secure_note
+import br.com.sportconnect.resources.card_remove
+import br.com.sportconnect.resources.card_saved_expiry
+import br.com.sportconnect.resources.card_saved_item
+import androidx.compose.material.icons.rounded.CreditCard
+import br.com.sportconnect.core.data.local.AppPreferences
 import br.com.sportconnect.resources.profile_photo_remove
 import br.com.sportconnect.resources.profile_photo_change
 import br.com.sportconnect.resources.profile_photo_add
@@ -627,17 +633,46 @@ fun SportsScreen(selected: Set<Sport>, onBack: () -> Unit = {}, onToggle: (Sport
 
 // =================================================================== cartoes salvos
 
-/** Cartoes salvos (B15): cartao e P1 (US-032); por enquanto, estado vazio que explica o porque. */
+/** Cartoes salvos (B15/E5): so bandeira, final e validade; remover tira do aparelho. */
 @Composable
-fun SavedCardsScreen(onBack: () -> Unit = {}) {
+fun SavedCardsRoute(onBack: () -> Unit) {
+    val prefs: AppPreferences = koinInject()
+    var cards by remember { mutableStateOf(prefs.savedCards) }
+    SavedCardsScreen(cards, onBack, onRemove = { card -> prefs.savedCards = cards - card; cards = prefs.savedCards })
+}
+
+@Composable
+fun SavedCardsScreen(cards: List<AppPreferences.SavedCard> = emptyList(), onBack: () -> Unit = {}, onRemove: (AppPreferences.SavedCard) -> Unit = {}) {
     val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
     Scaffold(containerColor = c.surface, topBar = { SCTopBar(stringResource(Res.string.profile_saved_cards), onNavigationClick = onBack) }) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
-            SCEmptyState(
-                title = stringResource(Res.string.cards_empty_title),
-                description = stringResource(Res.string.cards_empty_body),
-                modifier = Modifier.testTag("cards_empty"),
-            )
+        if (cards.isEmpty()) {
+            Box(Modifier.fillMaxSize().padding(padding)) {
+                SCEmptyState(
+                    title = stringResource(Res.string.cards_empty_title),
+                    description = stringResource(Res.string.cards_empty_body),
+                    modifier = Modifier.testTag("cards_empty"),
+                )
+            }
+            return@Scaffold
+        }
+        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
+            CenteredContent(Modifier.padding(horizontal = 16.dp)) {
+                cards.forEach { card ->
+                    Row(Modifier.fillMaxWidth().heightIn(min = 72.dp).testTag("saved_card_${card.last4}"), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Rounded.CreditCard, null, tint = c.onSurfaceVariant, modifier = Modifier.size(24.dp))
+                        Spacer(Modifier.width(16.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(stringResource(Res.string.card_saved_item, card.brand, card.last4), style = t.bodyLarge, color = c.onSurface)
+                            Text(stringResource(Res.string.card_saved_expiry, card.expiry), style = t.bodyMedium, color = c.onSurfaceVariant)
+                        }
+                        SCButton(stringResource(Res.string.card_remove), { onRemove(card) }, variant = SCButtonVariant.Text, size = SCButtonSize.Small)
+                    }
+                    HorizontalDivider(color = c.outlineVariant)
+                }
+                Spacer(Modifier.height(16.dp))
+                Text(stringResource(Res.string.card_secure_note), style = t.bodySmall, color = c.onSurfaceVariant)
+            }
         }
     }
 }

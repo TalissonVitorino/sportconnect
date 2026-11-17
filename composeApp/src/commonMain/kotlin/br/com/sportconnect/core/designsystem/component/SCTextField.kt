@@ -43,12 +43,13 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import br.com.sportconnect.core.designsystem.theme.SCShape
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
 
-enum class SCTextFieldType { Text, Money, Phone, Cpf, Cep, Search, Multiline }
+enum class SCTextFieldType { Text, Money, Phone, Cpf, Cep, CardNumber, CardExpiry, Cvv, Search, Multiline }
 
 /**
  * Campo de texto (06 §5.2). Rotulo SEMPRE visivel acima do campo (nome acessivel),
@@ -87,20 +88,29 @@ fun SCTextField(
         SCTextFieldType.Phone -> 11
         SCTextFieldType.Cpf -> 11
         SCTextFieldType.Cep -> 8
+        SCTextFieldType.CardNumber -> 19
+        SCTextFieldType.CardExpiry -> 4
+        SCTextFieldType.Cvv -> 4
         SCTextFieldType.Money -> 11
         else -> null
     }
     val effectiveMax = maxLength ?: digitLimit
-    val digitsOnly = type == SCTextFieldType.Money || type == SCTextFieldType.Phone || type == SCTextFieldType.Cpf || type == SCTextFieldType.Cep
+    val digitsOnly = type == SCTextFieldType.Money || type == SCTextFieldType.Phone || type == SCTextFieldType.Cpf ||
+        type == SCTextFieldType.Cep || type == SCTextFieldType.CardNumber || type == SCTextFieldType.CardExpiry || type == SCTextFieldType.Cvv
     val transformation: VisualTransformation = when (type) {
         SCTextFieldType.Money -> MoneyVisualTransformation
         SCTextFieldType.Phone -> MaskVisualTransformation("(##) # ####-####")
         SCTextFieldType.Cpf -> MaskVisualTransformation("###.###.###-##")
         SCTextFieldType.Cep -> MaskVisualTransformation("#####-###")
+        SCTextFieldType.CardNumber -> MaskVisualTransformation("#### #### #### #### ###")
+        SCTextFieldType.CardExpiry -> MaskVisualTransformation("##/##")
+        SCTextFieldType.Cvv -> PasswordVisualTransformation()
         else -> VisualTransformation.None
     }
     val kbOptions = when (type) {
-        SCTextFieldType.Money, SCTextFieldType.Cpf, SCTextFieldType.Cep -> keyboardOptions.copy(keyboardType = KeyboardType.Number)
+        SCTextFieldType.Money, SCTextFieldType.Cpf, SCTextFieldType.Cep, SCTextFieldType.CardNumber, SCTextFieldType.CardExpiry ->
+            keyboardOptions.copy(keyboardType = KeyboardType.Number)
+        SCTextFieldType.Cvv -> keyboardOptions.copy(keyboardType = KeyboardType.NumberPassword)
         SCTextFieldType.Phone -> keyboardOptions.copy(keyboardType = KeyboardType.Phone)
         else -> keyboardOptions
     }
