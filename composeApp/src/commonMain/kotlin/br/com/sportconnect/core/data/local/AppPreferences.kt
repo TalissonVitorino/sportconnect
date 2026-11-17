@@ -23,6 +23,7 @@ class AppPreferences(private val settings: Settings) {
                 id = id,
                 nome = settings.getStringOrNull(KEY_SESSION_NAME).orEmpty(),
                 celular = settings.getStringOrNull(KEY_SESSION_PHONE).orEmpty(),
+                email = settings.getStringOrNull(KEY_SESSION_EMAIL),
             )
         }
         set(value) {
@@ -30,10 +31,12 @@ class AppPreferences(private val settings: Settings) {
                 settings.remove(KEY_SESSION_ID)
                 settings.remove(KEY_SESSION_NAME)
                 settings.remove(KEY_SESSION_PHONE)
+                settings.remove(KEY_SESSION_EMAIL)
             } else {
                 settings.putString(KEY_SESSION_ID, value.id)
                 settings.putString(KEY_SESSION_NAME, value.nome)
                 settings.putString(KEY_SESSION_PHONE, value.celular)
+                if (value.email == null) settings.remove(KEY_SESSION_EMAIL) else settings.putString(KEY_SESSION_EMAIL, value.email)
             }
         }
 
@@ -46,7 +49,12 @@ class AppPreferences(private val settings: Settings) {
         get() = settings.getBoolean(KEY_MARKETING, false)
         set(value) = settings.putBoolean(KEY_MARKETING, value)
 
-    data class SavedSession(val id: String, val nome: String, val celular: String)
+    /** "Meus esportes" (perfil/onboarding): nomes de [br.com.sportconnect.core.model.Sport]. */
+    var favoriteSports: Set<String>
+        get() = settings.getStringOrNull(KEY_SPORTS)?.split(',')?.filter { it.isNotBlank() }?.toSet().orEmpty()
+        set(value) = settings.putString(KEY_SPORTS, value.joinToString(","))
+
+    data class SavedSession(val id: String, val nome: String, val celular: String, val email: String? = null)
 
     private companion object {
         const val PREFIX = "sportconnect."
@@ -54,7 +62,9 @@ class AppPreferences(private val settings: Settings) {
         const val KEY_SESSION_ID = PREFIX + "session_user_id"
         const val KEY_SESSION_NAME = PREFIX + "session_user_name"
         const val KEY_SESSION_PHONE = PREFIX + "session_user_phone"
+        const val KEY_SESSION_EMAIL = PREFIX + "session_user_email"
         const val KEY_TERMS_VERSION = PREFIX + "terms_version"
         const val KEY_MARKETING = PREFIX + "marketing_opt_in"
+        const val KEY_SPORTS = PREFIX + "favorite_sports"
     }
 }

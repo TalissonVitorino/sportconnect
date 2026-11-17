@@ -780,6 +780,54 @@
     <string name="profile_signed_out_title">Entre pra organizar e pagar</string>
     <string name="profile_signed_out_body">Com o celular você cria jogos, paga sua cota e acompanha tudo por aqui.</string>
     <string name="profile_sign_in">Entrar com celular</string>
+    <!-- 11-backlog-auditoria · sprint "LGPD e lojas" (B11, B12, B13, B15) — propostos, revisar com UX Writing/Jurídico -->
+    <string name="privacy_section_consents">O que você autoriza</string>
+    <string name="privacy_marketing_title">Novidades e promoções</string>
+    <string name="privacy_marketing_body">Ofertas de arenas e novidades do app. Avisos de pagamento e de jogo chegam sempre.</string>
+    <string name="privacy_section_documents">Documentos</string>
+    <string name="privacy_section_your_data">Seus dados</string>
+    <string name="privacy_download_body">Um arquivo com seu perfil, consentimentos, jogos e pagamentos.</string>
+    <string name="privacy_download_ready">Seus dados estão prontos</string>
+    <string name="privacy_download_hint">Copie e guarde onde quiser. O arquivo está no formato JSON.</string>
+    <string name="privacy_delete_body">Apaga seu perfil e seus dados pessoais.</string>
+    <string name="delete_what_happens">O que acontece</string>
+    <string name="delete_point_data">Seu nome, celular e e-mail são apagados em até 15 dias.</string>
+    <string name="delete_point_payments">Comprovantes de pagamento ficam guardados pelo prazo exigido por lei, sem identificar você.</string>
+    <string name="delete_point_games">Você sai dos jogos que ainda não pagou.</string>
+    <string name="delete_pending_title">Você tem jogo pago chegando</string>
+    <string name="delete_pending_body">A exclusão acontece depois de %1$s, quando esse jogo terminar ou for reembolsado.</string>
+    <string name="delete_code_title">Confirme que é você</string>
+    <string name="delete_done_title">Pedido de exclusão recebido</string>
+    <string name="delete_done_body_now">Seus dados pessoais serão apagados em até 15 dias. Foi bom jogar com você.</string>
+    <string name="delete_done_body_scheduled">Sua conta será excluída depois de %1$s. Até lá, seu jogo pago continua garantido.</string>
+    <string name="delete_done_cta">Entendi</string>
+    <string name="profile_edit_title">Editar perfil</string>
+    <string name="profile_email_label">E-mail (opcional)</string>
+    <string name="profile_email_helper">Para receber os comprovantes.</string>
+    <string name="profile_email_invalid">Confira o e-mail. Exemplo: nome@email.com</string>
+    <string name="profile_phone_label">Celular</string>
+    <string name="profile_phone_change">Trocar celular</string>
+    <string name="profile_phone_new_label">Novo celular com DDD</string>
+    <string name="profile_saved">Perfil atualizado</string>
+    <string name="profile_phone_changed">Celular trocado</string>
+    <string name="sports_saved">Esportes salvos</string>
+    <string name="cards_empty_title">Nenhum cartão salvo</string>
+    <string name="cards_empty_body">Quando você pagar com cartão e marcar “Salvar cartão”, ele aparece aqui. Por enquanto, o Pix é o jeito mais rápido.</string>
+    <string name="support_faq_title">Perguntas frequentes</string>
+    <string name="support_q1">Quando minha vaga fica garantida?</string>
+    <string name="support_a1">Assim que seu pagamento é confirmado. O jogo fecha quando todas as cotas são pagas.</string>
+    <string name="support_q2">E se o jogo não fechar?</string>
+    <string name="support_a2">Vale a regra que o organizador escolheu: ele cobre o que faltar, o jogo é cancelado com reembolso para todos, ou quem pagou divide o restante.</string>
+    <string name="support_q3">Como peço reembolso?</string>
+    <string name="support_a3">Se você sair antes de o jogo ser confirmado, o reembolso é automático. Acompanhe em Perfil › Pagamentos e reembolsos.</string>
+    <string name="support_q4">Paguei e não apareceu</string>
+    <string name="support_a4">O Pix costuma confirmar em segundos. Se passar de 10 minutos, fale com a gente com o comprovante em mãos.</string>
+    <string name="support_contact_title">Ainda precisa de ajuda?</string>
+    <string name="support_hours">Atendimento todos os dias, das 8h às 22h.</string>
+    <string name="support_whatsapp">Falar pelo WhatsApp</string>
+    <string name="support_email">Mandar e-mail</string>
+    <string name="support_whatsapp_message">Oi! Preciso de ajuda com o SportConnect.</string>
+    <string name="cd_edit_profile">Editar perfil</string>
 
     <!-- ===== Minha Arena (strings_arena.xml) ===== -->
     <!-- Shell / navegacao -->

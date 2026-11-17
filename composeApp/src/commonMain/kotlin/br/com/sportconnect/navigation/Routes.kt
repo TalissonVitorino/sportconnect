@@ -24,6 +24,12 @@ import kotlinx.serialization.Serializable
  * | my-games                | [Route.MyGames]            | sim        |
  * | profile                 | [Route.Profile]            | sim        |
  * | profile/payments        | [Route.ProfilePayments]    | sim        |
+ * | profile/privacy         | [Route.ProfilePrivacy]     | sim        |
+ * | profile/delete          | [Route.DeleteAccount]      | nao        |
+ * | profile/edit            | [Route.ProfileEdit]        | nao        |
+ * | profile/sports          | [Route.ProfileSports]      | sim        |
+ * | profile/cards           | [Route.SavedCards]         | sim        |
+ * | support                 | [Route.Support]            | sim        |
  * | receipt/{paymentId}     | [Route.Receipt]            | sim        |
  * | notifications           | [Route.Notifications]      | sim        |
  */
@@ -83,6 +89,26 @@ sealed interface Route {
 
     @Serializable
     data object ProfilePayments : Route
+
+    /** Privacidade e dados (09 ficha 16): consentimentos, baixar dados, excluir conta. */
+    @Serializable
+    data object ProfilePrivacy : Route
+
+    /** Excluir conta (US-003): fluxo transacional, sem navegacao global. */
+    @Serializable
+    data object DeleteAccount : Route
+
+    @Serializable
+    data object ProfileEdit : Route
+
+    @Serializable
+    data object ProfileSports : Route
+
+    @Serializable
+    data object SavedCards : Route
+
+    @Serializable
+    data object Support : Route
 
     @Serializable
     data class Receipt(val paymentId: String) : Route

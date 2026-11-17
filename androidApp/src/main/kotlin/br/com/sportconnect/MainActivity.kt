@@ -1,11 +1,13 @@
 package br.com.sportconnect
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.animation.AccelerateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import br.com.sportconnect.navigation.ExternalUriHandler
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +25,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent { App() }
+    }
+
+    /** Link aberto com o app ja rodando (singleTask). Na abertura a frio o NavController le o intent sozinho. */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        intent.data?.toString()?.let(ExternalUriHandler::onNewUri)
     }
 
     private companion object {

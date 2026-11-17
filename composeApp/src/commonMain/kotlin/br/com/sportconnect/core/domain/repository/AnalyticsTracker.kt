@@ -54,6 +54,9 @@ object AnalyticsEvents {
     const val AVALIACAO_ENVIADA = "avaliacao_enviada"
     const val ARENA_VISUALIZADA = "arena_visualizada"
     const val EXTRATO_EXPORTADO = "extrato_exportado"
+    const val DADOS_EXPORTADOS = "dados_exportados"
+    const val CONTA_EXCLUSAO_SOLICITADA = "conta_exclusao_solicitada"
+    const val PERFIL_ATUALIZADO = "perfil_atualizado"
 }
 
 data class EventoAnalytics(val nome: String, val propriedades: Map<String, Any?>)

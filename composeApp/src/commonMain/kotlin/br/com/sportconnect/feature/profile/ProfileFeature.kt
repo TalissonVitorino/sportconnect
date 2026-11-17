@@ -2,6 +2,8 @@
 
 package br.com.sportconnect.feature.profile
 
+import br.com.sportconnect.resources.cd_edit_profile
+import androidx.compose.material.icons.rounded.Edit
 import br.com.sportconnect.resources.profile_sign_in
 import br.com.sportconnect.resources.profile_signed_out_body
 import br.com.sportconnect.resources.profile_signed_out_title
@@ -203,6 +205,11 @@ data class ProfileActions(
     val switchMode: (AppMode) -> Unit = {},
     val loggedOut: () -> Unit = {},
     val signIn: () -> Unit = {},
+    val editProfile: () -> Unit = {},
+    val sports: () -> Unit = {},
+    val savedCards: () -> Unit = {},
+    val privacy: () -> Unit = {},
+    val support: () -> Unit = {},
 )
 
 @Composable
@@ -256,13 +263,21 @@ fun ProfileScreen(
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             CenteredContent(Modifier.padding(horizontal = 16.dp)) {
                 val u = state.user
-                Row(Modifier.fillMaxWidth().padding(vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+                // B13: tocar no cabecalho (avatar/nome) abre "Editar perfil".
+                val editLabel = stringResource(Res.string.cd_edit_profile)
+                Row(
+                    Modifier.fillMaxWidth().clickable(role = Role.Button, onClickLabel = editLabel, onClick = actions.editProfile)
+                        .padding(vertical = 16.dp).testTag("profile_header"),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     SCAvatar(AvatarUi(u.nome), size = 64.dp)
                     Spacer(Modifier.width(16.dp))
                     Column {
                         Text(u.nome, style = t.titleLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
                         Text(PtBrFormat.maskedPhone(u.celular), style = t.bodyMedium, color = c.onSurfaceVariant)
                     }
+                    Spacer(Modifier.weight(1f))
+                    Icon(Icons.Rounded.Edit, null, tint = c.onSurfaceVariant)
                 }
                 if (state.hasArenaRole) {
                     Text(stringResource(Res.string.profile_use_as), style = t.titleSmall, color = c.onSurfaceVariant)
@@ -286,11 +301,11 @@ fun ProfileScreen(
                 }
                 ProfileItem(Icons.Rounded.SportsScore, stringResource(Res.string.profile_my_games), "my_games", actions.myGames)
                 ProfileItem(Icons.Rounded.Payments, stringResource(Res.string.profile_payments), "payments", actions.payments)
-                ProfileItem(Icons.Rounded.SportsSoccer, stringResource(Res.string.profile_sports), "sports") {}
+                ProfileItem(Icons.Rounded.SportsSoccer, stringResource(Res.string.profile_sports), "sports", actions.sports)
                 ProfileItem(Icons.Rounded.Notifications, stringResource(Res.string.profile_notifications), "notifications", actions.notifications)
-                ProfileItem(Icons.Rounded.CreditCard, stringResource(Res.string.profile_saved_cards), "saved_cards") {}
-                ProfileItem(Icons.Rounded.PrivacyTip, stringResource(Res.string.profile_privacy), "privacy") {}
-                ProfileItem(Icons.AutoMirrored.Rounded.HelpOutline, stringResource(Res.string.profile_support), "support") {}
+                ProfileItem(Icons.Rounded.CreditCard, stringResource(Res.string.profile_saved_cards), "saved_cards", actions.savedCards)
+                ProfileItem(Icons.Rounded.PrivacyTip, stringResource(Res.string.profile_privacy), "privacy", actions.privacy)
+                ProfileItem(Icons.AutoMirrored.Rounded.HelpOutline, stringResource(Res.string.profile_support), "support", actions.support)
                 Spacer(Modifier.height(16.dp))
                 if (!state.hasArenaRole) {
                     SCButton(

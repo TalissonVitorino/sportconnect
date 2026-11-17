@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["SUBSTITUIR_TEAM_ID.br.com.sportconnect.app"],
+        "components": [
+          { "/": "/j/*", "comment": "Convite para o jogo" },
+          { "/": "/g/*", "comment": "Detalhe do jogo" },
+          { "/": "/a/*", "comment": "Detalhe da arena" }
+        ]
+      }
+    ]
+  }
+}

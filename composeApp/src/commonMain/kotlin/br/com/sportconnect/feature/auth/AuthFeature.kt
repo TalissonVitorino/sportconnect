@@ -540,7 +540,7 @@ private fun ErrorBox(title: String, body: String) {
 
 /** Campo OTP: uma semantica, 6 caixas visuais 48x56 (10 §2.2), com autofill do codigo do SMS. */
 @Composable
-private fun OtpField(value: String, onChange: (String) -> Unit, isError: Boolean, enabled: Boolean) {
+internal fun OtpField(value: String, onChange: (String) -> Unit, isError: Boolean, enabled: Boolean) {
     val c = SportConnectTheme.colors
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }

@@ -1,5 +1,9 @@
 package br.com.sportconnect.di
 
+import br.com.sportconnect.feature.account.DeleteAccountViewModel
+import br.com.sportconnect.feature.account.EditProfileViewModel
+import br.com.sportconnect.feature.account.PrivacyViewModel
+import br.com.sportconnect.feature.account.SportsViewModel
 import br.com.sportconnect.core.domain.usecase.AvisosLidosStore
 import br.com.sportconnect.core.domain.usecase.GetMyPaymentsUseCase
 import br.com.sportconnect.core.domain.usecase.GetNotificationsUseCase
@@ -61,6 +65,10 @@ val featureModule = module {
     viewModelOf(::PaymentsViewModel)
     viewModelOf(::ReceiptViewModel)
     viewModelOf(::NotificationsViewModel)
+    viewModelOf(::PrivacyViewModel)
+    viewModelOf(::DeleteAccountViewModel)
+    viewModelOf(::EditProfileViewModel)
+    viewModelOf(::SportsViewModel)
 }
 
 /** Modo Atleta/Organizador ([featureModule]) + modo Minha Arena ([arenaAdminModule], feature/arenaadmin). */

@@ -31,8 +31,15 @@ interface AuthRepository {
     val currentUser: StateFlow<Usuario?>
     suspend fun solicitarOtp(celular: String, canal: CanalOtp = CanalOtp.SMS): Result<Unit>
     suspend fun verificarOtp(celular: String, codigo: String): Result<Usuario>
-    /** Nome/apelido exibido na lista do jogo (passo 3 do cadastro e edicao de perfil). */
-    suspend fun atualizarPerfil(nome: String): Result<Usuario>
+    /** Nome/apelido exibido na lista do jogo (passo 3 do cadastro e edicao de perfil) e e-mail opcional. */
+    suspend fun atualizarPerfil(nome: String, email: String? = null): Result<Usuario>
+    /** Troca o celular da conta: exige [solicitarOtp] para o numero novo e o codigo recebido nele. */
+    suspend fun trocarCelular(novoCelular: String, codigo: String): Result<Usuario>
+    /**
+     * Exclusao da conta (US-003, LGPD art. 18). [aposJogosAte] != null quando ha jogo ativo pago: a exclusao
+     * fica agendada para depois dele. Em ambos os casos a sessao e encerrada neste aparelho.
+     */
+    suspend fun excluirConta(aposJogosAte: Instant?): Result<Unit>
     /** Registra o aceite dos termos e o opt-in de marketing (LGPD, CT-05, US-003). */
     suspend fun registrarConsentimentos(versaoTermos: String, marketing: Boolean): Result<Usuario>
     suspend fun logout()

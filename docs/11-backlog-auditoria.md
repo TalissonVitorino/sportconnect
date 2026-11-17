@@ -70,11 +70,11 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 
 | # | P | Tam | Tarefa | Detalhe |
 |---|---|---|---|---|
-| B11 | P0 | G | **Excluir conta** (obrigatório: App Store 5.1.1(v) e política do Google Play; LGPD art. 18). | Fluxo em `profile/privacy`: botão `profile_delete_account` → tela de consequências → diálogo `profile_delete_dialog_*` (strings já existem) → reautenticação por OTP → regra US-003 "com jogo ativo, a exclusão ocorre após conclusão/reembolso" → estado "exclusão agendada" → logout. Adicionar `AuthRepository.solicitarExclusao()` e o evento `conta_exclusao_solicitada`. Publicar também a **URL web de exclusão**, que o Play Console exige. |
-| B12 | P0 | M | **Tela `profile/privacy` — Privacidade e dados** (09 ficha 16; hoje o item no Perfil não faz nada). | Consentimentos com switch (marketing, localização, push) disparando `consentimento_atualizado`; "Baixar meus dados" (`profile_download_data`, RNF-11: JSON/CSV); links para Termos e Política; "Excluir conta". |
-| B13 | P0 | M | **Editar perfil.** | Não existe: o nome só é definido no 1º login. Tela com foto, nome/apelido, e-mail opcional e troca de celular (com novo OTP). Tocar no avatar do Perfil abre essa tela. |
+| B11 | ✅ P0 | G | **Excluir conta** (obrigatório: App Store 5.1.1(v) e política do Google Play; LGPD art. 18). | Fluxo em `profile/privacy`: botão `profile_delete_account` → tela de consequências → diálogo `profile_delete_dialog_*` (strings já existem) → reautenticação por OTP → regra US-003 "com jogo ativo, a exclusão ocorre após conclusão/reembolso" → estado "exclusão agendada" → logout. Adicionar `AuthRepository.solicitarExclusao()` e o evento `conta_exclusao_solicitada`. Publicar também a **URL web de exclusão**, que o Play Console exige. |
+| B12 | ✅ P0 | M | **Tela `profile/privacy` — Privacidade e dados** (09 ficha 16; hoje o item no Perfil não faz nada). | Consentimentos com switch (marketing, localização, push) disparando `consentimento_atualizado`; "Baixar meus dados" (`profile_download_data`, RNF-11: JSON/CSV); links para Termos e Política; "Excluir conta". |
+| B13 | ✅ P0 | M | **Editar perfil.** | Não existe: o nome só é definido no 1º login. Tela com foto, nome/apelido, e-mail opcional e troca de celular (com novo OTP). Tocar no avatar do Perfil abre essa tela. |
 | B14 | ✅ P0 | P | **Confirmar "Sair".** | Hoje o logout é imediato com um toque num texto vermelho. Usar um `SCDialog` e mover o botão para o fim, separado. |
-| B15 | P1 | M | **Itens mortos do Perfil.** | "Meus esportes", "Cartões salvos", "Privacidade e dados" e "Falar com o suporte" têm `onClick = {}`. Criar as telas ou esconder os itens até existirem: item que não responde passa a impressão de app quebrado. |
+| B15 | ✅ P1 | M | **Itens mortos do Perfil.** | "Meus esportes", "Cartões salvos", "Privacidade e dados" e "Falar com o suporte" têm `onClick = {}`. Criar as telas ou esconder os itens até existirem: item que não responde passa a impressão de app quebrado. |
 | B16 | P2 | M | **Preferências**: tema (sistema/claro/escuro) e preferências de notificação por tipo. | `profile_notifications` hoje leva à lista de avisos, não às preferências. |
 | B17 | P2 | P | **Comprovante**: "Compartilhar" hoje só copia texto. Usar o *share sheet* nativo (expect/actual) e, depois, PDF. | `ReceiptScreen` |
 
@@ -118,7 +118,7 @@ As causas mais prováveis da sensação de lentidão, da mais para a menos impac
 | D2 | ✅ P0 | P | **Ícone do app iOS**: `AppIcon.appiconset` só tem o `Contents.json` (sem imagem). Exportar 1024×1024 (variantes clara, escura e tinted no iOS 18+). |
 | D3 | ✅ P0 | P | **Tema Android próprio** (`Theme.SportConnect`, DayNight, sem ActionBar, barras transparentes) no lugar de `@android:style/Theme.Material.Light.NoActionBar`. Evita o flash branco no modo escuro e prepara o splash (B1). |
 | D4 | P1 | P | **Predictive back** (Android 14+): `android:enableOnBackInvokedCallback="true"` no manifest; com A1 feito, o navigation-compose já anima o gesto. |
-| D5 | P1 | P | **Deep links reais**: as rotas declaram `https://sportconnect.app/{a,g,j}`, mas o `AndroidManifest` não tem `intent-filter` com `autoVerify` e o iOS não tem Associated Domains. O convite por link (fluxo principal do produto) não abre o app. |
+| D5 | ✅ P1 | P | **Deep links reais**: as rotas declaram `https://sportconnect.app/{a,g,j}`, mas o `AndroidManifest` não tem `intent-filter` com `autoVerify` e o iOS não tem Associated Domains. O convite por link (fluxo principal do produto) não abre o app. |
 | D6 | P1 | P | `android:localeConfig` + `values-pt-rBR` e `supportsRtl` revisado; `android:allowBackup` ligado guarda a sessão em backup: definir `dataExtractionRules` excluindo tokens. |
 | D7 | P2 | P | Trocar `material-icons-extended` (biblioteca enorme e sem manutenção) pelos ícones usados copiados para `SCIcons`, ou Material Symbols via Compose Resources: reduz build e APK. |
 
@@ -168,10 +168,25 @@ Perfil de visitante com "Entrar com celular"), D1 (ícone adaptativo + monocrom�
 1024 sem alfa). Testes novos em `AuthRepositoryTest`.
 Pendentes do sprint: B9 (login como sheet) e a confirmação do autofill de SMS num aparelho real.
 
+**Sprint "LGPD e lojas" — concluído em 17/11/2026:** B11 (excluir conta: consequências → diálogo →
+código no celular → confirmação; com cota paga em jogo ativo a exclusão fica agendada para depois do jogo,
+US-003), B12 (`profile/privacy`: opt-in de marketing, Termos/Política, "Baixar meus dados" em JSON), B13
+(editar nome, e-mail e celular — este com código no número novo), B15 (Meus esportes, Cartões salvos,
+Suporte com FAQ/WhatsApp/e-mail; nenhum item do Perfil está mais morto), D5 (App Links com `autoVerify`
++ `singleTask`, `onOpenURL` no iOS, `ExternalUriHandler`; modelos de `assetlinks.json` e
+`apple-app-site-association` em `docs/deeplinks/`). Eventos novos no 04: 53–55. Testes em `AccountUseCasesTest`.
+
+Pendências fora do código (para publicar):
+- Publicar `assetlinks.json` e `apple-app-site-association` no domínio, com a SHA-256 da chave do Play e o Team ID.
+- No Xcode, ativar *Associated Domains* usando `iosApp/iosApp/iosApp.entitlements`.
+- Página web de exclusão de conta exigida pelo Play Console (ver `docs/deeplinks/README.md`).
+- Trocar o WhatsApp e o e-mail de suporte provisórios (`SupportContacts`) pelos oficiais.
+- Jurídico: textos de exclusão, termos e privacidade.
+
 ## Ordem sugerida (sprints)
 
 1. ~~**Sprint "Fluidez"**~~ ✅ (2–3 dias): A1, A2, A4, A5, A6, C1, C2, C3, D3 → o app já "parece outro".
 2. ~~**Sprint "Abertura e conta"**~~ ✅ (1 semana): B1, B2, B3, D1, D2, B5, B6, B14.
-3. **Sprint "LGPD e lojas"** (1 semana): B11, B12, B13, B15, D5. **Sem B11 o app é rejeitado nas duas lojas.**
+3. ~~**Sprint "LGPD e lojas"**~~ ✅ (1 semana): B11, B12, B13, B15, D5. **Sem B11 o app é rejeitado nas duas lojas.**
 4. **Sprint "Polimento"**: A3, A7–A10, C4–C17, B7–B10.
 5. Backlog: P2 restantes.

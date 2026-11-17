@@ -164,6 +164,18 @@ class AppScreenshotTest {
     }
 
     @Test
+    fun account() {
+        asOrganizer()
+        compact("app-profile-compact-light.png", height = 1000) { AppNavHost(startDestination = Route.Profile) }
+        compact("app-privacy-compact-light.png") { AppNavHost(startDestination = Route.ProfilePrivacy) }
+        compact("app-delete-account-compact-light.png") { AppNavHost(startDestination = Route.DeleteAccount) }
+        compact("app-profile-edit-compact-light.png") { AppNavHost(startDestination = Route.ProfileEdit) }
+        compact("app-sports-compact-light.png") { AppNavHost(startDestination = Route.ProfileSports) }
+        compact("app-support-compact-light.png") { AppNavHost(startDestination = Route.Support) }
+        compact("app-saved-cards-compact-light.png", height = 800) { AppNavHost(startDestination = Route.SavedCards) }
+    }
+
+    @Test
     fun explore() {
         asOrganizer()
         compact("app-explore-compact-light.png") { AppNavHost(startDestination = Route.Explore) }

@@ -43,14 +43,15 @@ class FakeAuthRepository(
     private fun initialUser(seed: DemoData): Usuario? {
         if (prefs == null) return seed.organizador
         val saved = prefs.session ?: return null
-        return usuarios[saved.id] ?: Usuario(id = saved.id, nome = saved.nome, celular = saved.celular, criadoEm = clock.now())
+        return usuarios[saved.id]?.let { it.copy(nome = saved.nome.ifBlank { it.nome }, celular = saved.celular.ifBlank { it.celular }, email = saved.email ?: it.email) }
+            ?: Usuario(id = saved.id, nome = saved.nome, celular = saved.celular, email = saved.email, criadoEm = clock.now())
             .also { usuarios[it.id] = it }
     }
 
     private fun setCurrent(u: Usuario?) {
         _current.value = u
         if (u != null) usuarios[u.id] = u
-        prefs?.session = u?.let { AppPreferences.SavedSession(it.id, it.nome, it.celular) }
+        prefs?.session = u?.let { AppPreferences.SavedSession(it.id, it.nome, it.celular, it.email) }
     }
 
     override suspend fun solicitarOtp(celular: String, canal: CanalOtp): Result<Unit> {
@@ -103,13 +104,50 @@ class FakeAuthRepository(
         return AuthFailure.TooManyAttempts(ate)
     }
 
-    override suspend fun atualizarPerfil(nome: String): Result<Usuario> {
+    override suspend fun atualizarPerfil(nome: String, email: String?): Result<Usuario> {
         val atual = _current.value ?: return Result.failure(IllegalStateException("Sem sessão"))
         val limpo = nome.trim().replace(Regex("\\s+"), " ")
         if (limpo.length < 2) return Result.failure(IllegalArgumentException("Nome muito curto"))
-        val novo = atual.copy(nome = limpo)
+        val emailLimpo = email?.trim()?.takeIf { it.isNotEmpty() }
+        if (emailLimpo != null && !EMAIL.matches(emailLimpo)) return Result.failure(IllegalArgumentException("E-mail inválido"))
+        val novo = atual.copy(nome = limpo, email = emailLimpo ?: atual.email.takeIf { email == null })
         setCurrent(novo)
         return Result.success(novo)
+    }
+
+    override suspend fun trocarCelular(novoCelular: String, codigo: String): Result<Usuario> {
+        val atual = _current.value ?: return Result.failure(IllegalStateException("Sem sessão"))
+        bloqueio()?.let { return Result.failure(it) }
+        val digitos = novoCelular.filter { it.isDigit() }
+        if (digitos.length !in 10..13) return Result.failure(AuthFailure.PhoneInvalid())
+        if (otpCelular != digitos) return Result.failure(AuthFailure.CodeExpired())
+        val enviado = otpEnviadoEm
+        if (enviado != null && clock.now() - enviado > AuthRules.OTP_VALIDADE_MIN.minutes) return Result.failure(AuthFailure.CodeExpired())
+        if (codigo != CODIGO_OTP_DEMO) {
+            tentativas++
+            if (tentativas >= AuthRules.MAX_TENTATIVAS) {
+                val ate = clock.now() + AuthRules.BLOQUEIO_MIN.minutes
+                bloqueadoAte = ate
+                return Result.failure(AuthFailure.TooManyAttempts(ate))
+            }
+            return Result.failure(AuthFailure.CodeInvalid())
+        }
+        tentativas = 0
+        otpEnviadoEm = null
+        val novo = atual.copy(celular = "+55$digitos", celularVerificado = true)
+        setCurrent(novo)
+        return Result.success(novo)
+    }
+
+    override suspend fun excluirConta(aposJogosAte: Instant?): Result<Unit> {
+        val atual = _current.value ?: return Result.failure(IllegalStateException("Sem sessão"))
+        // Demo: os dados pessoais saem na hora deste aparelho; o servidor real anonimiza em ate 15 dias
+        // (ou depois de [aposJogosAte]) e guarda so o que a lei exige dos pagamentos.
+        usuarios.remove(atual.id)
+        prefs?.acceptedTermsVersion = null
+        prefs?.marketingOptIn = false
+        setCurrent(null)
+        return Result.success(Unit)
     }
 
     override suspend fun registrarConsentimentos(versaoTermos: String, marketing: Boolean): Result<Usuario> {
@@ -144,5 +182,6 @@ class FakeAuthRepository(
         const val NOME_PROVISORIO = "Convidado"
         private const val TIPO_TERMOS = "termos"
         private const val TIPO_MARKETING = "marketing"
+        private val EMAIL = Regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
     }
 }

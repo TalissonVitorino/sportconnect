@@ -16,6 +16,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,6 +32,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavUri
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -51,6 +53,12 @@ import br.com.sportconnect.feature.arena.ArenaDetailActions
 import br.com.sportconnect.feature.arena.ArenaDetailRoute
 import br.com.sportconnect.feature.arenaadmin.ArenaAdminRoute
 import br.com.sportconnect.feature.arenaadmin.arenaAdminGraph
+import br.com.sportconnect.feature.account.DeleteAccountRoute
+import br.com.sportconnect.feature.account.EditProfileRoute
+import br.com.sportconnect.feature.account.PrivacyRoute
+import br.com.sportconnect.feature.account.SavedCardsScreen
+import br.com.sportconnect.feature.account.SportsRoute
+import br.com.sportconnect.feature.account.SupportScreen
 import br.com.sportconnect.feature.auth.AuthRoute
 import br.com.sportconnect.feature.auth.LegalDoc
 import br.com.sportconnect.feature.auth.LegalScreen
@@ -124,7 +132,9 @@ private fun NavDestination.athleteTab(): AthleteTab? = when {
     hasRoute<Route.Home>() || hasRoute<Route.Notifications>() -> AthleteTab.Home
     hasRoute<Route.MyGames>() || hasRoute<Route.GameDetail>() -> AthleteTab.Games
     hasRoute<Route.Explore>() || hasRoute<Route.ArenaDetail>() || hasRoute<Route.SlotPicker>() -> AthleteTab.Search
-    hasRoute<Route.Profile>() || hasRoute<Route.ProfilePayments>() || hasRoute<Route.Receipt>() -> AthleteTab.Profile
+    hasRoute<Route.Profile>() || hasRoute<Route.ProfilePayments>() || hasRoute<Route.Receipt>() ||
+        hasRoute<Route.ProfilePrivacy>() || hasRoute<Route.ProfileSports>() ||
+        hasRoute<Route.SavedCards>() || hasRoute<Route.Support>() -> AthleteTab.Profile
     else -> null
 }
 
@@ -148,6 +158,14 @@ fun AppNavHost(
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val nav = remember(navController) { AppNavigator(navController) }
+    // Links externos (convite, jogo, arena) com o app ja aberto ou vindos do iOS.
+    // So limpa o listener se ainda for o desta casca: num link a frio o Android recria a Activity e a casca
+    // antiga e descartada depois da nova ja ter se registrado.
+    DisposableEffect(navController) {
+        val listener: (String) -> Unit = { uri -> runCatching { navController.navigate(NavUri(uri)) } }
+        ExternalUriHandler.listener = listener
+        onDispose { if (ExternalUriHandler.listener === listener) ExternalUriHandler.listener = null }
+    }
     val reducedMotion = LocalSCReducedMotion.current
     val transitions = remember(reducedMotion) { NavTransitions(reducedMotion) }
 
@@ -352,10 +370,30 @@ fun AppNavHost(
                             switchMode = ::switchMode,
                             loggedOut = { nav.resetTo(Route.Auth()) },
                             signIn = { nav.go(Route.Auth()) },
+                            editProfile = { nav.go(Route.ProfileEdit) },
+                            sports = { nav.go(Route.ProfileSports) },
+                            savedCards = { nav.go(Route.SavedCards) },
+                            privacy = { nav.go(Route.ProfilePrivacy) },
+                            support = { nav.go(Route.Support) },
                         ),
                         vm = profileVm,
                     )
                 }
+                composable<Route.ProfilePrivacy> {
+                    PrivacyRoute(
+                        onBack = nav::back,
+                        onOpenLegal = { nav.go(Route.Legal(it.name)) },
+                        onDeleteAccount = { nav.go(Route.DeleteAccount) },
+                    )
+                }
+                composable<Route.DeleteAccount> {
+                    // Conta excluida: volta para a Home como visitante (pilha limpa).
+                    DeleteAccountRoute(onBack = nav::back, onFinished = { nav.resetTo(Route.Home) })
+                }
+                composable<Route.ProfileEdit> { EditProfileRoute(onBack = nav::back) }
+                composable<Route.ProfileSports> { SportsRoute(onBack = nav::back) }
+                composable<Route.SavedCards> { SavedCardsScreen(onBack = nav::back) }
+                composable<Route.Support> { SupportScreen(onBack = nav::back) }
                 composable<Route.ProfilePayments> { PaymentsRoute(onBack = nav::back, onReceipt = { nav.go(Route.Receipt(it)) }) }
                 composable<Route.Receipt> { entry -> ReceiptRoute(entry.toRoute(), onBack = nav::back) }
                 composable<Route.Notifications> { NotificationsRoute(onBack = nav::back, onOpenGame = { nav.go(Route.GameDetail(it)) }) }
