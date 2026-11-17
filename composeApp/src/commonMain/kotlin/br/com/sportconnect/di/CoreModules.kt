@@ -1,5 +1,6 @@
 package br.com.sportconnect.di
 
+import br.com.sportconnect.core.data.local.SocialStore
 import br.com.sportconnect.core.data.local.ArenaPhotoStore
 import br.com.sportconnect.core.data.local.ProfilePhotoStore
 import br.com.sportconnect.core.data.InMemorySportRepository
@@ -71,6 +72,7 @@ val dataModule = module {
     single { AppPreferences(get()) }
     single { ProfilePhotoStore() }
     single { ArenaPhotoStore(get()) }
+    single { SocialStore(get()) }
 
     singleOf(::InMemorySportRepository) bind SportRepository::class
     single { InMemoryAnalyticsTracker() } bind AnalyticsTracker::class

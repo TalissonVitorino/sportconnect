@@ -132,21 +132,21 @@ grupo deles corresponde a uma funcionalidade que falta.
 
 | # | Fase | Origem | O que falta |
 |---|---|---|---|
-| E1 | MVP | 09 ficha 16, US-003 | Tela Privacidade e dados (consentimentos, baixar dados, excluir conta) → B11/B12 |
-| E2 | MVP | 09 ficha 1 | Onboarding com esportes e localização → B10 |
-| E3 | MVP | 09 ficha 2 | Login social e erros de OTP → B5/B8 |
-| E4 | MVP | 07 §4 | ~25 estados de erro sem tela (`error_payment_declined_*`, `error_pix_*`, `error_checkout_expired_*`, `error_hold_expired_*`, `error_card_expired_*`, `error_price_changed_*`, `error_session_expired_*`, `error_refund_failed_*`, `error_upload_failed_*`, `error_location_denied_*`, `error_payment_slow_*`) |
-| E5 | P1 | US-032 | Formulário de cartão (`card_number/expiry/cvv/name_label`, `card_save_toggle`) |
-| E6 | MVP | US-053 | Linha do tempo do reembolso (`refund_requested`, `refund_status_processing`, `refund_card_eta`, `refund_help`) |
-| E7 | MVP | RNF-22, 09 §6.6 | Modo offline: `offline_banner`/`online_banner` + cache dos confirmados e comprovantes |
-| E8 | MVP | US-046, US-061 | Push e WhatsApp: 16 textos `push_*` e 4 `wa_*` (lembretes 2h/30min, jogo amanhã, reembolso, nova reserva, repasse) |
-| E9 | MVP | US-010, CT-01 | Arena: fotos e comodidades (`arena_detail_amenity_*`) |
-| E10 | MVP/F2 | US-020, US-200 | Busca: filtros de preço/horário, ordenar por preço, mapa (`search_filter_*`, `search_sort_price`, `search_map_view`) |
-| E11 | P1 | 09 fichas 24–25, US-015, US-063 | `arena-admin/reports` e `arena-admin/settings` (rotas não existem) |
-| E12 | MVP | US-001 | Convite web: "Abrir no app" (`guest_open_in_app`) e oferta do app após pagar (`payment_app_offer_*`) |
-| E13 | MVP | 07 | Cancelamento com motivo (`cancel_reason_label`, `cancel_done_body`) |
-| E14 | F2 | US-110 | Lista de espera: domínio pronto (`WaitlistManager`), sem UI (`waitlist_*`) |
-| E15 | F2 | US-130 | Avaliação pós-jogo (`rating_*`) |
+| E1 | ✅ MVP | 09 ficha 16, US-003 | Tela Privacidade e dados (consentimentos, baixar dados, excluir conta) → B11/B12 |
+| E2 | ✅ MVP | 09 ficha 1 | Onboarding com esportes e localização → B10 |
+| E3 | ✅ MVP | 09 ficha 2 | Login social e erros de OTP → B5/B8 |
+| E4 | ✅ MVP | 07 §4 | ~25 estados de erro sem tela (`error_payment_declined_*`, `error_pix_*`, `error_checkout_expired_*`, `error_hold_expired_*`, `error_card_expired_*`, `error_price_changed_*`, `error_session_expired_*`, `error_refund_failed_*`, `error_upload_failed_*`, `error_location_denied_*`, `error_payment_slow_*`) |
+| E5 | ✅ P1 | US-032 | Formulário de cartão (`card_number/expiry/cvv/name_label`, `card_save_toggle`) |
+| E6 | ✅ MVP | US-053 | Linha do tempo do reembolso (`refund_requested`, `refund_status_processing`, `refund_card_eta`, `refund_help`) |
+| E7 | ✅ MVP | RNF-22, 09 §6.6 | Modo offline: `offline_banner`/`online_banner` + cache dos confirmados e comprovantes |
+| E8 | ✅ MVP | US-046, US-061 | Push e WhatsApp: 16 textos `push_*` e 4 `wa_*` (lembretes 2h/30min, jogo amanhã, reembolso, nova reserva, repasse) |
+| E9 | ✅ MVP | US-010, CT-01 | Arena: fotos e comodidades (`arena_detail_amenity_*`) |
+| E10 | ✅ MVP/F2 | US-020, US-200 | Busca: filtros de preço/horário, ordenar por preço, mapa (`search_filter_*`, `search_sort_price`, `search_map_view`) |
+| E11 | ✅ P1 | 09 fichas 24–25, US-015, US-063 | `arena-admin/reports` e `arena-admin/settings` (rotas não existem) |
+| E12 | ✅ MVP | US-001 | Convite web: "Abrir no app" (`guest_open_in_app`) e oferta do app após pagar (`payment_app_offer_*`) |
+| E13 | ✅ MVP | 07 | Cancelamento com motivo (`cancel_reason_label`, `cancel_done_body`) |
+| E14 | ✅ F2 | US-110 | Lista de espera: domínio pronto (`WaitlistManager`), sem UI (`waitlist_*`) |
+| E15 | ✅ F2 | US-130 | Avaliação pós-jogo (`rating_*`) |
 
 ---
 
@@ -199,6 +199,18 @@ passo a passo no 12 §10), B9 (login como sheet), B10 completo (localização re
 digitada), C8, C18–C23, A11, A12, D4 (back preditivo), D6 (backup sem sessão, localeConfig).
 Não feito, de propósito: **D7** (trocar `material-icons-extended`) — o R8 já remove do APK release os ícones
 não usados, então o ganho seria só em tempo de build, ao custo de reescrever ~150 imports.
+
+**Seção E — concluída em 17/11/2026:** E4 (estados de erro do 07 §4 com tela), E5 (formulário de cartão com
+validação e cartões salvos), E6/E13 (linha do tempo do reembolso, motivo do cancelamento), E7 (banner offline e
+pagamento bloqueado sem conexão), E8 (lembretes locais 2h/30min e véspera do jogo; push remoto no 12 §11),
+E9 (fotos e comodidades da arena), E10 (filtros de horário e preço, ordenar por preço), E11 (relatórios e regras
+da arena), E12 (web: "Abrir no app" e oferta do app; página `/app` no 12 §12), E14 (lista de espera) e E15
+(avaliação pós-jogo). E14/E15 vivem no app (`SocialStore`) até existir servidor; o aviso "abriu uma vaga"
+depende de push remoto.
+Fica para depois: mapa na busca (US-200, precisa de SDK de mapas) e equipe/operadores da arena (contas no
+servidor).
+Correção encontrada no emulador: gestor de arena que abria o app caía na Home de atleta sem barra de
+navegação; agora abre no Painel.
 
 ## Ordem sugerida (sprints)
 

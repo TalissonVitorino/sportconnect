@@ -82,8 +82,10 @@ class FeatureViewModelsTest {
         fun detail(id: String) = GameDetailViewModel(
             Route.GameDetail(id), GetGameUseCase(games), auth,
             CancelGameUseCase(service, games, arenas, auth, clock), LeaveGameUseCase(service, games, auth, clock),
-            analytics, session, clock,
+            analytics, session, clock, social,
         )
+
+        val social = br.com.sportconnect.core.data.local.SocialStore()
 
         fun create(slotId: String?) = CreateGameViewModel(
             Route.GameCreate(slotId), arenas, split, hold,
@@ -261,5 +263,42 @@ class FeatureViewModelsTest {
         runCurrent()
         assertIs<GameDetailEvent.Cancelled>(vm.events.first())
         assertEquals(StatusReserva.CANCELADO, assertIs<GameDetailUiState.Content>(vm.uiState.value).jogo.status)
+    }
+
+    // ------------------------------------------------------------------ E14/E15
+
+    @Test
+    fun jogo_lotado_oferece_lista_de_espera_e_mostra_a_posicao() = runTest {
+        val env = setUp()
+        val vm = env.detail(DemoData.JOGO_PADEL_LOTADO)
+        runCurrent()
+        var s = assertIs<GameDetailUiState.Content>(vm.uiState.value)
+        assertTrue(s.canJoinWaitlist)
+        assertEquals(null, s.waitlistPosition)
+        vm.joinWaitlist()
+        runCurrent()
+        s = assertIs(vm.uiState.value)
+        assertEquals(1, s.waitlistPosition)
+        assertFalse(s.canJoinWaitlist)
+        vm.leaveWaitlist()
+        runCurrent()
+        s = assertIs(vm.uiState.value)
+        assertEquals(null, s.waitlistPosition)
+        assertTrue(s.canJoinWaitlist)
+    }
+
+    @Test
+    fun jogo_concluido_pede_avaliacao_uma_vez() = runTest {
+        val env = setUp()
+        val vm = env.detail(DemoData.JOGO_BEACH_CONCLUIDO)
+        runCurrent()
+        var s = assertIs<GameDetailUiState.Content>(vm.uiState.value)
+        assertTrue(s.canRate)
+        assertFalse(s.canJoinWaitlist)
+        vm.rate(br.com.sportconnect.core.data.local.GameRating(emptyMap(), 4, ""))
+        runCurrent()
+        s = assertIs(vm.uiState.value)
+        assertFalse(s.canRate)
+        assertFalse(assertIs<GameDetailUiState.Content>(env.detail(DemoData.JOGO_RACHA).also { runCurrent() }.uiState.value).canRate)
     }
 }

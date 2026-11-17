@@ -2,6 +2,37 @@
 
 package br.com.sportconnect.feature.game
 
+import br.com.sportconnect.resources.cd_court_stars
+import br.com.sportconnect.resources.rating_cta
+import br.com.sportconnect.resources.rating_private_note
+import br.com.sportconnect.resources.rating_thanks
+import br.com.sportconnect.resources.rating_submit
+import br.com.sportconnect.resources.rating_comment_placeholder
+import br.com.sportconnect.resources.rating_court_label
+import br.com.sportconnect.resources.rating_late
+import br.com.sportconnect.resources.rating_no_show
+import br.com.sportconnect.resources.rating_attended
+import br.com.sportconnect.resources.rating_body
+import br.com.sportconnect.resources.rating_title
+import br.com.sportconnect.resources.waitlist_joined
+import br.com.sportconnect.resources.waitlist_leave
+import br.com.sportconnect.resources.waitlist_join
+import br.com.sportconnect.resources.waitlist_position
+import br.com.sportconnect.resources.waitlist_body
+import br.com.sportconnect.core.designsystem.theme.SCSelection
+import androidx.compose.material.icons.rounded.StarRate
+import androidx.compose.material.icons.rounded.StarBorder
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ModalBottomSheet
+import br.com.sportconnect.core.data.local.Attendance
+import br.com.sportconnect.core.data.local.GameRating
 import br.com.sportconnect.resources.guest_open_in_app
 import androidx.compose.ui.platform.LocalUriHandler
 import br.com.sportconnect.core.config.FeatureFlags
@@ -250,6 +281,8 @@ fun GameDetailRoute(route: Route.GameDetail, actions: GameDetailActions) {
                     }
                 }
                 GameDetailEvent.Left -> snackbar.showSC(getString(Res.string.cancel_leave_game), SCSnackbarKind.Success)
+                is GameDetailEvent.WaitlistJoined -> snackbar.showSC(getString(Res.string.waitlist_joined), SCSnackbarKind.Success)
+                GameDetailEvent.Rated -> snackbar.showSC(getString(Res.string.rating_thanks), SCSnackbarKind.Success)
                 is GameDetailEvent.Failure -> snackbar.showSC(ev.message, SCSnackbarKind.Error)
             }
         }
@@ -267,6 +300,9 @@ fun GameDetailRoute(route: Route.GameDetail, actions: GameDetailActions) {
         },
         onCancel = { reason -> viewModel.cancel(reason) },
         onLeave = viewModel::leave,
+        onJoinWaitlist = viewModel::joinWaitlist,
+        onLeaveWaitlist = viewModel::leaveWaitlist,
+        onRate = viewModel::rate,
     )
 }
 
@@ -282,9 +318,13 @@ fun GameDetailScreen(
     onShareInvite: (String) -> Unit = {},
     onCancel: (String?) -> Unit = {},
     onLeave: () -> Unit = {},
+    onJoinWaitlist: () -> Unit = {},
+    onLeaveWaitlist: () -> Unit = {},
+    onRate: (GameRating) -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     var showCancel by remember { mutableStateOf(false) }
+    var showRating by remember { mutableStateOf(false) }
     var showLeave by remember { mutableStateOf(false) }
     var showRule by remember { mutableStateOf(false) }
     var menu by remember { mutableStateOf(false) }
@@ -346,6 +386,16 @@ fun GameDetailScreen(
                         modifier = Modifier.testTag("game_pay_now"),
                     )
                 }
+            } else if (content != null && (content.canJoinWaitlist || content.waitlistPosition != null)) {
+                WaitlistBar(content.waitlistPosition, onJoinWaitlist, onLeaveWaitlist)
+            } else if (content != null && content.canRate) {
+                br.com.sportconnect.feature.common.BottomActionBar {
+                    SCButton(
+                        stringResource(Res.string.rating_cta), { showRating = true },
+                        size = SCButtonSize.Large, fullWidth = true, leadingIcon = Icons.Rounded.StarRate,
+                        modifier = Modifier.testTag("game_rate"),
+                    )
+                }
             }
         },
     ) { padding ->
@@ -390,6 +440,13 @@ fun GameDetailScreen(
         }
     }
 
+    if (showRating && content != null) {
+        RatingSheet(
+            people = content.participants.filter { !it.isSelf && !it.openSpot },
+            onDismiss = { showRating = false },
+            onSubmit = { r -> showRating = false; onRate(r) },
+        )
+    }
     if (content != null && showCancel) {
         var reason by rememberSaveable { mutableStateOf("") }
         SCDialog(
@@ -883,3 +940,80 @@ private fun CancelTextButton(text: String, onClick: () -> Unit, tag: String) {
     )
 }
 
+/** E14 (US-110): jogo lotado -> entrar na lista de espera; ja na fila -> posicao e sair. */
+@Composable
+private fun WaitlistBar(position: Int?, onJoin: () -> Unit, onLeave: () -> Unit) {
+    val c = SportConnectTheme.colors
+    br.com.sportconnect.feature.common.BottomActionBar {
+        Column(Modifier.fillMaxWidth().testTag("game_waitlist")) {
+            Text(
+                if (position == null) stringResource(Res.string.waitlist_body) else stringResource(Res.string.waitlist_position, position),
+                style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp).semantics { liveRegion = LiveRegionMode.Polite },
+            )
+            if (position == null) {
+                SCButton(stringResource(Res.string.waitlist_join), onJoin, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("waitlist_join"))
+            } else {
+                SCButton(stringResource(Res.string.waitlist_leave), onLeave, variant = SCButtonVariant.Secondary, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("waitlist_leave"))
+            }
+        }
+    }
+}
+
+/** E15 (US-130): quem foi, quem faltou, a quadra (1–5) e um comentario opcional para a arena. */
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun RatingSheet(people: List<ParticipantUi>, onDismiss: () -> Unit, onSubmit: (GameRating) -> Unit) {
+    val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
+    val attendance = remember { mutableStateMapOf<String, Attendance>().apply { people.forEach { put(it.key, Attendance.ATTENDED) } } }
+    var stars by remember { mutableStateOf(0) }
+    var comment by remember { mutableStateOf("") }
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = c.surface) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 24.dp).testTag("rating_sheet")) {
+            Text(stringResource(Res.string.rating_title), style = t.headlineSmall, color = c.onSurface, modifier = Modifier.semantics { heading() })
+            Spacer(Modifier.height(4.dp))
+            Text(stringResource(Res.string.rating_body), style = t.bodyMedium, color = c.onSurfaceVariant)
+            Spacer(Modifier.height(16.dp))
+            people.forEach { p ->
+                Text(p.name, style = t.titleSmall, color = c.onSurface, modifier = Modifier.padding(top = 8.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        Attendance.ATTENDED to Res.string.rating_attended,
+                        Attendance.NO_SHOW to Res.string.rating_no_show,
+                        Attendance.LATE to Res.string.rating_late,
+                    ).forEach { (a, label) ->
+                        FilterChip(
+                            selected = attendance[p.key] == a,
+                            onClick = { attendance[p.key] = a },
+                            label = { Text(stringResource(label)) },
+                            colors = SCSelection.filterChipColors(),
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.height(20.dp))
+            Text(stringResource(Res.string.rating_court_label), style = t.titleMedium, color = c.onSurface)
+            Row {
+                (1..5).forEach { n ->
+                    val cd = stringResource(Res.string.cd_court_stars, n)
+                    IconButton(onClick = { stars = n }, modifier = Modifier.semantics { contentDescription = cd }.testTag("rating_star_$n")) {
+                        Icon(if (n <= stars) Icons.Rounded.Star else Icons.Rounded.StarBorder, null, tint = if (n <= stars) c.primary else c.onSurfaceVariant)
+                    }
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                comment, { comment = it.take(280) }, modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(Res.string.rating_comment_placeholder)) }, minLines = 2,
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(stringResource(Res.string.rating_private_note), style = t.bodySmall, color = c.onSurfaceVariant)
+            Spacer(Modifier.height(16.dp))
+            SCButton(
+                stringResource(Res.string.rating_submit), { onSubmit(GameRating(attendance.toMap(), stars, comment.trim())) },
+                size = SCButtonSize.Large, fullWidth = true, enabled = stars > 0, modifier = Modifier.testTag("rating_submit"),
+            )
+        }
+    }
+}

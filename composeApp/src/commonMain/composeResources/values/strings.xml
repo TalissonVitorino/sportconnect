@@ -891,4 +891,7 @@
     <string name="cd_arena_settings">Regras da arena</string>
     <string name="cd_decrease">Diminuir %1$s</string>
     <string name="cd_increase">Aumentar %1$s</string>
+    <!-- 11-backlog · E15 avaliação (propostos) -->
+    <string name="rating_cta">Avaliar o jogo</string>
+    <string name="cd_court_stars">%1$d de 5 estrelas</string>
 </resources>

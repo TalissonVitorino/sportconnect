@@ -338,6 +338,10 @@ class DemoData(private val clock: Clock) {
             Spec(JOGO_BEACH_ABERTO, "Beach tennis duplas", atleta("Sofia"), Sport.BEACH_TENNIS, "q-bt-areia1", 1, 18, 4,
                 listOf(atleta("Sofia"), atleta("Vanessa")), StatusReserva.AGUARDANDO_PAGAMENTOS, "BEACH4",
                 visibilidade = Visibilidade.VAGAS_ABERTAS, ativadaHaHoras = 1, observacoes = "Duplas mistas, nível iniciante."),
+            // E14: lotado e sem a usuaria da demo -> mostra a lista de espera.
+            Spec(JOGO_PADEL_LOTADO, "Padel das quintas", atleta("Bruno"), Sport.PADEL, "q-pm-padel2", 2, 20, 4,
+                listOf(atleta("Bruno"), atleta("Diego"), atleta("Sofia"), atleta("Vanessa")), StatusReserva.CONFIRMADO, "PADEL8",
+                visibilidade = Visibilidade.VAGAS_ABERTAS, ativadaHaHoras = 6, observacoes = "Nível intermediário."),
             Spec(JOGO_FUTEVOLEI_CANCELADO, "Futevôlei de sábado", organizador, Sport.FUTEVOLEI, "q-pp-areia3", 2, 8, 4,
                 listOf(organizador, atleta("Eduarda")), StatusReserva.CANCELADO, "FUTV04", observacoes = "Manutenção da areia"),
         )
@@ -410,6 +414,7 @@ class DemoData(private val clock: Clock) {
         const val JOGO_BASQUETE_ABERTO = "jogo-basquete"
         const val JOGO_BEACH_ABERTO = "jogo-beach-duplas"
         const val JOGO_FUTEVOLEI_CANCELADO = "jogo-futevolei"
+        const val JOGO_PADEL_LOTADO = "jogo-padel-quintas"
 
         const val DIAS_DE_SLOTS = 7
         const val PRIMEIRA_HORA = 7

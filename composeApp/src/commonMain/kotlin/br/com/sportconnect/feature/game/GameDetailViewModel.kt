@@ -1,5 +1,7 @@
 package br.com.sportconnect.feature.game
 
+import br.com.sportconnect.core.data.local.GameRating
+import br.com.sportconnect.core.data.local.SocialStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.sportconnect.core.domain.repository.AnalyticsEvents
@@ -54,6 +56,11 @@ sealed interface GameDetailUiState {
         /** Lembretes individuais ja enviados (limite 1 a cada 2h). */
         val remindedAt: Map<String, Instant> = emptyMap(),
         val cancelWindowHours: Int = 24,
+        /** E14: posicao na lista de espera (1-based) ou null. */
+        val waitlistPosition: Int? = null,
+        val canJoinWaitlist: Boolean = false,
+        /** E15: jogo concluido, participei e ainda nao avaliei. */
+        val canRate: Boolean = false,
     ) : GameDetailUiState {
         val pendingCount: Int get() = jogo.cotasPendentes
         val resolving: Boolean get() = jogo.status == StatusReserva.AGUARDANDO_PAGAMENTOS && jogo.etapaPrazo == EtapaPrazo.JANELA_RESOLUCAO
@@ -78,6 +85,8 @@ sealed interface GameDetailEvent {
     /** [reason]: motivo digitado no cancelamento (vai na mensagem do WhatsApp para a galera, E13). */
     data class Cancelled(val reason: String?) : GameDetailEvent
     data object Left : GameDetailEvent
+    data class WaitlistJoined(val position: Int) : GameDetailEvent
+    data object Rated : GameDetailEvent
     data class Failure(val message: String) : GameDetailEvent
 }
 
@@ -90,6 +99,7 @@ class GameDetailViewModel(
     private val analytics: AnalyticsTracker,
     private val session: UiSessionStore,
     private val clock: Clock,
+    private val social: SocialStore = SocialStore(),
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameDetailUiState>(GameDetailUiState.Loading)
     val uiState: StateFlow<GameDetailUiState> = _uiState.asStateFlow()
@@ -110,7 +120,7 @@ class GameDetailViewModel(
     private fun load() {
         job?.cancel()
         job = viewModelScope.launch {
-            combine(getGame(route.id), auth.currentUser) { jogo, user -> jogo to user }
+            combine(getGame(route.id), auth.currentUser, social.queues, social.rated) { jogo, user, _, _ -> jogo to user }
                 .catch { _uiState.value = GameDetailUiState.Error }
                 .collect { (jogo, user) ->
                     if (jogo == null) {
@@ -141,9 +151,36 @@ class GameDetailViewModel(
                         now = now,
                         busy = prev?.busy ?: false,
                         remindedAt = reminded.toMap(),
+                        waitlistPosition = uid?.let { social.position(jogo.id, it) },
+                        canJoinWaitlist = uid != null && jogo.organizadorId != uid && !jogo.participa(uid) &&
+                            social.position(jogo.id, uid) == null && social.canJoin(jogo, now),
+                        canRate = uid != null && jogo.status == StatusReserva.CONCLUIDO && jogo.participa(uid) && jogo.id !in social.rated.value,
                     )
                 }
         }
+    }
+
+    /** E14 (US-110): entrar/sair da lista de espera. */
+    fun joinWaitlist() {
+        val s = _uiState.value as? GameDetailUiState.Content ?: return
+        val u = auth.currentUser.value ?: return
+        social.join(s.jogo, u.id, u.nome, clock.now()).fold(
+            onSuccess = { pos -> _events.trySend(GameDetailEvent.WaitlistJoined(pos)) },
+            onFailure = { e -> _events.trySend(GameDetailEvent.Failure(e.message ?: "")) },
+        )
+    }
+
+    fun leaveWaitlist() {
+        val s = _uiState.value as? GameDetailUiState.Content ?: return
+        val uid = s.userId ?: return
+        social.leave(s.jogo.id, uid)
+    }
+
+    /** E15 (US-130): avaliacao pos-jogo. */
+    fun rate(rating: GameRating) {
+        val s = _uiState.value as? GameDetailUiState.Content ?: return
+        social.submitRating(s.jogo.id, rating)
+        _events.trySend(GameDetailEvent.Rated)
     }
 
     fun remindAll() {
