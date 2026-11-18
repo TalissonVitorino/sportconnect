@@ -21,6 +21,7 @@ import br.com.sportconnect.core.model.StatusReserva
 import br.com.sportconnect.core.model.StatusPagamento
 import br.com.sportconnect.core.domain.repository.PaymentGateway
 import br.com.sportconnect.core.data.local.ProfilePhotoStore
+import br.com.sportconnect.core.data.local.SocialStore
 import br.com.sportconnect.AppInfo
 import br.com.sportconnect.core.designsystem.component.SCSkeletonShape
 import br.com.sportconnect.core.designsystem.component.SCSkeleton
@@ -114,6 +115,7 @@ import br.com.sportconnect.resources.error_refund_failed_action
 import br.com.sportconnect.resources.error_pix_key_invalid_body
 import br.com.sportconnect.resources.refund_pix_key_field
 import br.com.sportconnect.resources.refund_pix_key_submit
+import br.com.sportconnect.resources.profile_attendance
 import br.com.sportconnect.core.designsystem.component.SCAvatar
 import br.com.sportconnect.core.designsystem.component.SCButton
 import br.com.sportconnect.core.designsystem.component.SCButtonVariant
@@ -193,7 +195,7 @@ import kotlin.time.Instant
 /** Modo do app (09 §2.1). */
 enum class AppMode { Athlete, Arena }
 
-data class ProfileUiState(val user: Usuario? = null, val switching: Boolean = false) {
+data class ProfileUiState(val user: Usuario? = null, val switching: Boolean = false, val attendance: Pair<Int, Int>? = null) {
     val hasArenaRole: Boolean get() = user?.papeis?.any { it == PapelUsuario.GESTOR_ARENA || it == PapelUsuario.OPERADOR_ARENA } == true
 }
 
@@ -201,12 +203,17 @@ data class ProfileUiState(val user: Usuario? = null, val switching: Boolean = fa
  * Perfil e troca de modo. No MVP fake, "Tenho uma arena"/"Minha Arena" entra como o gestor da demo
  * (`entrarComo("u-gestor")`) e "Atleta" volta para o organizador da demo.
  */
-class ProfileViewModel(private val auth: AuthRepository) : ViewModel() {
+class ProfileViewModel(private val auth: AuthRepository, private val social: SocialStore) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch { auth.currentUser.collect { u -> _uiState.update { it.copy(user = u) } } }
+        // T7 (13): presenca (E15); null enquanto ninguem marcou presenca em nenhum jogo do usuario.
+        viewModelScope.launch {
+            combine(auth.currentUser, social.attendance) { u, _ -> u }.collect { u ->
+                _uiState.update { it.copy(user = u, attendance = u?.let { user -> social.attendanceOf(user.id) }) }
+            }
+        }
     }
 
     fun switchMode(mode: AppMode, onDone: () -> Unit) {
@@ -314,6 +321,14 @@ fun ProfileScreen(
                     }
                     Spacer(Modifier.weight(1f))
                     Icon(Icons.Rounded.Edit, null, tint = c.onSurfaceVariant)
+                }
+                // T7 (13): presenca (E15, US-131); some ate o usuario ter algum jogo avaliado.
+                state.attendance?.let { (attended, total) ->
+                    Text(
+                        stringResource(Res.string.profile_attendance, "$attended/$total"),
+                        style = t.bodyMedium, color = c.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 16.dp).testTag("profile_attendance"),
+                    )
                 }
                 if (state.hasArenaRole) {
                     Text(stringResource(Res.string.profile_use_as), style = t.titleSmall, color = c.onSurfaceVariant)

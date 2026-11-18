@@ -399,7 +399,7 @@ flowchart TB
 |---|---|
 | **Objetivo** | Central da conta: dados, esportes, pagamentos, notificações, privacidade, suporte e troca de modo. |
 | **Ator** | Todos. |
-| **Conteúdo** | Nome, foto, celular mascarado · seletor "Usar como: Atleta \| Minha Arena" (se tiver papel de arena) · `profile_my_games` · `profile_payments` · `profile_sports` · `profile_notifications` · `profile_saved_cards` · `profile_privacy` · `profile_support` · `auth_logout` · `profile_version` · [F2] `profile_attendance`. |
+| **Conteúdo** | Nome, foto, celular mascarado · `profile_attendance` (T7 da 13, some sem jogo avaliado) · seletor "Usar como: Atleta \| Minha Arena" (se tiver papel de arena) · `profile_my_games` · `profile_payments` · `profile_sports` · `profile_notifications` · `profile_saved_cards` · `profile_privacy` · `profile_support` · `auth_logout` · `profile_version`. |
 | **Ações primárias** | Navegar para subtelas. |
 | **Ações secundárias** | "Tenho uma arena" (para quem não tem papel de arena) · sair da conta. |
 | **Estados** | *Loading:* skeleton. *Vazio:* n/a. *Erro:* `error_session_expired_*`. *Sucesso:* dados salvos com snackbar. |

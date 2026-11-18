@@ -543,7 +543,7 @@ Mensagem pré-pronta de WhatsApp: ver `wa_invite_message` (seção 7).
 | `profile_delete_dialog_title` | Excluir sua conta? | |
 | `profile_delete_dialog_body` | Seus dados pessoais são apagados em até 15 dias. Pagamentos ficam guardados pelo prazo exigido por lei. Isso não pode ser desfeito. | |
 | `profile_delete_confirm` | Excluir conta | |
-| `profile_attendance` | Presença: %1$s dos jogos | Fase 2 |
+| `profile_attendance` | Presença: %1$s dos jogos | T7 (13): %1$s = "9/10"; implementado com E15 (sem Fase 2) |
 | `profile_version` | Versão %1$s | |
 | `profile_support` | Falar com o suporte | |
 
