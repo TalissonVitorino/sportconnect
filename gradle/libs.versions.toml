@@ -45,6 +45,18 @@ koin = "4.2.2"
 ktor = "3.6.1"
 logback = "1.5.18"
 
+# Persistencia do servidor (Postgres/Exposed/Flyway) e Testcontainers
+exposed = "0.56.0"
+# kotlinx-datetime compativel com exposed-kotlin-datetime 0.56.0: a partir da 0.7.0 o
+# kotlinx-datetime passou a depreciar Instant/Clock em favor de kotlin.time, e o Exposed 0.56.0
+# ainda espera a classe real (pre-depreciacao) — por isso este modulo fixa uma versao anterior
+# em vez de reusar o ref kotlinx-datetime = "0.8.0" da raiz do catalogo.
+kotlinx-datetime-exposed = "0.6.1"
+hikaricp = "5.1.0"
+postgresql-driver = "42.7.4"
+flyway = "10.20.1"
+testcontainers = "1.21.4"
+
 [libraries]
 # Compose Multiplatform
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
@@ -118,6 +130,19 @@ ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref 
 
 # Logging (servidor)
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+# Persistencia do servidor (Postgres/Exposed/Flyway)
+kotlinx-datetime-exposed = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime-exposed" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+postgresql-driver = { module = "org.postgresql:postgresql", version.ref = "postgresql-driver" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+
+# Testcontainers (testes de persistencia)
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 # Testes
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

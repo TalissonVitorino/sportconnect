@@ -21,10 +21,20 @@ dependencies {
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.koin.ktor)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.datetime.exposed)
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.kotlin.datetime)
+    implementation(libs.hikaricp)
+    implementation(libs.postgresql.driver)
+    implementation(libs.flyway.core)
+    implementation(libs.flyway.database.postgresql)
     runtimeOnly(libs.logback.classic)
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.testcontainers.postgresql)
 }
 
 tasks.test {
