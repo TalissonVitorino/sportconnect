@@ -73,7 +73,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 
 | # | P | Tam | Tarefa | Onde | Por quê |
 |---|---|---|---|---|---|
-| T1 | P1 | P | **Máscara do celular** mostra "(11) 9 8765-4321" (espaço a mais); padrão do 07: "(11) 98765-4321". | `PhoneMask` / `SCTextField` | Aparece no login, na edição de perfil e na exclusão de conta. |
+| T1 | ✅ P1 | P | **Máscara do celular** mostra "(11) 9 8765-4321" (espaço a mais); padrão do 07: "(11) 98765-4321". | `PhoneMask` / `SCTextField` | Aparece no login, na edição de perfil e na exclusão de conta. |
 | T2 | P1 | P | **Campo de cidade** do onboarding marcado como multilinha (Enter quebra linha) → linha única com ação "Buscar"; chip de data mostra "hoje" em minúscula → "Hoje". | onboarding, explore | Detalhes vistos na web. |
 | T3 | P1 | M | **Jogos com vaga** (US-100/101, textos já no 07): seção na Home (`home_section_open_games`, `empty_open_games_*`) e aba "Jogos com vaga" na busca; ao criar jogo, opção "Abrir vagas para avulsos". | home, explore, create | Os jogos com `VAGAS_ABERTAS` da demo não aparecem em lugar nenhum; no expandido a Home fica vazia. |
 | T4 | P1 | P | **Busca no expandido**: título desalinhado do conteúdo e cards com imagem enorme (cabem 2 por tela) → imagem com altura máxima e título na mesma margem. | `ExploreScreen`, `SCCourtCard` | Visto na web a 1280 px. |
@@ -123,3 +123,4 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 - **A2** ✅ Android/iOS já tinham `Role.Tab`/`Role.Checkbox` com estado; a web do Compose só gera `role=button` sem `aria-selected/checked`. `webSelectedLabel`/`webCheckedLabel` põem o estado no nome só na web: abas (barra, rail, menu), "Meus jogos", 6 segmentos, chips de esporte e filtro "Coberta".
 - **A4** ✅ FAB "Criar jogo" do celular com nome acessível explícito (a web o expunha sem nome). Na rail, o FAB só com ícone segue o padrão M3 e já tem a descrição "Criar jogo".
 - **A3** ✅ `SCInlineLinks` no lugar do `LinkAnnotation` (Termos/Política com nome e papel de botão; frase lida inteira); campo de busca usa o placeholder como nome. Os `cd_*` restantes do 07 descrevem botões que já têm texto visível equivalente — aplicá-los duplicaria a leitura, então ficaram de fora. **Limitação do Material 3:** o `ModalBottomSheet` tem o rótulo "Fechar planilha" na tradução do Compose (texto da biblioteca, sem parâmetro).
+- **T1** ✅ Máscara do celular `(##) #####-####` (07): login, edição de perfil e exclusão de conta. Teste em `PhoneMaskTest`.

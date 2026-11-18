@@ -99,7 +99,7 @@ fun SCTextField(
         type == SCTextFieldType.Cep || type == SCTextFieldType.CardNumber || type == SCTextFieldType.CardExpiry || type == SCTextFieldType.Cvv
     val transformation: VisualTransformation = when (type) {
         SCTextFieldType.Money -> MoneyVisualTransformation
-        SCTextFieldType.Phone -> MaskVisualTransformation("(##) # ####-####")
+        SCTextFieldType.Phone -> MaskVisualTransformation(PHONE_MASK)
         SCTextFieldType.Cpf -> MaskVisualTransformation("###.###.###-##")
         SCTextFieldType.Cep -> MaskVisualTransformation("#####-###")
         SCTextFieldType.CardNumber -> MaskVisualTransformation("#### #### #### #### ###")
@@ -234,7 +234,10 @@ private object MoneyVisualTransformation : VisualTransformation {
 }
 
 /** Mascara visual com `#` = digito. Mapeamento de offset exato (edicao no meio funciona). */
-private class MaskVisualTransformation(private val mask: String) : VisualTransformation {
+/** T1 (doc 13): formato do 07 — (11) 98765-4321. */
+internal const val PHONE_MASK = "(##) #####-####"
+
+internal class MaskVisualTransformation(private val mask: String) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val digits = text.text
         val out = StringBuilder()
