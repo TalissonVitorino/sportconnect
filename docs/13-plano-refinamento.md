@@ -67,7 +67,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 | A1 | ✅ P1 | P | **Card de jogo lido por inteiro**: hoje o leitor diz "Esporte: Futebol society, Status: …" **sem o nome nem a data** do jogo. Incluir título, dia e hora, local e prazo, na ordem do 09 §8 (home). Saudação "E aí, Rafael!" é lida por último — corrigir a ordem. | `SCGameCard`, `HomeScreen` | O usuário de leitor de tela não sabe qual jogo é qual. |
 | A2 | ✅ P1 | P | **Seleção com estado**: esportes do onboarding/Meus esportes e chips de filtro como caixa de seleção com "marcado/não marcado"; abas (barra e rail) e segmentos com "selecionado". | onboarding, explore, `SCNavigation` | Na web aparecem como "button" sem estado; o 09 pede `Role.Checkbox`/`Role.Tab`. |
 | A3 | P1 | P | **Links e ícones sem nome**: "Termos de Uso" e "Política de Privacidade" no login aparecem como botões sem nome; aplicar os `cd_*` que já existem no 07 e não são usados (`cd_copy_pix`, `cd_share_whatsapp`, `cd_split_progress`, `cd_status_paid/pending`, `cd_calendar_add`, `cd_directions`, `cd_favorite_*`). | auth, pay, game, arena | 17 descrições prontas no 07 sem uso. |
-| A4 | P1 | P | **FAB da rail** (tela larga) só com "+": rótulo visível "Criar jogo" quando houver espaço, ou descrição acessível. | `SCNavigation` | 09 §8 home: "FAB com rótulo visível, não só +". |
+| A4 | ✅ P1 | P | **FAB da rail** (tela larga) só com "+": rótulo visível "Criar jogo" quando houver espaço, ou descrição acessível. | `SCNavigation` | 09 §8 home: "FAB com rótulo visível, não só +". |
 
 ## T. Telas e fluxos
 
@@ -121,3 +121,4 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 - **X4** ✅ Tocar fora fecha o teclado em todas as plataformas (no iPhone os teclados numéricos não têm tecla de fechar). O gesto de voltar pela borda no iOS já vem do Compose 1.12 (`UIKitBackGestureRecognizer`), sem código nosso.
 - **A1** ✅ Cards de jogo e de quadra lidos numa frase completa (nome, data, local, esporte, estado, rateio, prazo; arena, quadra, distância) e horários como "Reservar das 21h às 22h, R$ 240,00". Barra de topo lida primeiro (`TopBarFirst`) no TalkBack/VoiceOver — **limitação:** a web do Compose ignora `traversalIndex` e mantém a ordem da árvore.
 - **A2** ✅ Android/iOS já tinham `Role.Tab`/`Role.Checkbox` com estado; a web do Compose só gera `role=button` sem `aria-selected/checked`. `webSelectedLabel`/`webCheckedLabel` põem o estado no nome só na web: abas (barra, rail, menu), "Meus jogos", 6 segmentos, chips de esporte e filtro "Coberta".
+- **A4** ✅ FAB "Criar jogo" do celular com nome acessível explícito (a web o expunha sem nome). Na rail, o FAB só com ícone segue o padrão M3 e já tem a descrição "Criar jogo".

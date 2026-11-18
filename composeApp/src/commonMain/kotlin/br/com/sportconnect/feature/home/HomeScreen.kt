@@ -177,6 +177,7 @@ fun HomeScreen(
             floatingActionButton = {
                 // Medium/expanded: o FAB vira item da rail (casca de navegacao).
                 if (state is HomeUiState.Content && wc == WidthClass.Compact) {
+                    val createLabel = stringResource(Res.string.home_cta_create_game)
                     ExtendedFloatingActionButton(
                         text = { Text(stringResource(Res.string.home_cta_create_game), style = MaterialTheme.typography.labelLarge) },
                         icon = { Icon(Icons.Rounded.Add, null) },
@@ -185,7 +186,8 @@ fun HomeScreen(
                         containerColor = c.primaryContainer,
                         contentColor = c.onPrimaryContainer,
                         shape = MaterialTheme.shapes.extraLarge,
-                        modifier = Modifier.testTag("home_fab_create_game"),
+                        // A4: nome acessivel explicito (com o rotulo recolhido ao rolar, a web ficava sem nome).
+                        modifier = Modifier.semantics { contentDescription = createLabel }.testTag("home_fab_create_game"),
                     )
                 }
             },
