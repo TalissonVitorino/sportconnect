@@ -51,16 +51,29 @@ import br.com.sportconnect.core.designsystem.theme.SCShape
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
 import br.com.sportconnect.feature.arenaadmin.ArenaAdminNavigator
 import br.com.sportconnect.feature.arenaadmin.common.ArenaWidth
+import br.com.sportconnect.feature.arenaadmin.common.LoadState
 import br.com.sportconnect.resources.Res
+import br.com.sportconnect.resources.common_back
+import br.com.sportconnect.resources.error_server_body
+import br.com.sportconnect.resources.error_server_title
 import br.com.sportconnect.resources.aadm_onb_courts_body
+import br.com.sportconnect.resources.aadm_onb_error_address
 import br.com.sportconnect.resources.aadm_onb_error_cep
 import br.com.sportconnect.resources.aadm_onb_error_doc
 import br.com.sportconnect.resources.aadm_onb_error_name
+import br.com.sportconnect.resources.aadm_onb_error_phone
+import br.com.sportconnect.resources.aadm_onb_field_amenities
 import br.com.sportconnect.resources.aadm_onb_field_cep
 import br.com.sportconnect.resources.aadm_onb_field_doc
+import br.com.sportconnect.resources.aadm_onb_field_hours
 import br.com.sportconnect.resources.aadm_onb_field_name
+import br.com.sportconnect.resources.aadm_onb_field_neighborhood
+import br.com.sportconnect.resources.aadm_onb_field_number
+import br.com.sportconnect.resources.aadm_onb_field_phone
 import br.com.sportconnect.resources.aadm_onb_field_pix
+import br.com.sportconnect.resources.aadm_onb_field_street
 import br.com.sportconnect.resources.aadm_onb_go_dashboard
+import br.com.sportconnect.resources.aadm_onb_hours_placeholder
 import br.com.sportconnect.resources.aadm_onb_progress
 import br.com.sportconnect.resources.aadm_onb_publish_hint
 import br.com.sportconnect.resources.aadm_onb_schedule_body
@@ -78,6 +91,10 @@ import br.com.sportconnect.resources.arena_onb_step_schedule
 import br.com.sportconnect.resources.arena_onb_success_body
 import br.com.sportconnect.resources.arena_onb_success_title
 import br.com.sportconnect.resources.arena_onb_title
+import br.com.sportconnect.resources.arena_detail_amenity_bar
+import br.com.sportconnect.resources.arena_detail_amenity_lighting
+import br.com.sportconnect.resources.arena_detail_amenity_locker
+import br.com.sportconnect.resources.arena_detail_amenity_parking
 import br.com.sportconnect.resources.error_pix_key_invalid_title
 import br.com.sportconnect.resources.payout_bank_account
 import org.jetbrains.compose.resources.StringResource
@@ -122,7 +139,20 @@ fun ArenaOnboardingScreen(
     ) { padding ->
         androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
             val width = ArenaWidth.of(maxWidth)
-            if (state.published) {
+            if (state.load == LoadState.Loading) {
+                br.com.sportconnect.core.designsystem.component.SCSkeleton(
+                    br.com.sportconnect.core.designsystem.component.SCSkeletonShape.Box(height = 280.dp),
+                    Modifier.widthIn(max = 640.dp).fillMaxWidth().padding(16.dp),
+                )
+            } else if (state.load == LoadState.NoArena || state.load == LoadState.Error) {
+                SCEmptyState(
+                    stringResource(Res.string.error_server_title),
+                    stringResource(Res.string.error_server_body),
+                    Modifier.widthIn(max = 640.dp),
+                    illustration = SCIllustration.Error,
+                    primaryAction = SCAction(stringResource(Res.string.common_back), nav::back),
+                )
+            } else if (state.published) {
                 SCEmptyState(
                     stringResource(Res.string.arena_onb_success_title),
                     stringResource(Res.string.arena_onb_success_body),
@@ -197,6 +227,7 @@ private fun Checklist(state: ArenaOnboardingUiState, vm: ArenaOnboardingViewMode
     }
 }
 
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 private fun StepForm(step: OnboardingStep, state: ArenaOnboardingUiState, vm: ArenaOnboardingViewModel, nav: ArenaAdminNavigator) {
     val t = MaterialTheme.typography
@@ -207,7 +238,37 @@ private fun StepForm(step: OnboardingStep, state: ArenaOnboardingUiState, vm: Ar
             OnboardingStep.Info -> {
                 SCTextField(state.name, vm::setName, stringResource(Res.string.aadm_onb_field_name), Modifier.fillMaxWidth(), errorText = if (err && state.nameError) stringResource(Res.string.aadm_onb_error_name) else null)
                 SCTextField(state.document, vm::setDocument, stringResource(Res.string.aadm_onb_field_doc), Modifier.fillMaxWidth(), type = SCTextFieldType.Cpf, placeholder = "000.000.000-00", errorText = if (err && state.documentError) stringResource(Res.string.aadm_onb_error_doc) else null)
-                SCTextField(state.cep, vm::setCep, stringResource(Res.string.aadm_onb_field_cep), Modifier.fillMaxWidth(), type = SCTextFieldType.Cep, placeholder = "00000-000", errorText = if (err && state.cepError) stringResource(Res.string.aadm_onb_error_cep) else null)
+                SCTextField(state.telefone, vm::setTelefone, stringResource(Res.string.aadm_onb_field_phone), Modifier.fillMaxWidth(), type = SCTextFieldType.Phone, errorText = if (err && state.telefoneError) stringResource(Res.string.aadm_onb_error_phone) else null)
+                SCTextField(state.logradouro, vm::setLogradouro, stringResource(Res.string.aadm_onb_field_street), Modifier.fillMaxWidth())
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    SCTextField(state.numero, vm::setNumero, stringResource(Res.string.aadm_onb_field_number), Modifier.weight(1f))
+                    SCTextField(state.bairro, vm::setBairro, stringResource(Res.string.aadm_onb_field_neighborhood), Modifier.weight(2f))
+                }
+                SCTextField(
+                    state.cep, vm::setCep, stringResource(Res.string.aadm_onb_field_cep), Modifier.fillMaxWidth(), type = SCTextFieldType.Cep, placeholder = "00000-000",
+                    errorText = if (err && state.addressError) stringResource(Res.string.aadm_onb_error_address) else null,
+                )
+                Text(stringResource(Res.string.aadm_onb_field_amenities), style = t.titleSmall, color = c.onSurface)
+                // Mesmos rotulos que `amenityOf` reconhece com icone no detalhe da arena (E9).
+                val amenities = listOf(
+                    stringResource(Res.string.arena_detail_amenity_parking), stringResource(Res.string.arena_detail_amenity_locker),
+                    stringResource(Res.string.arena_detail_amenity_bar), stringResource(Res.string.arena_detail_amenity_lighting),
+                    "Churrasqueira", "Wi-Fi",
+                )
+                androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    amenities.forEach { nome ->
+                        androidx.compose.material3.FilterChip(
+                            selected = nome in state.comodidades,
+                            onClick = { vm.toggleComodidade(nome) },
+                            label = { Text(nome) },
+                            modifier = Modifier.testTag("arenaonb_amenity_$nome"),
+                        )
+                    }
+                }
+                SCTextField(
+                    state.horario, vm::setHorario, stringResource(Res.string.aadm_onb_field_hours), Modifier.fillMaxWidth(),
+                    placeholder = stringResource(Res.string.aadm_onb_hours_placeholder),
+                )
             }
             OnboardingStep.Courts -> {
                 Text(stringResource(Res.string.aadm_onb_courts_body), style = t.bodyMedium, color = c.onSurfaceVariant)

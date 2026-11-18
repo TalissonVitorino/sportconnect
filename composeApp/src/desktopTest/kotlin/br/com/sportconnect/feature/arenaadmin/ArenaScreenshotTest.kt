@@ -232,7 +232,7 @@ class ArenaScreenshotTest {
 
     @Test
     fun onboarding() {
-        val vm = ArenaOnboardingViewModel()
+        val vm = env().onboardingVm()
         vm.setName("Arena Pinheiros")
         render("arena-onboarding-compact.png", 400, 1000) { ArenaOnboardingScreen(ArenaAdminNavigator.Preview, vm) }
     }

@@ -117,6 +117,16 @@
     <string name="aadm_onb_error_name">Informe o nome da arena</string>
     <string name="aadm_onb_error_doc">CPF incompleto</string>
     <string name="aadm_onb_error_cep">CEP incompleto</string>
+    <!-- T9 (13/US-012): endereco completo, telefone, comodidades e horario -->
+    <string name="aadm_onb_field_street">Rua ou avenida</string>
+    <string name="aadm_onb_field_number">Número</string>
+    <string name="aadm_onb_field_neighborhood">Bairro</string>
+    <string name="aadm_onb_error_address">Preencha rua, número, bairro e CEP</string>
+    <string name="aadm_onb_field_phone">Telefone</string>
+    <string name="aadm_onb_error_phone">Telefone incompleto</string>
+    <string name="aadm_onb_field_amenities">Comodidades</string>
+    <string name="aadm_onb_field_hours">Horário de funcionamento</string>
+    <string name="aadm_onb_hours_placeholder">Ex.: Seg a sáb, 7h às 23h</string>
     <string name="aadm_onb_go_dashboard">Ir para o Painel</string>
     <string name="aadm_onb_step_number">Etapa %1$d</string>
 </resources>

@@ -48,6 +48,10 @@ data class Arena(
     val descricao: String = "",
     val avaliacaoMedia: Double? = null,
     val totalAvaliacoes: Int = 0,
+    /** T9 (13/US-012): recebimento dos repasses; validada como chave Pix (`isValidPixKey`). */
+    val chavePix: String? = null,
+    /** T9 (13/US-012): texto livre, ex. "Seg a sáb, 7h às 23h". */
+    val horarioFuncionamento: String = "",
 )
 
 @Serializable

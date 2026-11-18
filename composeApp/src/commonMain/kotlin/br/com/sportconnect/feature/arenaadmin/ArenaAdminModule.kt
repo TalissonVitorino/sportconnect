@@ -26,7 +26,7 @@ val arenaAdminModule = module {
     viewModel { ArenaCourtsViewModel(get(), get(), get(), get()) }
     viewModel { (courtId: String) -> ArenaCourtEditViewModel(courtId.ifEmpty { null }, get(), get(), get(), get(), get()) }
     viewModel { ArenaPayoutsViewModel(get(), get(), get(), get(), get(), get()) }
-    viewModel { ArenaOnboardingViewModel() }
+    viewModel { ArenaOnboardingViewModel(get(), get()) }
     viewModel { ArenaReportsViewModel(get(), get()) }
     viewModel { ArenaSettingsViewModel(get(), get()) }
     factory { ArenaReportsUseCase(get(), get(), get()) }
