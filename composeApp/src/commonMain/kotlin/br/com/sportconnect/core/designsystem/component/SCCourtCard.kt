@@ -1,5 +1,6 @@
 package br.com.sportconnect.core.designsystem.component
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import br.com.sportconnect.resources.Res
 import org.jetbrains.compose.resources.stringResource
 import br.com.sportconnect.resources.cd_court_distance
@@ -130,7 +131,9 @@ fun SCCourtCard(
             }
             else -> Column {
                 // C6: 16:9 ocupava ~50% da tela no celular (1 resultado por vez). 2.4:1 mostra ~2 cards.
-                Box(Modifier.fillMaxWidth().aspectRatio(2.4f)) {
+                // T4: em telas largas a proporcao passava de 250 dp de altura; limita a 180 dp sem estreitar.
+                BoxWithConstraints(Modifier.fillMaxWidth()) {
+                Box(Modifier.fillMaxWidth().height(minOf(maxWidth / 2.4f, 180.dp))) {
                     SCCourtPlaceholder(mainSport, Modifier.fillMaxWidth().fillMaxHeight())
                     if (court.distanceLabel != null) {
                         Row(
@@ -144,6 +147,7 @@ fun SCCourtCard(
                             Text(court.distanceLabel, style = t.labelMedium, color = Color.White, modifier = Modifier.clearAndSetSemantics { })
                         }
                     }
+                }
                 }
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(court.arenaName, style = t.titleMedium, color = c.onSurface, modifier = Modifier.semantics { contentDescription = headline })

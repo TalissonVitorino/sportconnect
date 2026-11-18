@@ -205,7 +205,16 @@ fun ExploreScreen(
         val hPad = if (wc == WidthClass.Compact) 16.dp else 24.dp
         Scaffold(
             containerColor = c.surface,
-            topBar = { SCTopBar(stringResource(Res.string.search_title), navigation = null) },
+            // T4: titulo na mesma largura do conteudo (antes ficava colado a esquerda em telas medias).
+            topBar = {
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                    SCTopBar(
+                        stringResource(Res.string.search_title), navigation = null,
+                        modifier = Modifier.widthIn(max = if (split) 1600.dp else if (wc == WidthClass.Expanded) 1040.dp else 760.dp)
+                            .padding(horizontal = if (wc == WidthClass.Compact) 0.dp else 8.dp),
+                    )
+                }
+            },
         ) { padding ->
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
                 Column(Modifier.widthIn(max = if (split) 1600.dp else if (wc == WidthClass.Expanded) 1040.dp else 760.dp).fillMaxSize()) {
