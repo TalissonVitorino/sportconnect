@@ -54,6 +54,24 @@ class TokenServiceTest {
     }
 
     @Test
+    fun acesso_e_renovacao_carregam_claims_tipo_diferentes() {
+        // Mesmo emissor, mesma claim usuarioId, mesma chave de assinatura: sem uma claim que
+        // distinga o tipo, um refresh token de 30 dias passaria como token de acesso válido numa
+        // rota protegida (Task 6). `tipo` existe exatamente para impedir isso.
+        val par = tokenService.emitirRefresh("usuario-1")
+        val verificador = JWT.require(Algorithm.HMAC256(config.jwtSecret)).withIssuer(config.jwtIssuer).build()
+
+        val acesso = verificador.verify(par.acesso)
+        val renovacao = verificador.verify(par.renovacao)
+
+        assertEquals(TokenService.TIPO_ACESSO, acesso.getClaim(TokenService.CLAIM_TIPO).asString())
+        assertEquals(TokenService.TIPO_RENOVACAO, renovacao.getClaim(TokenService.CLAIM_TIPO).asString())
+
+        val tokenAcessoIsolado = JWT.decode(tokenService.emitirAcesso("usuario-1"))
+        assertEquals(TokenService.TIPO_ACESSO, tokenAcessoIsolado.getClaim(TokenService.CLAIM_TIPO).asString())
+    }
+
+    @Test
     fun token_assinado_com_outro_segredo_falha_na_verificacao() {
         val token = tokenService.emitirAcesso("usuario-1")
         val verificadorComSegredoErrado = JWT.require(Algorithm.HMAC256("outro-segredo")).build()

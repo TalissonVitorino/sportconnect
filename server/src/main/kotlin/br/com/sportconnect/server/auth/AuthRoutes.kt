@@ -39,12 +39,11 @@ private data class ErroBloqueadoResponse(val erro: ErroCorpo, val tentarApos: In
  * Rotas de autenticação por OTP (docs/15-contrato-api.md §1): solicitar código e confirmar.
  *
  * Este esqueleto não integra um provedor de SMS/WhatsApp real: `POST /auth/otp` apenas gera o
- * código via [otp] e o registra em log de DEPURAÇÃO (nunca na resposta HTTP — devolver o código
- * ali seria uma falha de segurança real caso este código fosse ao ar como está). O nível raiz do
- * logback deste módulo é `INFO` (`server/src/main/resources/logback.xml`), então esse log de
- * depuração não aparece por padrão; nos testes, o código é lido diretamente do [OtpStore]
- * (`InMemoryOtpStore.ultimoCodigoPara`), nunca do log. A integração com um provedor real é item de
- * um plano futuro, não deste esqueleto.
+ * código via [otp]. O valor do código **nunca** é logado nem devolvido em nenhuma resposta HTTP —
+ * isso seria uma falha de segurança real caso este código fosse ao ar como está, independente do
+ * nível de log configurado em produção. Testes leem o código diretamente do [OtpStore]
+ * (`InMemoryOtpStore.ultimoCodigoPara`), nunca de um log. A integração com um provedor real é item
+ * de um plano futuro, não deste esqueleto.
  */
 fun Route.authRoutes(usuarios: UsuarioRepository, otp: OtpStore, tokens: TokenService) {
     post("/auth/otp") {
@@ -52,8 +51,8 @@ fun Route.authRoutes(usuarios: UsuarioRepository, otp: OtpStore, tokens: TokenSe
         if (!FORMATO_E164.matches(requisicao.celular)) {
             throw RegraNegocioException("PHONE_INVALID", "Celular inválido. Use DDD + número.")
         }
-        val codigo = otp.gerar(requisicao.celular)
-        logger.debug("OTP gerado para {}: {} (esqueleto sem provedor SMS/WhatsApp real)", requisicao.celular, codigo)
+        otp.gerar(requisicao.celular)
+        logger.debug("OTP solicitado para {}", requisicao.celular)
         call.respond(HttpStatusCode.NoContent)
     }
 
