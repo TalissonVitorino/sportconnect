@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.explore
 
+import br.com.sportconnect.core.designsystem.a11y.webCheckedLabel
 import br.com.sportconnect.resources.cd_map_pin
 import br.com.sportconnect.resources.search_list_view
 import br.com.sportconnect.resources.search_map_view
@@ -371,7 +372,7 @@ private fun FilterRow(
             label = { Text(stringResource(Res.string.search_filter_covered)) },
             leadingIcon = { Icon(if (state.coveredOnly) Icons.Rounded.Check else Icons.Rounded.Roofing, null, Modifier.size(18.dp)) },
             colors = chipColors,
-            modifier = Modifier.testTag("explore_filter_covered"),
+            modifier = Modifier.webCheckedLabel(stringResource(Res.string.search_filter_covered), state.coveredOnly).testTag("explore_filter_covered"),
         )
         // E10: faixa de horario.
         Box {

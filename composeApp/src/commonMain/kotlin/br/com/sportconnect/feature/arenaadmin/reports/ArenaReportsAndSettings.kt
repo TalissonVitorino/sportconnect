@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.arenaadmin.reports
 
+import br.com.sportconnect.core.designsystem.a11y.webSelectedLabel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -125,6 +126,7 @@ fun ArenaReportsContent(state: ArenaReportsUiState, onBack: () -> Unit = {}, onD
                         SegmentedButton(
                             selected = state.days == d, onClick = { onDays(d) },
                             shape = SegmentedButtonDefaults.itemShape(i, 2), colors = SCSelection.segmentedColors(),
+                            modifier = Modifier.webSelectedLabel(stringResource(Res.string.arena_reports_last_days, d), state.days == d),
                         ) { Text(stringResource(Res.string.arena_reports_last_days, d)) }
                     }
                 }

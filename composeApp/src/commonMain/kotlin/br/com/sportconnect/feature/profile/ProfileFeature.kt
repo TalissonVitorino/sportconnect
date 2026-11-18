@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.profile
 
+import br.com.sportconnect.core.designsystem.a11y.webSelectedLabel
 import br.com.sportconnect.resources.refund_help
 import br.com.sportconnect.resources.refund_fee_note
 import br.com.sportconnect.resources.refund_pix_eta
@@ -316,6 +317,7 @@ fun ProfileScreen(
                             enabled = !state.switching,
                             shape = SegmentedButtonDefaults.itemShape(0, 2),
                             colors = SCSelection.segmentedColors(),
+                            modifier = Modifier.webSelectedLabel(stringResource(Res.string.profile_mode_athlete), false),
                         ) { Text(stringResource(Res.string.profile_mode_athlete)) }
                         SegmentedButton(
                             selected = true,
@@ -323,6 +325,7 @@ fun ProfileScreen(
                             enabled = !state.switching,
                             shape = SegmentedButtonDefaults.itemShape(1, 2),
                             colors = SCSelection.segmentedColors(),
+                            modifier = Modifier.webSelectedLabel(stringResource(Res.string.profile_mode_arena), true),
                         ) { Text(stringResource(Res.string.profile_mode_arena)) }
                     }
                     Spacer(Modifier.height(16.dp))

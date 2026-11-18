@@ -1,5 +1,6 @@
 package br.com.sportconnect.core.designsystem.component
 
+import br.com.sportconnect.core.designsystem.a11y.webSelectedLabel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -100,7 +101,7 @@ fun SCBottomNav(
                 icon = { NavIcon(item, selected) },
                 label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
                 alwaysShowLabel = true,
-                modifier = Modifier.badgeSemantics(item).testTag("nav_${item.route}"),
+                modifier = Modifier.badgeSemantics(item).webSelectedLabel(item.label, selected, item.badgeDescription).testTag("nav_${item.route}"),
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = c.onPrimaryContainer,
                     selectedTextColor = c.onSurface,
@@ -137,7 +138,7 @@ fun SCNavigationRail(
                     icon = { NavIcon(item, selected) },
                     label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
                     alwaysShowLabel = true,
-                    modifier = Modifier.badgeSemantics(item).testTag("nav_${item.route}"),
+                    modifier = Modifier.badgeSemantics(item).webSelectedLabel(item.label, selected, item.badgeDescription).testTag("nav_${item.route}"),
                     colors = NavigationRailItemDefaults.colors(
                         selectedIconColor = c.onPrimaryContainer,
                         selectedTextColor = c.onSurface,
@@ -171,7 +172,7 @@ fun SCNavigationDrawerSheet(
                 onClick = { onItemSelected(item.route) },
                 icon = { NavIcon(item, selected) },
                 badge = item.badgeCount?.takeIf { it > 0 }?.let { n -> { Text(n.toString(), style = MaterialTheme.typography.labelLarge) } },
-                modifier = Modifier.padding(horizontal = 12.dp).badgeSemantics(item),
+                modifier = Modifier.padding(horizontal = 12.dp).badgeSemantics(item).webSelectedLabel(item.label, selected, item.badgeDescription),
                 colors = NavigationDrawerItemDefaults.colors(
                     selectedContainerColor = c.primaryContainer,
                     selectedIconColor = c.onPrimaryContainer,

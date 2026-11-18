@@ -905,4 +905,8 @@
     <!-- 13-plano · A1 leitura dos cards (propostos) -->
     <string name="cd_slot_chip">Reservar das %1$s às %2$s, %3$s</string>
     <string name="cd_court_distance">a %1$s</string>
+    <!-- 13-plano · A2 estado na web (propostos) -->
+    <string name="a11y_state_selected">selecionada</string>
+    <string name="a11y_state_checked">marcado</string>
+    <string name="a11y_state_unchecked">não marcado</string>
 </resources>

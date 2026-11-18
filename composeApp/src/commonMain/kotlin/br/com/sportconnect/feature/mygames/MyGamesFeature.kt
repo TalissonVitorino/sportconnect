@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.mygames
 
+import br.com.sportconnect.core.designsystem.a11y.webSelectedLabel
 import br.com.sportconnect.core.designsystem.component.sharedGameTitleKey
 import org.koin.compose.koinInject
 import br.com.sportconnect.core.domain.repository.GameRepository
@@ -152,8 +153,8 @@ fun MyGamesScreen(
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
                 Column(Modifier.widthIn(max = 760.dp).fillMaxSize()) {
                     PrimaryTabRow(selectedTabIndex = state.tab, containerColor = c.surface) {
-                        Tab(state.tab == 0, { onTab(0) }, text = { Text(stringResource(Res.string.my_games_tab_upcoming)) }, modifier = Modifier.testTag("mygames_tab_upcoming"))
-                        Tab(state.tab == 1, { onTab(1) }, text = { Text(stringResource(Res.string.my_games_tab_past)) }, modifier = Modifier.testTag("mygames_tab_past"))
+                        Tab(state.tab == 0, { onTab(0) }, text = { Text(stringResource(Res.string.my_games_tab_upcoming)) }, modifier = Modifier.webSelectedLabel(stringResource(Res.string.my_games_tab_upcoming), state.tab == 0).testTag("mygames_tab_upcoming"))
+                        Tab(state.tab == 1, { onTab(1) }, text = { Text(stringResource(Res.string.my_games_tab_past)) }, modifier = Modifier.webSelectedLabel(stringResource(Res.string.my_games_tab_past), state.tab == 1).testTag("mygames_tab_past"))
                     }
                     if (state.sports.size > 1) {
                         Row(
