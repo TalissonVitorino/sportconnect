@@ -14,11 +14,14 @@ import io.ktor.http.ContentType
 import br.com.sportconnect.server.auth.OtpStore
 import br.com.sportconnect.server.auth.TokenService
 import br.com.sportconnect.server.auth.authRoutes
+import br.com.sportconnect.server.auth.jwtAuth
 import br.com.sportconnect.server.config.AppConfig
 import br.com.sportconnect.server.di.serverModule
 import br.com.sportconnect.server.http.configurarTratamentoDeErros
 import br.com.sportconnect.server.persistence.UsuarioRepository
+import br.com.sportconnect.server.routes.meRoutes
 import com.zaxxer.hikari.HikariDataSource
+import io.ktor.server.auth.Authentication
 import org.koin.ktor.ext.getKoin
 import org.koin.ktor.plugin.Koin
 
@@ -37,6 +40,7 @@ fun main() {
 fun Application.module(config: AppConfig = AppConfig.fromEnv(System.getenv())) {
     configurarTratamentoDeErros()
     install(ContentNegotiation) { json() }
+    install(Authentication) { jwtAuth(config) }
     install(Koin) {
         modules(serverModule(config))
     }
@@ -52,5 +56,6 @@ fun Application.module(config: AppConfig = AppConfig.fromEnv(System.getenv())) {
     routing {
         get("/saude") { call.respondText("""{"status":"ok"}""", ContentType.Application.Json) }
         authRoutes(usuarios, otp, tokens)
+        meRoutes(usuarios)
     }
 }
