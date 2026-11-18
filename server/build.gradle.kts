@@ -20,8 +20,15 @@ dependencies {
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.koin.ktor)
     runtimeOnly(libs.logback.classic)
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.ktor.server.test.host)
+}
+
+tasks.test {
+    // Defaults de desenvolvimento/teste para variáveis de ambiente sem default em AppConfig
+    // (ex.: JWT_SECRET), usados pelos testes que sobem a aplicação completa via module().
+    environment("JWT_SECRET", "segredo-de-teste-nao-usar-em-producao")
 }

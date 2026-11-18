@@ -10,15 +10,23 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.http.ContentType
+import br.com.sportconnect.server.config.AppConfig
+import br.com.sportconnect.server.di.serverModule
 import br.com.sportconnect.server.http.configurarTratamentoDeErros
+import org.koin.ktor.plugin.Koin
 
 fun main() {
-    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
+    val config = AppConfig.fromEnv(System.getenv())
+    embeddedServer(Netty, port = config.porta, module = Application::module).start(wait = true)
 }
 
 fun Application.module() {
+    val config = AppConfig.fromEnv(System.getenv())
     configurarTratamentoDeErros()
     install(ContentNegotiation) { json() }
+    install(Koin) {
+        modules(serverModule(config))
+    }
     routing {
         get("/saude") { call.respondText("""{"status":"ok"}""", ContentType.Application.Json) }
     }
