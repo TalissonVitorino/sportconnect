@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.arena
 
+import br.com.sportconnect.core.platform.rememberNativeShare
 import br.com.sportconnect.resources.cd_directions
 import br.com.sportconnect.core.designsystem.map.rememberSCMapCamera
 import br.com.sportconnect.core.designsystem.map.SCMapPin
@@ -209,6 +210,7 @@ fun ArenaDetailScreen(state: ArenaDetailUiState, actions: ArenaDetailActions = A
 
 @Composable
 private fun Gallery(state: ArenaDetailUiState.Content, onBack: () -> Unit, rounded: Boolean) {
+    val nativeShare = rememberNativeShare()
     val share = rememberShareActions()
     val sport = state.detail.esportes.firstOrNull() ?: Sport.FUTEBOL_SOCIETY
     val scrim = Color.Black.copy(alpha = 0.56f)
@@ -239,7 +241,10 @@ private fun Gallery(state: ArenaDetailUiState.Content, onBack: () -> Unit, round
             }
             Spacer(Modifier.weight(1f))
             IconButton(
-                onClick = { share.copy("https://sportconnect.app/a/${state.detail.arena.id}") },
+                onClick = {
+                    val link = "https://sportconnect.app/a/${state.detail.arena.id}"
+                    if (!nativeShare("${state.detail.arena.nome}\n$link")) share.copy(link)
+                },
                 modifier = Modifier.size(40.dp).background(scrim, CircleShape).testTag("arena_share"),
             ) { Icon(Icons.Rounded.Share, stringResource(Res.string.cd_arena_share), tint = Color.White) }
         }

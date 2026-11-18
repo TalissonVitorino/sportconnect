@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.invite
 
+import br.com.sportconnect.core.platform.rememberNativeShare
 import br.com.sportconnect.feature.common.LocalOnline
 import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
 import androidx.compose.foundation.background
@@ -184,6 +185,7 @@ fun OrganizerInviteScreen(
 ) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
+    val nativeShare = rememberNativeShare()
     val share = rememberShareActions()
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -224,8 +226,11 @@ fun OrganizerInviteScreen(
                                 stringResource(Res.string.invite_share_other),
                                 {
                                     onShared("nativo")
-                                    share.copy(message)
-                                    scope.launch { snackbar.showSC(getString(Res.string.invite_link_copied), SCSnackbarKind.Success) }
+                                    // X1: folha nativa; sem ela (desktop), copia a mensagem e avisa.
+                                    if (!nativeShare(message)) {
+                                        share.copy(message)
+                                        scope.launch { snackbar.showSC(getString(Res.string.invite_link_copied), SCSnackbarKind.Success) }
+                                    }
                                 },
                                 variant = SCButtonVariant.Secondary,
                                 leadingIcon = Icons.Rounded.Share,
