@@ -1,5 +1,10 @@
 package br.com.sportconnect.core.designsystem.component
 
+import br.com.sportconnect.core.designsystem.icon.label
+import br.com.sportconnect.core.designsystem.component.labelRes
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -94,6 +99,14 @@ fun SCGameCard(
     val past = game.status == SCReservationTone.Completed || game.status == SCReservationTone.Expired ||
         game.status == SCReservationTone.Cancelled
     val secondaryAlpha = if (past) 0.72f else 1f
+    // A1 (doc 13): uma frase completa para o leitor de tela, na ordem do 09 §8 (nome, quando, onde, estado).
+    // Antes, na web, so as descricoes dos icones viravam o nome do card (sem titulo nem data).
+    val statusText = game.statusLabel ?: stringResource(game.status.labelRes)
+    val headline = listOfNotNull(
+        game.title, game.dateTimeLabel, "${game.arenaName} · ${game.courtName}", game.sport.label(), statusText, game.roleTag,
+    ).joinToString(", ")
+    val myShareText = game.myShare?.let { stringResource(it.labelRes) }
+    val valueText = listOfNotNull(game.shareCaption, myShareText, game.shareValue.formatBrl()).joinToString(" ")
 
     Surface(
         onClick = onClick,
@@ -109,7 +122,7 @@ fun SCGameCard(
                 // C4: esporte (icone + faixa lateral), status e papel na mesma linha quando cabem. FlowRow:
                 // o selo nunca e espremido; se "Voce organiza" nao couber, desce para a linha de baixo.
                 FlowRow(
-                    Modifier.fillMaxWidth(),
+                    Modifier.fillMaxWidth().clearAndSetSemantics { },
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                     itemVerticalAlignment = Alignment.CenterVertically,
@@ -126,8 +139,8 @@ fun SCGameCard(
                         )
                     }
                 }
-                Text(game.title, style = t.titleMedium, color = c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.scSharedBounds(sharedTitleKey))
-                Column(Modifier.alpha(secondaryAlpha), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(game.title, style = t.titleMedium, color = c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.scSharedBounds(sharedTitleKey).semantics { contentDescription = headline })
+                Column(Modifier.alpha(secondaryAlpha).clearAndSetSemantics { }, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     InfoLine(Icons.Rounded.Stadium, "${game.arenaName} · ${game.courtName}")
                     InfoLine(Icons.Rounded.Schedule, game.dateTimeLabel)
                 }
@@ -149,7 +162,7 @@ fun SCGameCard(
                         SCAvatarStack(game.participants, paymentAware = variant == SCGameCardVariant.Organizer, size = 32.dp)
                         Spacer(Modifier.width(12.dp))
                     }
-                    Column(Modifier.weight(1f)) {
+                    Column(Modifier.weight(1f).clearAndSetSemantics { contentDescription = valueText }) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             if (game.shareCaption != null) {
                                 Text(game.shareCaption, style = t.labelSmall, color = c.onSurfaceVariant)

@@ -1,5 +1,7 @@
 package br.com.sportconnect.feature.home
 
+import androidx.compose.ui.semantics.isTraversalGroup
+import br.com.sportconnect.core.designsystem.component.TopBarFirst
 import br.com.sportconnect.resources.common_not_now
 import br.com.sportconnect.resources.reminders_enable
 import br.com.sportconnect.resources.reminders_card_body
@@ -162,12 +164,13 @@ fun HomeScreen(
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val wc = widthClassOf(maxWidth)
         Scaffold(
+            modifier = Modifier.semantics { isTraversalGroup = true },
             containerColor = c.surface,
             topBar = {
                 val topMax = if (wc == WidthClass.Expanded) 1040.dp else 640.dp
                 val hPad = if (wc == WidthClass.Compact) 0.dp else 8.dp
                 // A barra de topo e propria (nao e TopAppBar), entao desconta a status bar aqui.
-                Box(Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars), contentAlignment = Alignment.TopCenter) {
+                Box(Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars).then(TopBarFirst), contentAlignment = Alignment.TopCenter) {
                     Box(Modifier.widthIn(max = topMax).padding(horizontal = hPad)) { HomeTopBar(firstName, unread, actions.notifications) }
                 }
             },

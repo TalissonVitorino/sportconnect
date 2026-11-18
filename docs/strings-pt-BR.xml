@@ -900,6 +900,9 @@
     <!-- 13-plano · X2 salvar arquivo (propostos) -->
     <string name="file_saved">Arquivo salvo</string>
     <string name="file_save_action">Salvar arquivo</string>
+    <!-- 13-plano · A1 leitura dos cards (propostos) -->
+    <string name="cd_slot_chip">Reservar das %1$s às %2$s, %3$s</string>
+    <string name="cd_court_distance">a %1$s</string>
 
     <!-- ===== Minha Arena (strings_arena.xml) ===== -->
     <!-- Shell / navegacao -->

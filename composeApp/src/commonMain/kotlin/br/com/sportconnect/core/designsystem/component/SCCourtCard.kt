@@ -1,5 +1,10 @@
 package br.com.sportconnect.core.designsystem.component
 
+import br.com.sportconnect.resources.Res
+import org.jetbrains.compose.resources.stringResource
+import br.com.sportconnect.resources.cd_court_distance
+import br.com.sportconnect.resources.cd_slot_chip
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -90,6 +95,9 @@ fun SCCourtCard(
     val interaction = remember { MutableInteractionSource() }
     val mainSport = court.sports.firstOrNull() ?: Sport.FUTEBOL_SOCIETY
     val priceCd = "${court.priceFromPrefix} ${spokenBrl(court.priceFrom.cents)} por hora"
+    // A1 (doc 13): nome da arena, quadra, piso e distancia numa frase (a web perdia os textos do card).
+    val distanceCd = court.distanceLabel?.let { stringResource(Res.string.cd_court_distance, it) }
+    val headline = listOfNotNull(court.arenaName, "${court.courtName} · ${court.detailsLabel}", distanceCd).joinToString(", ")
 
     Surface(
         onClick = onClick,
@@ -107,17 +115,17 @@ fun SCCourtCard(
             ) {
                 SCCourtPlaceholder(mainSport, Modifier.width(96.dp).height(96.dp).clip(SCShape.small))
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(court.arenaName, style = t.titleMedium, color = c.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    Text("${court.courtName} · ${court.detailsLabel}", style = t.bodyMedium, color = c.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    Text(court.arenaName, style = t.titleMedium, color = c.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { contentDescription = headline })
+                    Text("${court.courtName} · ${court.detailsLabel}", style = t.bodyMedium, color = c.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.clearAndSetSemantics { })
                     Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
                         court.sports.take(4).forEach { SCSportChip(it, variant = SCSportChipVariant.Compact) }
                         if (court.distanceLabel != null) {
                             Icon(Icons.Rounded.LocationOn, null, tint = c.onSurfaceVariant, modifier = Modifier.padding(start = 4.dp).size(16.dp))
-                            Text(court.distanceLabel, style = t.labelMedium, color = c.onSurfaceVariant)
+                            Text(court.distanceLabel, style = t.labelMedium, color = c.onSurfaceVariant, modifier = Modifier.clearAndSetSemantics { })
                         }
                     }
                     PriceFrom(court, Modifier.semantics { contentDescription = priceCd })
-                    if (court.estimateLabel != null) Text(court.estimateLabel, style = t.bodySmall, color = c.onSurfaceVariant)
+                    if (court.estimateLabel != null) Text(court.estimateLabel, style = t.bodySmall, color = c.onSurfaceVariant, modifier = Modifier.semantics { contentDescription = court.estimateLabel })
                 }
             }
             else -> Column {
@@ -133,13 +141,13 @@ fun SCCourtCard(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Icon(Icons.Rounded.LocationOn, null, tint = Color.White, modifier = Modifier.size(14.dp))
-                            Text(court.distanceLabel, style = t.labelMedium, color = Color.White)
+                            Text(court.distanceLabel, style = t.labelMedium, color = Color.White, modifier = Modifier.clearAndSetSemantics { })
                         }
                     }
                 }
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(court.arenaName, style = t.titleMedium, color = c.onSurface)
-                    Text("${court.courtName} · ${court.detailsLabel}", style = t.bodyMedium, color = c.onSurfaceVariant)
+                    Text(court.arenaName, style = t.titleMedium, color = c.onSurface, modifier = Modifier.semantics { contentDescription = headline })
+                    Text("${court.courtName} · ${court.detailsLabel}", style = t.bodyMedium, color = c.onSurfaceVariant, modifier = Modifier.clearAndSetSemantics { })
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             court.sports.take(5).forEach { SCSportChip(it, variant = SCSportChipVariant.Compact) }
@@ -147,7 +155,7 @@ fun SCCourtCard(
                         PriceFrom(court, Modifier.semantics { contentDescription = priceCd })
                     }
                     if (court.estimateLabel != null) {
-                        Text(court.estimateLabel, style = t.bodySmall, color = c.onSurfaceVariant, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End)
+                        Text(court.estimateLabel, style = t.bodySmall, color = c.onSurfaceVariant, modifier = Modifier.fillMaxWidth().semantics { contentDescription = court.estimateLabel }, textAlign = TextAlign.End)
                     }
                     if (variant == SCCourtCardVariant.Owner && court.occupancy != null) {
                         LinearProgressIndicator(
@@ -188,6 +196,8 @@ private fun PriceFrom(court: CourtCardUi, modifier: Modifier = Modifier) {
 
 @Composable
 private fun MiniSlot(slot: SlotUi, onSlotClick: ((SlotUi) -> Unit)?) {
+    // A1: "Reservar das 21h as 22h, R$ 240,00" em vez de so "21h".
+    val slotCd = slot.price?.let { stringResource(Res.string.cd_slot_chip, slot.startLabel, slot.endLabel, it.formatBrl()) } ?: slot.startLabel
     val colors = SportConnectTheme.extendedColors.slot(slot.state)
     val enabled = onSlotClick != null && slot.state == SCSlotState.Available
     Box(
@@ -198,6 +208,7 @@ private fun MiniSlot(slot: SlotUi, onSlotClick: ((SlotUi) -> Unit)?) {
             .background(colors.container)
             .border(1.dp, colors.border, SCShape.control)
             .then(if (enabled) Modifier.clickable(role = Role.Button) { onSlotClick(slot) } else Modifier)
+            .semantics { contentDescription = slotCd }
             .padding(horizontal = 12.dp),
         contentAlignment = Alignment.Center,
     ) {

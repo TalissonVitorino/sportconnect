@@ -1,5 +1,7 @@
 package br.com.sportconnect.core.designsystem.component
 
+import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -74,8 +76,14 @@ fun SCTopBar(
         }
     }
     when (variant) {
-        SCTopBarVariant.CenterAligned -> CenterAlignedTopAppBar(title = titleContent, modifier = modifier, navigationIcon = navIcon, actions = actions, colors = colors, scrollBehavior = scrollBehavior)
-        SCTopBarVariant.Large -> LargeTopAppBar(title = titleContent, modifier = modifier, navigationIcon = navIcon, actions = actions, colors = colors, scrollBehavior = scrollBehavior)
-        else -> TopAppBar(title = titleContent, modifier = modifier, navigationIcon = navIcon, actions = actions, colors = colors, scrollBehavior = scrollBehavior)
+        SCTopBarVariant.CenterAligned -> CenterAlignedTopAppBar(title = titleContent, modifier = modifier.then(TopBarFirst), navigationIcon = navIcon, actions = actions, colors = colors, scrollBehavior = scrollBehavior)
+        SCTopBarVariant.Large -> LargeTopAppBar(title = titleContent, modifier = modifier.then(TopBarFirst), navigationIcon = navIcon, actions = actions, colors = colors, scrollBehavior = scrollBehavior)
+        else -> TopAppBar(title = titleContent, modifier = modifier.then(TopBarFirst), navigationIcon = navIcon, actions = actions, colors = colors, scrollBehavior = scrollBehavior)
     }
 }
+
+/**
+ * A1 (doc 13): o Scaffold do Material 3 poe o conteudo antes da barra de topo na arvore de acessibilidade;
+ * o leitor de tela lia o titulo da tela por ultimo. Este grupo faz a barra ser lida primeiro.
+ */
+val TopBarFirst: Modifier = Modifier.semantics { isTraversalGroup = true; traversalIndex = -1f }
