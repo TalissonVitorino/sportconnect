@@ -81,7 +81,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 | T6 | P2 | P | **Reembolso que falhou** (`error_refund_failed_*`): estado no comprovante com ação de ajuda. | `ReceiptScreen` | Estado previsto no 07 §4 sem tela. |
 | T7 | P2 | P | **Presença no perfil** (US-131, `profile_attendance`): "Presença: 9 de 10 jogos" a partir das avaliações (E15). | perfil | Fecha o ciclo do E15. |
 | T8 | P2 | M | **Passar minha vaga** (US-111): atleta pago em jogo confirmado oferece a vaga à lista de espera; quando alguém paga, ele é reembolsado sem taxa (`WaitlistManager.substituir` já existe). | game detail | Regra pronta no domínio, sem tela. |
-| T10 | P1 | P | **Saudação do visitante** mostra "E aí, !" (nome vazio) → "E aí!" / saudação de visitante. | `HomeScreen` | Visto na web sem login. |
+| T10 | ✅ P1 | P | **Saudação do visitante** mostra "E aí, !" (nome vazio) → "E aí!" / saudação de visitante. | `HomeScreen` | Visto na web sem login. |
 | T9 | P2 | M | **Cadastro da arena completo** (US-010/012): endereço com CEP, telefone, comodidades e horário de funcionamento; ao publicar, a arena aparece na busca. Hoje o cadastro não salva nada. | `arenaadmin/onboarding` | Fluxo de entrada da arena. |
 
 ## Q. Qualidade
@@ -125,3 +125,4 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 - **A3** ✅ `SCInlineLinks` no lugar do `LinkAnnotation` (Termos/Política com nome e papel de botão; frase lida inteira); campo de busca usa o placeholder como nome. Os `cd_*` restantes do 07 descrevem botões que já têm texto visível equivalente — aplicá-los duplicaria a leitura, então ficaram de fora. **Limitação do Material 3:** o `ModalBottomSheet` tem o rótulo "Fechar planilha" na tradução do Compose (texto da biblioteca, sem parâmetro).
 - **T1** ✅ Máscara do celular `(##) #####-####` (07): login, edição de perfil e exclusão de conta. Teste em `PhoneMaskTest`.
 - **T2** ✅ "Hoje"/"Amanhã" com maiúscula no chip de data, no menu de datas e nos títulos dos avisos (`relativeDayLabel`); em frases continua "hoje". O "multiline" do campo de cidade era falso alarme: o campo já é de linha única, e a web do Compose expõe todo campo como multilinha.
+- **T10** ✅ Visitante vê "E aí!" (`home_greeting_guest`).

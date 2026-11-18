@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.home
 
+import br.com.sportconnect.resources.home_greeting_guest
 import androidx.compose.ui.semantics.isTraversalGroup
 import br.com.sportconnect.core.designsystem.component.TopBarFirst
 import br.com.sportconnect.resources.common_not_now
@@ -215,7 +216,8 @@ private fun HomeTopBar(firstName: String, unread: Int, onNotifications: () -> Un
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            stringResource(Res.string.home_greeting, firstName),
+            // T10: visitante (ou conta sem nome) nao ve "E ai, !".
+            if (firstName.isBlank()) stringResource(Res.string.home_greeting_guest) else stringResource(Res.string.home_greeting, firstName),
             style = MaterialTheme.typography.headlineSmall,
             color = c.onSurface,
             modifier = Modifier.weight(1f).testTag("home_greeting").semantics { heading() },
