@@ -6,8 +6,10 @@ Contexto completo do produto em [`docs/00-brief.md`](docs/00-brief.md).
 
 Este repositório contém o app **Kotlin Multiplatform + Compose Multiplatform** com UI 100% compartilhada para
 **Android, iOS, Desktop (JVM) e Web (Wasm)**. No estado atual já tem o design system, as regras de negócio (rateio, prazos,
-estados da reserva, reembolso), as telas do atleta/organizador e da arena, tudo sobre dados fictícios
-(sem backend nem gateway reais). Veja o quadro "Estado atual do projeto" mais abaixo.
+estados da reserva, reembolso), as telas do atleta/organizador e da arena — o app em si ainda roda contra dados fictícios
+(`core/data/fake`), mas já existe o esqueleto de um **backend real** (módulo `:server`, Ktor) com autenticação OTP/JWT e
+persistência Postgres, e a decisão do gateway de pagamento (Asaas) já foi tomada. Veja o quadro "Estado atual do projeto"
+mais abaixo e a arquitetura do backend em [`docs/14-arquitetura-backend.md`](docs/14-arquitetura-backend.md).
 
 ## Estrutura
 
@@ -29,7 +31,14 @@ sportconnect/
 │   ├── iosApp.xcodeproj
 │   ├── Configuration/Config.xcconfig  # TEAM_ID, bundle id, versão
 │   └── iosApp/ (iOSApp.swift, ContentView.swift, Info.plist, Assets.xcassets)
-└── docs/                              # documentação de produto/design
+├── server/                            # backend real (Kotlin/JVM puro, Ktor) — NÃO depende de :composeApp
+│   └── src/
+│       ├── main/kotlin/br/com/sportconnect/
+│       │   ├── server/        # routing, auth (OTP+JWT), config, persistência (Exposed/Flyway)
+│       │   └── core/          # arquivos de domínio puro PORTADOS verbatim de composeApp (ver docs/14 §1)
+│       ├── main/resources/db/migration/   # migrações Flyway
+│       └── test/kotlin/       # kotlin.test; testes de persistência usam Testcontainers (Postgres real)
+└── docs/                              # documentação de produto/design/arquitetura
 ```
 
 ## Arquitetura de pacotes (`commonMain`)
@@ -80,6 +89,32 @@ Decisões e trade-offs:
   organizador (PRD, RN-04), para que a soma das cotas seja sempre igual ao total.
 - **Ktor** já está declarado (core, content-negotiation, logging, engines OkHttp/Darwin/JS), pronto para o
   `core/data` remoto.
+
+## Backend (`:server`)
+
+Módulo Gradle novo e **independente** — Kotlin/JVM puro, não depende de `:composeApp` como dependência Gradle.
+O código de domínio puro (`core/model`, `ReservationStateMachine` e afins) é **copiado verbatim** de `:composeApp`
+para dentro de `:server` (mesmo pacote), em vez de compartilhado via módulo — decisão registrada em
+[`docs/14-arquitetura-backend.md`](docs/14-arquitetura-backend.md) §1, pra manter os ciclos de deploy do app e do
+servidor desacoplados.
+
+| Camada | Stack | Onde |
+|---|---|---|
+| HTTP/routing | Ktor 3.6.1 (Netty), StatusPages com envelope de erro único (`{"erro":{"codigo","mensagem"}}`) | `server/.../server/http`, `server/.../server/routes` |
+| Autenticação | OTP + JWT (`com.auth0:java-jwt`), claim `tipo` distingue token de acesso/renovação | `server/.../server/auth` |
+| Persistência | PostgreSQL via Exposed + HikariCP; migrações Flyway | `server/.../server/persistence`, `server/.../resources/db/migration` |
+| DI | Koin (`koin-ktor`) | `server/.../server/di` |
+| Config | `AppConfig` a partir de variáveis de ambiente (`JWT_SECRET`, `DATABASE_URL`, …) | `server/.../server/config` |
+
+Rotas implementadas até aqui: `GET /saude`, `POST /auth/otp`, `POST /auth/otp/confirmar`, `GET /me` (protegida por JWT).
+O contrato completo (todas as rotas, catálogo de erros) está em [`docs/15-contrato-api.md`](docs/15-contrato-api.md); o
+modelo de dados/schema em [`docs/16-modelo-dados.md`](docs/16-modelo-dados.md); a escolha do gateway de pagamento
+(**Asaas**) em [`docs/17-adr-gateway-pagamento.md`](docs/17-adr-gateway-pagamento.md). O cliente (`:composeApp`) ainda
+não fala com esse backend — continua 100% contra `core/data/fake` até esse trabalho de integração ser feito.
+
+```bash
+./gradlew :server:test   # requer Docker rodando (Testcontainers sobe um Postgres real para os testes)
+```
 
 ## Como rodar
 
@@ -133,6 +168,7 @@ só a pasta `iosApp/`.
 ./gradlew :composeApp:desktopTest          # rápido, roda commonTest na JVM
 ./gradlew :composeApp:allTests             # todos os alvos disponíveis no host
 ./gradlew :composeApp:testAndroidHostTest  # commonTest no Android (requer SDK)
+./gradlew :server:test                     # backend; requer Docker rodando (Testcontainers)
 ```
 
 ## Máquinas sem Android SDK (`disableAndroid`)
@@ -163,10 +199,13 @@ Com a propriedade ligada, o build registra `SportConnect: alvo Android DESABILIT
 | Domínio e dados fake (`core/model`, `core/domain`, `core/data`) | Regras de rateio, prazos, estados, reembolso, lista de espera e repasse, com dados de demonstração |
 | Telas do atleta e organizador (`feature/*`) | Implementadas sobre dados fake |
 | Telas da Minha Arena (`feature/arenaadmin`) | Implementadas sobre dados fake |
-| Desktop e Web (Wasm) | Compilam; 143 testes passando em `desktopTest` |
-| Android e iOS | Android compila e gera APK (`:androidApp:assembleDebug`); iOS compila o framework Kotlin (app Xcode não testado aqui) |
+| Desktop e Web (Wasm) | Compilam; 196 testes passando em `desktopTest` |
+| Android e iOS | Android compila e gera APK (`:androidApp:assembleDebug`); iOS compila o framework Kotlin e o app Xcode contra o simulador |
+| Backend (`:server`) | Esqueleto real: módulo Ktor, auth OTP+JWT, Postgres (Exposed/Flyway), `GET /me` protegida — 75 testes, incluindo integração real contra Postgres via Testcontainers. Ainda não implementa `/jogos` nem pagamento; ver [`docs/14`](docs/14-arquitetura-backend.md) |
 
-Não há backend nem gateway de pagamento reais: o Pix é simulado (`FakePaymentGateway`) e confirma sozinho após cerca de 3 s.
+O app (`:composeApp`) ainda roda contra dados fictícios: o Pix é simulado (`FakePaymentGateway`) e confirma sozinho
+após cerca de 3 s. O gateway de pagamento real já foi escolhido (**Asaas** — [`docs/17`](docs/17-adr-gateway-pagamento.md)),
+mas a integração em `:server` ainda não foi implementada.
 
 ### Demonstração
 
@@ -177,7 +216,10 @@ Não há backend nem gateway de pagamento reais: o Pix é simulado (`FakePayment
 
 ### Pendências (decisões de produto e jurídicas)
 
-- Escolher o gateway de pagamento (precisa de split, Pix e pré-autorização de cartão com captura parcial) e saber se ele exige CPF de quem paga.
+- ~~Escolher o gateway de pagamento e saber se ele exige CPF de quem paga~~ — resolvido: **Asaas**, CPF é exigência
+  do gateway (não do Banco Central), decisão técnica tomada mas pendente de validação jurídica da base regulatória.
+  Ver [`docs/17-adr-gateway-pagamento.md`](docs/17-adr-gateway-pagamento.md).
+- Q-06 (`docs/03` §15): a página de convite em Compose/Wasm atinge LCP ≤ 2,5s, ou precisa de página web leve separada?
 - Definir quem emite nota fiscal.
 - Redigir os termos de uso, a política de privacidade e o termo de adesão da arena (CT-05 a CT-07 do PRD) e fazer a revisão jurídica (CDC) dos prazos, multas e textos de dinheiro e reembolso. Prazos, taxas e percentuais dos documentos são propostas, não validados.
 - Validar com usuários reais as hipóteses do `docs/01-ux-research.md`.
