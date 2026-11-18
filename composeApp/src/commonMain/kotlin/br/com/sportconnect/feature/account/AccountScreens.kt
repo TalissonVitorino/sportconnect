@@ -2,6 +2,9 @@
 
 package br.com.sportconnect.feature.account
 
+import br.com.sportconnect.resources.file_save_action
+import br.com.sportconnect.resources.file_saved
+import br.com.sportconnect.core.platform.rememberFileExport
 import br.com.sportconnect.resources.card_secure_note
 import br.com.sportconnect.resources.card_remove
 import br.com.sportconnect.resources.card_saved_expiry
@@ -218,14 +221,23 @@ fun PrivacyScreen(
     val copiedMsg = stringResource(Res.string.common_copied)
     var copyRequest by remember { mutableStateOf(0) }
     LaunchedEffect(copyRequest) { if (copyRequest > 0) snackbar.showSC(copiedMsg, SCSnackbarKind.Success) }
+    // X2: "Baixar meus dados" vira arquivo de verdade (antes so dava para copiar o JSON).
+    val savedMsg = stringResource(Res.string.file_saved)
+    var savedRequest by remember { mutableStateOf(0) }
+    LaunchedEffect(savedRequest) { if (savedRequest > 0) snackbar.showSC(savedMsg, SCSnackbarKind.Success) }
+    val export = rememberFileExport { ok -> if (ok) savedRequest++ }
 
     state.exported?.let { json ->
         SCDialog(
             title = stringResource(Res.string.privacy_download_ready),
             body = stringResource(Res.string.privacy_download_hint),
             onDismissRequest = onDismissExport,
-            confirm = SCAction(stringResource(Res.string.common_copy), { share.copy(json); onDismissExport(); copyRequest++ }, icon = Icons.Rounded.ContentCopy),
-            dismiss = SCAction(stringResource(Res.string.common_cancel), onDismissExport),
+            confirm = SCAction(
+                stringResource(Res.string.file_save_action),
+                { export("meus-dados-sportconnect", "json", json.encodeToByteArray()); onDismissExport() },
+                icon = Icons.Rounded.Download,
+            ),
+            dismiss = SCAction(stringResource(Res.string.common_copy), { share.copy(json); onDismissExport(); copyRequest++ }),
             modifier = Modifier.testTag("privacy_export_dialog"),
         )
     }

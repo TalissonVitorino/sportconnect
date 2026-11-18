@@ -789,7 +789,7 @@
     <string name="privacy_section_your_data">Seus dados</string>
     <string name="privacy_download_body">Um arquivo com seu perfil, consentimentos, jogos e pagamentos.</string>
     <string name="privacy_download_ready">Seus dados estão prontos</string>
-    <string name="privacy_download_hint">Copie e guarde onde quiser. O arquivo está no formato JSON.</string>
+    <string name="privacy_download_hint">Salve o arquivo ou copie o conteúdo. Ele está no formato JSON.</string>
     <string name="privacy_delete_body">Apaga seu perfil e seus dados pessoais.</string>
     <string name="delete_what_happens">O que acontece</string>
     <string name="delete_point_data">Seu nome, celular e e-mail são apagados em até 15 dias.</string>
@@ -897,6 +897,9 @@
     <string name="map_unavailable">Não deu pra carregar o mapa. Confira sua conexão.</string>
     <string name="cd_map_zoom_in">Aproximar o mapa</string>
     <string name="cd_map_zoom_out">Afastar o mapa</string>
+    <!-- 13-plano · X2 salvar arquivo (propostos) -->
+    <string name="file_saved">Arquivo salvo</string>
+    <string name="file_save_action">Salvar arquivo</string>
 
     <!-- ===== Minha Arena (strings_arena.xml) ===== -->
     <!-- Shell / navegacao -->

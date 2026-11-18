@@ -1,5 +1,8 @@
 package br.com.sportconnect.feature.arenaadmin.payouts
 
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import br.com.sportconnect.core.platform.rememberFileExport
 import br.com.sportconnect.core.designsystem.theme.SCSelection
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,13 +45,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -169,14 +170,15 @@ fun ArenaPayoutsScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val snackbar = remember { SnackbarHostState() }
-    @Suppress("DEPRECATION")
-    val clipboard = LocalClipboardManager.current
+    // X2: o extrato vira um arquivo .csv (dialogo "Salvar como"; na web, download).
+    var savedRequest by remember { mutableStateOf(0) }
+    LaunchedEffect(savedRequest) { if (savedRequest > 0) snackbar.showSC(getString(Res.string.payout_exported), SCSnackbarKind.Success) }
+    val export = rememberFileExport { ok -> if (ok) savedRequest++ }
     LaunchedEffect(state.exportCsv) {
         val csv = state.exportCsv ?: return@LaunchedEffect
-        // No common nao ha "salvar arquivo": o extrato vai para a area de transferencia.
-        runCatching { clipboard.setText(AnnotatedString(csv)) }
         viewModel.exportHandled()
-        snackbar.showSC(getString(Res.string.payout_exported), SCSnackbarKind.Success)
+        // BOM UTF-8: o Excel abre os acentos certos.
+        export("extrato-sportconnect", "csv", byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte()) + csv.encodeToByteArray())
     }
     ArenaAdminScaffold(
         selected = ArenaTab.Payouts,
