@@ -83,6 +83,10 @@ object PtBrFormat {
         else -> date(date)
     }
 
+    /** T2 (doc 13): rotulo solto (chip, menu): "Hoje", "Amanhã", "qui, 19 nov". Dentro de frase use [relativeDay]. */
+    fun relativeDayLabel(date: LocalDate, today: LocalDate): String =
+        relativeDay(date, today).let { if (date.toEpochDays() - today.toEpochDays() <= 1L) it.replaceFirstChar(Char::uppercaseChar) else it }
+
     /** "1h 45min" · "28min" · "45s" (segundos so no ultimo minuto) · "2 dias" acima de 48h. */
     fun duration(d: Duration): String {
         val total = d.inWholeSeconds.coerceAtLeast(0)

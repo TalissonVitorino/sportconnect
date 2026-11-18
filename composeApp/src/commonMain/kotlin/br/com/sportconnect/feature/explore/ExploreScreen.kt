@@ -354,7 +354,7 @@ private fun FilterRow(
             FilterChip(
                 selected = state.date != state.today,
                 onClick = { dateMenu = true },
-                label = { Text(PtBrFormat.relativeDay(state.date, state.today)) },
+                label = { Text(PtBrFormat.relativeDayLabel(state.date, state.today)) },
                 leadingIcon = { Icon(Icons.Rounded.CalendarMonth, null, Modifier.size(18.dp)) },
                 trailingIcon = { Icon(Icons.Rounded.ArrowDropDown, null, Modifier.size(18.dp)) },
                 colors = chipColors,
@@ -362,7 +362,7 @@ private fun FilterRow(
             )
             DropdownMenu(expanded = dateMenu, onDismissRequest = { dateMenu = false }) {
                 state.days.forEach { d ->
-                    DropdownMenuItem(text = { Text(PtBrFormat.relativeDay(d, state.today)) }, onClick = { dateMenu = false; onDate(d) })
+                    DropdownMenuItem(text = { Text(PtBrFormat.relativeDayLabel(d, state.today)) }, onClick = { dateMenu = false; onDate(d) })
                 }
             }
         }

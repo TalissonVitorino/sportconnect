@@ -587,7 +587,7 @@ fun NotificationsScreen(
         SCPullToRefresh(onRefresh, Modifier.fillMaxSize().padding(padding)) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             LazyColumn(Modifier.widthIn(max = 640.dp).fillMaxSize()) {
-                state.items.groupBy { PtBrFormat.relativeDay(PtBrFormat.date(it.em), PtBrFormat.date(state.now)) }.forEach { (day, items) ->
+                state.items.groupBy { PtBrFormat.relativeDayLabel(PtBrFormat.date(it.em), PtBrFormat.date(state.now)) }.forEach { (day, items) ->
                     item(key = "d$day") { SectionHeader(day.replaceFirstChar { it.uppercase() }, Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp)) }
                     items(items, key = { it.id }) { a ->
                         val (icon, bg, fg) = when (a.tipo) {
