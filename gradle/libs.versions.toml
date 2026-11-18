@@ -56,6 +56,8 @@ hikaricp = "5.1.0"
 postgresql-driver = "42.7.4"
 flyway = "10.20.1"
 testcontainers = "1.21.4"
+# JWT de acesso/renovacao emitidos pelo servidor (Task 5)
+java-jwt = "4.4.0"
 
 [libraries]
 # Compose Multiplatform
@@ -143,6 +145,9 @@ flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql
 
 # Testcontainers (testes de persistencia)
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+
+# JWT (emissao de tokens de acesso/renovacao no servidor)
+java-jwt = { module = "com.auth0:java-jwt", version.ref = "java-jwt" }
 
 # Testes
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

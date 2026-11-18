@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.postgresql.driver)
     implementation(libs.flyway.core)
     implementation(libs.flyway.database.postgresql)
+    implementation(libs.java.jwt)
     runtimeOnly(libs.logback.classic)
 
     testImplementation(libs.kotlin.test)
