@@ -16,6 +16,7 @@ import br.com.sportconnect.core.domain.WaitlistManager
 import br.com.sportconnect.core.domain.repository.AnalyticsEvents
 import br.com.sportconnect.core.domain.usecase.ArenaDashboardUseCase
 import br.com.sportconnect.core.domain.usecase.CancelGameUseCase
+import br.com.sportconnect.core.domain.usecase.ClaimOfferedSpotUseCase
 import br.com.sportconnect.core.domain.usecase.CreateGameUseCase
 import br.com.sportconnect.core.domain.usecase.GetArenasNearbyUseCase
 import br.com.sportconnect.core.domain.usecase.GetAvailableSlotsUseCase
@@ -25,7 +26,9 @@ import br.com.sportconnect.core.domain.usecase.JoinGameByInviteUseCase
 import br.com.sportconnect.core.domain.usecase.NovoJogo
 import br.com.sportconnect.core.domain.usecase.PayShareUseCase
 import br.com.sportconnect.core.domain.usecase.RegraNegocioException
+import br.com.sportconnect.core.domain.usecase.ToggleSpotOfferUseCase
 import br.com.sportconnect.core.model.EtapaPrazo
+import br.com.sportconnect.core.model.MetodoPagamento
 import br.com.sportconnect.core.model.Money
 import br.com.sportconnect.core.model.SlotStatus
 import br.com.sportconnect.core.model.Sport
@@ -60,8 +63,11 @@ class FakeDataIntegrationTest {
         val auth = FakeAuthRepository(seed, analytics, clock)
         val gateway = FakePaymentGateway(clock, scope.backgroundScope)
         val sm = ReservationStateMachine()
-        val service = ReservationService(games, arenas, gateway, analytics, sm, PayoutCalculator(), WaitlistManager(), clock)
+        val waitlistManager = WaitlistManager()
+        val service = ReservationService(games, arenas, gateway, analytics, sm, PayoutCalculator(), waitlistManager, clock)
         val payShare = PayShareUseCase(games, gateway, auth, analytics, clock)
+        val toggleSpotOffer = ToggleSpotOfferUseCase(games, auth, waitlistManager, clock)
+        val claimOfferedSpot = ClaimOfferedSpotUseCase(games, gateway, auth, waitlistManager, analytics, clock)
 
         init {
             service.start(scope.backgroundScope, intervalo = 1.hours)
@@ -184,6 +190,32 @@ class FakeDataIntegrationTest {
         assertEquals(StatusReserva.CANCELADO, jogo.status)
         assertTrue(jogo.reserva.cotas.none { it.status == StatusCota.PAGA || it.status == StatusCota.PENDENTE })
         assertEquals(SlotStatus.LIVRE, env.arenas.slot(jogo.slotId)!!.status)
+    }
+
+    @Test
+    fun passar_vaga_substitui_atleta_e_reembolsa_sem_taxa_rn26() = runTest {
+        val env = Ambiente(this)
+        val jogo = env.games.game(DemoData.JOGO_FUTSAL_CONFIRMADO)!!
+        val original = jogo.reserva.cotas.first { it.status == StatusCota.PAGA && !it.organizador && it.metodo == MetodoPagamento.PIX }
+
+        env.auth.entrarComo(original.atletaId!!)
+        env.toggleSpotOffer(jogo.id, original.id, true).getOrThrow()
+        assertTrue(env.games.game(jogo.id)!!.reserva.cotas.first { it.id == original.id }.offeredForSubstitution)
+
+        env.auth.entrarComo("u-atleta-50")
+        val cobranca = env.claimOfferedSpot(jogo.id, original.id).getOrThrow()
+        assertEquals(original.valor, cobranca.valorCota)
+
+        advanceTimeBy(1.seconds + 100.milliseconds)
+        runCurrent()
+
+        val depois = env.games.game(jogo.id)!!
+        assertEquals(StatusCota.REEMBOLSADA, depois.reserva.cotas.first { it.id == original.id }.status)
+        val nova = depois.reserva.cotas.first { it.atletaId == "u-atleta-50" }
+        assertEquals(StatusCota.PAGA, nova.status)
+        assertEquals(original.valor, nova.valor)
+        assertEquals(StatusReserva.CONFIRMADO, depois.status)
+        assertTrue(AnalyticsEvents.REEMBOLSO_SOLICITADO in env.analytics.nomes())
     }
 
     @Test

@@ -31,6 +31,8 @@ data class SolicitacaoCobranca(
     val expiraEm: Instant,
     /** Cobertura do organizador (RN-14) — confirma toda a janela, nao uma cota. */
     val cobertura: Boolean = false,
+    /** T8 (13/US-111, RN-26): id da cota PAGA sendo substituida; a confirmacao chama [WaitlistManager.substituir]. */
+    val substituicaoCotaId: String? = null,
 )
 
 /** Notificacao assincrona do gateway (webhook). */
@@ -44,6 +46,7 @@ data class WebhookPagamento(
     val status: StatusPagamento,
     val em: Instant,
     val cobertura: Boolean = false,
+    val substituicaoCotaId: String? = null,
 )
 
 interface PaymentGateway {

@@ -127,7 +127,7 @@ class FakePaymentGateway(
         _webhooks.emit(
             WebhookPagamento(
                 pagamentoId = id, jogoId = p.jogoId, cotaId = p.cotaId, pagadorId = p.pagadorId, pagadorNome = s.pagadorNome,
-                metodo = p.metodo, status = status, em = clock.now(), cobertura = s.cobertura,
+                metodo = p.metodo, status = status, em = clock.now(), cobertura = s.cobertura, substituicaoCotaId = s.substituicaoCotaId,
             ),
         )
     }

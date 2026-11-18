@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import br.com.sportconnect.core.domain.repository.AnalyticsEvents
 import br.com.sportconnect.core.domain.repository.AnalyticsTracker
 import br.com.sportconnect.core.domain.repository.AuthRepository
+import br.com.sportconnect.core.domain.WaitlistManager
 import br.com.sportconnect.core.domain.usecase.CancelGameUseCase
 import br.com.sportconnect.core.domain.usecase.GetGameUseCase
 import br.com.sportconnect.core.domain.usecase.LeaveGameUseCase
+import br.com.sportconnect.core.domain.usecase.ToggleSpotOfferUseCase
 import br.com.sportconnect.core.model.Cota
 import br.com.sportconnect.core.model.EtapaPrazo
 import br.com.sportconnect.core.model.Jogo
@@ -61,6 +63,10 @@ sealed interface GameDetailUiState {
         val canJoinWaitlist: Boolean = false,
         /** E15: jogo concluido, participei e ainda nao avaliei. */
         val canRate: Boolean = false,
+        /** T8 (13/US-111): posso oferecer minha vaga (pago, CONFIRMADO, ate T-1h, ainda nao oferecida). */
+        val canOfferSpot: Boolean = false,
+        /** Vaga de outro atleta oferecida a lista de espera, se eu estiver na fila e puder pagar por ela. */
+        val offeredSpot: Cota? = null,
     ) : GameDetailUiState {
         val pendingCount: Int get() = jogo.cotasPendentes
         val resolving: Boolean get() = jogo.status == StatusReserva.AGUARDANDO_PAGAMENTOS && jogo.etapaPrazo == EtapaPrazo.JANELA_RESOLUCAO
@@ -100,6 +106,8 @@ class GameDetailViewModel(
     private val session: UiSessionStore,
     private val clock: Clock,
     private val social: SocialStore = SocialStore(),
+    private val toggleSpotOffer: ToggleSpotOfferUseCase,
+    private val waitlistManager: WaitlistManager = WaitlistManager(),
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameDetailUiState>(GameDetailUiState.Loading)
     val uiState: StateFlow<GameDetailUiState> = _uiState.asStateFlow()
@@ -138,23 +146,30 @@ class GameDetailViewModel(
                         session.markCelebrated(jogo.id)
                     }
                     val prev = _uiState.value as? GameDetailUiState.Content
+                    val myPaidShare = uid?.let { id ->
+                        jogo.reserva.cotas.firstOrNull { it.atletaId == id && it.status == StatusCota.PAGA && it.tipo == TipoCota.PADRAO }
+                    }
+                    val waitlistPosition = uid?.let { social.position(jogo.id, it) }
                     _uiState.value = GameDetailUiState.Content(
                         jogo = jogo,
                         userId = uid,
                         isOrganizer = uid != null && jogo.organizadorId == uid,
-                        myPaidShare = uid?.let { id ->
-                            jogo.reserva.cotas.firstOrNull { it.atletaId == id && it.status == StatusCota.PAGA && it.tipo == TipoCota.PADRAO }
-                        },
+                        myPaidShare = myPaidShare,
                         counts = jogo.splitCounts(now),
                         participants = jogo.participantsFor(uid, now),
                         celebrate = celebrating && jogo.status == StatusReserva.CONFIRMADO,
                         now = now,
                         busy = prev?.busy ?: false,
                         remindedAt = reminded.toMap(),
-                        waitlistPosition = uid?.let { social.position(jogo.id, it) },
+                        waitlistPosition = waitlistPosition,
                         canJoinWaitlist = uid != null && jogo.organizadorId != uid && !jogo.participa(uid) &&
-                            social.position(jogo.id, uid) == null && social.canJoin(jogo, now),
+                            waitlistPosition == null && social.canJoin(jogo, now),
                         canRate = uid != null && jogo.status == StatusReserva.CONCLUIDO && jogo.participa(uid) && jogo.id !in social.rated.value,
+                        // T8 (13/US-111): oferecer a propria vaga, ou pagar a vaga que alguem ofereceu (so quem esta na fila).
+                        canOfferSpot = myPaidShare != null && !myPaidShare.offeredForSubstitution && waitlistManager.podeSubstituir(jogo, now),
+                        offeredSpot = if (waitlistPosition != null) {
+                            jogo.reserva.cotas.firstOrNull { it.offeredForSubstitution && it.status == StatusCota.PAGA && it.atletaId != uid }
+                        } else null,
                     )
                 }
         }
@@ -174,6 +189,18 @@ class GameDetailViewModel(
         val s = _uiState.value as? GameDetailUiState.Content ?: return
         val uid = s.userId ?: return
         social.leave(s.jogo.id, uid)
+    }
+
+    /** T8 (13/US-111): oferece ou retira a oferta da minha vaga paga para a lista de espera. */
+    fun toggleOfferMySpot(oferecer: Boolean) {
+        val s = _uiState.value as? GameDetailUiState.Content ?: return
+        val cotaId = s.myPaidShare?.id ?: return
+        viewModelScope.launch {
+            toggleSpotOffer(s.jogo.id, cotaId, oferecer).fold(
+                onSuccess = {},
+                onFailure = { e -> _events.trySend(GameDetailEvent.Failure(e.message ?: "")) },
+            )
+        }
     }
 
     /** E15 (US-130): avaliacao pos-jogo. */

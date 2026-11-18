@@ -370,6 +370,63 @@ class LeaveGameUseCase(
     }
 }
 
+// ------------------------------------------------------------------ passar a vaga (T8, US-111, RN-26)
+
+/** Atleta pago oferece/retira a propria vaga para a lista de espera (RN-26). */
+class ToggleSpotOfferUseCase(
+    private val games: GameRepository,
+    private val auth: AuthRepository,
+    private val waitlist: WaitlistManager,
+    private val clock: Clock,
+) {
+    suspend operator fun invoke(jogoId: String, cotaId: String, oferecer: Boolean): Result<Jogo> = runCatching {
+        val usuario = auth.exigirUsuario()
+        var jogo = games.game(jogoId) ?: regra("JOGO_INEXISTENTE", "Jogo não encontrado.")
+        jogo = try {
+            if (oferecer) waitlist.oferecer(jogo, cotaId, usuario.id, clock.now()) else waitlist.cancelarOferta(jogo, cotaId, usuario.id)
+        } catch (e: ListaEsperaException) {
+            regra("SUBSTITUICAO", e.message ?: "Não foi possível oferecer a vaga.")
+        }
+        games.save(jogo)
+        jogo
+    }
+}
+
+/** Quem esta na lista de espera paga a vaga oferecida; a confirmacao do gateway chama [WaitlistManager.substituir]. */
+class ClaimOfferedSpotUseCase(
+    private val games: GameRepository,
+    private val gateway: PaymentGateway,
+    private val auth: AuthRepository,
+    private val waitlist: WaitlistManager,
+    private val analytics: AnalyticsTracker,
+    private val clock: Clock,
+) {
+    suspend operator fun invoke(jogoId: String, cotaId: String, metodo: MetodoPagamento = MetodoPagamento.PIX): Result<Cobranca> = runCatching {
+        val usuario = auth.exigirUsuario()
+        val agora = clock.now()
+        val jogo = games.game(jogoId) ?: regra("JOGO_INEXISTENTE", "Jogo não encontrado.")
+        if (!waitlist.podeSubstituir(jogo, agora)) regra("SUBSTITUICAO_INDISPONIVEL", "Essa substituição não está mais disponível.")
+        val cota = jogo.reserva.cotas.firstOrNull { it.id == cotaId }
+            ?: regra("SUBSTITUICAO_INDISPONIVEL", "Essa vaga não está mais disponível.")
+        if (!cota.offeredForSubstitution || cota.status != StatusCota.PAGA) regra("SUBSTITUICAO_INDISPONIVEL", "Essa vaga não está mais disponível.")
+        if (jogo.participa(usuario.id)) regra("JA_PAGOU", "Você já está neste jogo.")
+        val taxa = TaxaConveniencia.para(metodo)
+        val solicitacao = SolicitacaoCobranca(
+            jogoId = jogo.id, cotaId = "sub-${cota.id}", pagadorId = usuario.id, pagadorNome = usuario.nome,
+            valorCota = cota.valor, taxaConveniencia = taxa, expiraEm = agora + 10.minutes, substituicaoCotaId = cota.id,
+        )
+        val cobranca = when (metodo) {
+            MetodoPagamento.PIX -> gateway.criarCobrancaPix(solicitacao)
+            MetodoPagamento.CARTAO -> gateway.criarCobrancaCartao(solicitacao)
+        }
+        analytics.track(
+            AnalyticsEvents.COBRANCA_GERADA,
+            mapOf("pagamento_id" to cobranca.pagamentoId, "metodo" to metodo.name.lowercase(), "valor_centavos" to cobranca.total.cents, "taxa_centavos" to taxa.cents),
+        )
+        cobranca
+    }
+}
+
 /** Entra na lista de espera (RN-27). */
 class JoinWaitlistUseCase(
     private val games: GameRepository,

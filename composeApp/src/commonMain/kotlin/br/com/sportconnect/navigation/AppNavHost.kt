@@ -265,8 +265,8 @@ fun AppNavHost(
         if (authRepo.currentUser.value == null) requireLogin(AfterLogin.Create(slotId)) else nav.go(Route.GameCreate(slotId))
     }
 
-    fun goPay(gameId: String, afterCreate: Boolean = false) {
-        if (authRepo.currentUser.value == null) requireLogin(AfterLogin.Pay(gameId)) else nav.go(Route.GamePay(gameId, afterCreate))
+    fun goPay(gameId: String, afterCreate: Boolean = false, substituicaoCotaId: String? = null) {
+        if (authRepo.currentUser.value == null) requireLogin(AfterLogin.Pay(gameId)) else nav.go(Route.GamePay(gameId, afterCreate, substituicaoCotaId))
     }
 
     val photoErrorMsg = stringResource(Res.string.error_upload_failed_title) + ". " + stringResource(Res.string.error_upload_failed_body)
@@ -401,6 +401,7 @@ fun AppNavHost(
                             invite = { nav.go(Route.GameInvite(it)) },
                             resolve = { nav.go(Route.GameResolve(it)) },
                             receipt = { nav.go(Route.Receipt(it)) },
+                            claimSpot = { id, cotaId -> goPay(id, substituicaoCotaId = cotaId) },
                         ),
                     )
                     }

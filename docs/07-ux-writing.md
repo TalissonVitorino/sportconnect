@@ -479,6 +479,12 @@ Mensagem pré-pronta de WhatsApp: ver `wa_invite_message` (seção 7).
 | `waitlist_spot_open_body` | Pague %1$s até %2$s pra garantir. Depois disso, a vaga vai para o próximo. | |
 | `waitlist_missed` | A vaga foi para a próxima pessoa da fila. Você continua na lista. | |
 | `waitlist_joined` | Você entrou na lista de espera. | |
+| `waitlist_offer_body` | Alguém da lista de espera pode pagar sua cota e você é reembolsado sem taxa. | T8 (13): implementado, não é Fase 2 |
+| `waitlist_offer_action` | Passar minha vaga | |
+| `waitlist_offer_active_body` | Sua vaga está oferecida à lista de espera. Quando alguém pagar, você recebe o reembolso sem taxa. | |
+| `waitlist_offer_cancel` | Cancelar oferta | |
+| `waitlist_claim_body` | Uma vaga abriu por %1$s. Pague agora pra garantir seu lugar. | %1$s = preço formatado |
+| `waitlist_claim_action` | Pagar e entrar | |
 
 ### 3.18 Avaliação (`rating_`) — Fase 2
 | ID | Texto | Notas |

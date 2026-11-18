@@ -73,7 +73,7 @@ sealed interface Route {
 
     /** [afterCreate]: pagamento da cota do organizador logo apos criar (sucesso leva ao convite). */
     @Serializable
-    data class GamePay(val id: String, val afterCreate: Boolean = false) : Route
+    data class GamePay(val id: String, val afterCreate: Boolean = false, val substituicaoCotaId: String? = null) : Route
 
     @Serializable
     data class GameResolve(val id: String) : Route

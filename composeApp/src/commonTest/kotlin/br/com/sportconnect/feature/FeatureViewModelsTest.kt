@@ -21,6 +21,7 @@ import br.com.sportconnect.core.domain.usecase.GetGameUseCase
 import br.com.sportconnect.core.domain.usecase.GetMyGamesUseCase
 import br.com.sportconnect.core.domain.usecase.GetNotificationsUseCase
 import br.com.sportconnect.core.domain.usecase.LeaveGameUseCase
+import br.com.sportconnect.core.domain.usecase.ToggleSpotOfferUseCase
 import br.com.sportconnect.core.model.GarantiaCobertura
 import br.com.sportconnect.core.model.Money
 import br.com.sportconnect.core.model.PoliticaNaoPagamento
@@ -83,7 +84,7 @@ class FeatureViewModelsTest {
         fun detail(id: String) = GameDetailViewModel(
             Route.GameDetail(id), GetGameUseCase(games), auth,
             CancelGameUseCase(service, games, arenas, auth, clock), LeaveGameUseCase(service, games, auth, clock),
-            analytics, session, clock, social,
+            analytics, session, clock, social, ToggleSpotOfferUseCase(games, auth, WaitlistManager(), clock),
         )
 
         val social = br.com.sportconnect.core.data.local.SocialStore()

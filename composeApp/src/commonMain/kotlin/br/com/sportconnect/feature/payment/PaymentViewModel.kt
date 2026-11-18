@@ -12,6 +12,7 @@ import br.com.sportconnect.core.domain.repository.AnalyticsTracker
 import br.com.sportconnect.core.domain.repository.AuthRepository
 import br.com.sportconnect.core.domain.repository.Cobranca
 import br.com.sportconnect.core.domain.repository.PaymentGateway
+import br.com.sportconnect.core.domain.usecase.ClaimOfferedSpotUseCase
 import br.com.sportconnect.core.domain.usecase.GetGameUseCase
 import br.com.sportconnect.core.domain.usecase.PayShareUseCase
 import br.com.sportconnect.core.domain.usecase.RegraNegocioException
@@ -91,6 +92,7 @@ class PaymentViewModel(
     private val route: Route.GamePay,
     private val getGame: GetGameUseCase,
     private val payShare: PayShareUseCase,
+    private val claimOfferedSpot: ClaimOfferedSpotUseCase,
     private val gateway: PaymentGateway,
     private val auth: AuthRepository,
     private val analytics: AnalyticsTracker,
@@ -111,6 +113,9 @@ class PaymentViewModel(
                         jogo.reserva.cotas.firstOrNull { it.tipo == TipoCota.COMPLEMENTO && it.atletaId == id && it.status == StatusCota.PENDENTE }
                     }
                     val share = when {
+                        // T8 (13/US-111): mesmo valor da cota oferecida, com taxa normal (quem saiu que nao paga taxa).
+                        route.substituicaoCotaId != null ->
+                            jogo.reserva.cotas.firstOrNull { it.id == route.substituicaoCotaId }?.valor ?: jogo.valorCotaConvidado
                         jogo.status == StatusReserva.RASCUNHO -> jogo.cotaOrganizador?.valor ?: jogo.valorCotaConvidado
                         jogo.etapaPrazo == EtapaPrazo.JANELA_RESOLUCAO && complemento != null -> complemento.valor
                         else -> jogo.valorCotaConvidado
@@ -167,7 +172,12 @@ class PaymentViewModel(
         }
         _uiState.update { it.copy(phase = PixPhase.Generating, copied = false) }
         viewModelScope.launch {
-            payShare(route.id, s.method).fold(
+            val resultado = if (route.substituicaoCotaId != null) {
+                claimOfferedSpot(route.id, route.substituicaoCotaId, s.method)
+            } else {
+                payShare(route.id, s.method)
+            }
+            resultado.fold(
                 onSuccess = { cob ->
                     _uiState.update {
                         it.copy(

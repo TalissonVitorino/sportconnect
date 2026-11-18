@@ -41,6 +41,8 @@ import br.com.sportconnect.core.domain.usecase.ExportMyDataUseCase
 import br.com.sportconnect.core.domain.usecase.GetOpenGamesUseCase
 import br.com.sportconnect.core.domain.usecase.JoinGameByInviteUseCase
 import br.com.sportconnect.core.domain.usecase.JoinWaitlistUseCase
+import br.com.sportconnect.core.domain.usecase.ToggleSpotOfferUseCase
+import br.com.sportconnect.core.domain.usecase.ClaimOfferedSpotUseCase
 import br.com.sportconnect.core.domain.usecase.LeaveGameUseCase
 import br.com.sportconnect.core.domain.usecase.ObserveGameWithWaitlistUseCase
 import br.com.sportconnect.core.domain.usecase.PayShareUseCase
@@ -108,6 +110,8 @@ val domainModule = module {
     factoryOf(::CoverDifferenceUseCase)
     factoryOf(::JoinGameByInviteUseCase)
     factoryOf(::JoinWaitlistUseCase)
+    factoryOf(::ToggleSpotOfferUseCase)
+    factoryOf(::ClaimOfferedSpotUseCase)
     factoryOf(::GetMyGamesUseCase)
     factoryOf(::DeleteAccountUseCase)
     factoryOf(::ExportMyDataUseCase)

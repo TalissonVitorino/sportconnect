@@ -19,6 +19,12 @@ import br.com.sportconnect.resources.waitlist_leave
 import br.com.sportconnect.resources.waitlist_join
 import br.com.sportconnect.resources.waitlist_position
 import br.com.sportconnect.resources.waitlist_body
+import br.com.sportconnect.resources.waitlist_offer_body
+import br.com.sportconnect.resources.waitlist_offer_action
+import br.com.sportconnect.resources.waitlist_offer_active_body
+import br.com.sportconnect.resources.waitlist_offer_cancel
+import br.com.sportconnect.resources.waitlist_claim_body
+import br.com.sportconnect.resources.waitlist_claim_action
 import br.com.sportconnect.core.designsystem.theme.SCSelection
 import androidx.compose.material.icons.rounded.StarRate
 import androidx.compose.material.icons.rounded.StarBorder
@@ -143,6 +149,7 @@ import br.com.sportconnect.core.designsystem.theme.LocalSCClock
 import br.com.sportconnect.core.designsystem.theme.SCShape
 import br.com.sportconnect.core.designsystem.theme.SCShareState
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
+import br.com.sportconnect.core.model.Cota
 import br.com.sportconnect.core.model.MotivoConfirmacao
 import br.com.sportconnect.core.model.PoliticaNaoPagamento
 import br.com.sportconnect.core.model.PtBrFormat
@@ -236,6 +243,8 @@ data class GameDetailActions(
     val invite: (String) -> Unit = {},
     val resolve: (String) -> Unit = {},
     val receipt: (String) -> Unit = {},
+    /** T8 (13/US-111): [jogoId] e a cota oferecida -> tela de pagamento do substituto. */
+    val claimSpot: (String, String) -> Unit = { _, _ -> },
 )
 
 @Composable
@@ -302,6 +311,7 @@ fun GameDetailRoute(route: Route.GameDetail, actions: GameDetailActions) {
         onLeave = viewModel::leave,
         onJoinWaitlist = viewModel::joinWaitlist,
         onLeaveWaitlist = viewModel::leaveWaitlist,
+        onToggleOfferSpot = viewModel::toggleOfferMySpot,
         onRate = viewModel::rate,
     )
 }
@@ -320,6 +330,7 @@ fun GameDetailScreen(
     onLeave: () -> Unit = {},
     onJoinWaitlist: () -> Unit = {},
     onLeaveWaitlist: () -> Unit = {},
+    onToggleOfferSpot: (Boolean) -> Unit = {},
     onRate: (GameRating) -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
@@ -386,8 +397,12 @@ fun GameDetailScreen(
                         modifier = Modifier.testTag("game_pay_now"),
                     )
                 }
+            } else if (content != null && content.offeredSpot != null) {
+                ClaimSpotBar(content.offeredSpot, { actions.claimSpot(content.jogo.id, content.offeredSpot.id) })
             } else if (content != null && (content.canJoinWaitlist || content.waitlistPosition != null)) {
                 WaitlistBar(content.waitlistPosition, onJoinWaitlist, onLeaveWaitlist)
+            } else if (content != null && (content.canOfferSpot || content.myPaidShare?.offeredForSubstitution == true)) {
+                OfferSpotBar(content.myPaidShare?.offeredForSubstitution == true, onToggleOfferSpot)
             } else if (content != null && content.canRate) {
                 br.com.sportconnect.feature.common.BottomActionBar {
                     SCButton(
@@ -956,6 +971,50 @@ private fun WaitlistBar(position: Int?, onJoin: () -> Unit, onLeave: () -> Unit)
             } else {
                 SCButton(stringResource(Res.string.waitlist_leave), onLeave, variant = SCButtonVariant.Secondary, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("waitlist_leave"))
             }
+        }
+    }
+}
+
+/** T8 (13/US-111): atleta pago oferece/retira a propria vaga para a lista de espera. */
+@Composable
+private fun OfferSpotBar(offered: Boolean, onToggle: (Boolean) -> Unit) {
+    val c = SportConnectTheme.colors
+    br.com.sportconnect.feature.common.BottomActionBar {
+        Column(Modifier.fillMaxWidth().testTag("game_offer_spot")) {
+            Text(
+                stringResource(if (offered) Res.string.waitlist_offer_active_body else Res.string.waitlist_offer_body),
+                style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
+            if (offered) {
+                SCButton(
+                    stringResource(Res.string.waitlist_offer_cancel), { onToggle(false) },
+                    variant = SCButtonVariant.Secondary, size = SCButtonSize.Large, fullWidth = true,
+                    modifier = Modifier.testTag("offer_spot_cancel"),
+                )
+            } else {
+                SCButton(
+                    stringResource(Res.string.waitlist_offer_action), { onToggle(true) },
+                    variant = SCButtonVariant.Secondary, size = SCButtonSize.Large, fullWidth = true,
+                    modifier = Modifier.testTag("offer_spot_start"),
+                )
+            }
+        }
+    }
+}
+
+/** T8 (13/US-111): quem esta na fila ve a vaga que alguem ofereceu e pode pagar pra entrar. */
+@Composable
+private fun ClaimSpotBar(cota: Cota, onClaim: () -> Unit) {
+    val c = SportConnectTheme.colors
+    br.com.sportconnect.feature.common.BottomActionBar {
+        Column(Modifier.fillMaxWidth().testTag("game_claim_spot")) {
+            Text(
+                stringResource(Res.string.waitlist_claim_body, cota.valor.format()),
+                style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp).semantics { liveRegion = LiveRegionMode.Polite },
+            )
+            SCButton(stringResource(Res.string.waitlist_claim_action), onClaim, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("claim_spot"))
         }
     }
 }

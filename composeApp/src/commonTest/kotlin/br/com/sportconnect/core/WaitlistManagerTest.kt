@@ -106,7 +106,9 @@ class WaitlistManagerTest {
 
     @Test
     fun substituicao_reembolsa_original_sem_taxa_e_mantem_repasse_rn26() {
-        val j = confirmado()
+        val original = confirmado()
+        val dono = original.reserva.cotas.first { it.id == "r-c3" }.atletaId!!
+        val j = wl.oferecer(original, "r-c3", dono, agora)
         val r = wl.substituir(j, "r-c3", "u-sub", "Substituto", agora)
         assertEquals(StatusCota.REEMBOLSADA, r.jogo.reserva.cotas.first { it.id == "r-c3" }.status)
         val nova = r.jogo.reserva.cotas.last()
@@ -125,5 +127,20 @@ class WaitlistManagerTest {
         assertFailsWith<ListaEsperaException> { wl.substituir(j, "r-c3", "u-sub", "S", SABADO_20H - 30.minutes) }
         assertFailsWith<ListaEsperaException> { wl.substituir(j, "r-c0", "u-sub", "S", agora) }
         assertFailsWith<ListaEsperaException> { wl.substituir(pagar(sm, ativo(sm), 3), "r-c1", "u-sub", "S", agora) }
+    }
+
+    @Test
+    fun substituicao_exige_oferta_previa_do_dono_da_cota_rn26() {
+        val j = confirmado()
+        val dono = j.reserva.cotas.first { it.id == "r-c3" }.atletaId!!
+        // Ninguem ofereceu ainda.
+        assertFailsWith<ListaEsperaException> { wl.substituir(j, "r-c3", "u-sub", "S", agora) }
+        // So o dono da cota pode oferecer.
+        assertFailsWith<ListaEsperaException> { wl.oferecer(j, "r-c3", "outro-usuario", agora) }
+        val oferecida = wl.oferecer(j, "r-c3", dono, agora)
+        assertTrue(oferecida.reserva.cotas.first { it.id == "r-c3" }.offeredForSubstitution)
+        val semOferta = wl.cancelarOferta(oferecida, "r-c3", dono)
+        assertFalse(semOferta.reserva.cotas.first { it.id == "r-c3" }.offeredForSubstitution)
+        assertFailsWith<ListaEsperaException> { wl.substituir(semOferta, "r-c3", "u-sub", "S", agora) }
     }
 }

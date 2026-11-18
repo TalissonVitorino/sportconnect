@@ -334,6 +334,13 @@
     <string name="waitlist_spot_open_body">Pague %1$s até %2$s pra garantir. Depois disso, a vaga vai para o próximo.</string>
     <string name="waitlist_missed">A vaga foi para a próxima pessoa da fila. Você continua na lista.</string>
     <string name="waitlist_joined">Você entrou na lista de espera.</string>
+    <!-- T8 (13/US-111): passar a vaga -->
+    <string name="waitlist_offer_body">Alguém da lista de espera pode pagar sua cota e você é reembolsado sem taxa.</string>
+    <string name="waitlist_offer_action">Passar minha vaga</string>
+    <string name="waitlist_offer_active_body">Sua vaga está oferecida à lista de espera. Quando alguém pagar, você recebe o reembolso sem taxa.</string>
+    <string name="waitlist_offer_cancel">Cancelar oferta</string>
+    <string name="waitlist_claim_body">Uma vaga abriu por %1$s. Pague agora pra garantir seu lugar.</string>
+    <string name="waitlist_claim_action">Pagar e entrar</string>
 
     <!-- 3.18 Avaliação (`rating_`) — Fase 2 -->
     <string name="rating_title">Como foi o jogo?</string>
