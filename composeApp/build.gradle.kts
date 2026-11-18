@@ -187,8 +187,25 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "SportConnect"
-            packageVersion = "1.0.0"
+            // X3 (doc 13): mesma versao do app (gradle.properties).
+            val appVersion = providers.gradleProperty("sportconnect.versionName").get()
+            val appBuild = providers.gradleProperty("sportconnect.versionCode").get()
+            packageVersion = appVersion
             description = "SportConnect - esportes amadores, quadras e rateio"
+            vendor = "SportConnect"
+            macOS {
+                bundleID = "br.com.sportconnect.desktop"
+                iconFile.set(project.file("desktopIcons/icon.icns"))
+                // O .dmg exige versao com o 1o numero > 0; enquanto o app estiver em 0.x, usa 1.0.<build>.
+                packageVersion = if (appVersion.startsWith("0.")) "1.0.$appBuild" else appVersion
+            }
+            windows {
+                iconFile.set(project.file("desktopIcons/icon.ico"))
+                menuGroup = "SportConnect"
+                // Mesmo codigo sempre: o instalador novo substitui o antigo.
+                upgradeUuid = "6f1a3c2e-5b7d-4e8a-9c1f-2d3b4a5e6f70"
+            }
+            linux { iconFile.set(project.file("desktopIcons/icon.png")) }
         }
     }
 }
