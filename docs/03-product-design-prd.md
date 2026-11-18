@@ -1344,7 +1344,7 @@ classDiagram
 ### 11.6 Desempenho, disponibilidade e plataforma
 | ID | Requisito |
 |---|---|
-| RNF-25 | Página do convite (web): LCP ≤ 2,5 s em 4G mediano; peso inicial ≤ 500 KB. Se o bundle Compose/Wasm não atingir a meta, servir a página de convite/pagamento como web leve (Q-06). |
+| RNF-25 | Página do convite (web): LCP ≤ 2,5 s em 4G mediano; peso inicial ≤ 500 KB. **Confirmado que o bundle Compose/Wasm não atinge a meta (Q-06, §15) — a página de convite/pagamento deve ser servida como web leve**, fora do bundle Compose/Wasm. |
 | RNF-26 | Disponibilidade: 99,5% (MVP) e 99,9% para fluxo de pagamento/webhooks. |
 | RNF-27 | Apps: Android 8+, iOS 15+, navegadores evergreen (2 últimas versões), Desktop Windows/macOS. |
 | RNF-28 | Observabilidade: tracing do fluxo de pagamento ponta a ponta; alertas para falha de webhook, job atrasado > 2 min e taxa de estorno falho > 1%. |
@@ -1444,7 +1444,7 @@ Jogo de futebol society: V = R$ 240,00, 12 cotas, todas via Pix, arena no plano 
 | R5 | Arena mantém agenda paralela (telefone) e gera conflito | Alta | Alto | Bloqueio manual em 2 toques; agenda como fonte única; onboarding assistido. |
 | R6 | Dependência de um único gateway (indisponibilidade, mudança de preço) | Média | Alto | Porta/adaptador; reconciliação; plano de contingência com 2º gateway na Fase 2. |
 | R7 | Enquadramento regulatório (BACEN) se a plataforma parecer custodiar recursos | Baixa | Alto | Recursos sempre em subcontas do gateway; parecer jurídico antes do lançamento. |
-| R8 | Desempenho do Compose/Wasm no link de convite | Média | Alto | Meta RNF-25; plano B de página web leve. |
+| R8 | Desempenho do Compose/Wasm no link de convite | **Confirmado** (Q-06, 18/11/2026: LCP 4.334 ms) | Alto | Plano B virou plano único: página de convite/pagamento servida como web leve (SSR/estática), fora do bundle Compose/Wasm. |
 | R9 | Fraude/chargeback em cartão | Média | Médio | 3DS, Pix como padrão, limites por usuário novo, reserva técnica. |
 | R10 | Custo de reembolsos integrais (taxa devolvida + custo de estorno) | Média | Médio | KPI de % de jogos expirados; otimizar prazos e lembretes. |
 | R11 | Complexidade da política C confunde usuários | Média | Médio | P1 no MVP; teste de usabilidade antes do lançamento; textos com exemplos em R$. |
@@ -1458,7 +1458,7 @@ Jogo de futebol society: V = R$ 240,00, 12 cotas, todas via Pix, arena no plano 
 | Q-03 | A taxa de conveniência retida na saída voluntária (RN-21) é aceitável sob o CDC? Redação dos termos. | Jurídico | **Sim** |
 | Q-04 | Repasse D+1 para cartão: plataforma antecipa ou a arena espera a liquidação do cartão? | Financeiro | Não |
 | Q-05 | Tamanho da reserva técnica para chargebacks e política de absorção. | Financeiro | Não |
-| Q-06 | Página de convite em Compose/Wasm atinge LCP ≤ 2,5 s? Precisamos de página web leve separada? | Engenharia | **Sim** (spike na sprint 1) |
+| Q-06 | Página de convite em Compose/Wasm atinge LCP ≤ 2,5 s? Precisamos de página web leve separada? | Engenharia | ✅ Resolvida (spike em 18/11/2026): **não atinge — precisa de página web leve separada.** LCP medido = 4.334 ms ("Ruim", >4.000 ms) com throttling de rede 4G lenta + CPU 4x, build de produção real (`wasmJsBrowserDistribution`). Bundle inicial ≈17,3 MB (dois `.wasm` de Compose+Skia), 34x acima do orçamento de 500 KB do RNF-25; 59% do LCP é tempo de main thread compilando/instanciando o Wasm, não rede — compressão/CDN não fecha essa diferença. Decisão: `GET /jogos/convite/{codigo}` ([15 §Jogos](15-contrato-api.md#5-jogos)) deve ser servido como página web leve (SSR/estática), não pelo bundle Compose/Wasm. |
 | Q-07 | Permitir alterar o número de vagas após a ativação (com recálculo apenas das pendentes)? | Produto + Design | Não |
 | Q-08 | Qual a duração ideal do hold por antecedência do jogo (4h fixo × proporcional)? | Produto + Dados | Não (validar com piloto) |
 | Q-09 | Emissão de nota fiscal: quem emite para o atleta (arena pelo valor da quadra, plataforma pela taxa)? | Jurídico + Contábil | **Sim** |
