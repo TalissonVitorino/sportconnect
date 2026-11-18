@@ -7,6 +7,7 @@ import br.com.sportconnect.resources.cd_court_distance
 import br.com.sportconnect.resources.cd_slot_chip
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -38,7 +39,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -68,6 +71,8 @@ data class CourtCardUi(
     val distanceLabel: String? = null,
     val nextSlots: List<SlotUi> = emptyList(),
     val photoUrl: String? = null,
+    /** T5: primeira foto da arena (E9), ja decodificada; null = desenho da quadra. */
+    val photo: ImageBitmap? = null,
     /** Exibido quando nao ha [nextSlots] ("Sem horários livres hoje"). */
     val unavailableLabel: String? = null,
     /** Variante Owner: ocupacao do dia 0..1 e rotulo ("72% ocupada hoje"). */
@@ -114,7 +119,7 @@ fun SCCourtCard(
                 Modifier.padding(12.dp).heightIn(min = 96.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                SCCourtPlaceholder(mainSport, Modifier.width(96.dp).height(96.dp).clip(SCShape.small))
+                CourtImage(court.photo, mainSport, Modifier.width(96.dp).height(96.dp).clip(SCShape.small))
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(court.arenaName, style = t.titleMedium, color = c.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { contentDescription = headline })
                     Text("${court.courtName} · ${court.detailsLabel}", style = t.bodyMedium, color = c.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.clearAndSetSemantics { })
@@ -134,7 +139,7 @@ fun SCCourtCard(
                 // T4: em telas largas a proporcao passava de 250 dp de altura; limita a 180 dp sem estreitar.
                 BoxWithConstraints(Modifier.fillMaxWidth()) {
                 Box(Modifier.fillMaxWidth().height(minOf(maxWidth / 2.4f, 180.dp))) {
-                    SCCourtPlaceholder(mainSport, Modifier.fillMaxWidth().fillMaxHeight())
+                    CourtImage(court.photo, mainSport, Modifier.fillMaxWidth().fillMaxHeight())
                     if (court.distanceLabel != null) {
                         Row(
                             Modifier.align(Alignment.TopStart).padding(12.dp)
@@ -185,6 +190,16 @@ fun SCCourtCard(
                 }
             }
         }
+    }
+}
+
+/** T5: foto da arena (E9) no lugar do desenho da quadra, quando houver. Decorativo (o card ja tem a frase completa). */
+@Composable
+private fun CourtImage(photo: ImageBitmap?, sport: Sport, modifier: Modifier = Modifier) {
+    if (photo != null) {
+        Image(photo, contentDescription = null, contentScale = ContentScale.Crop, modifier = modifier)
+    } else {
+        SCCourtPlaceholder(sport, modifier)
     }
 }
 

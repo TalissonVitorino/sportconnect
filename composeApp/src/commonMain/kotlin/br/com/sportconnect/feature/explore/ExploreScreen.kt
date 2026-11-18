@@ -3,6 +3,7 @@
 package br.com.sportconnect.feature.explore
 
 import androidx.compose.runtime.LaunchedEffect
+import br.com.sportconnect.core.data.local.ArenaPhotoStore
 import br.com.sportconnect.core.designsystem.component.SCSportChipVariant
 import br.com.sportconnect.core.designsystem.component.SCSportChip
 import br.com.sportconnect.core.designsystem.theme.LocalSCClock
@@ -471,6 +472,11 @@ private fun FilterRow(
 @Composable
 private fun CourtResultCard(r: CourtResult, actions: ExploreActions, wc: WidthClass, variant: SCCourtCardVariant = SCCourtCardVariant.List) {
     val q = r.quadra
+    // T5: quando a arena tem fotos (E9), o card usa a primeira no lugar do desenho da quadra.
+    val photoStore: ArenaPhotoStore = koinInject()
+    val arenaId = r.arena.arena.id
+    LaunchedEffect(arenaId) { photoStore.load(arenaId) }
+    val photo = photoStore.photos.collectAsStateWithLifecycle().value[arenaId]?.firstOrNull()
     val price = r.freeSlots.minOf { it.preco }
     val spots = q.esportes.first().esporte.vagasPadrao.coerceAtMost(q.esportes.first().capacidadeMax)
     val perPerson = Money(price.cents / spots)
@@ -492,6 +498,7 @@ private fun CourtResultCard(r: CourtResult, actions: ExploreActions, wc: WidthCl
                 SlotUi(id = s.id, startLabel = PtBrFormat.hour(s.inicio), endLabel = PtBrFormat.hour(s.fim), price = s.preco)
             },
             estimateLabel = stringResource(Res.string.common_per_person_estimate, perPerson.format(), spots),
+            photo = photo,
         ),
         onClick = { actions.openArena(r.arena.arena.id) },
         onSlotClick = { actions.pickSlot(it.id) },
