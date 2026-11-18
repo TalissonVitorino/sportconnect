@@ -58,7 +58,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 | X1 | ✅ P1 | M | **Folha nativa de compartilhar** ("Mais opções", `invite_share_other`): Android `Intent.ACTION_SEND`, iOS `UIActivityViewController`, web `navigator.share` (cai para copiar), desktop copia. | `core/platform/Share*.kt`, convite | Prevista no 09 §6.5; hoje só existe WhatsApp e copiar. |
 | X2 | ✅ P1 | P | **Salvar arquivo de verdade**: extrato CSV (arena) e "Baixar meus dados" (JSON) com o seletor de salvar do FileKit — download na web. | repasses, privacidade | Hoje os dois vão para a área de transferência, o que confunde (LGPD: "baixar meus dados"). |
 | X3 | ✅ P1 | P | **Janela do desktop**: ícone, tamanho mínimo (360×640), lembrar tamanho e posição; pacote com versão do `gradle.properties` e ícones `.icns/.ico/.png`. | `desktopMain/main.kt`, `build.gradle.kts` | Hoje a janela não tem ícone e o instalador sai sempre como 1.0.0. |
-| X4 | P2 | P | **iOS**: gesto de voltar pela borda em todas as telas de pilha e teclado com "Concluído" nos campos numéricos; conferir no simulador. | `iosMain/`, `MainViewController` | Expectativa básica de quem usa iPhone. |
+| X4 | ✅ P2 | P | **iOS**: gesto de voltar pela borda em todas as telas de pilha e teclado com "Concluído" nos campos numéricos; conferir no simulador. | `iosMain/`, `MainViewController` | Expectativa básica de quem usa iPhone. |
 
 ## A. Acessibilidade (09 §8)
 
@@ -118,3 +118,4 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 - **X1** ✅ `rememberNativeShare()` (Android `ACTION_SEND`, iOS `UIActivityViewController`, web `navigator.share`; desktop copia). Usado em "Outros apps" do convite e no compartilhar da arena.
 - **X2** ✅ `rememberFileExport` (diálogo "Salvar como" do FileKit; web baixa). Extrato `.csv` com BOM (acentos no Excel) e "Baixar meus dados" em `.json`. Verificado no Android (arquivo em Downloads).
 - **X3** ✅ Janela do desktop com ícone, tamanho mínimo 360×600 e tamanho/posição lembrados; pacotes com a versão do `gradle.properties` (macOS: `1.0.<build>` enquanto o app for 0.x, exigência do `.dmg`) e ícones `.icns/.ico/.png`.
+- **X4** ✅ Tocar fora fecha o teclado em todas as plataformas (no iPhone os teclados numéricos não têm tecla de fechar). O gesto de voltar pela borda no iOS já vem do Compose 1.12 (`UIKitBackGestureRecognizer`), sem código nosso.
