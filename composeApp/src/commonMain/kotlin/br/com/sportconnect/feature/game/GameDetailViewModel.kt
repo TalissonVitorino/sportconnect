@@ -9,12 +9,15 @@ import br.com.sportconnect.core.domain.repository.AnalyticsTracker
 import br.com.sportconnect.core.domain.repository.AuthRepository
 import br.com.sportconnect.core.domain.WaitlistManager
 import br.com.sportconnect.core.domain.usecase.CancelGameUseCase
-import br.com.sportconnect.core.domain.usecase.GetGameUseCase
+import br.com.sportconnect.core.domain.usecase.JoinWaitlistUseCase
 import br.com.sportconnect.core.domain.usecase.LeaveGameUseCase
+import br.com.sportconnect.core.domain.usecase.LeaveWaitlistUseCase
+import br.com.sportconnect.core.domain.usecase.ObserveGameWithWaitlistUseCase
 import br.com.sportconnect.core.domain.usecase.ToggleSpotOfferUseCase
 import br.com.sportconnect.core.model.Cota
 import br.com.sportconnect.core.model.EtapaPrazo
 import br.com.sportconnect.core.model.Jogo
+import br.com.sportconnect.core.model.ListaEspera
 import br.com.sportconnect.core.model.StatusCota
 import br.com.sportconnect.core.model.StatusReserva
 import br.com.sportconnect.core.model.TipoCota
@@ -98,7 +101,7 @@ sealed interface GameDetailEvent {
 
 class GameDetailViewModel(
     private val route: Route.GameDetail,
-    private val getGame: GetGameUseCase,
+    private val observeGameWithWaitlist: ObserveGameWithWaitlistUseCase,
     private val auth: AuthRepository,
     private val cancelGame: CancelGameUseCase,
     private val leaveGame: LeaveGameUseCase,
@@ -108,6 +111,8 @@ class GameDetailViewModel(
     private val social: SocialStore = SocialStore(),
     private val toggleSpotOffer: ToggleSpotOfferUseCase,
     private val waitlistManager: WaitlistManager = WaitlistManager(),
+    private val joinWaitlistUseCase: JoinWaitlistUseCase,
+    private val leaveWaitlistUseCase: LeaveWaitlistUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameDetailUiState>(GameDetailUiState.Loading)
     val uiState: StateFlow<GameDetailUiState> = _uiState.asStateFlow()
@@ -128,9 +133,10 @@ class GameDetailViewModel(
     private fun load() {
         job?.cancel()
         job = viewModelScope.launch {
-            combine(getGame(route.id), auth.currentUser, social.queues, social.rated) { jogo, user, _, _ -> jogo to user }
+            combine(observeGameWithWaitlist(route.id), auth.currentUser, social.rated) { gameAndFila, user, _ -> gameAndFila to user }
                 .catch { _uiState.value = GameDetailUiState.Error }
-                .collect { (jogo, user) ->
+                .collect { (gameAndFila, user) ->
+                    val (jogo, fila) = gameAndFila
                     if (jogo == null) {
                         _uiState.value = GameDetailUiState.NotFound
                         return@collect
@@ -149,7 +155,7 @@ class GameDetailViewModel(
                     val myPaidShare = uid?.let { id ->
                         jogo.reserva.cotas.firstOrNull { it.atletaId == id && it.status == StatusCota.PAGA && it.tipo == TipoCota.PADRAO }
                     }
-                    val waitlistPosition = uid?.let { social.position(jogo.id, it) }
+                    val waitlistPosition = uid?.let { id -> waitlistManager.ativos(fila).indexOfFirst { it.usuarioId == id }.takeIf { it >= 0 }?.plus(1) }
                     _uiState.value = GameDetailUiState.Content(
                         jogo = jogo,
                         userId = uid,
@@ -163,7 +169,7 @@ class GameDetailViewModel(
                         remindedAt = reminded.toMap(),
                         waitlistPosition = waitlistPosition,
                         canJoinWaitlist = uid != null && jogo.organizadorId != uid && !jogo.participa(uid) &&
-                            waitlistPosition == null && social.canJoin(jogo, now),
+                            waitlistPosition == null && waitlistManager.podeEntrar(jogo, fila, now),
                         canRate = uid != null && jogo.status == StatusReserva.CONCLUIDO && jogo.participa(uid) && jogo.id !in social.rated.value,
                         // T8 (13/US-111): oferecer a propria vaga, ou pagar a vaga que alguem ofereceu (so quem esta na fila).
                         canOfferSpot = myPaidShare != null && !myPaidShare.offeredForSubstitution && waitlistManager.podeSubstituir(jogo, now),
@@ -178,17 +184,21 @@ class GameDetailViewModel(
     /** E14 (US-110): entrar/sair da lista de espera. */
     fun joinWaitlist() {
         val s = _uiState.value as? GameDetailUiState.Content ?: return
-        val u = auth.currentUser.value ?: return
-        social.join(s.jogo, u.id, u.nome, clock.now()).fold(
-            onSuccess = { pos -> _events.trySend(GameDetailEvent.WaitlistJoined(pos)) },
-            onFailure = { e -> _events.trySend(GameDetailEvent.Failure(e.message ?: "")) },
-        )
+        val uid = s.userId ?: return
+        viewModelScope.launch {
+            joinWaitlistUseCase(s.jogo.id).fold(
+                onSuccess = { fila ->
+                    val pos = waitlistManager.ativos(fila).indexOfFirst { it.usuarioId == uid }.takeIf { it >= 0 }?.plus(1) ?: 0
+                    _events.trySend(GameDetailEvent.WaitlistJoined(pos))
+                },
+                onFailure = { e -> _events.trySend(GameDetailEvent.Failure(e.message ?: "")) },
+            )
+        }
     }
 
     fun leaveWaitlist() {
         val s = _uiState.value as? GameDetailUiState.Content ?: return
-        val uid = s.userId ?: return
-        social.leave(s.jogo.id, uid)
+        viewModelScope.launch { leaveWaitlistUseCase(s.jogo.id) }
     }
 
     /** T8 (13/US-111): oferece ou retira a oferta da minha vaga paga para a lista de espera. */

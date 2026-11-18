@@ -202,7 +202,7 @@ class FakeDataIntegrationTest {
         env.toggleSpotOffer(jogo.id, original.id, true).getOrThrow()
         assertTrue(env.games.game(jogo.id)!!.reserva.cotas.first { it.id == original.id }.offeredForSubstitution)
 
-        env.auth.entrarComo("u-atleta-50")
+        env.auth.entrarComo("u-atleta-1").getOrThrow()
         val cobranca = env.claimOfferedSpot(jogo.id, original.id).getOrThrow()
         assertEquals(original.valor, cobranca.valorCota)
 
@@ -211,7 +211,7 @@ class FakeDataIntegrationTest {
 
         val depois = env.games.game(jogo.id)!!
         assertEquals(StatusCota.REEMBOLSADA, depois.reserva.cotas.first { it.id == original.id }.status)
-        val nova = depois.reserva.cotas.first { it.atletaId == "u-atleta-50" }
+        val nova = depois.reserva.cotas.first { it.atletaId == "u-atleta-1" }
         assertEquals(StatusCota.PAGA, nova.status)
         assertEquals(original.valor, nova.valor)
         assertEquals(StatusReserva.CONFIRMADO, depois.status)

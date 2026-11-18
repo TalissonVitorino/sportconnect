@@ -110,7 +110,7 @@ class CreateGameUseCase(
             if (i == 0) Cota(id = "$reservaId-c0", valor = valor, organizador = true, atletaId = usuario.id, atletaNome = usuario.nome)
             else Cota(id = "$reservaId-c$i", valor = valor)
         }
-        val codigo = gerarCodigo(jogoId)
+        val codigo = gerarCodigo()
         val jogo = Jogo(
             id = jogoId,
             titulo = params.titulo?.takeIf { it.isNotBlank() } ?: "${params.esporte.displayName} · ${arena.nome}",
@@ -151,10 +151,13 @@ class CreateGameUseCase(
         jogo
     }
 
-    private fun gerarCodigo(jogoId: String): String {
+    /** Aleatorio de verdade (nao um hash deterministico do id) e sem colisao com um convite existente. */
+    private suspend fun gerarCodigo(): String {
         val alfabeto = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-        var h = jogoId.hashCode().toLong() and 0xffffffffL
-        return buildString { repeat(6) { append(alfabeto[(h % alfabeto.length).toInt()]); h /= alfabeto.length; h += 7 } }
+        while (true) {
+            val codigo = buildString { repeat(6) { append(alfabeto.random()) } }
+            if (games.conviteByCodigo(codigo) == null) return codigo
+        }
     }
 }
 
@@ -447,6 +450,19 @@ class JoinWaitlistUseCase(
         games.saveWaitlist(jogoId, nova)
         analytics.track(AnalyticsEvents.LISTA_ESPERA_ENTROU, mapOf("jogo_id" to jogoId, "posicao" to waitlist.ativos(nova).size))
         nova
+    }
+}
+
+/** Sai da lista de espera. */
+class LeaveWaitlistUseCase(
+    private val games: GameRepository,
+    private val auth: AuthRepository,
+    private val waitlist: WaitlistManager,
+) {
+    suspend operator fun invoke(jogoId: String): Result<Unit> = runCatching {
+        val usuario = auth.exigirUsuario()
+        val fila = games.observeWaitlist(jogoId).firstOrNull() ?: emptyList()
+        games.saveWaitlist(jogoId, waitlist.sair(fila, usuario.id))
     }
 }
 

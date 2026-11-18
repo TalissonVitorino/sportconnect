@@ -17,10 +17,12 @@ import br.com.sportconnect.core.domain.WaitlistManager
 import br.com.sportconnect.core.domain.usecase.AvisosLidosStore
 import br.com.sportconnect.core.domain.usecase.CancelGameUseCase
 import br.com.sportconnect.core.domain.usecase.CreateGameUseCase
-import br.com.sportconnect.core.domain.usecase.GetGameUseCase
 import br.com.sportconnect.core.domain.usecase.GetMyGamesUseCase
 import br.com.sportconnect.core.domain.usecase.GetNotificationsUseCase
+import br.com.sportconnect.core.domain.usecase.JoinWaitlistUseCase
 import br.com.sportconnect.core.domain.usecase.LeaveGameUseCase
+import br.com.sportconnect.core.domain.usecase.LeaveWaitlistUseCase
+import br.com.sportconnect.core.domain.usecase.ObserveGameWithWaitlistUseCase
 import br.com.sportconnect.core.domain.usecase.ToggleSpotOfferUseCase
 import br.com.sportconnect.core.model.GarantiaCobertura
 import br.com.sportconnect.core.model.Money
@@ -82,9 +84,11 @@ class FeatureViewModelsTest {
         fun home() = HomeViewModel(GetMyGamesUseCase(games, auth), GetNotificationsUseCase(games, auth, AvisosLidosStore()), auth, analytics, clock)
 
         fun detail(id: String) = GameDetailViewModel(
-            Route.GameDetail(id), GetGameUseCase(games), auth,
+            Route.GameDetail(id), ObserveGameWithWaitlistUseCase(games), auth,
             CancelGameUseCase(service, games, arenas, auth, clock), LeaveGameUseCase(service, games, auth, clock),
             analytics, session, clock, social, ToggleSpotOfferUseCase(games, auth, WaitlistManager(), clock),
+            joinWaitlistUseCase = JoinWaitlistUseCase(games, auth, WaitlistManager(), analytics, clock),
+            leaveWaitlistUseCase = LeaveWaitlistUseCase(games, auth, WaitlistManager()),
         )
 
         val social = br.com.sportconnect.core.data.local.SocialStore()
