@@ -321,6 +321,9 @@
     <string name="refund_status_processing">Em andamento</string>
     <string name="refund_status_done">Concluído</string>
     <string name="refund_help">Não recebeu? Fale com a gente</string>
+    <!-- T6 (13): chave Pix p/ receber o reembolso que o cartao recusou -->
+    <string name="refund_pix_key_field">Chave Pix para o reembolso</string>
+    <string name="refund_pix_key_submit">Enviar</string>
 
     <!-- 3.17 Lista de espera (`waitlist_`) — Fase 2 -->
     <string name="waitlist_join">Entrar na lista de espera</string>

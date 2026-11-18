@@ -465,6 +465,8 @@ Mensagem pré-pronta de WhatsApp: ver `wa_invite_message` (seção 7).
 | `refund_status_processing` | Em andamento | |
 | `refund_status_done` | Concluído | |
 | `refund_help` | Não recebeu? Fale com a gente | |
+| `refund_pix_key_field` | Chave Pix para o reembolso | T6 (13): usa `error_pix_key_invalid_*` na validação |
+| `refund_pix_key_submit` | Enviar | |
 
 ### 3.17 Lista de espera (`waitlist_`) — Fase 2
 | ID | Texto | Notas |

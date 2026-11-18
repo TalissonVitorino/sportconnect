@@ -71,6 +71,7 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material.icons.rounded.DoneAll
+import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.PrivacyTip
@@ -105,6 +106,14 @@ import androidx.lifecycle.viewModelScope
 import br.com.sportconnect.core.designsystem.component.AvatarUi
 import br.com.sportconnect.core.designsystem.component.PriceLine
 import br.com.sportconnect.core.designsystem.component.SCAction
+import br.com.sportconnect.core.designsystem.component.SCTextField
+import br.com.sportconnect.core.domain.isValidPixKey
+import br.com.sportconnect.resources.error_refund_failed_title
+import br.com.sportconnect.resources.error_refund_failed_body
+import br.com.sportconnect.resources.error_refund_failed_action
+import br.com.sportconnect.resources.error_pix_key_invalid_body
+import br.com.sportconnect.resources.refund_pix_key_field
+import br.com.sportconnect.resources.refund_pix_key_submit
 import br.com.sportconnect.core.designsystem.component.SCAvatar
 import br.com.sportconnect.core.designsystem.component.SCButton
 import br.com.sportconnect.core.designsystem.component.SCButtonVariant
@@ -401,8 +410,8 @@ class PaymentsViewModel(getMyPayments: GetMyPaymentsUseCase, private val gateway
     }
 }
 
-/** Situacao do reembolso de um pagamento (E6, US-053). */
-data class RefundUi(val done: Boolean, val doneAt: Instant?)
+/** Situacao do reembolso de um pagamento (E6, US-053). T6 (13): [failed] quando o cartao recusou a devolucao. */
+data class RefundUi(val done: Boolean, val doneAt: Instant?, val failed: Boolean = false)
 
 @Composable
 fun PaymentsRoute(onBack: () -> Unit, onReceipt: (String) -> Unit, vm: PaymentsViewModel = koinViewModel()) {
@@ -465,31 +474,43 @@ data class ReceiptUiState(val payment: MeuPagamento? = null, val refund: RefundU
 class ReceiptViewModel(
     private val route: Route.Receipt,
     getMyPayments: GetMyPaymentsUseCase,
-    gateway: PaymentGateway,
+    private val gateway: PaymentGateway,
 ) : ViewModel() {
     val uiState: StateFlow<ReceiptUiState> = combine(getMyPayments(), gateway.observePagamento(route.paymentId)) { list, pg ->
         val p = list.firstOrNull { it.pagamentoId == route.paymentId }
         // O gateway sabe do estorno em tempo real; a cota marcada REEMBOLSADA cobre os dados semeados.
         val refund = when {
             pg?.status == StatusPagamento.ESTORNADO -> RefundUi(done = true, doneAt = pg.estornadoEm)
+            pg?.status == StatusPagamento.ESTORNO_FALHOU -> RefundUi(done = false, doneAt = null, failed = true)
             pg?.status == StatusPagamento.ESTORNO_EM_PROCESSAMENTO -> RefundUi(done = false, doneAt = null)
             p?.reembolsado == true -> RefundUi(done = true, doneAt = null)
             else -> null
         }
         ReceiptUiState(p, refund)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, ReceiptUiState())
+
+    /** T6 (13): depois do ESTORNO_FALHOU, reenvia o reembolso para a chave Pix informada. */
+    fun informarChavePix(chave: String) {
+        viewModelScope.launch { gateway.informarChavePixReembolso(route.paymentId, chave) }
+    }
 }
 
 @Composable
 fun ReceiptRoute(route: Route.Receipt, onBack: () -> Unit, onHelp: () -> Unit = {}) {
     val vm: ReceiptViewModel = koinViewModel(key = "receipt-${route.paymentId}") { parametersOf(route) }
     val state by vm.uiState.collectAsStateWithLifecycle()
-    ReceiptScreen(state.payment, onBack, refund = state.refund, onHelp = onHelp)
+    ReceiptScreen(state.payment, onBack, refund = state.refund, onHelp = onHelp, onInformPixKey = vm::informarChavePix)
 }
 
 /** Comprovante (10 §2.14). */
 @Composable
-fun ReceiptScreen(p: MeuPagamento?, onBack: () -> Unit = {}, refund: RefundUi? = null, onHelp: () -> Unit = {}) {
+fun ReceiptScreen(
+    p: MeuPagamento?,
+    onBack: () -> Unit = {},
+    refund: RefundUi? = null,
+    onHelp: () -> Unit = {},
+    onInformPixKey: (String) -> Unit = {},
+) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
     val share = rememberShareActions()
@@ -524,7 +545,7 @@ fun ReceiptScreen(p: MeuPagamento?, onBack: () -> Unit = {}, refund: RefundUi? =
                 }
                 if (refund != null) {
                     Spacer(Modifier.height(16.dp))
-                    RefundTimeline(p, refund, onHelp)
+                    RefundTimeline(p, refund, onHelp, onInformPixKey)
                 }
                 Spacer(Modifier.height(16.dp))
                 val text = "${p.jogo.titulo} · ${p.total.format()} · ${p.pagamentoId}"
@@ -638,7 +659,7 @@ fun NotificationsScreen(
 
 /** E6/US-053: pedido -> em andamento -> concluido, com o prazo do metodo e o atalho para o suporte. */
 @Composable
-private fun RefundTimeline(p: MeuPagamento, refund: RefundUi, onHelp: () -> Unit) {
+private fun RefundTimeline(p: MeuPagamento, refund: RefundUi, onHelp: () -> Unit, onInformPixKey: (String) -> Unit) {
     val c = SportConnectTheme.colors
     val ext = SportConnectTheme.extendedColors
     val t = MaterialTheme.typography
@@ -648,6 +669,11 @@ private fun RefundTimeline(p: MeuPagamento, refund: RefundUi, onHelp: () -> Unit
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(stringResource(Res.string.refund_title), style = t.titleMedium, color = c.onSurface, modifier = Modifier.semantics { heading() })
+        if (refund.failed) {
+            // T6 (13): a conta de origem (cartao) recusou a devolucao -> pede uma chave Pix para concluir.
+            RefundFailed(onInformPixKey)
+            return@Column
+        }
         RefundStep(stringResource(Res.string.refund_requested, value), done = true, current = false)
         RefundStep(stringResource(Res.string.refund_status_processing), done = refund.done, current = !refund.done)
         RefundStep(
@@ -665,6 +691,53 @@ private fun RefundTimeline(p: MeuPagamento, refund: RefundUi, onHelp: () -> Unit
         }
         SCButton(stringResource(Res.string.refund_help), onHelp, variant = SCButtonVariant.Text, modifier = Modifier.scAlignTextButtonStart().testTag("refund_help"))
     }
+}
+
+/** T6 (13): error_refund_failed_* com a acao de informar a chave Pix para concluir o reembolso. */
+@Composable
+private fun RefundFailed(onInformPixKey: (String) -> Unit) {
+    val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    Row(
+        Modifier.fillMaxWidth().background(c.errorContainer, MaterialTheme.shapes.medium).padding(16.dp).testTag("receipt_refund_failed"),
+    ) {
+        Icon(Icons.Rounded.ErrorOutline, null, tint = c.onErrorContainer, modifier = Modifier.size(20.dp).padding(top = 2.dp))
+        Spacer(Modifier.width(12.dp))
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(stringResource(Res.string.error_refund_failed_title), style = t.titleSmall, color = c.onErrorContainer)
+            Text(stringResource(Res.string.error_refund_failed_body), style = t.bodyMedium, color = c.onErrorContainer)
+            SCButton(
+                stringResource(Res.string.error_refund_failed_action),
+                { showDialog = true },
+                variant = SCButtonVariant.Text,
+                modifier = Modifier.scAlignTextButtonStart().testTag("refund_inform_pix_key"),
+            )
+        }
+    }
+    if (showDialog) {
+        PixKeyDialog(onDismiss = { showDialog = false }, onSubmit = { key -> showDialog = false; onInformPixKey(key) })
+    }
+}
+
+@Composable
+private fun PixKeyDialog(onDismiss: () -> Unit, onSubmit: (String) -> Unit) {
+    var key by rememberSaveable { mutableStateOf("") }
+    var showErrors by rememberSaveable { mutableStateOf(false) }
+    val invalid = !isValidPixKey(key)
+    SCDialog(
+        title = stringResource(Res.string.error_refund_failed_action),
+        onDismissRequest = onDismiss,
+        confirm = SCAction(stringResource(Res.string.refund_pix_key_submit), { if (invalid) showErrors = true else onSubmit(key.trim()) }),
+        dismiss = SCAction(stringResource(Res.string.common_cancel), onDismiss),
+        modifier = Modifier.testTag("refund_pix_key_dialog"),
+        content = {
+            SCTextField(
+                key, { key = it }, stringResource(Res.string.refund_pix_key_field), Modifier.fillMaxWidth(),
+                errorText = if (showErrors && invalid) stringResource(Res.string.error_pix_key_invalid_body) else null,
+            )
+        },
+    )
 }
 
 @Composable

@@ -1,6 +1,7 @@
 package br.com.sportconnect.feature.arenaadmin.onboarding
 
 import androidx.lifecycle.ViewModel
+import br.com.sportconnect.core.domain.isValidPixKey
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,18 +23,7 @@ data class ArenaOnboardingUiState(
     val nameError get() = name.isBlank()
     val documentError get() = document.length != 11
     val cepError get() = cep.filter(Char::isDigit).length != 8
-    /** Chave Pix: CPF/CNPJ (11/14 digitos), e-mail, celular (+55...) ou aleatoria (32+ chars). */
-    val pixError: Boolean
-        get() {
-            val k = pixKey.trim()
-            val digits = k.filter(Char::isDigit)
-            return !(
-                (k.all { it.isDigit() || it in ".-/" } && (digits.length == 11 || digits.length == 14)) ||
-                    Regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$").matches(k) ||
-                    (k.startsWith("+") && digits.length in 12..13) ||
-                    (k.length >= 32 && k.count { it == '-' } >= 4)
-                )
-        }
+    val pixError: Boolean get() = !isValidPixKey(pixKey)
     val progress: Int get() = done.size
     val canPublish: Boolean get() = done.size == OnboardingStep.entries.size && !published
 }

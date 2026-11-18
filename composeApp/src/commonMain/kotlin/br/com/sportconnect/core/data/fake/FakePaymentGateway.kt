@@ -95,6 +95,23 @@ class FakePaymentGateway(
         atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNO_EM_PROCESSAMENTO) }
         scope.launch {
             delay(atrasoConfirmacao)
+            if (atual.metodo == MetodoPagamento.CARTAO) {
+                // T6 (13): demo da conta de origem recusando a devolucao no cartao.
+                atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNO_FALHOU) }
+                emitir(pagamentoId, StatusPagamento.ESTORNO_FALHOU)
+            } else {
+                atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNADO, estornadoEm = clock.now()) }
+                emitir(pagamentoId, StatusPagamento.ESTORNADO)
+            }
+        }
+    }
+
+    override suspend fun informarChavePixReembolso(pagamentoId: String, chave: String) {
+        val atual = pagamentos.value[pagamentoId] ?: return
+        if (atual.status != StatusPagamento.ESTORNO_FALHOU) return
+        atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNO_EM_PROCESSAMENTO) }
+        scope.launch {
+            delay(atrasoConfirmacao)
             atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNADO, estornadoEm = clock.now()) }
             emitir(pagamentoId, StatusPagamento.ESTORNADO)
         }
