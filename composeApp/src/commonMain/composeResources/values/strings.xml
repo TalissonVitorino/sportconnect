@@ -911,4 +911,9 @@
     <string name="a11y_state_unchecked">não marcado</string>
     <!-- 13-plano · T10 saudação sem nome (propostos) -->
     <string name="home_greeting_guest">E aí!</string>
+    <!-- 13-plano · T3 jogos com vaga (propostos) -->
+    <string name="search_tab_courts">Quadras</string>
+    <string name="search_tab_games">Jogos com vaga</string>
+    <string name="game_create_open_spots">Abrir vagas pra quem quiser jogar</string>
+    <string name="game_create_open_spots_help">O jogo aparece em "Jogos com vaga" para atletas da região até as vagas acabarem.</string>
 </resources>

@@ -1,5 +1,11 @@
 package br.com.sportconnect.feature.home
 
+import androidx.compose.foundation.lazy.grid.items as gridItems
+import br.com.sportconnect.core.designsystem.theme.LocalSCClock
+import br.com.sportconnect.resources.home_section_open_games
+import br.com.sportconnect.core.model.Jogo
+import br.com.sportconnect.feature.common.OpenGameCard
+import br.com.sportconnect.feature.common.OpenGamesViewModel
 import br.com.sportconnect.resources.home_greeting_guest
 import androidx.compose.ui.semantics.isTraversalGroup
 import br.com.sportconnect.core.designsystem.component.TopBarFirst
@@ -115,8 +121,9 @@ data class HomeActions(
 )
 
 @Composable
-fun HomeRoute(actions: HomeActions, viewModel: HomeViewModel = koinViewModel()) {
+fun HomeRoute(actions: HomeActions, viewModel: HomeViewModel = koinViewModel(), openVm: OpenGamesViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val openGames by openVm.games.collectAsStateWithLifecycle()
     val games: GameRepository = koinInject()
     // E8: card de lembretes na 1a vez que ha jogo (permissao pedida em contexto, nao na abertura).
     val reminders: ReminderSync = koinInject()
@@ -134,6 +141,7 @@ fun HomeRoute(actions: HomeActions, viewModel: HomeViewModel = koinViewModel()) 
         state = state,
         actions = actions.copy(createGame = { viewModel.onCreateGame(); actions.createGame() }),
         onRetry = viewModel::retry,
+        openGames = openGames.take(3),
     )
 }
 
@@ -148,6 +156,8 @@ fun HomeScreen(
     onRetry: () -> Unit = {},
     onRefresh: suspend () -> Unit = {},
     reminderPrompt: (@Composable () -> Unit)? = null,
+    /** T3: ate 3 jogos com vaga de outras pessoas (US-101). */
+    openGames: List<Jogo> = emptyList(),
 ) {
     val c = SportConnectTheme.colors
     val gridState = rememberLazyGridState()
@@ -197,9 +207,9 @@ fun HomeScreen(
                 when (state) {
                     HomeUiState.Loading -> HomeLoading(Modifier.widthIn(max = 640.dp).fillMaxWidth().padding(16.dp))
                     HomeUiState.Error -> LoadErrorState(onRetry)
-                    is HomeUiState.Empty -> HomeEmpty(actions)
+                    is HomeUiState.Empty -> if (openGames.isEmpty()) HomeEmpty(actions) else HomeEmptyWithOpenGames(actions, openGames, wc)
                     is HomeUiState.Content -> SCPullToRefresh(onRefresh, Modifier.fillMaxSize()) {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) { HomeContent(state, actions, wc, gridState, reminderPrompt) }
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) { HomeContent(state, actions, wc, gridState, reminderPrompt, openGames) }
                     }
                 }
             }
@@ -243,6 +253,24 @@ private fun HomeLoading(modifier: Modifier) {
     }
 }
 
+/** T3: sem jogos meus, mas com jogos abertos por perto: o convite a criar fica no topo e os jogos abaixo. */
+@Composable
+private fun HomeEmptyWithOpenGames(actions: HomeActions, openGames: List<Jogo>, wc: WidthClass) {
+    val now = LocalSCClock.current.now()
+    val hPad = if (wc == WidthClass.Compact) 16.dp else 24.dp
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(if (wc == WidthClass.Expanded) 2 else 1),
+        modifier = Modifier.widthIn(max = if (wc == WidthClass.Expanded) 1040.dp else 640.dp).fillMaxSize(),
+        contentPadding = PaddingValues(start = hPad, end = hPad, bottom = 24.dp),
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item(span = { GridItemSpan(maxLineSpan) }, key = "empty") { HomeEmpty(actions) }
+        header(Res.string.home_section_open_games, "home_section_open")
+        gridItems(openGames, key = { "open_${it.id}" }) { j -> OpenGameCard(j, now, onClick = { actions.openGame(j.id) }) }
+    }
+}
+
 /** Momento de marca §3.3: estado vazio centralizado, sem FAB. */
 @Composable
 private fun HomeEmpty(actions: HomeActions) {
@@ -262,6 +290,7 @@ private fun HomeContent(
     wc: WidthClass,
     gridState: androidx.compose.foundation.lazy.grid.LazyGridState,
     reminderPrompt: (@Composable () -> Unit)? = null,
+    openGames: List<Jogo> = emptyList(),
 ) {
     val columns = if (wc == WidthClass.Expanded) 2 else 1
     val maxWidth = if (wc == WidthClass.Expanded) 1040.dp else 640.dp
@@ -290,6 +319,12 @@ private fun HomeContent(
         if (state.upcoming.isNotEmpty()) {
             header(Res.string.home_section_next_games, "home_section_next")
             items(state.upcoming, state, actions, Section.Upcoming)
+        }
+        if (openGames.isNotEmpty()) {
+            header(Res.string.home_section_open_games, "home_section_open")
+            gridItems(openGames, key = { "open_${it.id}" }) { j ->
+                Box(Modifier.animateItem()) { OpenGameCard(j, state.now, onClick = { actions.openGame(j.id) }) }
+            }
         }
         item(span = { GridItemSpan(maxLineSpan) }, key = "find_court") {
             Box(Modifier.fillMaxWidth().padding(top = 12.dp)) {

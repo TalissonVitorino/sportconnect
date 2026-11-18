@@ -361,7 +361,7 @@ fun AppNavHost(
                     }
                 }
                 composable<Route.Explore> {
-                    ExploreRoute(ExploreActions(openArena = { nav.go(Route.ArenaDetail(it)) }, pickSlot = { goCreate(it) }))
+                    ExploreRoute(ExploreActions(openArena = { nav.go(Route.ArenaDetail(it)) }, pickSlot = { goCreate(it) }, openGame = { nav.go(Route.GameDetail(it)) }))
                 }
                 composable<Route.ArenaDetail>(
                     deepLinks = listOf(navDeepLink<Route.ArenaDetail>(basePath = "https://sportconnect.app/a")),

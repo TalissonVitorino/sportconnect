@@ -2,6 +2,22 @@
 
 package br.com.sportconnect.feature.explore
 
+import androidx.compose.runtime.LaunchedEffect
+import br.com.sportconnect.core.designsystem.component.SCSportChipVariant
+import br.com.sportconnect.core.designsystem.component.SCSportChip
+import br.com.sportconnect.core.designsystem.theme.LocalSCClock
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyColumn
+import br.com.sportconnect.resources.empty_open_games_body
+import br.com.sportconnect.resources.empty_open_games_title
+import br.com.sportconnect.resources.search_tab_games
+import br.com.sportconnect.resources.search_tab_courts
+import br.com.sportconnect.core.designsystem.a11y.webSelectedLabel
+import androidx.compose.material3.Tab
+import androidx.compose.material3.PrimaryTabRow
+import br.com.sportconnect.core.model.Jogo
+import br.com.sportconnect.feature.common.OpenGameCard
+import br.com.sportconnect.feature.common.OpenGamesViewModel
 import br.com.sportconnect.core.designsystem.a11y.webCheckedLabel
 import br.com.sportconnect.resources.cd_map_pin
 import br.com.sportconnect.resources.search_list_view
@@ -124,16 +140,22 @@ import org.koin.compose.viewmodel.koinViewModel
 
 data class ExploreActions(
     val openArena: (String) -> Unit = {},
+    /** T3: abre um jogo com vaga. */
+    val openGame: (String) -> Unit = {},
     val pickSlot: (slotId: String) -> Unit = {},
 )
 
 @Composable
-fun ExploreRoute(actions: ExploreActions, viewModel: ExploreViewModel = koinViewModel()) {
+fun ExploreRoute(actions: ExploreActions, viewModel: ExploreViewModel = koinViewModel(), openVm: OpenGamesViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val openGames by openVm.games.collectAsStateWithLifecycle()
+    // O filtro de esporte vale para as duas abas.
+    LaunchedEffect(state.sport) { openVm.setSport(state.sport) }
     val games: GameRepository = koinInject()
     val tiles: MapTileCache = koinInject()
     ExploreScreen(
         tiles = tiles,
+        openGames = openGames,
         state = state,
         actions = actions,
         onQuery = viewModel::setQuery,
@@ -166,7 +188,10 @@ fun ExploreScreen(
     onSort: (ExploreSort) -> Unit = {},
     /** M2: tiles do mapa; null (screenshots) = sem mapa. */
     tiles: MapTileCache? = null,
+    /** T3: jogos com vaga (aba "Jogos com vaga", US-101). */
+    openGames: List<Jogo> = emptyList(),
 ) {
+    var gamesTab by rememberSaveable { mutableStateOf(false) }
     val c = SportConnectTheme.colors
     var mapMode by rememberSaveable { mutableStateOf(false) }
     var selectedArena by rememberSaveable { mutableStateOf<String?>(null) }
@@ -196,6 +221,17 @@ fun ExploreScreen(
                         } else null,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = hPad).testTag("explore_search_field"),
                     )
+                    // T3: abas "Quadras | Jogos com vaga" (09 ficha 4).
+                    PrimaryTabRow(selectedTabIndex = if (gamesTab) 1 else 0, containerColor = c.surface, modifier = Modifier.padding(top = 8.dp)) {
+                        val courtsLabel = stringResource(Res.string.search_tab_courts)
+                        val gamesLabel = stringResource(Res.string.search_tab_games)
+                        Tab(!gamesTab, { gamesTab = false }, text = { Text(courtsLabel) }, modifier = Modifier.webSelectedLabel(courtsLabel, !gamesTab).testTag("explore_tab_courts"))
+                        Tab(gamesTab, { gamesTab = true }, text = { Text(gamesLabel) }, modifier = Modifier.webSelectedLabel(gamesLabel, gamesTab).testTag("explore_tab_games"))
+                    }
+                    if (gamesTab) {
+                        OpenGamesList(openGames, state.sport, onSport, hPad, actions)
+                        return@Column
+                    }
                     FilterRow(state, onSport, onDate, onCovered, hPad, onPeriod, onMaxPrice)
                     Row(Modifier.fillMaxWidth().padding(horizontal = hPad, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -470,5 +506,30 @@ private fun arenaPins(results: List<CourtResult>): List<SCMapPin> {
             label = min.format().substringBefore(","),
             description = template.replace("%1", a.arena.nome).replace("%2", a.distanciaFormatada.removeSuffix(" km")) + ", " + fromTemplate.replace("%3", min.format()),
         )
+    }
+}
+
+/** T3: aba "Jogos com vaga" — filtro de esporte e lista de jogos abertos (ou estado vazio do 07). */
+@Composable
+private fun OpenGamesList(games: List<Jogo>, sport: Sport?, onSport: (Sport?) -> Unit, hPad: androidx.compose.ui.unit.Dp, actions: ExploreActions) {
+    val now = LocalSCClock.current.now()
+    Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = hPad, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Sport.entries.forEach { s -> SCSportChip(s, variant = SCSportChipVariant.Filter, selected = sport == s, onClick = { onSport(if (sport == s) null else s) }) }
+    }
+    if (games.isEmpty()) {
+        SCEmptyState(
+            title = stringResource(Res.string.empty_open_games_title),
+            description = stringResource(Res.string.empty_open_games_body),
+            illustration = SCIllustration.NoResults,
+            modifier = Modifier.testTag("explore_open_games_empty"),
+        )
+    } else {
+        LazyColumn(
+            contentPadding = PaddingValues(start = hPad, end = hPad, top = 8.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxSize().testTag("explore_open_games"),
+        ) {
+            items(games, key = { it.id }) { j -> OpenGameCard(j, now, onClick = { actions.openGame(j.id) }, modifier = Modifier.animateItem()) }
+        }
     }
 }

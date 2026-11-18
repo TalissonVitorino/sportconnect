@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.creategame
 
+import br.com.sportconnect.core.model.Visibilidade
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.sportconnect.core.domain.HoldDeadlineCalculator
@@ -62,6 +63,8 @@ data class CreateGameUiState(
     val guarantee: GarantiaCobertura = GarantiaCobertura.CARTAO,
     /** RN-16: teto do complemento em % da cota (padrao 50). */
     val capPct: Int = 50,
+    /** T3 (US-100): vagas restantes abertas para avulsos ("Jogos com vaga"). */
+    val openSpots: Boolean = false,
     /** Viabilidade por regra (RN-12). A: viavel se ao menos uma garantia couber. */
     val viable: Map<RuleOption, Boolean> = emptyMap(),
     val guaranteeViable: Map<GarantiaCobertura, Boolean> = emptyMap(),
@@ -183,6 +186,8 @@ class CreateGameViewModel(
         recompute()
     }
 
+    fun setOpenSpots(open: Boolean) = _uiState.update { it.copy(openSpots = open) }
+
     fun setCapPct(pct: Int) = _uiState.update { it.copy(capPct = pct.coerceIn(0, 100)) }
 
     /** Viabilidade (RN-12) e prazos (RN-10/11), como se a pre-reserva fosse ativada agora. */
@@ -279,6 +284,7 @@ class CreateGameViewModel(
                     garantia = s.garantiaEfetiva,
                     tetoComplementoPct = s.capPct,
                     titulo = s.name.ifBlank { null },
+                    visibilidade = if (s.openSpots) Visibilidade.VAGAS_ABERTAS else Visibilidade.PRIVADO,
                 ),
             ).fold(
                 onSuccess = { jogo ->

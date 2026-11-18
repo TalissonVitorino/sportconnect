@@ -2,6 +2,10 @@
 
 package br.com.sportconnect.feature.creategame
 
+import br.com.sportconnect.resources.game_create_open_spots_help
+import br.com.sportconnect.resources.game_create_open_spots
+import androidx.compose.material3.Switch
+import androidx.compose.foundation.selection.toggleable
 import br.com.sportconnect.resources.profile_sign_in
 import br.com.sportconnect.resources.error_session_expired_body
 import br.com.sportconnect.resources.error_session_expired_title
@@ -209,6 +213,7 @@ fun CreateGameRoute(route: Route.GameCreate, actions: CreateGameActions) {
         onRule = vm::selectRule,
         onGuarantee = vm::selectGuarantee,
         onCap = vm::setCapPct,
+        onOpenSpots = vm::setOpenSpots,
         onNext = vm::next,
         onBack = vm::back,
         onGoTo = vm::goTo,
@@ -228,6 +233,7 @@ fun CreateGameScreen(
     onRule: (RuleOption) -> Unit = {},
     onGuarantee: (GarantiaCobertura) -> Unit = {},
     onCap: (Int) -> Unit = {},
+    onOpenSpots: (Boolean) -> Unit = {},
     onNext: () -> Unit = {},
     onBack: () -> Boolean = { false },
     onGoTo: (CreateStep) -> Unit = {},
@@ -299,7 +305,7 @@ fun CreateGameScreen(
                                     CreateStep.Court -> CourtStep(state, actions, onSport, onName)
                                     CreateStep.Split -> SplitStep(state, onInc, onDec)
                                     CreateStep.Rule -> RuleStep(state, onRule, onGuarantee, onCap)
-                                    CreateStep.Review -> ReviewStep(state, onGoTo)
+                                    CreateStep.Review -> ReviewStep(state, onGoTo, onOpenSpots)
                                 }
                             }
                         }
@@ -835,7 +841,7 @@ private fun ReviewBreakdown(state: CreateGameUiState) {
 }
 
 @Composable
-private fun ReviewStep(state: CreateGameUiState, onGoTo: (CreateStep) -> Unit) {
+private fun ReviewStep(state: CreateGameUiState, onGoTo: (CreateStep) -> Unit, onOpenSpots: (Boolean) -> Unit = {}) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
     val slot = state.slot ?: return
@@ -873,6 +879,18 @@ private fun ReviewStep(state: CreateGameUiState, onGoTo: (CreateStep) -> Unit) {
     state.deadline?.let {
         Spacer(Modifier.height(12.dp))
         Text(stringResource(Res.string.game_create_review_deadline, PtBrFormat.relative(it, state.now)), style = t.bodyMedium, color = c.onSurface)
+    }
+    // T3 (US-100): abrir vagas restantes para avulsos.
+    Spacer(Modifier.height(16.dp))
+    Row(
+        Modifier.fillMaxWidth().toggleable(value = state.openSpots, role = Role.Switch, onValueChange = onOpenSpots).testTag("create_open_spots"),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f).padding(end = 12.dp)) {
+            Text(stringResource(Res.string.game_create_open_spots), style = t.titleSmall, color = c.onSurface)
+            Text(stringResource(Res.string.game_create_open_spots_help), style = t.bodySmall, color = c.onSurfaceVariant)
+        }
+        Switch(checked = state.openSpots, onCheckedChange = null)
     }
     Spacer(Modifier.height(16.dp))
     Text(stringResource(Res.string.arena_detail_cancellation_policy), style = t.titleSmall, color = c.onSurface)

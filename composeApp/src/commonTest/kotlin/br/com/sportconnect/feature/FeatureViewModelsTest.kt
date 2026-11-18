@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature
 
+import kotlinx.coroutines.launch
 import br.com.sportconnect.core.TestClock
 import br.com.sportconnect.core.data.fake.DemoData
 import br.com.sportconnect.core.data.fake.FakeArenaRepository
@@ -300,5 +301,38 @@ class FeatureViewModelsTest {
         s = assertIs(vm.uiState.value)
         assertFalse(s.canRate)
         assertFalse(assertIs<GameDetailUiState.Content>(env.detail(DemoData.JOGO_RACHA).also { runCurrent() }.uiState.value).canRate)
+    }
+
+    // ------------------------------------------------------------------ T3 jogos com vaga
+
+    @Test
+    fun jogos_com_vaga_mostram_so_os_de_outras_pessoas_e_filtram_por_esporte() = runTest {
+        val env = setUp()
+        val vm = br.com.sportconnect.feature.common.OpenGamesViewModel(
+            br.com.sportconnect.core.domain.usecase.GetOpenGamesUseCase(env.games, env.clock), env.auth, env.clock,
+        )
+        backgroundScope.launch { vm.games.collect { } }
+        runCurrent()
+        val uid = env.auth.currentUser.value!!.id
+        val todos = vm.games.value
+        assertTrue(todos.isNotEmpty())
+        assertTrue(todos.none { it.organizadorId == uid || it.participa(uid) })
+        assertTrue(todos.all { it.visibilidade == br.com.sportconnect.core.model.Visibilidade.VAGAS_ABERTAS && it.vagasRestantes > 0 })
+        vm.setSport(Sport.BASQUETE)
+        runCurrent()
+        assertTrue(vm.games.value.isNotEmpty() && vm.games.value.all { it.esporte == Sport.BASQUETE })
+    }
+
+    @Test
+    fun criar_jogo_com_vagas_abertas_fica_visivel_para_avulsos() = runTest {
+        val env = setUp()
+        val vm = env.create(env.freeSlot("q-vm-society1", minHours = 24).id)
+        runCurrent()
+        vm.next(); vm.next(); vm.next()
+        vm.setOpenSpots(true)
+        vm.next()
+        runCurrent()
+        val ev = assertIs<CreateGameEvent.GoToPay>(vm.events.first())
+        assertEquals(br.com.sportconnect.core.model.Visibilidade.VAGAS_ABERTAS, env.games.game(ev.gameId)!!.visibilidade)
     }
 }

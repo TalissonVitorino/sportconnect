@@ -1,5 +1,6 @@
 package br.com.sportconnect.di
 
+import br.com.sportconnect.feature.common.OpenGamesViewModel
 import br.com.sportconnect.feature.common.ReminderSync
 import br.com.sportconnect.core.platform.platformModule
 import br.com.sportconnect.feature.account.DeleteAccountViewModel
@@ -54,6 +55,7 @@ val featureModule = module {
     viewModelOf(::OnboardingViewModel)
     viewModelOf(::AuthViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::OpenGamesViewModel)
     viewModelOf(::GameDetailViewModel)
     viewModelOf(::PaymentViewModel)
     viewModelOf(::CreateGameViewModel)

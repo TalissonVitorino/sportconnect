@@ -75,7 +75,7 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 |---|---|---|---|---|---|
 | T1 | ✅ P1 | P | **Máscara do celular** mostra "(11) 9 8765-4321" (espaço a mais); padrão do 07: "(11) 98765-4321". | `PhoneMask` / `SCTextField` | Aparece no login, na edição de perfil e na exclusão de conta. |
 | T2 | ✅ P1 | P | **Campo de cidade** do onboarding marcado como multilinha (Enter quebra linha) → linha única com ação "Buscar"; chip de data mostra "hoje" em minúscula → "Hoje". | onboarding, explore | Detalhes vistos na web. |
-| T3 | P1 | M | **Jogos com vaga** (US-100/101, textos já no 07): seção na Home (`home_section_open_games`, `empty_open_games_*`) e aba "Jogos com vaga" na busca; ao criar jogo, opção "Abrir vagas para avulsos". | home, explore, create | Os jogos com `VAGAS_ABERTAS` da demo não aparecem em lugar nenhum; no expandido a Home fica vazia. |
+| T3 | ✅ P1 | M | **Jogos com vaga** (US-100/101, textos já no 07): seção na Home (`home_section_open_games`, `empty_open_games_*`) e aba "Jogos com vaga" na busca; ao criar jogo, opção "Abrir vagas para avulsos". | home, explore, create | Os jogos com `VAGAS_ABERTAS` da demo não aparecem em lugar nenhum; no expandido a Home fica vazia. |
 | T4 | P1 | P | **Busca no expandido**: título desalinhado do conteúdo e cards com imagem enorme (cabem 2 por tela) → imagem com altura máxima e título na mesma margem. | `ExploreScreen`, `SCCourtCard` | Visto na web a 1280 px. |
 | T5 | P1 | P | **Fotos da arena nos cards da busca**: quando a arena tem fotos (E9), o card usa a primeira no lugar do desenho. | `SCCourtCard` | Fecha o ciclo do E9. |
 | T6 | P2 | P | **Reembolso que falhou** (`error_refund_failed_*`): estado no comprovante com ação de ajuda. | `ReceiptScreen` | Estado previsto no 07 §4 sem tela. |
@@ -126,3 +126,4 @@ provedor com chave — Google Map Tiles API, MapTiler ou Stadia (passo a passo n
 - **T1** ✅ Máscara do celular `(##) #####-####` (07): login, edição de perfil e exclusão de conta. Teste em `PhoneMaskTest`.
 - **T2** ✅ "Hoje"/"Amanhã" com maiúscula no chip de data, no menu de datas e nos títulos dos avisos (`relativeDayLabel`); em frases continua "hoje". O "multiline" do campo de cidade era falso alarme: o campo já é de linha única, e a web do Compose expõe todo campo como multilinha.
 - **T10** ✅ Visitante vê "E aí!" (`home_greeting_guest`).
+- **T3** ✅ Jogos com vaga: `OpenGamesViewModel` (só jogos de outras pessoas), seção "Jogos com vaga perto de você" na Home (inclusive no estado vazio), aba "Jogos com vaga" na busca com filtro de esporte, e "Abrir vagas pra quem quiser jogar" na revisão do criar jogo. Verificado no Android até a tela de pagamento.
