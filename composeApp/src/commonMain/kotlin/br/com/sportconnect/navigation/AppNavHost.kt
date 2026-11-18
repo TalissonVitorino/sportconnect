@@ -1,5 +1,34 @@
+@file:OptIn(androidx.compose.animation.ExperimentalSharedTransitionApi::class, androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package br.com.sportconnect.navigation
 
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.channels.Channel
+import androidx.navigation.NavController
+import br.com.sportconnect.feature.common.ReminderSync
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.layout.Column
+import br.com.sportconnect.feature.common.OfflineBanner
+import br.com.sportconnect.feature.common.LocalOnline
+import br.com.sportconnect.core.domain.repository.GameRepository
+import br.com.sportconnect.core.platform.ConnectivityMonitor
+import br.com.sportconnect.resources.error_upload_failed_title
+import br.com.sportconnect.resources.error_upload_failed_body
+import br.com.sportconnect.feature.common.ProfilePhotoHost
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ModalBottomSheet
+import androidx.lifecycle.Lifecycle
+import br.com.sportconnect.core.designsystem.component.LocalSCNavAnimatedScope
+import br.com.sportconnect.core.designsystem.component.LocalSCSharedTransitionScope
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,6 +45,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,6 +61,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavUri
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -42,6 +73,7 @@ import br.com.sportconnect.core.designsystem.component.SCNavItem
 import br.com.sportconnect.core.designsystem.component.SCSnackbarHost
 import br.com.sportconnect.core.designsystem.component.SCSnackbarKind
 import br.com.sportconnect.core.designsystem.component.showSC
+import br.com.sportconnect.core.designsystem.theme.LocalSCReducedMotion
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
 import br.com.sportconnect.core.domain.repository.AuthRepository
 import br.com.sportconnect.core.domain.usecase.GetMyGamesUseCase
@@ -50,7 +82,15 @@ import br.com.sportconnect.feature.arena.ArenaDetailActions
 import br.com.sportconnect.feature.arena.ArenaDetailRoute
 import br.com.sportconnect.feature.arenaadmin.ArenaAdminRoute
 import br.com.sportconnect.feature.arenaadmin.arenaAdminGraph
+import br.com.sportconnect.feature.account.DeleteAccountRoute
+import br.com.sportconnect.feature.account.EditProfileRoute
+import br.com.sportconnect.feature.account.PrivacyRoute
+import br.com.sportconnect.feature.account.SavedCardsRoute
+import br.com.sportconnect.feature.account.SportsRoute
+import br.com.sportconnect.feature.account.SupportScreen
 import br.com.sportconnect.feature.auth.AuthRoute
+import br.com.sportconnect.feature.auth.LegalDoc
+import br.com.sportconnect.feature.auth.LegalScreen
 import br.com.sportconnect.feature.common.UiSessionStore
 import br.com.sportconnect.feature.creategame.CreateGameActions
 import br.com.sportconnect.feature.creategame.CreateGameRoute
@@ -121,7 +161,9 @@ private fun NavDestination.athleteTab(): AthleteTab? = when {
     hasRoute<Route.Home>() || hasRoute<Route.Notifications>() -> AthleteTab.Home
     hasRoute<Route.MyGames>() || hasRoute<Route.GameDetail>() -> AthleteTab.Games
     hasRoute<Route.Explore>() || hasRoute<Route.ArenaDetail>() || hasRoute<Route.SlotPicker>() -> AthleteTab.Search
-    hasRoute<Route.Profile>() || hasRoute<Route.ProfilePayments>() || hasRoute<Route.Receipt>() -> AthleteTab.Profile
+    hasRoute<Route.Profile>() || hasRoute<Route.ProfilePayments>() || hasRoute<Route.Receipt>() ||
+        hasRoute<Route.ProfilePrivacy>() || hasRoute<Route.ProfileSports>() ||
+        hasRoute<Route.SavedCards>() || hasRoute<Route.Support>() -> AthleteTab.Profile
     else -> null
 }
 
@@ -134,9 +176,21 @@ private fun NavDestination.athleteTab(): AthleteTab? = when {
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     startDestination: Any? = null,
+    /** Web (W1): liga o historico do navegador ao NavController. */
+    onNavHostReady: suspend (NavController) -> Unit = {},
 ) {
     val session: UiSessionStore = koinInject()
-    val start = remember { startDestination ?: if (session.onboardingDone.value) Route.Home else Route.Onboarding }
+    val startAuth: AuthRepository = koinInject()
+    // B3: com sessao de arena, abre no Painel. Na Home de atleta a barra fica oculta para gestores e a pessoa
+    // ficava presa sem navegacao.
+    val start = remember {
+        startDestination ?: when {
+            !session.onboardingDone.value -> Route.Onboarding
+            startAuth.currentUser.value?.papeis?.any { it == PapelUsuario.GESTOR_ARENA || it == PapelUsuario.OPERADOR_ARENA } == true ->
+                ArenaAdminRoute.Dashboard
+            else -> Route.Home
+        }
+    }
     val shell: ShellViewModel = koinViewModel()
     val shellState by shell.state.collectAsStateWithLifecycle()
     val backStack by navController.currentBackStackEntryAsState()
@@ -145,6 +199,29 @@ fun AppNavHost(
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val nav = remember(navController) { AppNavigator(navController) }
+    // Links externos (convite, jogo, arena) com o app ja aberto ou vindos do iOS.
+    // So limpa o listener se ainda for o desta casca: num link a frio o Android recria a Activity e a casca
+    // antiga e descartada depois da nova ja ter se registrado.
+    // W1: o link pode chegar antes de o NavHost ter grafo (abertura a frio na web); entra numa fila e so
+    // navega depois que existe a primeira tela.
+    val links = remember(navController) { Channel<String>(Channel.UNLIMITED) }
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.first()
+        for (uri in links) {
+            runCatching { navController.navigate(NavUri(uri)) }.onFailure { println("Link nao aberto: $uri -> $it") }
+        }
+    }
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.first()
+        onNavHostReady(navController)
+    }
+    DisposableEffect(navController) {
+        val listener: (String) -> Unit = { uri -> links.trySend(uri) }
+        ExternalUriHandler.listener = listener
+        onDispose { if (ExternalUriHandler.listener === listener) ExternalUriHandler.listener = null }
+    }
+    val reducedMotion = LocalSCReducedMotion.current
+    val transitions = remember(reducedMotion) { NavTransitions(reducedMotion) }
 
     val gamesLabel = stringResource(Res.string.nav_games)
     val items = listOf(
@@ -171,7 +248,43 @@ fun AppNavHost(
     }
 
     val profileVm: ProfileViewModel = koinViewModel()
+    val authRepo: AuthRepository = koinInject()
 
+    // Login so quando precisa (09 ficha 1): visitante explora a vontade; criar jogo e pagar pedem o celular
+    // e, depois do codigo, a pessoa volta exatamente para onde ia (09 §2.5).
+    // B9: o login pedido no meio de um fluxo abre como sheet sobre a tela atual (09 ficha 2), sem perder o
+    // contexto (o convite/arena continua atras). Depois do codigo segue para onde a pessoa ia.
+    var pendingLogin by remember { mutableStateOf<AfterLogin?>(null) }
+    var loginSheetNonce by remember { mutableStateOf(0) }
+    fun requireLogin(next: AfterLogin) {
+        loginSheetNonce++
+        pendingLogin = next
+    }
+
+    fun goCreate(slotId: String? = null) {
+        if (authRepo.currentUser.value == null) requireLogin(AfterLogin.Create(slotId)) else nav.go(Route.GameCreate(slotId))
+    }
+
+    fun goPay(gameId: String, afterCreate: Boolean = false, substituicaoCotaId: String? = null) {
+        if (authRepo.currentUser.value == null) requireLogin(AfterLogin.Pay(gameId)) else nav.go(Route.GamePay(gameId, afterCreate, substituicaoCotaId))
+    }
+
+    val photoErrorMsg = stringResource(Res.string.error_upload_failed_title) + ". " + stringResource(Res.string.error_upload_failed_body)
+    // E7: conexao. Ao voltar, sincroniza os dados (o que mudou enquanto estava offline).
+    val connectivity: ConnectivityMonitor = koinInject()
+    val online by connectivity.online.collectAsStateWithLifecycle()
+    val gamesRepo: GameRepository = koinInject()
+    LaunchedEffect(online) { if (online) runCatching { gamesRepo.sincronizar() } }
+    // E8: lembretes locais acompanham os jogos enquanto o app esta aberto (e reagendam a cada abertura).
+    val reminders: ReminderSync = koinInject()
+    LaunchedEffect(reminders) { reminders.run() }
+    CompositionLocalProvider(LocalOnline provides online) {
+    Column(Modifier.fillMaxSize()) {
+    var bannerVisible by remember { mutableStateOf(false) }
+    OfflineBanner(online, onVisibleChange = { bannerVisible = it })
+    // Com o banner visivel ele ja ocupa a status bar: as telas abaixo nao descontam de novo.
+    Box(Modifier.weight(1f).then(if (bannerVisible) Modifier.consumeWindowInsets(WindowInsets.statusBars) else Modifier)) {
+    ProfilePhotoHost(onError = { scope.launch { snackbar.showSC(photoErrorMsg, SCSnackbarKind.Error) } }) {
     SCAdaptiveNavigation(
         items = items,
         selectedRoute = tab?.key.orEmpty(),
@@ -185,7 +298,7 @@ fun AppNavHost(
         },
         header = {
             FloatingActionButton(
-                onClick = { nav.go(Route.GameCreate()) },
+                onClick = { goCreate() },
                 containerColor = SportConnectTheme.colors.primaryContainer,
                 contentColor = SportConnectTheme.colors.onPrimaryContainer,
                 modifier = Modifier.testTag("nav_fab_create_game"),
@@ -195,7 +308,17 @@ fun AppNavHost(
         drawerBreakpoint = Dp.Infinity,
     ) { contentModifier ->
         Box(contentModifier.fillMaxSize()) {
-            NavHost(navController = navController, startDestination = start, modifier = Modifier.fillMaxSize()) {
+            SharedTransitionLayout {
+            CompositionLocalProvider(LocalSCSharedTransitionScope provides this) {
+            NavHost(
+                navController = navController,
+                startDestination = start,
+                modifier = Modifier.fillMaxSize(),
+                enterTransition = transitions.enter,
+                exitTransition = transitions.exit,
+                popEnterTransition = transitions.popEnter,
+                popExitTransition = transitions.popExit,
+            ) {
                 composable<Route.Onboarding> {
                     OnboardingRoute(
                         OnboardingActions(
@@ -210,24 +333,35 @@ fun AppNavHost(
                         onClose = { if (!navController.popBackStack()) nav.resetTo(Route.Home) },
                         onDone = {
                             val pay = r.payGameId
-                            if (pay != null) nav.replace(Route.GamePay(pay)) else nav.resetTo(Route.Home)
+                            when {
+                                pay != null -> nav.replace(Route.GamePay(pay))
+                                r.createGame -> nav.replace(Route.GameCreate(r.slotId))
+                                else -> nav.resetTo(Route.Home)
+                            }
                         },
+                        onOpenLegal = { nav.go(Route.Legal(it.name)) },
                     )
                 }
+                composable<Route.Legal> { entry ->
+                    val doc = LegalDoc.entries.firstOrNull { it.name == entry.toRoute<Route.Legal>().doc } ?: LegalDoc.Terms
+                    LegalScreen(doc, onBack = nav::back)
+                }
                 composable<Route.Home> {
+                    CompositionLocalProvider(LocalSCNavAnimatedScope provides this) {
                     HomeRoute(
                         HomeActions(
                             openGame = { nav.go(Route.GameDetail(it)) },
-                            pay = { id, afterCreate -> nav.go(Route.GamePay(id, afterCreate)) },
+                            pay = { id, afterCreate -> goPay(id, afterCreate) },
                             resolve = { nav.go(Route.GameResolve(it)) },
-                            createGame = { nav.go(Route.GameCreate()) },
+                            createGame = { goCreate() },
                             findCourt = { nav.openTab(Route.Explore) },
                             notifications = { nav.go(Route.Notifications) },
                         ),
                     )
+                    }
                 }
                 composable<Route.Explore> {
-                    ExploreRoute(ExploreActions(openArena = { nav.go(Route.ArenaDetail(it)) }, pickSlot = { nav.go(Route.GameCreate(it)) }))
+                    ExploreRoute(ExploreActions(openArena = { nav.go(Route.ArenaDetail(it)) }, pickSlot = { goCreate(it) }, openGame = { nav.go(Route.GameDetail(it)) }))
                 }
                 composable<Route.ArenaDetail>(
                     deepLinks = listOf(navDeepLink<Route.ArenaDetail>(basePath = "https://sportconnect.app/a")),
@@ -237,12 +371,12 @@ fun AppNavHost(
                         ArenaDetailActions(
                             back = nav::back,
                             openSlots = { court, date -> nav.go(Route.SlotPicker(court, date)) },
-                            createGame = { nav.go(Route.GameCreate(it)) },
+                            createGame = { goCreate(it) },
                         ),
                     )
                 }
                 composable<Route.SlotPicker> { entry ->
-                    SlotPickerRoute(entry.toRoute(), onBack = nav::back, onContinue = { nav.go(Route.GameCreate(it)) })
+                    SlotPickerRoute(entry.toRoute(), onBack = nav::back, onContinue = { goCreate(it) })
                 }
                 composable<Route.GameCreate> { entry ->
                     CreateGameRoute(
@@ -251,22 +385,26 @@ fun AppNavHost(
                             close = nav::back,
                             pickSlot = { nav.openTab(Route.Explore) },
                             goToPay = { id -> nav.replace(Route.GamePay(id, afterCreate = true)) },
+                            login = { requireLogin(AfterLogin.Create(null)) },
                         ),
                     )
                 }
                 composable<Route.GameDetail>(
                     deepLinks = listOf(navDeepLink<Route.GameDetail>(basePath = "https://sportconnect.app/g")),
                 ) { entry ->
+                    CompositionLocalProvider(LocalSCNavAnimatedScope provides this) {
                     GameDetailRoute(
                         entry.toRoute(),
                         GameDetailActions(
                             back = { if (!navController.popBackStack()) nav.resetTo(Route.Home) },
-                            pay = { nav.go(Route.GamePay(it)) },
+                            pay = { goPay(it) },
                             invite = { nav.go(Route.GameInvite(it)) },
                             resolve = { nav.go(Route.GameResolve(it)) },
                             receipt = { nav.go(Route.Receipt(it)) },
+                            claimSpot = { id, cotaId -> goPay(id, substituicaoCotaId = cotaId) },
                         ),
                     )
+                    }
                 }
                 composable<Route.GameInvite> { entry ->
                     OrganizerInviteRoute(
@@ -282,6 +420,7 @@ fun AppNavHost(
                             seeGame = { nav.replace(Route.GameDetail(it)) },
                             invite = { nav.replace(Route.GameInvite(it)) },
                             receipt = { nav.go(Route.Receipt(it)) },
+                            login = { requireLogin(AfterLogin.Pay(it)) },
                         ),
                     )
                 }
@@ -294,21 +433,23 @@ fun AppNavHost(
                     GuestInviteRoute(
                         entry.toRoute(),
                         GuestInviteActions(
-                            pay = { nav.go(Route.GamePay(it)) },
-                            login = { nav.go(Route.Auth(payGameId = it)) },
+                            pay = { goPay(it) },
+                            login = { requireLogin(AfterLogin.Pay(it)) },
                             seeGame = { nav.replace(Route.GameDetail(it)) },
                             close = { nav.resetTo(Route.Home) },
                         ),
                     )
                 }
                 composable<Route.MyGames> {
+                    CompositionLocalProvider(LocalSCNavAnimatedScope provides this) {
                     MyGamesRoute(
                         MyGamesActions(
                             openGame = { nav.go(Route.GameDetail(it)) },
-                            createGame = { nav.go(Route.GameCreate()) },
+                            createGame = { goCreate() },
                             repeat = { nav.go(Route.ArenaDetail(it.arenaId)) },
                         ),
                     )
+                    }
                 }
                 composable<Route.Profile> {
                     ProfileRoute(
@@ -318,25 +459,90 @@ fun AppNavHost(
                             notifications = { nav.go(Route.Notifications) },
                             switchMode = ::switchMode,
                             loggedOut = { nav.resetTo(Route.Auth()) },
+                            signIn = { nav.go(Route.Auth()) },
+                            editProfile = { nav.go(Route.ProfileEdit) },
+                            sports = { nav.go(Route.ProfileSports) },
+                            savedCards = { nav.go(Route.SavedCards) },
+                            privacy = { nav.go(Route.ProfilePrivacy) },
+                            support = { nav.go(Route.Support) },
                         ),
                         vm = profileVm,
                     )
                 }
+                composable<Route.ProfilePrivacy> {
+                    PrivacyRoute(
+                        onBack = nav::back,
+                        onOpenLegal = { nav.go(Route.Legal(it.name)) },
+                        onDeleteAccount = { nav.go(Route.DeleteAccount) },
+                    )
+                }
+                composable<Route.DeleteAccount> {
+                    // Conta excluida: volta para a Home como visitante (pilha limpa).
+                    DeleteAccountRoute(onBack = nav::back, onFinished = { nav.resetTo(Route.Home) })
+                }
+                composable<Route.ProfileEdit> { EditProfileRoute(onBack = nav::back) }
+                composable<Route.ProfileSports> { SportsRoute(onBack = nav::back) }
+                composable<Route.SavedCards> { SavedCardsRoute(onBack = nav::back) }
+                composable<Route.Support> { SupportScreen(onBack = nav::back) }
                 composable<Route.ProfilePayments> { PaymentsRoute(onBack = nav::back, onReceipt = { nav.go(Route.Receipt(it)) }) }
-                composable<Route.Receipt> { entry -> ReceiptRoute(entry.toRoute(), onBack = nav::back) }
+                composable<Route.Receipt> { entry -> ReceiptRoute(entry.toRoute(), onBack = nav::back, onHelp = { nav.go(Route.Support) }) }
                 composable<Route.Notifications> { NotificationsRoute(onBack = nav::back, onOpenGame = { nav.go(Route.GameDetail(it)) }) }
 
                 // Modo "Minha Arena" (feature/arenaadmin). "Perfil" da arena abre o Perfil, que tem o seletor de modo.
                 arenaAdminGraph(navController, onExitArenaMode = { nav.go(Route.Profile) })
             }
+            }
+            }
             SCSnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(bottom = 88.dp))
         }
     }
+
+    pendingLogin?.let { target ->
+        ModalBottomSheet(
+            onDismissRequest = { pendingLogin = null },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            containerColor = SportConnectTheme.colors.surface,
+            modifier = Modifier.testTag("auth_sheet"),
+        ) {
+            Box(Modifier.fillMaxWidth().fillMaxHeight(0.92f)) {
+                AuthRoute(
+                    onClose = { pendingLogin = null },
+                    onDone = {
+                        pendingLogin = null
+                        when (target) {
+                            is AfterLogin.Pay -> nav.go(Route.GamePay(target.gameId))
+                            is AfterLogin.Create -> nav.go(Route.GameCreate(target.slotId))
+                        }
+                    },
+                    onOpenLegal = { pendingLogin = null; nav.go(Route.Legal(it.name)) },
+                    // Chave nova a cada abertura: o ViewModel anterior ja terminou (done = true).
+                    vm = koinViewModel(key = "auth-sheet-$loginSheetNonce"),
+                )
+            }
+        }
+    }
+    }
+    }
+    }
+    }
+}
+
+/** Para onde seguir depois do login pedido no meio de um fluxo (09 §2.5). */
+private sealed interface AfterLogin {
+    data class Pay(val gameId: String) : AfterLogin
+    data class Create(val slotId: String?) : AfterLogin
 }
 
 /** Acoes de navegacao (encapsula o NavHostController; facilita previews/testes). */
 class AppNavigator(private val nc: NavHostController) {
-    fun go(route: Any) = nc.navigate(route) { launchSingleTop = true }
+    /**
+     * A11: ignora o toque enquanto a tela atual nao esta RESUMED (ex.: durante a transicao). Evita abrir a
+     * mesma tela duas vezes com toque duplo, mesmo com argumentos diferentes (launchSingleTop nao cobre).
+     */
+    fun go(route: Any) {
+        if (nc.currentBackStackEntry?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) == false) return
+        nc.navigate(route) { launchSingleTop = true }
+    }
 
     fun back() {
         if (!nc.popBackStack()) resetTo(Route.Home)

@@ -1,5 +1,12 @@
 package br.com.sportconnect.di
 
+import br.com.sportconnect.feature.common.OpenGamesViewModel
+import br.com.sportconnect.feature.common.ReminderSync
+import br.com.sportconnect.core.platform.platformModule
+import br.com.sportconnect.feature.account.DeleteAccountViewModel
+import br.com.sportconnect.feature.account.EditProfileViewModel
+import br.com.sportconnect.feature.account.PrivacyViewModel
+import br.com.sportconnect.feature.account.SportsViewModel
 import br.com.sportconnect.core.domain.usecase.AvisosLidosStore
 import br.com.sportconnect.core.domain.usecase.GetMyPaymentsUseCase
 import br.com.sportconnect.core.domain.usecase.GetNotificationsUseCase
@@ -38,7 +45,8 @@ import org.koin.mp.KoinPlatform
  * (`koinViewModel { parametersOf(route) }`): cada rota e um tipo distinto, entao o Koin resolve sem ambiguidade.
  */
 val featureModule = module {
-    singleOf(::UiSessionStore)
+    single { UiSessionStore(get()) }
+    single { ReminderSync(get(), get(), get(), get(), get()) }
     singleOf(::AvisosLidosStore)
     factoryOf(::GetNotificationsUseCase)
     factoryOf(::GetMyPaymentsUseCase)
@@ -47,6 +55,7 @@ val featureModule = module {
     viewModelOf(::OnboardingViewModel)
     viewModelOf(::AuthViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::OpenGamesViewModel)
     viewModelOf(::GameDetailViewModel)
     viewModelOf(::PaymentViewModel)
     viewModelOf(::CreateGameViewModel)
@@ -61,10 +70,14 @@ val featureModule = module {
     viewModelOf(::PaymentsViewModel)
     viewModelOf(::ReceiptViewModel)
     viewModelOf(::NotificationsViewModel)
+    viewModelOf(::PrivacyViewModel)
+    viewModelOf(::DeleteAccountViewModel)
+    viewModelOf(::EditProfileViewModel)
+    viewModelOf(::SportsViewModel)
 }
 
 /** Modo Atleta/Organizador ([featureModule]) + modo Minha Arena ([arenaAdminModule], feature/arenaadmin). */
-val appModules = listOf(dataModule, domainModule, featureModule, arenaAdminModule)
+val appModules = listOf(settingsModule, platformModule, dataModule, domainModule, featureModule, arenaAdminModule)
 
 /**
  * Inicia o Koin uma unica vez (idempotente). Chamado pelos entry points de cada plataforma.

@@ -10,6 +10,7 @@ import br.com.sportconnect.core.domain.PayoutCalculator
 import br.com.sportconnect.core.domain.usecase.ArenaDashboardUseCase
 import br.com.sportconnect.feature.arenaadmin.courts.ArenaCourtStore
 import br.com.sportconnect.feature.arenaadmin.dashboard.ArenaDashboardViewModel
+import br.com.sportconnect.feature.arenaadmin.onboarding.ArenaOnboardingViewModel
 import br.com.sportconnect.feature.arenaadmin.schedule.ArenaScheduleViewModel
 import kotlin.time.Instant
 
@@ -27,6 +28,7 @@ class ArenaTestEnv(now: Instant = QUINTA_19H32) {
 
     fun dashboardVm() = ArenaDashboardViewModel(dashboardUseCase, arenas, games, auth, payout, store, analytics, clock)
     fun scheduleVm() = ArenaScheduleViewModel(dashboardUseCase, arenas, auth, payout, analytics, clock)
+    fun onboardingVm() = ArenaOnboardingViewModel(auth, arenas)
 
     suspend fun loginGestor() {
         auth.entrarComo(DemoData.ID_GESTOR).getOrThrow()

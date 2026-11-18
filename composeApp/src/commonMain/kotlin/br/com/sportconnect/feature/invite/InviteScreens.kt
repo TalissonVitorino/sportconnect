@@ -2,6 +2,9 @@
 
 package br.com.sportconnect.feature.invite
 
+import br.com.sportconnect.core.platform.rememberNativeShare
+import br.com.sportconnect.feature.common.LocalOnline
+import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -182,6 +185,7 @@ fun OrganizerInviteScreen(
 ) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
+    val nativeShare = rememberNativeShare()
     val share = rememberShareActions()
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -222,8 +226,11 @@ fun OrganizerInviteScreen(
                                 stringResource(Res.string.invite_share_other),
                                 {
                                     onShared("nativo")
-                                    share.copy(message)
-                                    scope.launch { snackbar.showSC(getString(Res.string.invite_link_copied), SCSnackbarKind.Success) }
+                                    // X1: folha nativa; sem ela (desktop), copia a mensagem e avisa.
+                                    if (!nativeShare(message)) {
+                                        share.copy(message)
+                                        scope.launch { snackbar.showSC(getString(Res.string.invite_link_copied), SCSnackbarKind.Success) }
+                                    }
                                 },
                                 variant = SCButtonVariant.Secondary,
                                 leadingIcon = Icons.Rounded.Share,
@@ -450,7 +457,7 @@ private fun GuestHero(state: GuestInviteUiState.Content, share: br.com.sportconn
             .testTag("guest_hero"),
     ) {
         if (state.firstOpen) {
-            CourtLinesBackdrop(c.outlineVariant, Modifier.matchParentSize().testTag("guest_hero_court_lines"), lineYFraction = 0.3f)
+            CourtLinesBackdrop(c.outlineVariant, Modifier.matchParentSize().testTag("guest_hero_court_lines"), lineYFraction = 0.55f)
         }
         Column(Modifier.padding(horizontal = 16.dp, vertical = 24.dp)) {
             if (state.firstOpen) {
@@ -592,7 +599,7 @@ private fun RuleInfo(j: Jogo, onSeeRules: () -> Unit) {
     )
     Spacer(Modifier.height(8.dp))
     Text(stringResource(Res.string.guest_leave_policy), style = t.bodyMedium, color = c.onSurfaceVariant)
-    SCButton(stringResource(Res.string.guest_see_rules), onSeeRules, variant = SCButtonVariant.Text, size = SCButtonSize.Small, modifier = Modifier.testTag("guest_see_rules"))
+    SCButton(stringResource(Res.string.guest_see_rules), onSeeRules, variant = SCButtonVariant.Text, size = SCButtonSize.Small, modifier = Modifier.scAlignTextButtonStart().testTag("guest_see_rules"))
 }
 
 @Composable
@@ -625,6 +632,7 @@ private fun GuestFooter(
                 { if (state.loggedIn) actions.pay(j.id) else actions.login(j.id) },
                 size = SCButtonSize.Large,
                 fullWidth = true,
+                enabled = LocalOnline.current,
                 modifier = Modifier.testTag("guest_cta_pay"),
             )
             SCButton(

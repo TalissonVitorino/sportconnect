@@ -1,5 +1,6 @@
 package br.com.sportconnect.core.designsystem.component
 
+import br.com.sportconnect.core.designsystem.a11y.webCheckedLabel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -102,6 +103,7 @@ fun SCSportChip(
                 .clip(SCShape.chip)
                 .background(container)
                 .then(borderMod)
+                .then(if (interactive) Modifier.webCheckedLabel(label, selected) else Modifier)
                 .then(
                     if (interactive) {
                         Modifier.toggleable(

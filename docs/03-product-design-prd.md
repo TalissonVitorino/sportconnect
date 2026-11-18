@@ -1365,7 +1365,7 @@ classDiagram
 | Cartão com tokenização, 3DS e **pré-autorização/captura parcial** | Cotas por cartão; garantia da política A | Sim (P1 para cotas) |
 | Webhooks assinados + API de consulta | Idempotência e reconciliação | Sim |
 
-Candidatos: **Asaas**, **Pagar.me**, **Mercado Pago** (avaliação técnica e comercial em ADR separado — Q-02). Arquitetura com **porta/adaptador** (`PaymentGateway`) para permitir troca.
+Candidatos avaliados: **Asaas**, **Pagar.me**, **Mercado Pago**. **Decisão (Q-02): Asaas** — avaliação técnica e comercial completa, com trade-offs e lacunas pendentes de verificação empírica, no [ADR — 17](17-adr-gateway-pagamento.md). Arquitetura com **porta/adaptador** (`PaymentGateway`) para permitir troca.
 
 ### 12.2 WhatsApp
 - **MVP:** compartilhamento via deep link `https://wa.me/?text=` / intent nativa com mensagem pré-preenchida; meta tags Open Graph para pré-visualização do link.
@@ -1453,8 +1453,8 @@ Jogo de futebol society: V = R$ 240,00, 12 cotas, todas via Pix, arena no plano 
 
 | ID | Questão | Responsável | Bloqueante? |
 |---|---|---|---|
-| Q-01 | O gateway exige CPF do pagador em Pix/cartão? Se sim, coletar no checkout do convidado (impacto na conversão). | Engenharia + Jurídico | **Sim** |
-| Q-02 | Escolha do gateway (Asaas × Pagar.me × Mercado Pago): pré-autorização com captura parcial, liberação programada no split, custos de Pix e estorno. | Engenharia + Financeiro | **Sim** |
+| Q-01 | O gateway exige CPF do pagador em Pix/cartão? Se sim, coletar no checkout do convidado (impacto na conversão). | Engenharia + Jurídico | ⚠️ Decisão técnica tomada — não é regra do BCB/Pix, é política do gateway; no Asaas escolhido, CPF é obrigatório (sem pagador "convidado" anônimo). Pendente ok de Jurídico sobre a base regulatória antes de fechar ([ADR — 17](17-adr-gateway-pagamento.md#resposta-à-q-01--cpf-obrigatório-é-regra-do-banco-central-ou-política-do-gateway)). |
+| Q-02 | Escolha do gateway (Asaas × Pagar.me × Mercado Pago): pré-autorização com captura parcial, liberação programada no split, custos de Pix e estorno. | Engenharia + Financeiro | ✅ Resolvida: **Asaas**, pela Conta Escrow (custódia self-service do split até a data do jogo) — ver trade-offs e lacunas de verificação empírica no [ADR — 17](17-adr-gateway-pagamento.md). |
 | Q-03 | A taxa de conveniência retida na saída voluntária (RN-21) é aceitável sob o CDC? Redação dos termos. | Jurídico | **Sim** |
 | Q-04 | Repasse D+1 para cartão: plataforma antecipa ou a arena espera a liquidação do cartão? | Financeiro | Não |
 | Q-05 | Tamanho da reserva técnica para chargebacks e política de absorção. | Financeiro | Não |

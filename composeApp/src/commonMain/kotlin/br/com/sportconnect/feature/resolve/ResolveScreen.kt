@@ -2,6 +2,7 @@
 
 package br.com.sportconnect.feature.resolve
 
+import br.com.sportconnect.feature.common.LocalOnline
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -196,6 +197,7 @@ fun ResolveScreen(
                             size = SCButtonSize.Large,
                             fullWidth = true,
                             loading = state.paying,
+                            enabled = LocalOnline.current,
                             modifier = Modifier.testTag("resolve_pay_cover"),
                         )
                     }

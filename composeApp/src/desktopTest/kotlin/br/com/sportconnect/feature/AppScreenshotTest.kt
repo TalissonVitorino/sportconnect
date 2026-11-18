@@ -142,6 +142,56 @@ class AppScreenshotTest {
     }
 
     @Test
+    fun auth() {
+        compact("app-auth-phone-compact-light.png", height = 800) {
+            br.com.sportconnect.feature.auth.AuthScreen(br.com.sportconnect.feature.auth.AuthUiState(phone = "11987654321"))
+        }
+        compact("app-auth-social-compact-light.png", height = 900) {
+            br.com.sportconnect.feature.auth.AuthScreen(
+                br.com.sportconnect.feature.auth.AuthUiState(phone = "11987654321"),
+                socialProviders = setOf(br.com.sportconnect.core.platform.SocialProvider.GOOGLE, br.com.sportconnect.core.platform.SocialProvider.APPLE),
+            )
+        }
+        compact("app-auth-code-error-compact-light.png", height = 800) {
+            br.com.sportconnect.feature.auth.AuthScreen(
+                br.com.sportconnect.feature.auth.AuthUiState(
+                    step = br.com.sportconnect.feature.auth.AuthStep.Code,
+                    phone = "11987654321",
+                    resendIn = 21,
+                    error = br.com.sportconnect.feature.auth.AuthError.CodeExpired,
+                ),
+            )
+        }
+        compact("app-auth-name-compact-light.png", height = 800) {
+            br.com.sportconnect.feature.auth.AuthScreen(
+                br.com.sportconnect.feature.auth.AuthUiState(step = br.com.sportconnect.feature.auth.AuthStep.Name, name = "Talisson"),
+            )
+        }
+    }
+
+    @Test
+    fun account() {
+        asOrganizer()
+        compact("app-profile-compact-light.png", height = 1000) { AppNavHost(startDestination = Route.Profile) }
+        compact("app-privacy-compact-light.png") { AppNavHost(startDestination = Route.ProfilePrivacy) }
+        compact("app-delete-account-compact-light.png") { AppNavHost(startDestination = Route.DeleteAccount) }
+        compact("app-profile-edit-compact-light.png") { AppNavHost(startDestination = Route.ProfileEdit) }
+        compact("app-sports-compact-light.png") { AppNavHost(startDestination = Route.ProfileSports) }
+        compact("app-support-compact-light.png") { AppNavHost(startDestination = Route.Support) }
+        compact("app-saved-cards-compact-light.png", height = 800) { AppNavHost(startDestination = Route.SavedCards) }
+    }
+
+    @Test
+    fun refund() {
+        asOrganizer()
+        val payments = runBlocking { koin.get<br.com.sportconnect.core.domain.usecase.GetMyPaymentsUseCase>()().first() }
+        val p = payments.first()
+        compact("app-receipt-refund-compact-light.png", height = 1100) {
+            br.com.sportconnect.feature.profile.ReceiptScreen(p, refund = br.com.sportconnect.feature.profile.RefundUi(done = false, doneAt = null))
+        }
+    }
+
+    @Test
     fun explore() {
         asOrganizer()
         compact("app-explore-compact-light.png") { AppNavHost(startDestination = Route.Explore) }
@@ -215,8 +265,23 @@ class AppScreenshotTest {
         runBlocking { withTimeout(10_000) { vm.uiState.first { !it.loading } } }
         vm.pay()
         val waiting = runBlocking { withTimeout(10_000) { vm.uiState.first { it.phase is PixPhase.Waiting } } }
-        // Estado congelado em "Aguardando" (o Pix fake confirma sozinho em ~3s).
+        // Estado congelado em "Aguardando" (o Pix fake confirma sozinho em ~1s).
         compact("app-pix-compact-light.png", height = 1000) { PaymentScreen(waiting) }
+        compact("app-pay-card-form-compact-light.png", height = 1500) {
+            PaymentScreen(
+                waiting.copy(
+                    phase = PixPhase.Idle,
+                    method = br.com.sportconnect.core.model.MetodoPagamento.CARTAO,
+                    card = br.com.sportconnect.feature.payment.CardForm(number = "4111111111111112", expiry = "1025", cvv = "12", showErrors = true),
+                ),
+            )
+        }
+        // E4: aguardando ha mais de 2 min -> "O pagamento esta demorando".
+        val slow = waiting.copy(waitingSince = waiting.waitingSince?.minus(kotlin.time.Duration.parse("3m")))
+        compact("app-pix-slow-compact-light.png", height = 1000) { PaymentScreen(slow) }
+        compact("app-pay-session-expired-compact-light.png", height = 800) {
+            PaymentScreen(waiting.copy(phase = PixPhase.Error("NAO_AUTENTICADO", "")))
+        }
         val paid = runBlocking { withTimeout(15_000) { vm.uiState.first { it.phase is PixPhase.Paid } } }
         compact("app-pix-paid-compact-light.png") { PaymentScreen(paid) }
     }

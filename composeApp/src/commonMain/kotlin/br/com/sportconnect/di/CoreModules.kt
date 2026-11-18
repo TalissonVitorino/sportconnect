@@ -1,7 +1,14 @@
 package br.com.sportconnect.di
 
+import br.com.sportconnect.core.config.FeatureFlags
+import br.com.sportconnect.core.designsystem.map.MapTileCache
+import br.com.sportconnect.core.data.local.SocialStore
+import br.com.sportconnect.core.data.local.ArenaPhotoStore
+import br.com.sportconnect.core.data.local.ProfilePhotoStore
 import br.com.sportconnect.core.data.InMemorySportRepository
 import br.com.sportconnect.core.data.fake.DemoData
+import br.com.sportconnect.core.data.local.AppPreferences
+import com.russhwolf.settings.Settings
 import br.com.sportconnect.core.data.fake.FakeArenaRepository
 import br.com.sportconnect.core.data.fake.FakeAuthRepository
 import br.com.sportconnect.core.data.fake.FakeGameRepository
@@ -29,9 +36,14 @@ import br.com.sportconnect.core.domain.usecase.GetArenasNearbyUseCase
 import br.com.sportconnect.core.domain.usecase.GetAvailableSlotsUseCase
 import br.com.sportconnect.core.domain.usecase.GetGameUseCase
 import br.com.sportconnect.core.domain.usecase.GetMyGamesUseCase
+import br.com.sportconnect.core.domain.usecase.DeleteAccountUseCase
+import br.com.sportconnect.core.domain.usecase.ExportMyDataUseCase
 import br.com.sportconnect.core.domain.usecase.GetOpenGamesUseCase
 import br.com.sportconnect.core.domain.usecase.JoinGameByInviteUseCase
 import br.com.sportconnect.core.domain.usecase.JoinWaitlistUseCase
+import br.com.sportconnect.core.domain.usecase.LeaveWaitlistUseCase
+import br.com.sportconnect.core.domain.usecase.ToggleSpotOfferUseCase
+import br.com.sportconnect.core.domain.usecase.ClaimOfferedSpotUseCase
 import br.com.sportconnect.core.domain.usecase.LeaveGameUseCase
 import br.com.sportconnect.core.domain.usecase.ObserveGameWithWaitlistUseCase
 import br.com.sportconnect.core.domain.usecase.PayShareUseCase
@@ -49,17 +61,30 @@ import kotlin.time.Clock
 /** Escopo de aplicacao para jobs de fundo (webhooks, prazos). */
 val APP_SCOPE = named("appScope")
 
+/**
+ * Armazenamento local da plataforma (SharedPreferences/NSUserDefaults/java.util.prefs/localStorage).
+ * Separado do [dataModule] para os testes trocarem por um MapSettings em memoria.
+ */
+val settingsModule = module {
+    single<Settings> { Settings() }
+}
+
 /** Implementacoes de dados (fakes em memoria para a demo; trocar por Ktor depois). */
 val dataModule = module {
     single<Clock> { Clock.System }
     single<CoroutineScope>(APP_SCOPE) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
     single { DemoData(get()) }
+    single { AppPreferences(get()) }
+    single { ProfilePhotoStore() }
+    single { ArenaPhotoStore(get()) }
+    single { SocialStore(get()) }
+    single { MapTileCache(FeatureFlags.MAP_TILE_URL) }
 
     singleOf(::InMemorySportRepository) bind SportRepository::class
     single { InMemoryAnalyticsTracker() } bind AnalyticsTracker::class
     single { FakeArenaRepository(get()) } bind ArenaRepository::class
     single { FakeGameRepository(get()) } bind GameRepository::class
-    single { FakeAuthRepository(get(), get(), get()) } bind AuthRepository::class
+    single { FakeAuthRepository(get(), get(), get(), get()) } bind AuthRepository::class
     single { FakePaymentGateway(get(), get(APP_SCOPE)) } bind PaymentGateway::class
 }
 
@@ -86,7 +111,12 @@ val domainModule = module {
     factoryOf(::CoverDifferenceUseCase)
     factoryOf(::JoinGameByInviteUseCase)
     factoryOf(::JoinWaitlistUseCase)
+    factoryOf(::LeaveWaitlistUseCase)
+    factoryOf(::ToggleSpotOfferUseCase)
+    factoryOf(::ClaimOfferedSpotUseCase)
     factoryOf(::GetMyGamesUseCase)
+    factoryOf(::DeleteAccountUseCase)
+    factoryOf(::ExportMyDataUseCase)
     factoryOf(::GetOpenGamesUseCase)
     factoryOf(::ArenaDashboardUseCase)
     factoryOf(::CancelGameUseCase)

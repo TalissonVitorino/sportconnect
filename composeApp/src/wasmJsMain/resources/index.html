@@ -2,11 +2,28 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <!-- W1: links como /j/CODIGO carregam os arquivos a partir da raiz. -->
+    <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- W3: cor da barra do navegador acompanha o tema do sistema (surface claro/escuro do app). -->
+    <meta name="theme-color" content="#F5FBF6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#101411" media="(prefers-color-scheme: dark)">
+    <meta name="description" content="Reserve a quadra, chame a galera e cada um paga a sua parte. Pagamento por Pix, sem planilha.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="SportConnect">
     <title>SportConnect</title>
+    <link rel="icon" type="image/svg+xml" href="app-icon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.webmanifest">
     <link type="text/css" rel="stylesheet" href="styles.css">
     <script type="application/javascript" src="composeApp.js"></script>
 </head>
 <body>
+    <!-- Loader exibido enquanto o Wasm baixa e compila; removido no primeiro frame do Compose (main.kt). -->
+    <div id="sc-loader" role="status" aria-label="Carregando o SportConnect">
+        <img src="app-icon.svg" alt="" width="96" height="96">
+        <div class="sc-bar"><span></span></div>
+    </div>
 </body>
 </html>

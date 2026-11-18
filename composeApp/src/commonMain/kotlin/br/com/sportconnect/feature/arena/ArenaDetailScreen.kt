@@ -2,6 +2,32 @@
 
 package br.com.sportconnect.feature.arena
 
+import br.com.sportconnect.core.platform.rememberNativeShare
+import br.com.sportconnect.resources.cd_directions
+import br.com.sportconnect.core.designsystem.map.rememberSCMapCamera
+import br.com.sportconnect.core.designsystem.map.SCMapPin
+import br.com.sportconnect.core.designsystem.map.SCMap
+import br.com.sportconnect.core.designsystem.map.MapTileCache
+import br.com.sportconnect.resources.arena_detail_amenity_lighting
+import br.com.sportconnect.resources.arena_detail_amenity_bar
+import br.com.sportconnect.resources.arena_detail_amenity_locker
+import br.com.sportconnect.resources.arena_detail_amenity_parking
+import br.com.sportconnect.resources.cd_arena_photo
+import org.jetbrains.compose.resources.StringResource
+import androidx.compose.material.icons.rounded.Wifi
+import androidx.compose.material.icons.rounded.OutdoorGrill
+import androidx.compose.material.icons.rounded.Lightbulb
+import androidx.compose.material.icons.rounded.LocalBar
+import androidx.compose.material.icons.rounded.Checkroom
+import androidx.compose.material.icons.rounded.LocalParking
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.runtime.LaunchedEffect
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.data.local.ArenaPhotoStore
+import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -120,7 +146,10 @@ fun ArenaDetailScreen(state: ArenaDetailUiState, actions: ArenaDetailActions = A
         Scaffold(
             containerColor = c.surface,
             bottomBar = {
-                if (content != null && firstCourt != null && wc != WidthClass.Expanded) {
+                // C8: com varias quadras o CTA fixo era ambiguo ("Ver horarios" de qual?) e cada card ja tem horarios e
+                // "Ver todos". Fica so quando ha uma quadra.
+                val singleCourt = content?.detail?.quadras?.count { content.sport == null || it.suporta(content.sport) } == 1
+                if (content != null && firstCourt != null && singleCourt && wc != WidthClass.Expanded) {
                     BottomActionBar {
                         SCButton(
                             stringResource(Res.string.arena_detail_see_times),
@@ -181,6 +210,7 @@ fun ArenaDetailScreen(state: ArenaDetailUiState, actions: ArenaDetailActions = A
 
 @Composable
 private fun Gallery(state: ArenaDetailUiState.Content, onBack: () -> Unit, rounded: Boolean) {
+    val nativeShare = rememberNativeShare()
     val share = rememberShareActions()
     val sport = state.detail.esportes.firstOrNull() ?: Sport.FUTEBOL_SOCIETY
     val scrim = Color.Black.copy(alpha = 0.56f)
@@ -189,19 +219,37 @@ private fun Gallery(state: ArenaDetailUiState.Content, onBack: () -> Unit, round
             .then(if (rounded) Modifier.clip(MaterialTheme.shapes.extraLarge) else Modifier)
             .testTag("arena_gallery"),
     ) {
-        SCCourtPlaceholder(sport, Modifier.fillMaxSize())
+        // E9: fotos enviadas pela arena (carrossel); sem fotos, o desenho da quadra (e sem contador falso).
+        val store: ArenaPhotoStore = koinInject()
+        val arenaId = state.detail.arena.id
+        LaunchedEffect(arenaId) { store.load(arenaId) }
+        val photos = store.photos.collectAsStateWithLifecycle().value[arenaId].orEmpty()
+        val pager = rememberPagerState { photos.size.coerceAtLeast(1) }
+        if (photos.isEmpty()) {
+            SCCourtPlaceholder(sport, Modifier.fillMaxSize())
+        } else {
+            HorizontalPager(pager, Modifier.fillMaxSize()) { i ->
+                Image(
+                    photos[i], stringResource(Res.string.cd_arena_photo, state.detail.arena.nome),
+                    contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
         Row(Modifier.fillMaxWidth().padding(8.dp)) {
             IconButton(onClick = onBack, modifier = Modifier.size(40.dp).background(scrim, CircleShape)) {
                 Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(Res.string.cd_back), tint = Color.White)
             }
             Spacer(Modifier.weight(1f))
             IconButton(
-                onClick = { share.copy("https://sportconnect.app/a/${state.detail.arena.id}") },
+                onClick = {
+                    val link = "https://sportconnect.app/a/${state.detail.arena.id}"
+                    if (!nativeShare("${state.detail.arena.nome}\n$link")) share.copy(link)
+                },
                 modifier = Modifier.size(40.dp).background(scrim, CircleShape).testTag("arena_share"),
             ) { Icon(Icons.Rounded.Share, stringResource(Res.string.cd_arena_share), tint = Color.White) }
         }
-        Text(
-            "1/${(state.detail.quadras.size + 2).coerceAtMost(5)}",
+        if (photos.size > 1) Text(
+            "${pager.currentPage + 1}/${photos.size}",
             style = MaterialTheme.typography.labelMedium,
             color = Color.White,
             modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp).background(scrim, SCShape.chip).padding(horizontal = 8.dp, vertical = 4.dp),
@@ -241,6 +289,21 @@ private fun ArenaInfo(state: ArenaDetailUiState.Content, actions: ArenaDetailAct
                 )
             }
         }
+        // M3: mini-mapa com o pino; tocar abre o app de mapas (mesmo destino do "Como chegar").
+        val tiles: MapTileCache = koinInject()
+        val camera = rememberSCMapCamera(a.localizacao.latitude, a.localizacao.longitude, 15.0)
+        val pinDesc = stringResource(Res.string.cd_directions)
+        Spacer(Modifier.height(12.dp))
+        SCMap(
+            camera, tiles,
+            listOf(SCMapPin(a.id, a.localizacao.latitude, a.localizacao.longitude, a.endereco.bairro.ifBlank { a.nome }, pinDesc)),
+            modifier = Modifier.fillMaxWidth().height(150.dp).clip(MaterialTheme.shapes.large).testTag("arena_minimap"),
+            selectedPinId = a.id,
+            onPinClick = { share.openUrl(mapsUrl("${a.nome}, ${a.endereco.resumo}")) },
+            onMapClick = { share.openUrl(mapsUrl("${a.nome}, ${a.endereco.resumo}")) },
+            interactive = false,
+            fitPinsOnStart = false,
+        )
         Spacer(Modifier.height(16.dp))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             state.detail.esportes.sortedBy { it.ordinal }.forEach { s ->
@@ -264,11 +327,18 @@ private fun ArenaInfo(state: ArenaDetailUiState.Content, actions: ArenaDetailAct
             Spacer(Modifier.height(24.dp))
             SectionHeader(stringResource(Res.string.arena_detail_amenities))
             Spacer(Modifier.height(8.dp))
-            a.comodidades.forEach {
-                Row(Modifier.heightIn(min = 32.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.CheckCircle, null, tint = c.primary, modifier = Modifier.size(20.dp))
-                    Spacer(Modifier.width(12.dp))
-                    Text(it, style = t.bodyMedium, color = c.onSurface)
+            // E9: comodidades com icone e o rotulo do 07 quando reconhecida.
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.testTag("arena_amenities")) {
+                a.comodidades.forEach { raw ->
+                    val (icon, label) = amenityOf(raw)
+                    Row(
+                        Modifier.heightIn(min = 36.dp).background(c.surfaceContainerLow, SCShape.chip).padding(horizontal = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(icon, null, tint = c.primary, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(label?.let { stringResource(it) } ?: raw, style = t.labelLarge, color = c.onSurface)
+                    }
                 }
             }
         }
@@ -318,7 +388,7 @@ private fun CourtBlock(q: Quadra, slots: List<Slot>, actions: ArenaDetailActions
             if (slots.isEmpty()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(Res.string.arena_detail_no_slots_today), style = t.bodyMedium, color = c.onSurfaceVariant, modifier = Modifier.weight(1f))
-                    SCButton(stringResource(Res.string.arena_detail_see_tomorrow), { actions.openSlots(q.id, "tomorrow") }, variant = SCButtonVariant.Text, size = SCButtonSize.Small)
+                    SCButton(stringResource(Res.string.arena_detail_see_tomorrow), { actions.openSlots(q.id, "tomorrow") }, variant = SCButtonVariant.Text, size = SCButtonSize.Small, modifier = Modifier.scAlignTextButtonStart())
                 }
             } else {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -331,9 +401,23 @@ private fun CourtBlock(q: Quadra, slots: List<Slot>, actions: ArenaDetailActions
                             contentAlignment = Alignment.Center,
                         ) { Text(PtBrFormat.hour(s.inicio), style = t.labelLarge, color = c.onSurface) }
                     }
-                    SCButton(stringResource(Res.string.common_see_all), { actions.openSlots(q.id, null) }, variant = SCButtonVariant.Text, size = SCButtonSize.Small)
+                    SCButton(stringResource(Res.string.common_see_all), { actions.openSlots(q.id, null) }, variant = SCButtonVariant.Text, size = SCButtonSize.Small, modifier = Modifier.scAlignTextButtonStart())
                 }
             }
         }
+    }
+}
+
+/** Icone e rotulo padrao (07) das comodidades conhecidas; desconhecida fica com o texto da arena. */
+private fun amenityOf(raw: String): Pair<androidx.compose.ui.graphics.vector.ImageVector, StringResource?> {
+    val n = raw.lowercase()
+    return when {
+        "estacion" in n -> Icons.Rounded.LocalParking to Res.string.arena_detail_amenity_parking
+        "vesti" in n -> Icons.Rounded.Checkroom to Res.string.arena_detail_amenity_locker
+        "bar" in n || "lanchonete" in n -> Icons.Rounded.LocalBar to Res.string.arena_detail_amenity_bar
+        "ilumina" in n -> Icons.Rounded.Lightbulb to Res.string.arena_detail_amenity_lighting
+        "churras" in n -> Icons.Rounded.OutdoorGrill to null
+        "wi-fi" in n || "wifi" in n -> Icons.Rounded.Wifi to null
+        else -> Icons.Rounded.CheckCircle to null
     }
 }

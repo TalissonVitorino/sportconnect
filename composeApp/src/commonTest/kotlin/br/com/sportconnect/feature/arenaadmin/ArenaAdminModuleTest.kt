@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.arenaadmin
 
+import br.com.sportconnect.core.testSettingsModule
 import br.com.sportconnect.di.dataModule
 import br.com.sportconnect.di.domainModule
 import br.com.sportconnect.feature.arenaadmin.booking.ArenaBookingViewModel
@@ -25,7 +26,7 @@ class ArenaAdminModuleTest {
     @Test
     fun modulo_da_arena_resolve_todos_os_view_models() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        val koin = startKoin { modules(dataModule, domainModule, arenaAdminModule) }.koin
+        val koin = startKoin { modules(testSettingsModule, dataModule, domainModule, arenaAdminModule) }.koin
         try {
             assertNotNull(koin.get<ArenaDashboardViewModel>())
             assertNotNull(koin.get<ArenaScheduleViewModel>())

@@ -51,6 +51,8 @@ data class Cota(
     /** Para COMPLEMENTO: cota original do pagante (RN-16). */
     val cotaOriginalId: String? = null,
     val preAceiteRerrateio: Boolean = false,
+    /** T8 (13/US-111, RN-26): o atleta pago ofereceu a vaga a lista de espera. */
+    val offeredForSubstitution: Boolean = false,
 ) {
     val totalPago: Money get() = valor + taxaConveniencia
 

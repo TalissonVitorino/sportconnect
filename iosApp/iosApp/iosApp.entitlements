@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Universal Links (D5). Ativar em Xcode › target iosApp › Signing & Capabilities › Associated Domains
+	     (aponta CODE_SIGN_ENTITLEMENTS para este arquivo). Exige o apple-app-site-association no domínio. -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:sportconnect.app</string>
+	</array>
+</dict>
+</plist>

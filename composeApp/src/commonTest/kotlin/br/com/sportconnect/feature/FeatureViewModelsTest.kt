@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature
 
+import kotlinx.coroutines.launch
 import br.com.sportconnect.core.TestClock
 import br.com.sportconnect.core.data.fake.DemoData
 import br.com.sportconnect.core.data.fake.FakeArenaRepository
@@ -16,10 +17,13 @@ import br.com.sportconnect.core.domain.WaitlistManager
 import br.com.sportconnect.core.domain.usecase.AvisosLidosStore
 import br.com.sportconnect.core.domain.usecase.CancelGameUseCase
 import br.com.sportconnect.core.domain.usecase.CreateGameUseCase
-import br.com.sportconnect.core.domain.usecase.GetGameUseCase
 import br.com.sportconnect.core.domain.usecase.GetMyGamesUseCase
 import br.com.sportconnect.core.domain.usecase.GetNotificationsUseCase
+import br.com.sportconnect.core.domain.usecase.JoinWaitlistUseCase
 import br.com.sportconnect.core.domain.usecase.LeaveGameUseCase
+import br.com.sportconnect.core.domain.usecase.LeaveWaitlistUseCase
+import br.com.sportconnect.core.domain.usecase.ObserveGameWithWaitlistUseCase
+import br.com.sportconnect.core.domain.usecase.ToggleSpotOfferUseCase
 import br.com.sportconnect.core.model.GarantiaCobertura
 import br.com.sportconnect.core.model.Money
 import br.com.sportconnect.core.model.PoliticaNaoPagamento
@@ -80,10 +84,14 @@ class FeatureViewModelsTest {
         fun home() = HomeViewModel(GetMyGamesUseCase(games, auth), GetNotificationsUseCase(games, auth, AvisosLidosStore()), auth, analytics, clock)
 
         fun detail(id: String) = GameDetailViewModel(
-            Route.GameDetail(id), GetGameUseCase(games), auth,
+            Route.GameDetail(id), ObserveGameWithWaitlistUseCase(games), auth,
             CancelGameUseCase(service, games, arenas, auth, clock), LeaveGameUseCase(service, games, auth, clock),
-            analytics, session, clock,
+            analytics, session, clock, social, ToggleSpotOfferUseCase(games, auth, WaitlistManager(), clock),
+            joinWaitlistUseCase = JoinWaitlistUseCase(games, auth, WaitlistManager(), analytics, clock),
+            leaveWaitlistUseCase = LeaveWaitlistUseCase(games, auth, WaitlistManager()),
         )
+
+        val social = br.com.sportconnect.core.data.local.SocialStore()
 
         fun create(slotId: String?) = CreateGameViewModel(
             Route.GameCreate(slotId), arenas, split, hold,
@@ -261,5 +269,75 @@ class FeatureViewModelsTest {
         runCurrent()
         assertIs<GameDetailEvent.Cancelled>(vm.events.first())
         assertEquals(StatusReserva.CANCELADO, assertIs<GameDetailUiState.Content>(vm.uiState.value).jogo.status)
+    }
+
+    // ------------------------------------------------------------------ E14/E15
+
+    @Test
+    fun jogo_lotado_oferece_lista_de_espera_e_mostra_a_posicao() = runTest {
+        val env = setUp()
+        val vm = env.detail(DemoData.JOGO_PADEL_LOTADO)
+        runCurrent()
+        var s = assertIs<GameDetailUiState.Content>(vm.uiState.value)
+        assertTrue(s.canJoinWaitlist)
+        assertEquals(null, s.waitlistPosition)
+        vm.joinWaitlist()
+        runCurrent()
+        s = assertIs(vm.uiState.value)
+        assertEquals(1, s.waitlistPosition)
+        assertFalse(s.canJoinWaitlist)
+        vm.leaveWaitlist()
+        runCurrent()
+        s = assertIs(vm.uiState.value)
+        assertEquals(null, s.waitlistPosition)
+        assertTrue(s.canJoinWaitlist)
+    }
+
+    @Test
+    fun jogo_concluido_pede_avaliacao_uma_vez() = runTest {
+        val env = setUp()
+        val vm = env.detail(DemoData.JOGO_BEACH_CONCLUIDO)
+        runCurrent()
+        var s = assertIs<GameDetailUiState.Content>(vm.uiState.value)
+        assertTrue(s.canRate)
+        assertFalse(s.canJoinWaitlist)
+        vm.rate(br.com.sportconnect.core.data.local.GameRating(emptyMap(), 4, ""))
+        runCurrent()
+        s = assertIs(vm.uiState.value)
+        assertFalse(s.canRate)
+        assertFalse(assertIs<GameDetailUiState.Content>(env.detail(DemoData.JOGO_RACHA).also { runCurrent() }.uiState.value).canRate)
+    }
+
+    // ------------------------------------------------------------------ T3 jogos com vaga
+
+    @Test
+    fun jogos_com_vaga_mostram_so_os_de_outras_pessoas_e_filtram_por_esporte() = runTest {
+        val env = setUp()
+        val vm = br.com.sportconnect.feature.common.OpenGamesViewModel(
+            br.com.sportconnect.core.domain.usecase.GetOpenGamesUseCase(env.games, env.clock), env.auth, env.clock,
+        )
+        backgroundScope.launch { vm.games.collect { } }
+        runCurrent()
+        val uid = env.auth.currentUser.value!!.id
+        val todos = vm.games.value
+        assertTrue(todos.isNotEmpty())
+        assertTrue(todos.none { it.organizadorId == uid || it.participa(uid) })
+        assertTrue(todos.all { it.visibilidade == br.com.sportconnect.core.model.Visibilidade.VAGAS_ABERTAS && it.vagasRestantes > 0 })
+        vm.setSport(Sport.BASQUETE)
+        runCurrent()
+        assertTrue(vm.games.value.isNotEmpty() && vm.games.value.all { it.esporte == Sport.BASQUETE })
+    }
+
+    @Test
+    fun criar_jogo_com_vagas_abertas_fica_visivel_para_avulsos() = runTest {
+        val env = setUp()
+        val vm = env.create(env.freeSlot("q-vm-society1", minHours = 24).id)
+        runCurrent()
+        vm.next(); vm.next(); vm.next()
+        vm.setOpenSpots(true)
+        vm.next()
+        runCurrent()
+        val ev = assertIs<CreateGameEvent.GoToPay>(vm.events.first())
+        assertEquals(br.com.sportconnect.core.model.Visibilidade.VAGAS_ABERTAS, env.games.game(ev.gameId)!!.visibilidade)
     }
 }

@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.arenaadmin.common
 
+import br.com.sportconnect.core.designsystem.theme.SCSelection
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -16,7 +17,6 @@ import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -141,11 +141,7 @@ fun <T> ChoiceChips(
                 label = { Text(label(opt), style = MaterialTheme.typography.labelLarge) },
                 leadingIcon = if (isSel) ({ Icon(Icons.Rounded.Check, null, Modifier.padding(0.dp)) }) else null,
                 shape = SCShape.chip,
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = SportConnectTheme.colors.secondaryContainer,
-                    selectedLabelColor = SportConnectTheme.colors.onSecondaryContainer,
-                    selectedLeadingIconColor = SportConnectTheme.colors.onSecondaryContainer,
-                ),
+                colors = SCSelection.filterChipColors(),
                 modifier = Modifier
                     .then(tag(opt)?.let { Modifier.testTag(it) } ?: Modifier)
                     .semantics { role = Role.RadioButton },

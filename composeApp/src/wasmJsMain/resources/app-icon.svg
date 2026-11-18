@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-labelledby="t">
+  <title id="t">SportConnect — ícone do app</title>
+  <!-- Ícone 1024×1024 (iOS/Android/Desktop). Fundo full-bleed: as plataformas aplicam a máscara (squircle iOS, adaptive icon Android).
+       Zona segura do adaptive icon: círculo de 66% central — o símbolo ocupa ~62%. -->
+  <rect width="1024" height="1024" fill="#191C19"/>
+  <g transform="translate(512 512) scale(16) translate(-24 -24)">
+    <line x1="4" y1="24" x2="44" y2="24" stroke="#F5FBF6" stroke-width="1.6" stroke-linecap="round" opacity=".92"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#191C19" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M30 9.5A8 7.25 0 0 0 24 8A8 8 0 0 0 24 24A8 8 0 0 1 24 40A8 7.25 0 0 1 18 38.5" fill="none" stroke="#00E46E" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="37.5" cy="9.5" r="3.25" fill="#EE6800"/>
+  </g>
+</svg>

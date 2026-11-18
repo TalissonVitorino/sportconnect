@@ -1,16 +1,23 @@
 package br.com.sportconnect.feature.game
 
+import br.com.sportconnect.core.data.local.GameRating
+import br.com.sportconnect.core.data.local.SocialStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.sportconnect.core.domain.repository.AnalyticsEvents
 import br.com.sportconnect.core.domain.repository.AnalyticsTracker
 import br.com.sportconnect.core.domain.repository.AuthRepository
+import br.com.sportconnect.core.domain.WaitlistManager
 import br.com.sportconnect.core.domain.usecase.CancelGameUseCase
-import br.com.sportconnect.core.domain.usecase.GetGameUseCase
+import br.com.sportconnect.core.domain.usecase.JoinWaitlistUseCase
 import br.com.sportconnect.core.domain.usecase.LeaveGameUseCase
+import br.com.sportconnect.core.domain.usecase.LeaveWaitlistUseCase
+import br.com.sportconnect.core.domain.usecase.ObserveGameWithWaitlistUseCase
+import br.com.sportconnect.core.domain.usecase.ToggleSpotOfferUseCase
 import br.com.sportconnect.core.model.Cota
 import br.com.sportconnect.core.model.EtapaPrazo
 import br.com.sportconnect.core.model.Jogo
+import br.com.sportconnect.core.model.ListaEspera
 import br.com.sportconnect.core.model.StatusCota
 import br.com.sportconnect.core.model.StatusReserva
 import br.com.sportconnect.core.model.TipoCota
@@ -54,6 +61,15 @@ sealed interface GameDetailUiState {
         /** Lembretes individuais ja enviados (limite 1 a cada 2h). */
         val remindedAt: Map<String, Instant> = emptyMap(),
         val cancelWindowHours: Int = 24,
+        /** E14: posicao na lista de espera (1-based) ou null. */
+        val waitlistPosition: Int? = null,
+        val canJoinWaitlist: Boolean = false,
+        /** E15: jogo concluido, participei e ainda nao avaliei. */
+        val canRate: Boolean = false,
+        /** T8 (13/US-111): posso oferecer minha vaga (pago, CONFIRMADO, ate T-1h, ainda nao oferecida). */
+        val canOfferSpot: Boolean = false,
+        /** Vaga de outro atleta oferecida a lista de espera, se eu estiver na fila e puder pagar por ela. */
+        val offeredSpot: Cota? = null,
     ) : GameDetailUiState {
         val pendingCount: Int get() = jogo.cotasPendentes
         val resolving: Boolean get() = jogo.status == StatusReserva.AGUARDANDO_PAGAMENTOS && jogo.etapaPrazo == EtapaPrazo.JANELA_RESOLUCAO
@@ -75,20 +91,28 @@ sealed interface GameDetailEvent {
     data class RemindAll(val jogo: Jogo, val pending: Int) : GameDetailEvent
     data class RemindOne(val jogo: Jogo, val name: String) : GameDetailEvent
     data class RemindLimited(val name: String, val nextAt: Instant) : GameDetailEvent
-    data object Cancelled : GameDetailEvent
+    /** [reason]: motivo digitado no cancelamento (vai na mensagem do WhatsApp para a galera, E13). */
+    data class Cancelled(val reason: String?) : GameDetailEvent
     data object Left : GameDetailEvent
+    data class WaitlistJoined(val position: Int) : GameDetailEvent
+    data object Rated : GameDetailEvent
     data class Failure(val message: String) : GameDetailEvent
 }
 
 class GameDetailViewModel(
     private val route: Route.GameDetail,
-    private val getGame: GetGameUseCase,
+    private val observeGameWithWaitlist: ObserveGameWithWaitlistUseCase,
     private val auth: AuthRepository,
     private val cancelGame: CancelGameUseCase,
     private val leaveGame: LeaveGameUseCase,
     private val analytics: AnalyticsTracker,
     private val session: UiSessionStore,
     private val clock: Clock,
+    private val social: SocialStore = SocialStore(),
+    private val toggleSpotOffer: ToggleSpotOfferUseCase,
+    private val waitlistManager: WaitlistManager = WaitlistManager(),
+    private val joinWaitlistUseCase: JoinWaitlistUseCase,
+    private val leaveWaitlistUseCase: LeaveWaitlistUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<GameDetailUiState>(GameDetailUiState.Loading)
     val uiState: StateFlow<GameDetailUiState> = _uiState.asStateFlow()
@@ -109,9 +133,10 @@ class GameDetailViewModel(
     private fun load() {
         job?.cancel()
         job = viewModelScope.launch {
-            combine(getGame(route.id), auth.currentUser) { jogo, user -> jogo to user }
+            combine(observeGameWithWaitlist(route.id), auth.currentUser, social.rated) { gameAndFila, user, _ -> gameAndFila to user }
                 .catch { _uiState.value = GameDetailUiState.Error }
-                .collect { (jogo, user) ->
+                .collect { (gameAndFila, user) ->
+                    val (jogo, fila) = gameAndFila
                     if (jogo == null) {
                         _uiState.value = GameDetailUiState.NotFound
                         return@collect
@@ -127,22 +152,72 @@ class GameDetailViewModel(
                         session.markCelebrated(jogo.id)
                     }
                     val prev = _uiState.value as? GameDetailUiState.Content
+                    val myPaidShare = uid?.let { id ->
+                        jogo.reserva.cotas.firstOrNull { it.atletaId == id && it.status == StatusCota.PAGA && it.tipo == TipoCota.PADRAO }
+                    }
+                    val waitlistPosition = uid?.let { id -> waitlistManager.ativos(fila).indexOfFirst { it.usuarioId == id }.takeIf { it >= 0 }?.plus(1) }
                     _uiState.value = GameDetailUiState.Content(
                         jogo = jogo,
                         userId = uid,
                         isOrganizer = uid != null && jogo.organizadorId == uid,
-                        myPaidShare = uid?.let { id ->
-                            jogo.reserva.cotas.firstOrNull { it.atletaId == id && it.status == StatusCota.PAGA && it.tipo == TipoCota.PADRAO }
-                        },
+                        myPaidShare = myPaidShare,
                         counts = jogo.splitCounts(now),
                         participants = jogo.participantsFor(uid, now),
                         celebrate = celebrating && jogo.status == StatusReserva.CONFIRMADO,
                         now = now,
                         busy = prev?.busy ?: false,
                         remindedAt = reminded.toMap(),
+                        waitlistPosition = waitlistPosition,
+                        canJoinWaitlist = uid != null && jogo.organizadorId != uid && !jogo.participa(uid) &&
+                            waitlistPosition == null && waitlistManager.podeEntrar(jogo, fila, now),
+                        canRate = uid != null && jogo.status == StatusReserva.CONCLUIDO && jogo.participa(uid) && jogo.id !in social.rated.value,
+                        // T8 (13/US-111): oferecer a propria vaga, ou pagar a vaga que alguem ofereceu (so quem esta na fila).
+                        canOfferSpot = myPaidShare != null && !myPaidShare.offeredForSubstitution && waitlistManager.podeSubstituir(jogo, now),
+                        offeredSpot = if (waitlistPosition != null) {
+                            jogo.reserva.cotas.firstOrNull { it.offeredForSubstitution && it.status == StatusCota.PAGA && it.atletaId != uid }
+                        } else null,
                     )
                 }
         }
+    }
+
+    /** E14 (US-110): entrar/sair da lista de espera. */
+    fun joinWaitlist() {
+        val s = _uiState.value as? GameDetailUiState.Content ?: return
+        val uid = s.userId ?: return
+        viewModelScope.launch {
+            joinWaitlistUseCase(s.jogo.id).fold(
+                onSuccess = { fila ->
+                    val pos = waitlistManager.ativos(fila).indexOfFirst { it.usuarioId == uid }.takeIf { it >= 0 }?.plus(1) ?: 0
+                    _events.trySend(GameDetailEvent.WaitlistJoined(pos))
+                },
+                onFailure = { e -> _events.trySend(GameDetailEvent.Failure(e.message ?: "")) },
+            )
+        }
+    }
+
+    fun leaveWaitlist() {
+        val s = _uiState.value as? GameDetailUiState.Content ?: return
+        viewModelScope.launch { leaveWaitlistUseCase(s.jogo.id) }
+    }
+
+    /** T8 (13/US-111): oferece ou retira a oferta da minha vaga paga para a lista de espera. */
+    fun toggleOfferMySpot(oferecer: Boolean) {
+        val s = _uiState.value as? GameDetailUiState.Content ?: return
+        val cotaId = s.myPaidShare?.id ?: return
+        viewModelScope.launch {
+            toggleSpotOffer(s.jogo.id, cotaId, oferecer).fold(
+                onSuccess = {},
+                onFailure = { e -> _events.trySend(GameDetailEvent.Failure(e.message ?: "")) },
+            )
+        }
+    }
+
+    /** E15 (US-130): avaliacao pos-jogo. */
+    fun rate(rating: GameRating) {
+        val s = _uiState.value as? GameDetailUiState.Content ?: return
+        social.submitRating(s.jogo.id, rating)
+        _events.trySend(GameDetailEvent.Rated)
     }
 
     fun remindAll() {
@@ -175,7 +250,7 @@ class GameDetailViewModel(
 
     fun cancel(reason: String? = null) = runBusy {
         cancelGame(route.id, reason).fold(
-            onSuccess = { GameDetailEvent.Cancelled },
+            onSuccess = { GameDetailEvent.Cancelled(reason?.takeIf { it.isNotBlank() }) },
             onFailure = { GameDetailEvent.Failure(it.message ?: "") },
         )
     }

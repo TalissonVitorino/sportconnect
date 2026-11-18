@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
  * |-------------------------|----------------------------|------------|
  * | onboarding              | [Route.Onboarding]         | nao        |
  * | auth                    | [Route.Auth]               | nao        |
+ * | legal/{doc}             | [Route.Legal]              | nao        |
  * | home                    | [Route.Home]               | sim        |
  * | explore                 | [Route.Explore]            | sim        |
  * | arena/{id}              | [Route.ArenaDetail]        | sim        |
@@ -23,6 +24,12 @@ import kotlinx.serialization.Serializable
  * | my-games                | [Route.MyGames]            | sim        |
  * | profile                 | [Route.Profile]            | sim        |
  * | profile/payments        | [Route.ProfilePayments]    | sim        |
+ * | profile/privacy         | [Route.ProfilePrivacy]     | sim        |
+ * | profile/delete          | [Route.DeleteAccount]      | nao        |
+ * | profile/edit            | [Route.ProfileEdit]        | nao        |
+ * | profile/sports          | [Route.ProfileSports]      | sim        |
+ * | profile/cards           | [Route.SavedCards]         | sim        |
+ * | support                 | [Route.Support]            | sim        |
  * | receipt/{paymentId}     | [Route.Receipt]            | sim        |
  * | notifications           | [Route.Notifications]      | sim        |
  */
@@ -30,9 +37,16 @@ sealed interface Route {
     @Serializable
     data object Onboarding : Route
 
-    /** [payGameId]: depois do OTP, segue direto para `game/{id}/pay` (regra de retorno, 09 §2.5). */
+    /**
+     * Regra de retorno (09 §2.5): depois do OTP segue para onde a pessoa ia.
+     * [payGameId] -> `game/{id}/pay`; [createGame] -> `game/create` (com [slotId], se ja escolheu horario).
+     */
     @Serializable
-    data class Auth(val payGameId: String? = null) : Route
+    data class Auth(val payGameId: String? = null, val createGame: Boolean = false, val slotId: String? = null) : Route
+
+    /** Termos de Uso ou Politica de Privacidade (CT-05). [doc] = nome de [br.com.sportconnect.feature.auth.LegalDoc]. */
+    @Serializable
+    data class Legal(val doc: String) : Route
 
     @Serializable
     data object Home : Route
@@ -59,7 +73,7 @@ sealed interface Route {
 
     /** [afterCreate]: pagamento da cota do organizador logo apos criar (sucesso leva ao convite). */
     @Serializable
-    data class GamePay(val id: String, val afterCreate: Boolean = false) : Route
+    data class GamePay(val id: String, val afterCreate: Boolean = false, val substituicaoCotaId: String? = null) : Route
 
     @Serializable
     data class GameResolve(val id: String) : Route
@@ -75,6 +89,26 @@ sealed interface Route {
 
     @Serializable
     data object ProfilePayments : Route
+
+    /** Privacidade e dados (09 ficha 16): consentimentos, baixar dados, excluir conta. */
+    @Serializable
+    data object ProfilePrivacy : Route
+
+    /** Excluir conta (US-003): fluxo transacional, sem navegacao global. */
+    @Serializable
+    data object DeleteAccount : Route
+
+    @Serializable
+    data object ProfileEdit : Route
+
+    @Serializable
+    data object ProfileSports : Route
+
+    @Serializable
+    data object SavedCards : Route
+
+    @Serializable
+    data object Support : Route
 
     @Serializable
     data class Receipt(val paymentId: String) : Route

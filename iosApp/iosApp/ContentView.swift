@@ -14,5 +14,9 @@ struct ContentView: View {
     var body: some View {
         ComposeView()
             .ignoresSafeArea()
+            // Universal Links (D5): https://sportconnect.app/{j,g,a}/... chegam aqui e seguem para o NavController.
+            .onOpenURL { url in
+                ExternalUriHandler.shared.onNewUri(uri: url.absoluteString)
+            }
     }
 }

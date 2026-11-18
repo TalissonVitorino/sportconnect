@@ -1,5 +1,6 @@
 package br.com.sportconnect.core
 
+import br.com.sportconnect.core.testSettingsModule
 import br.com.sportconnect.core.domain.ReservationService
 import br.com.sportconnect.core.domain.SportRepository
 import br.com.sportconnect.core.domain.repository.PaymentGateway
@@ -28,7 +29,7 @@ import kotlin.test.assertNotNull
 class DiModulesTest {
     @Test
     fun grafo_de_dados_e_dominio_resolve_todos_os_casos_de_uso() {
-        val koin = startKoin { modules(dataModule, domainModule) }.koin
+        val koin = startKoin { modules(testSettingsModule, dataModule, domainModule) }.koin
         try {
             listOf(
                 SportRepository::class, PaymentGateway::class, ReservationService::class,

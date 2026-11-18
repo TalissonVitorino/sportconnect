@@ -36,22 +36,3 @@ data class ListaEspera(
     val notificadoEm: Instant? = null,
     val exclusividadeAte: Instant? = null,
 )
-
-@Serializable
-enum class TipoAvaliacao { ATLETA, ARENA }
-
-/** Avaliacao pos-jogo (Fase 2). */
-@Serializable
-data class Avaliacao(
-    val id: String,
-    val jogoId: String,
-    val autorId: String,
-    val tipo: TipoAvaliacao,
-    val avaliadoId: String? = null,
-    val arenaId: String? = null,
-    val presente: Boolean? = null,
-    val pontual: Boolean? = null,
-    val nota: Int,
-    val comentario: String? = null,
-    val criadaEm: Instant,
-)

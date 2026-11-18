@@ -1,5 +1,7 @@
 package br.com.sportconnect.feature.arenaadmin
 
+import br.com.sportconnect.feature.arenaadmin.reports.ArenaSettingsScreen
+import br.com.sportconnect.feature.arenaadmin.reports.ArenaReportsScreen
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -35,4 +37,6 @@ fun NavGraphBuilder.arenaAdminGraph(
     }
     composable<ArenaAdminRoute.Payouts> { ArenaPayoutsScreen(nav) }
     composable<ArenaAdminRoute.Onboarding> { ArenaOnboardingScreen(nav) }
+    composable<ArenaAdminRoute.Reports> { ArenaReportsScreen(nav) }
+    composable<ArenaAdminRoute.Settings> { ArenaSettingsScreen(nav) }
 }

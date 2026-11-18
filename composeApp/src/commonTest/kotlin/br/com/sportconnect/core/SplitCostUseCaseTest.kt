@@ -81,8 +81,8 @@ class SplitCostRn04Test {
 
     @Test
     fun money_formata_em_pt_br() {
-        assertEquals("R$ 1.234,56", Money(123_456).format())
-        assertEquals("R$ 0,05", Money(5).format())
-        assertEquals("-R$ 10,00", Money(-1_000).format())
+        assertEquals("R$\u00A01.234,56", Money(123_456).format())
+        assertEquals("R$\u00A00,05", Money(5).format())
+        assertEquals("-R$\u00A010,00", Money(-1_000).format())
     }
 }

@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.update
 
 /** Jogos em memoria com [MutableStateFlow]: cada mudanca (ex.: webhook de pagamento) e emitida em tempo real. */
 class FakeGameRepository(seed: DemoData) : GameRepository {
+    /** Fake: simula a ida e volta ao servidor; os dados ja estao atualizados em memoria. */
+    override suspend fun sincronizar() = kotlinx.coroutines.delay(500)
+
 
     private val jogos = MutableStateFlow<Map<String, Jogo>>(LinkedHashMap(seed.jogos.associateBy { it.id }))
     private val convites = MutableStateFlow(seed.convites.associateBy { it.codigoCurto.uppercase() })

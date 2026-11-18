@@ -1,4 +1,4 @@
-import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -14,24 +14,60 @@ plugins {
 /**
  * Android fica HABILITADO por padrao. O AGP exige um Android SDK ja na fase de configuracao;
  * em maquinas sem SDK use `-PdisableAndroid=true` (ver README). Nesse modo o plugin
- * `com.android.application` e o target `androidTarget` simplesmente nao sao aplicados.
+ * `com.android.kotlin.multiplatform.library` e o target Android simplesmente nao sao aplicados
+ * (e o modulo `:androidApp` sai do build, ver settings.gradle.kts).
+ *
+ * Desde o AGP 9 o app Android vive no modulo `:androidApp`; este modulo e uma biblioteca KMP.
  */
 val androidEnabled: Boolean = providers.gradleProperty("disableAndroid")
     .map { !it.toBoolean() }
     .getOrElse(true)
 
 if (androidEnabled) {
-    apply(plugin = libs.plugins.androidApplication.get().pluginId)
+    apply(plugin = libs.plugins.androidMultiplatformLibrary.get().pluginId)
 } else {
     logger.lifecycle("SportConnect: alvo Android DESABILITADO (disableAndroid=true).")
 }
 
+// C23: versao do app gerada a partir do gradle.properties (antes "0.1.0" fixo no Perfil).
+val appVersionName = providers.gradleProperty("sportconnect.versionName")
+val generateAppInfo = tasks.register("generateAppInfo") {
+    val outDir = layout.buildDirectory.dir("generated/appinfo/kotlin")
+    val version = appVersionName
+    inputs.property("versionName", version)
+    outputs.dir(outDir)
+    doLast {
+        val file = outDir.get().file("br/com/sportconnect/AppInfo.kt").asFile
+        file.parentFile.mkdirs()
+        file.writeText(
+            """
+            |package br.com.sportconnect
+            |
+            |/** Gerado pelo Gradle (composeApp/build.gradle.kts, tarefa generateAppInfo). Nao edite. */
+            |object AppInfo {
+            |    const val VERSION_NAME: String = "${version.get()}"
+            |}
+            |""".trimMargin(),
+        )
+    }
+}
+
 kotlin {
+    sourceSets.commonMain { kotlin.srcDir(generateAppInfo) }
     if (androidEnabled) {
-        androidTarget {
+        // Equivale a `androidLibrary { }`; o plugin e aplicado condicionalmente, entao sem accessor tipado.
+        (this as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryTarget>("androidLibrary") {
+            namespace = "br.com.sportconnect.shared"
+            compileSdk = libs.versions.android.compileSdk.get().toInt()
+            minSdk = libs.versions.android.minSdk.get().toInt()
             compilerOptions {
                 jvmTarget.set(JvmTarget.JVM_11)
             }
+            androidResources {
+                enable = true
+            }
+            // Roda o commonTest tambem na JVM do Android (`:composeApp:testAndroidHostTest`).
+            withHostTest {}
         }
     }
 
@@ -65,7 +101,7 @@ kotlin {
     }
 
     sourceSets {
-        val desktopMain by getting
+        val desktopMain = getByName("desktopMain")
 
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -93,21 +129,28 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.noArg)
+
+            implementation(libs.filekit.core)
+            implementation(libs.filekit.dialogs.compose)
         }
         commonTest.dependencies {
+            implementation(libs.multiplatform.settings.test)
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
         }
         if (androidEnabled) {
             androidMain.dependencies {
+                // Pedido de permissao (localizacao) a partir do Compose.
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.kotlinx.coroutines.android)
-                implementation(libs.koin.android)
+                // Login com Google (B8, atras de FeatureFlags.SOCIAL_LOGIN).
+                implementation(libs.androidx.credentials)
+                implementation(libs.androidx.credentials.play.services)
+                implementation(libs.googleid)
                 implementation(libs.ktor.client.okhttp)
-                // OkHttp 5.4+ exige compileSdk 37 / AGP 9.1; fixamos a última versão compatível com SDK 36.
-                implementation("com.squareup.okhttp3:okhttp") {
-                    version { strictly(libs.versions.okhttp.get()) }
-                }
             }
         }
         iosMain.dependencies {
@@ -125,34 +168,9 @@ kotlin {
 }
 
 if (androidEnabled) {
-    extensions.configure<ApplicationExtension> {
-        namespace = "br.com.sportconnect"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-        defaultConfig {
-            applicationId = "br.com.sportconnect.app"
-            minSdk = libs.versions.android.minSdk.get().toInt()
-            targetSdk = libs.versions.android.targetSdk.get().toInt()
-            versionCode = 1
-            versionName = "0.1.0"
-        }
-        packaging {
-            resources {
-                excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            }
-        }
-        buildTypes {
-            getByName("release") {
-                isMinifyEnabled = false
-            }
-        }
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
-        }
-    }
     dependencies {
-        "debugImplementation"(libs.compose.ui.tooling)
+        // O plugin Android-KMP nao tem build variants: tooling do Compose vai para o runtime classpath.
+        "androidRuntimeClasspath"(libs.compose.ui.tooling)
     }
 }
 
@@ -169,8 +187,25 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "SportConnect"
-            packageVersion = "1.0.0"
+            // X3 (doc 13): mesma versao do app (gradle.properties).
+            val appVersion = providers.gradleProperty("sportconnect.versionName").get()
+            val appBuild = providers.gradleProperty("sportconnect.versionCode").get()
+            packageVersion = appVersion
             description = "SportConnect - esportes amadores, quadras e rateio"
+            vendor = "SportConnect"
+            macOS {
+                bundleID = "br.com.sportconnect.desktop"
+                iconFile.set(project.file("desktopIcons/icon.icns"))
+                // O .dmg exige versao com o 1o numero > 0; enquanto o app estiver em 0.x, usa 1.0.<build>.
+                packageVersion = if (appVersion.startsWith("0.")) "1.0.$appBuild" else appVersion
+            }
+            windows {
+                iconFile.set(project.file("desktopIcons/icon.ico"))
+                menuGroup = "SportConnect"
+                // Mesmo codigo sempre: o instalador novo substitui o antigo.
+                upgradeUuid = "6f1a3c2e-5b7d-4e8a-9c1f-2d3b4a5e6f70"
+            }
+            linux { iconFile.set(project.file("desktopIcons/icon.png")) }
         }
     }
 }

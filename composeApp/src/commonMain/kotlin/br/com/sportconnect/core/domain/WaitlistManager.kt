@@ -124,6 +124,28 @@ class WaitlistManager(private val refundPolicy: RefundPolicy = RefundPolicy()) {
     fun podeSubstituir(jogo: Jogo, agora: Instant): Boolean =
         jogo.status == StatusReserva.CONFIRMADO && agora < fechamentoDaLista(jogo)
 
+    /** T8 (13/US-111): o atleta pago oferece a propria vaga a lista de espera. */
+    fun oferecer(jogo: Jogo, cotaId: String, usuarioId: String, agora: Instant): Jogo {
+        if (!podeSubstituir(jogo, agora)) throw ListaEsperaException("Substituição só em jogo CONFIRMADO até T − 1h.")
+        val cota = jogo.reserva.cotas.firstOrNull { it.id == cotaId } ?: throw ListaEsperaException("Cota inexistente.")
+        if (cota.atletaId != usuarioId) throw ListaEsperaException("Essa cota não é sua.")
+        if (cota.status != StatusCota.PAGA || cota.tipo != TipoCota.PADRAO) throw ListaEsperaException("Somente cota PAGA pode ser oferecida.")
+        if (cota.organizador) throw ListaEsperaException("O organizador não pode oferecer a vaga.")
+        return marcarOferta(jogo, cotaId, true)
+    }
+
+    /** Desiste de oferecer a vaga (antes de alguem pagar). */
+    fun cancelarOferta(jogo: Jogo, cotaId: String, usuarioId: String): Jogo {
+        val cota = jogo.reserva.cotas.firstOrNull { it.id == cotaId } ?: throw ListaEsperaException("Cota inexistente.")
+        if (cota.atletaId != usuarioId) throw ListaEsperaException("Essa cota não é sua.")
+        return marcarOferta(jogo, cotaId, false)
+    }
+
+    private fun marcarOferta(jogo: Jogo, cotaId: String, oferecida: Boolean): Jogo {
+        val cotas = jogo.reserva.cotas.map { if (it.id == cotaId) it.copy(offeredForSubstitution = oferecida) else it }
+        return jogo.copy(reserva = jogo.reserva.copy(cotas = cotas))
+    }
+
     /**
      * O substituto pagou uma nova cota de mesmo valor: a cota original vira REEMBOLSADA (taxa retida)
      * e uma nova cota PAGA e criada para o substituto. O valor do repasse nao muda.
@@ -141,6 +163,7 @@ class WaitlistManager(private val refundPolicy: RefundPolicy = RefundPolicy()) {
         val original = jogo.reserva.cotas.firstOrNull { it.id == cotaOriginalId }
             ?: throw ListaEsperaException("Cota inexistente.")
         if (original.status != StatusCota.PAGA || original.tipo != TipoCota.PADRAO) throw ListaEsperaException("Somente cota PAGA pode ser substituída.")
+        if (!original.offeredForSubstitution) throw ListaEsperaException("Essa vaga não foi oferecida para substituição.")
         if (original.organizador) throw ListaEsperaException("O organizador não pode ser substituído.")
         if (jogo.participa(substitutoId)) throw ListaEsperaException("O substituto já está no jogo.")
         val reembolso = refundPolicy.calcular(original, SituacaoReembolso.SUBSTITUICAO)!!

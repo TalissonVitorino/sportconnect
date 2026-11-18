@@ -25,13 +25,13 @@ import kotlin.time.Duration.Companion.seconds
 
 /**
  * Gateway fake: gera um Pix copia-e-cola ficticio (formato EMV/BR Code com CRC16 valido) e, apos
- * [atrasoConfirmacao] (~3 s), confirma o pagamento e emite o webhook — como o PSP real faria.
+ * [atrasoConfirmacao] (~1 s), confirma o pagamento e emite o webhook — como o PSP real faria.
  * Estornos passam por ESTORNO_EM_PROCESSAMENTO e concluem apos o mesmo atraso.
  */
 class FakePaymentGateway(
     private val clock: Clock,
     private val scope: CoroutineScope,
-    private val atrasoConfirmacao: Duration = 3.seconds,
+    private val atrasoConfirmacao: Duration = 1.seconds,
     private val confirmarAutomaticamente: Boolean = true,
 ) : PaymentGateway {
 
@@ -95,6 +95,23 @@ class FakePaymentGateway(
         atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNO_EM_PROCESSAMENTO) }
         scope.launch {
             delay(atrasoConfirmacao)
+            if (atual.metodo == MetodoPagamento.CARTAO) {
+                // T6 (13): demo da conta de origem recusando a devolucao no cartao.
+                atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNO_FALHOU) }
+                emitir(pagamentoId, StatusPagamento.ESTORNO_FALHOU)
+            } else {
+                atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNADO, estornadoEm = clock.now()) }
+                emitir(pagamentoId, StatusPagamento.ESTORNADO)
+            }
+        }
+    }
+
+    override suspend fun informarChavePixReembolso(pagamentoId: String, chave: String) {
+        val atual = pagamentos.value[pagamentoId] ?: return
+        if (atual.status != StatusPagamento.ESTORNO_FALHOU) return
+        atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNO_EM_PROCESSAMENTO) }
+        scope.launch {
+            delay(atrasoConfirmacao)
             atualizar(pagamentoId) { it.copy(status = StatusPagamento.ESTORNADO, estornadoEm = clock.now()) }
             emitir(pagamentoId, StatusPagamento.ESTORNADO)
         }
@@ -110,7 +127,7 @@ class FakePaymentGateway(
         _webhooks.emit(
             WebhookPagamento(
                 pagamentoId = id, jogoId = p.jogoId, cotaId = p.cotaId, pagadorId = p.pagadorId, pagadorNome = s.pagadorNome,
-                metodo = p.metodo, status = status, em = clock.now(), cobertura = s.cobertura,
+                metodo = p.metodo, status = status, em = clock.now(), cobertura = s.cobertura, substituicaoCotaId = s.substituicaoCotaId,
             ),
         )
     }

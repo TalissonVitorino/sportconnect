@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.common
 
+import br.com.sportconnect.core.data.local.AppPreferences
 import br.com.sportconnect.core.designsystem.component.AvatarUi
 import br.com.sportconnect.core.designsystem.component.GameCardUi
 import br.com.sportconnect.core.designsystem.theme.SCShareState
@@ -119,15 +120,20 @@ fun Jogo.toCardUi(
 }
 
 /**
- * Flags de sessao da UI (memoria do processo; em producao: DataStore + servidor).
- * - [onboardingDone]: onboarding visto;
+ * Flags de sessao da UI.
+ * - [onboardingDone]: onboarding visto (persistido em [AppPreferences] quando existe; B3 do backlog 11);
  * - [celebrated]: jogos cuja celebracao "Fechou!" ja foi exibida (uma vez por pessoa por jogo, 10 §3.1);
  * - [openedInvites]: convites ja abertos neste aparelho (1a abertura, 10 §3.2).
  */
-class UiSessionStore {
-    val onboardingDone = MutableStateFlow(false)
+class UiSessionStore(private val prefs: AppPreferences? = null) {
+    val onboardingDone = MutableStateFlow(prefs?.onboardingDone ?: false)
     val celebrated = MutableStateFlow<Set<String>>(emptySet())
     val openedInvites = MutableStateFlow<Set<String>>(emptySet())
+
+    fun finishOnboarding() {
+        onboardingDone.value = true
+        prefs?.onboardingDone = true
+    }
 
     fun markCelebrated(gameId: String) = celebrated.update { it + gameId }
     fun markInviteOpened(code: String) = openedInvites.update { it + code.uppercase() }

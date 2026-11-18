@@ -2,6 +2,8 @@
 
 package br.com.sportconnect.feature.slots
 
+import br.com.sportconnect.core.designsystem.a11y.webSelectedLabel
+import br.com.sportconnect.core.designsystem.theme.SCSelection
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -153,11 +155,8 @@ fun SlotPickerScreen(
                                     onClick = {},
                                     enabled = enabled,
                                     shape = SegmentedButtonDefaults.itemShape(i, 3),
-                                    colors = SegmentedButtonDefaults.colors(
-                                        activeContainerColor = c.secondaryContainer,
-                                        activeContentColor = c.onSecondaryContainer,
-                                    ),
-                                    modifier = Modifier.testTag("slot_duration_${if (i == 0) 60 else if (i == 1) 90 else 120}"),
+                                    colors = SCSelection.segmentedColors(),
+                                    modifier = Modifier.webSelectedLabel(label, i == 0).testTag("slot_duration_${if (i == 0) 60 else if (i == 1) 90 else 120}"),
                                 ) { Text(label) }
                             }
                         }

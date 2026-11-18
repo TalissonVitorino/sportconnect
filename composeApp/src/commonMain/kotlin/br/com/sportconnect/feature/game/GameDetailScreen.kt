@@ -2,6 +2,57 @@
 
 package br.com.sportconnect.feature.game
 
+import br.com.sportconnect.resources.cd_court_stars
+import br.com.sportconnect.resources.rating_cta
+import br.com.sportconnect.resources.rating_private_note
+import br.com.sportconnect.resources.rating_thanks
+import br.com.sportconnect.resources.rating_submit
+import br.com.sportconnect.resources.rating_comment_placeholder
+import br.com.sportconnect.resources.rating_court_label
+import br.com.sportconnect.resources.rating_late
+import br.com.sportconnect.resources.rating_no_show
+import br.com.sportconnect.resources.rating_attended
+import br.com.sportconnect.resources.rating_body
+import br.com.sportconnect.resources.rating_title
+import br.com.sportconnect.resources.waitlist_joined
+import br.com.sportconnect.resources.waitlist_leave
+import br.com.sportconnect.resources.waitlist_join
+import br.com.sportconnect.resources.waitlist_position
+import br.com.sportconnect.resources.waitlist_body
+import br.com.sportconnect.resources.waitlist_offer_body
+import br.com.sportconnect.resources.waitlist_offer_action
+import br.com.sportconnect.resources.waitlist_offer_active_body
+import br.com.sportconnect.resources.waitlist_offer_cancel
+import br.com.sportconnect.resources.waitlist_claim_body
+import br.com.sportconnect.resources.waitlist_claim_action
+import br.com.sportconnect.core.designsystem.theme.SCSelection
+import androidx.compose.material.icons.rounded.StarRate
+import androidx.compose.material.icons.rounded.StarBorder
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ModalBottomSheet
+import br.com.sportconnect.core.data.local.Attendance
+import br.com.sportconnect.core.data.local.GameRating
+import br.com.sportconnect.resources.guest_open_in_app
+import androidx.compose.ui.platform.LocalUriHandler
+import br.com.sportconnect.core.config.FeatureFlags
+import br.com.sportconnect.core.platform.isWebApp
+import br.com.sportconnect.resources.cancel_reason_label
+import br.com.sportconnect.resources.wa_game_cancelled
+import br.com.sportconnect.resources.cancel_done_body
+import br.com.sportconnect.core.designsystem.component.SCTextField
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import br.com.sportconnect.core.designsystem.component.scSharedBounds
+import br.com.sportconnect.core.designsystem.component.sharedGameTitleKey
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
@@ -98,6 +149,7 @@ import br.com.sportconnect.core.designsystem.theme.LocalSCClock
 import br.com.sportconnect.core.designsystem.theme.SCShape
 import br.com.sportconnect.core.designsystem.theme.SCShareState
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
+import br.com.sportconnect.core.model.Cota
 import br.com.sportconnect.core.model.MotivoConfirmacao
 import br.com.sportconnect.core.model.PoliticaNaoPagamento
 import br.com.sportconnect.core.model.PtBrFormat
@@ -191,6 +243,8 @@ data class GameDetailActions(
     val invite: (String) -> Unit = {},
     val resolve: (String) -> Unit = {},
     val receipt: (String) -> Unit = {},
+    /** T8 (13/US-111): [jogoId] e a cota oferecida -> tela de pagamento do substituto. */
+    val claimSpot: (String, String) -> Unit = { _, _ -> },
 )
 
 @Composable
@@ -199,25 +253,45 @@ fun GameDetailRoute(route: Route.GameDetail, actions: GameDetailActions) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val share = rememberShareActions()
+    val clock = LocalSCClock.current
     LaunchedEffect(viewModel) {
         viewModel.events.collect { ev ->
             when (ev) {
                 is GameDetailEvent.RemindAll -> {
                     val j = ev.jogo
-                    val prazo = j.reserva.prazoCotas?.let { PtBrFormat.relative(it, kotlin.time.Clock.System.now()) } ?: ""
+                    val prazo = j.reserva.prazoCotas?.let { PtBrFormat.relative(it, clock.now()) } ?: ""
                     share.whatsapp(getString(Res.string.wa_group_reminder, ev.pending, j.titulo, prazo, inviteUrl(j.codigoConvite)))
                     snackbar.showSC(getString(Res.string.split_remind_sent, ev.pending), SCSnackbarKind.Success)
                 }
                 is GameDetailEvent.RemindOne -> {
                     val j = ev.jogo
-                    val prazo = j.reserva.prazoCotas?.let { PtBrFormat.relative(it, kotlin.time.Clock.System.now()) } ?: ""
+                    val prazo = j.reserva.prazoCotas?.let { PtBrFormat.relative(it, clock.now()) } ?: ""
                     val cota = (j.valorCotaConvidado + TaxaConveniencia.PIX).format()
                     share.whatsapp(getString(Res.string.wa_payment_reminder_2h, ev.name.substringBefore(' '), j.titulo, cota, prazo, inviteUrl(j.codigoConvite)))
                 }
                 is GameDetailEvent.RemindLimited ->
                     snackbar.showSC(getString(Res.string.split_remind_limit, ev.name.substringBefore(' '), PtBrFormat.hour(ev.nextAt)))
-                GameDetailEvent.Cancelled -> snackbar.showSC(getString(Res.string.cancel_done_title), SCSnackbarKind.Success)
+                is GameDetailEvent.Cancelled -> {
+                    // E13: "Jogo cancelado" + texto do 07 e atalho para avisar no WhatsApp com o motivo.
+                    val result = snackbar.showSC(
+                        getString(Res.string.cancel_done_title) + ". " + getString(Res.string.cancel_done_body),
+                        SCSnackbarKind.Success,
+                        actionLabel = getString(Res.string.confirmed_share),
+                    )
+                    val j = (viewModel.uiState.value as? GameDetailUiState.Content)?.jogo
+                    if (result == SnackbarResult.ActionPerformed && j != null) {
+                        share.whatsapp(
+                            getString(
+                                Res.string.wa_game_cancelled,
+                                PtBrFormat.dateTime(j.inicio), j.arenaNome,
+                                ev.reason ?: "-", j.valorCotaConvidado.format(), inviteUrl(j.codigoConvite),
+                            ),
+                        )
+                    }
+                }
                 GameDetailEvent.Left -> snackbar.showSC(getString(Res.string.cancel_leave_game), SCSnackbarKind.Success)
+                is GameDetailEvent.WaitlistJoined -> snackbar.showSC(getString(Res.string.waitlist_joined), SCSnackbarKind.Success)
+                GameDetailEvent.Rated -> snackbar.showSC(getString(Res.string.rating_thanks), SCSnackbarKind.Success)
                 is GameDetailEvent.Failure -> snackbar.showSC(ev.message, SCSnackbarKind.Error)
             }
         }
@@ -233,8 +307,12 @@ fun GameDetailRoute(route: Route.GameDetail, actions: GameDetailActions) {
             viewModel.onInviteShared("whatsapp")
             actions.invite(j)
         },
-        onCancel = { viewModel.cancel() },
+        onCancel = { reason -> viewModel.cancel(reason) },
         onLeave = viewModel::leave,
+        onJoinWaitlist = viewModel::joinWaitlist,
+        onLeaveWaitlist = viewModel::leaveWaitlist,
+        onToggleOfferSpot = viewModel::toggleOfferMySpot,
+        onRate = viewModel::rate,
     )
 }
 
@@ -248,17 +326,25 @@ fun GameDetailScreen(
     onRemindAll: () -> Unit = {},
     onRemindOne: (ParticipantUi) -> Unit = {},
     onShareInvite: (String) -> Unit = {},
-    onCancel: () -> Unit = {},
+    onCancel: (String?) -> Unit = {},
     onLeave: () -> Unit = {},
+    onJoinWaitlist: () -> Unit = {},
+    onLeaveWaitlist: () -> Unit = {},
+    onToggleOfferSpot: (Boolean) -> Unit = {},
+    onRate: (GameRating) -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     var showCancel by remember { mutableStateOf(false) }
+    var showRating by remember { mutableStateOf(false) }
     var showLeave by remember { mutableStateOf(false) }
     var showRule by remember { mutableStateOf(false) }
     var menu by remember { mutableStateOf(false) }
     val content = state as? GameDetailUiState.Content
     val celebrating = content?.celebrate == true
     val share = rememberShareActions()
+    // A7: "Fechou!" com toque de confirmacao (uma vez, quando a celebracao aparece).
+    val haptics = LocalHapticFeedback.current
+    LaunchedEffect(celebrating) { if (celebrating) haptics.performHapticFeedback(HapticFeedbackType.Confirm) }
 
     Scaffold(
         containerColor = c.surface,
@@ -269,6 +355,16 @@ fun GameDetailScreen(
                     title = "",
                     onNavigationClick = actions.back,
                     actions = {
+                        if (content != null && isWebApp) {
+                            // E12: na web, convidado pode abrir o jogo no app.
+                            val uri = LocalUriHandler.current
+                            SCButton(
+                                stringResource(Res.string.guest_open_in_app),
+                                { runCatching { uri.openUri(FeatureFlags.appLink(content.jogo.id)) } },
+                                variant = SCButtonVariant.Text, size = SCButtonSize.Small,
+                                modifier = Modifier.testTag("game_open_in_app"),
+                            )
+                        }
                         if (content != null) {
                             IconButton(onClick = { onShareInvite(content.jogo.id) }) {
                                 Icon(Icons.Rounded.Share, stringResource(Res.string.cd_share_game))
@@ -299,6 +395,20 @@ fun GameDetailScreen(
                         size = SCButtonSize.Large,
                         fullWidth = true,
                         modifier = Modifier.testTag("game_pay_now"),
+                    )
+                }
+            } else if (content != null && content.offeredSpot != null) {
+                ClaimSpotBar(content.offeredSpot, { actions.claimSpot(content.jogo.id, content.offeredSpot.id) })
+            } else if (content != null && (content.canJoinWaitlist || content.waitlistPosition != null)) {
+                WaitlistBar(content.waitlistPosition, onJoinWaitlist, onLeaveWaitlist)
+            } else if (content != null && (content.canOfferSpot || content.myPaidShare?.offeredForSubstitution == true)) {
+                OfferSpotBar(content.myPaidShare?.offeredForSubstitution == true, onToggleOfferSpot)
+            } else if (content != null && content.canRate) {
+                br.com.sportconnect.feature.common.BottomActionBar {
+                    SCButton(
+                        stringResource(Res.string.rating_cta), { showRating = true },
+                        size = SCButtonSize.Large, fullWidth = true, leadingIcon = Icons.Rounded.StarRate,
+                        modifier = Modifier.testTag("game_rate"),
                     )
                 }
             }
@@ -345,15 +455,31 @@ fun GameDetailScreen(
         }
     }
 
+    if (showRating && content != null) {
+        RatingSheet(
+            people = content.participants.filter { !it.isSelf && !it.openSpot },
+            onDismiss = { showRating = false },
+            onSubmit = { r -> showRating = false; onRate(r) },
+        )
+    }
     if (content != null && showCancel) {
+        var reason by rememberSaveable { mutableStateOf("") }
         SCDialog(
             title = stringResource(Res.string.cancel_dialog_title, content.jogo.titulo),
             body = stringResource(Res.string.cancel_dialog_body),
             onDismissRequest = { showCancel = false },
             variant = SCDialogVariant.Destructive,
-            confirm = SCAction(stringResource(Res.string.cancel_dialog_confirm), { showCancel = false; onCancel() }),
+            confirm = SCAction(stringResource(Res.string.cancel_dialog_confirm), { showCancel = false; onCancel(reason) }),
             dismiss = SCAction(stringResource(Res.string.cancel_dialog_keep), { showCancel = false }),
-        )
+        ) {
+            // E13: motivo opcional, visivel para a galera (vai no aviso do WhatsApp).
+            SCTextField(
+                value = reason,
+                onValueChange = { reason = it.take(120) },
+                label = stringResource(Res.string.cancel_reason_label),
+                modifier = Modifier.fillMaxWidth().testTag("cancel_reason"),
+            )
+        }
     }
     if (content != null && showLeave) {
         val refund = stringResource(Res.string.cancel_leave_refund_value, (content.myPaidShare?.valor ?: content.jogo.valorCotaConvidado).format())
@@ -430,7 +556,7 @@ private fun ColumnScope.MainColumn(
     Spacer(Modifier.size(12.dp))
     SCSportChip(j.esporte)
     Spacer(Modifier.size(8.dp))
-    Text(j.titulo, style = MaterialTheme.typography.headlineSmall, color = c.onSurface, maxLines = 2, modifier = Modifier.semantics { heading() })
+    Text(j.titulo, style = MaterialTheme.typography.headlineSmall, color = c.onSurface, maxLines = 2, modifier = Modifier.scSharedBounds(sharedGameTitleKey(j.id)).semantics { heading() })
     Spacer(Modifier.size(8.dp))
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         MetaLine(Icons.Rounded.CalendarMonth, PtBrFormat.dateTimeRange(j.inicio, j.fim))
@@ -494,16 +620,18 @@ private fun ColumnScope.MainColumn(
                 leadingIcon = Icons.Rounded.NotificationsActive,
                 modifier = Modifier.testTag("game_remind_all"),
             )
+            // C13: um primario por tela. "Convidar mais gente" e secundario (antes Tonal neon, competia
+            // com o primario) e so aparece quando o principal nao e o proprio convite.
+            Spacer(Modifier.size(8.dp))
+            SCButton(
+                stringResource(Res.string.game_invite_more),
+                { onShareInvite(j.id) },
+                variant = SCButtonVariant.Secondary,
+                fullWidth = true,
+                leadingIcon = Icons.Rounded.PersonAdd,
+                modifier = Modifier.testTag("game_invite_more"),
+            )
         }
-        Spacer(Modifier.size(8.dp))
-        SCButton(
-            stringResource(Res.string.game_invite_more),
-            { onShareInvite(j.id) },
-            variant = SCButtonVariant.Tonal,
-            fullWidth = true,
-            leadingIcon = Icons.Rounded.PersonAdd,
-            modifier = Modifier.testTag("game_invite_more"),
-        )
     }
     if (j.status == StatusReserva.CONFIRMADO) {
         Spacer(Modifier.size(24.dp))
@@ -827,3 +955,124 @@ private fun CancelTextButton(text: String, onClick: () -> Unit, tag: String) {
     )
 }
 
+/** E14 (US-110): jogo lotado -> entrar na lista de espera; ja na fila -> posicao e sair. */
+@Composable
+private fun WaitlistBar(position: Int?, onJoin: () -> Unit, onLeave: () -> Unit) {
+    val c = SportConnectTheme.colors
+    br.com.sportconnect.feature.common.BottomActionBar {
+        Column(Modifier.fillMaxWidth().testTag("game_waitlist")) {
+            Text(
+                if (position == null) stringResource(Res.string.waitlist_body) else stringResource(Res.string.waitlist_position, position),
+                style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp).semantics { liveRegion = LiveRegionMode.Polite },
+            )
+            if (position == null) {
+                SCButton(stringResource(Res.string.waitlist_join), onJoin, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("waitlist_join"))
+            } else {
+                SCButton(stringResource(Res.string.waitlist_leave), onLeave, variant = SCButtonVariant.Secondary, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("waitlist_leave"))
+            }
+        }
+    }
+}
+
+/** T8 (13/US-111): atleta pago oferece/retira a propria vaga para a lista de espera. */
+@Composable
+private fun OfferSpotBar(offered: Boolean, onToggle: (Boolean) -> Unit) {
+    val c = SportConnectTheme.colors
+    br.com.sportconnect.feature.common.BottomActionBar {
+        Column(Modifier.fillMaxWidth().testTag("game_offer_spot")) {
+            Text(
+                stringResource(if (offered) Res.string.waitlist_offer_active_body else Res.string.waitlist_offer_body),
+                style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
+            if (offered) {
+                SCButton(
+                    stringResource(Res.string.waitlist_offer_cancel), { onToggle(false) },
+                    variant = SCButtonVariant.Secondary, size = SCButtonSize.Large, fullWidth = true,
+                    modifier = Modifier.testTag("offer_spot_cancel"),
+                )
+            } else {
+                SCButton(
+                    stringResource(Res.string.waitlist_offer_action), { onToggle(true) },
+                    variant = SCButtonVariant.Secondary, size = SCButtonSize.Large, fullWidth = true,
+                    modifier = Modifier.testTag("offer_spot_start"),
+                )
+            }
+        }
+    }
+}
+
+/** T8 (13/US-111): quem esta na fila ve a vaga que alguem ofereceu e pode pagar pra entrar. */
+@Composable
+private fun ClaimSpotBar(cota: Cota, onClaim: () -> Unit) {
+    val c = SportConnectTheme.colors
+    br.com.sportconnect.feature.common.BottomActionBar {
+        Column(Modifier.fillMaxWidth().testTag("game_claim_spot")) {
+            Text(
+                stringResource(Res.string.waitlist_claim_body, cota.valor.format()),
+                style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp).semantics { liveRegion = LiveRegionMode.Polite },
+            )
+            SCButton(stringResource(Res.string.waitlist_claim_action), onClaim, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("claim_spot"))
+        }
+    }
+}
+
+/** E15 (US-130): quem foi, quem faltou, a quadra (1–5) e um comentario opcional para a arena. */
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun RatingSheet(people: List<ParticipantUi>, onDismiss: () -> Unit, onSubmit: (GameRating) -> Unit) {
+    val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
+    val attendance = remember { mutableStateMapOf<String, Attendance>().apply { people.forEach { put(it.key, Attendance.ATTENDED) } } }
+    var stars by remember { mutableStateOf(0) }
+    var comment by remember { mutableStateOf("") }
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = c.surface) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 24.dp).testTag("rating_sheet")) {
+            Text(stringResource(Res.string.rating_title), style = t.headlineSmall, color = c.onSurface, modifier = Modifier.semantics { heading() })
+            Spacer(Modifier.height(4.dp))
+            Text(stringResource(Res.string.rating_body), style = t.bodyMedium, color = c.onSurfaceVariant)
+            Spacer(Modifier.height(16.dp))
+            people.forEach { p ->
+                Text(p.name, style = t.titleSmall, color = c.onSurface, modifier = Modifier.padding(top = 8.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        Attendance.ATTENDED to Res.string.rating_attended,
+                        Attendance.NO_SHOW to Res.string.rating_no_show,
+                        Attendance.LATE to Res.string.rating_late,
+                    ).forEach { (a, label) ->
+                        FilterChip(
+                            selected = attendance[p.key] == a,
+                            onClick = { attendance[p.key] = a },
+                            label = { Text(stringResource(label)) },
+                            colors = SCSelection.filterChipColors(),
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.height(20.dp))
+            Text(stringResource(Res.string.rating_court_label), style = t.titleMedium, color = c.onSurface)
+            Row {
+                (1..5).forEach { n ->
+                    val cd = stringResource(Res.string.cd_court_stars, n)
+                    IconButton(onClick = { stars = n }, modifier = Modifier.semantics { contentDescription = cd }.testTag("rating_star_$n")) {
+                        Icon(if (n <= stars) Icons.Rounded.Star else Icons.Rounded.StarBorder, null, tint = if (n <= stars) c.primary else c.onSurfaceVariant)
+                    }
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                comment, { comment = it.take(280) }, modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(Res.string.rating_comment_placeholder)) }, minLines = 2,
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(stringResource(Res.string.rating_private_note), style = t.bodySmall, color = c.onSurfaceVariant)
+            Spacer(Modifier.height(16.dp))
+            SCButton(
+                stringResource(Res.string.rating_submit), { onSubmit(GameRating(attendance.toMap(), stars, comment.trim())) },
+                size = SCButtonSize.Large, fullWidth = true, enabled = stars > 0, modifier = Modifier.testTag("rating_submit"),
+            )
+        }
+    }
+}

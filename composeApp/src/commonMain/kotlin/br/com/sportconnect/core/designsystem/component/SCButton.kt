@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -130,3 +131,10 @@ fun SCButton(
         }
     }
 }
+
+/**
+ * Para botao de texto alinhado a esquerda com outro texto (ex.: "Ver todos" embaixo do nome da quadra):
+ * compensa o padding horizontal de 12dp, para o rotulo comecar na mesma coluna do conteudo (C9).
+ * A area de toque continua a mesma.
+ */
+fun Modifier.scAlignTextButtonStart(): Modifier = this.offset(x = (-12).dp)

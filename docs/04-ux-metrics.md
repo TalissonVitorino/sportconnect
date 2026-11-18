@@ -261,6 +261,9 @@ Nota: no piloto com onboarding assistido, a meta C1→C7 sobe para ≥ 60% em 14
 | 50 | `avaliacao_enviada` *(Fase 2)* | S | Avaliação pós-jogo | `jogo_id`, `tipo` (atleta/arena), `nota` |
 | 51 | `arena_visualizada` | C | Tela de detalhe da arena renderizada (atleta/organizador) | `arena_id`, `origem` (busca/home/link/jogo), `qtd_quadras`, `preco_min_centavos`, `slots_livres_hoje` |
 | 52 | `extrato_exportado` | C | Exportação do extrato de repasses (CSV) | `periodo_dias` (7, 30, 90 ou -1 = todos), `qtd_repasses` (a arena e o papel vêm do contexto global do tracker) |
+| 53 | `dados_exportados` † | C | "Baixar meus dados" em Privacidade e dados (LGPD, RNF-11) | `formato` (json), `qtd_jogos`, `qtd_pagamentos` |
+| 54 | `conta_exclusao_solicitada` † | S | Exclusão de conta confirmada por código (US-003) | `agendada` (bool: há jogo ativo pago), `qtd_jogos_pendentes` |
+| 55 | `perfil_atualizado` † | C | Perfil editado | `campos` (nome/email/celular) |
 
 > **Nota de implementação (evento 44):** `agenda_arena_visualizada` deve ser emitido **uma vez por abertura da tela** (ou por troca de visão dia/semana), e não a cada assinatura de dados. Na visão de semana, a implementação atual assina 7 vezes o painel da arena; é preciso desduplicar antes de ligar o tracking real.
 

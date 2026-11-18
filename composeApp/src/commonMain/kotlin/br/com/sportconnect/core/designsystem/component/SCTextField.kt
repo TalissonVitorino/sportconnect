@@ -43,12 +43,13 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import br.com.sportconnect.core.designsystem.theme.SCShape
 import br.com.sportconnect.core.designsystem.theme.SportConnectTheme
 
-enum class SCTextFieldType { Text, Money, Phone, Cpf, Search, Multiline }
+enum class SCTextFieldType { Text, Money, Phone, Cpf, Cep, CardNumber, CardExpiry, Cvv, Search, Multiline }
 
 /**
  * Campo de texto (06 §5.2). Rotulo SEMPRE visivel acima do campo (nome acessivel),
@@ -86,19 +87,30 @@ fun SCTextField(
     val digitLimit = when (type) {
         SCTextFieldType.Phone -> 11
         SCTextFieldType.Cpf -> 11
+        SCTextFieldType.Cep -> 8
+        SCTextFieldType.CardNumber -> 19
+        SCTextFieldType.CardExpiry -> 4
+        SCTextFieldType.Cvv -> 4
         SCTextFieldType.Money -> 11
         else -> null
     }
     val effectiveMax = maxLength ?: digitLimit
-    val digitsOnly = type == SCTextFieldType.Money || type == SCTextFieldType.Phone || type == SCTextFieldType.Cpf
+    val digitsOnly = type == SCTextFieldType.Money || type == SCTextFieldType.Phone || type == SCTextFieldType.Cpf ||
+        type == SCTextFieldType.Cep || type == SCTextFieldType.CardNumber || type == SCTextFieldType.CardExpiry || type == SCTextFieldType.Cvv
     val transformation: VisualTransformation = when (type) {
         SCTextFieldType.Money -> MoneyVisualTransformation
-        SCTextFieldType.Phone -> MaskVisualTransformation("(##) # ####-####")
+        SCTextFieldType.Phone -> MaskVisualTransformation(PHONE_MASK)
         SCTextFieldType.Cpf -> MaskVisualTransformation("###.###.###-##")
+        SCTextFieldType.Cep -> MaskVisualTransformation("#####-###")
+        SCTextFieldType.CardNumber -> MaskVisualTransformation("#### #### #### #### ###")
+        SCTextFieldType.CardExpiry -> MaskVisualTransformation("##/##")
+        SCTextFieldType.Cvv -> PasswordVisualTransformation()
         else -> VisualTransformation.None
     }
     val kbOptions = when (type) {
-        SCTextFieldType.Money, SCTextFieldType.Cpf -> keyboardOptions.copy(keyboardType = KeyboardType.Number)
+        SCTextFieldType.Money, SCTextFieldType.Cpf, SCTextFieldType.Cep, SCTextFieldType.CardNumber, SCTextFieldType.CardExpiry ->
+            keyboardOptions.copy(keyboardType = KeyboardType.Number)
+        SCTextFieldType.Cvv -> keyboardOptions.copy(keyboardType = KeyboardType.NumberPassword)
         SCTextFieldType.Phone -> keyboardOptions.copy(keyboardType = KeyboardType.Phone)
         else -> keyboardOptions
     }
@@ -141,7 +153,8 @@ fun SCTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .semantics {
-                    contentDescription = label
+                    // A3: campo sem rotulo visivel (busca) usa o placeholder como nome.
+                    contentDescription = label.ifBlank { placeholder.orEmpty() }
                     if (isError) {
                         error(errorText)
                     }
@@ -221,7 +234,10 @@ private object MoneyVisualTransformation : VisualTransformation {
 }
 
 /** Mascara visual com `#` = digito. Mapeamento de offset exato (edicao no meio funciona). */
-private class MaskVisualTransformation(private val mask: String) : VisualTransformation {
+/** T1 (doc 13): formato do 07 — (11) 98765-4321. */
+internal const val PHONE_MASK = "(##) #####-####"
+
+internal class MaskVisualTransformation(private val mask: String) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val digits = text.text
         val out = StringBuilder()

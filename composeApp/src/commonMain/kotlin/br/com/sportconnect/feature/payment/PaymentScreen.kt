@@ -2,6 +2,65 @@
 
 package br.com.sportconnect.feature.payment
 
+import br.com.sportconnect.resources.payment_app_offer_dismiss
+import br.com.sportconnect.resources.payment_app_offer_cta
+import br.com.sportconnect.resources.payment_app_offer_title
+import androidx.compose.material.icons.rounded.NotificationsActive
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalUriHandler
+import br.com.sportconnect.core.config.FeatureFlags
+import br.com.sportconnect.core.platform.isWebApp
+import br.com.sportconnect.resources.card_name_invalid
+import br.com.sportconnect.resources.common_back
+import br.com.sportconnect.resources.error_card_expired_body
+import br.com.sportconnect.resources.error_card_expired_title
+import br.com.sportconnect.resources.error_payment_declined_action
+import br.com.sportconnect.resources.error_payment_declined_body
+import br.com.sportconnect.resources.error_payment_declined_title
+import br.com.sportconnect.resources.card_secure_note
+import br.com.sportconnect.resources.card_cvv_invalid
+import br.com.sportconnect.resources.card_expiry_invalid
+import br.com.sportconnect.resources.card_number_invalid
+import br.com.sportconnect.resources.card_save_toggle
+import br.com.sportconnect.resources.card_name_label
+import br.com.sportconnect.resources.card_cvv_label
+import br.com.sportconnect.resources.card_expiry_label
+import br.com.sportconnect.resources.card_number_label
+import br.com.sportconnect.core.model.FusoSaoPaulo
+import kotlinx.datetime.toLocalDateTime
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material3.Checkbox
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
+import br.com.sportconnect.core.designsystem.component.SCTextFieldType
+import br.com.sportconnect.core.designsystem.component.SCTextField
+import br.com.sportconnect.core.domain.CardValidation
+import br.com.sportconnect.core.domain.CardBrand
+import kotlin.time.Duration.Companion.minutes
+import androidx.compose.runtime.produceState
+import br.com.sportconnect.resources.profile_sign_in
+import br.com.sportconnect.resources.error_session_expired_body
+import br.com.sportconnect.resources.error_session_expired_title
+import br.com.sportconnect.resources.error_payment_slow_body
+import br.com.sportconnect.resources.error_payment_slow_title
+import br.com.sportconnect.resources.error_pix_expired_action
+import br.com.sportconnect.resources.error_checkout_expired_body
+import br.com.sportconnect.resources.error_checkout_expired_title
+import br.com.sportconnect.feature.common.LocalOnline
+import br.com.sportconnect.core.designsystem.theme.SCMotion
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -162,6 +221,8 @@ data class PaymentActions(
     /** Depois de pagar a cota do organizador: segue para `game/{id}/invite`. */
     val invite: (String) -> Unit = {},
     val receipt: (String) -> Unit = {},
+    /** Sessao expirou: abre o login e volta para este pagamento. */
+    val login: (String) -> Unit = {},
 )
 
 @Composable
@@ -177,6 +238,9 @@ fun PaymentRoute(route: Route.GamePay, actions: PaymentActions) {
         onCheckNow = vm::checkNow,
         onRegenerate = vm::regenerate,
         onPayWithCard = vm::payWithCard,
+        onCard = vm::updateCard,
+        onSwitchToPix = vm::switchToPix,
+        onBackToForm = vm::backToForm,
     )
 }
 
@@ -191,6 +255,9 @@ fun PaymentScreen(
     onCheckNow: () -> Unit = {},
     onRegenerate: () -> Unit = {},
     onPayWithCard: () -> Unit = {},
+    onCard: ((CardForm) -> CardForm) -> Unit = {},
+    onSwitchToPix: () -> Unit = {},
+    onBackToForm: () -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     val snackbar = remember { SnackbarHostState() }
@@ -224,7 +291,7 @@ fun PaymentScreen(
                             size = SCButtonSize.Large,
                             fullWidth = true,
                             loading = state.phase is PixPhase.Generating,
-                            enabled = !state.loading && !waiting,
+                            enabled = !state.loading && !waiting && LocalOnline.current,
                             modifier = Modifier.testTag("pay_pix_cta"),
                         )
                     }
@@ -234,12 +301,12 @@ fun PaymentScreen(
             Box(Modifier.fillMaxSize().padding(padding)) {
                 when {
                     state.paid -> PaidContent(state, actions)
-                    state.phase is PixPhase.Error -> ErrorContent(state.phase, state, actions, onRegenerate)
+                    state.phase is PixPhase.Error -> ErrorContent(state.phase, state, actions, onRegenerate, onSwitchToPix, onBackToForm)
                     wc == WidthClass.Expanded && waiting -> Row(
                         Modifier.fillMaxSize().padding(24.dp),
                         horizontalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterHorizontally),
                     ) {
-                        Column(Modifier.widthIn(max = 456.dp).weight(1f)) { Summary(state, onSelectMethod, enabled = false) }
+                        Column(Modifier.widthIn(max = 456.dp).weight(1f)) { Summary(state, onSelectMethod, enabled = false, onCard = onCard) }
                         Column(
                             Modifier.widthIn(max = 456.dp).weight(1f).fillMaxHeight()
                                 .background(c.surfaceContainerLow, MaterialTheme.shapes.extraLarge)
@@ -261,26 +328,24 @@ fun PaymentScreen(
                             }
                         }
                     }
-                    else -> {
-                        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                    else -> AnimatedContent(
+                        targetState = waiting,
+                        transitionSpec = {
+                            // C14: antes era um "sheet" com alca que nao arrastava, sobre um scrim cinza.
+                            // Agora o Pix entra como tela propria, subindo de leve.
+                            (slideInVertically(tween(SCMotion.Medium4, easing = SCMotion.EmphasizedDecelerate)) { it / 8 } + fadeIn(tween(SCMotion.Medium1))) togetherWith
+                                fadeOut(tween(SCMotion.Short3))
+                        },
+                        label = "pix-wait",
+                    ) { isWaiting ->
+                        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).then(if (isWaiting) Modifier.testTag("pix_sheet") else Modifier)) {
                             CenteredContent(Modifier.padding(horizontal = if (wc == WidthClass.Compact) 0.dp else 24.dp)) {
-                                Summary(state, onSelectMethod, enabled = !waiting)
-                            }
-                        }
-                        if (waiting) {
-                            // "Sheet" do Pix sobre o resumo (scrim 32%, topo radius.xxl, alca 32x4).
-                            Box(Modifier.fillMaxSize().background(c.scrim.copy(alpha = 0.32f)))
-                            Column(
-                                Modifier.align(Alignment.BottomCenter).widthIn(max = 560.dp).fillMaxWidth()
-                                    .fillMaxHeight(0.94f)
-                                    .background(c.surfaceContainerLow, SCShape.sheet)
-                                    .verticalScroll(rememberScrollState())
-                                    .testTag("pix_sheet"),
-                            ) {
-                                Box(Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 16.dp), contentAlignment = Alignment.Center) {
-                                    Box(Modifier.size(32.dp, 4.dp).background(c.outlineVariant, CircleShape))
+                                if (isWaiting) {
+                                    Spacer(Modifier.height(8.dp))
+                                    PixSheetContent(state, share, onCopied, onCheckNow, onRegenerate, onPayWithCard)
+                                } else {
+                                    Summary(state, onSelectMethod, enabled = true, onCard = onCard)
                                 }
-                                PixSheetContent(state, share, onCopied, onCheckNow, onRegenerate, onPayWithCard)
                             }
                         }
                     }
@@ -318,7 +383,7 @@ private fun PixPhase.toSc(): SCPixState = when (this) {
 }
 
 @Composable
-private fun Summary(state: PaymentUiState, onSelectMethod: (MetodoPagamento) -> Unit, enabled: Boolean) {
+private fun Summary(state: PaymentUiState, onSelectMethod: (MetodoPagamento) -> Unit, enabled: Boolean, onCard: ((CardForm) -> CardForm) -> Unit = {}) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
     Column {
@@ -373,6 +438,9 @@ private fun Summary(state: PaymentUiState, onSelectMethod: (MetodoPagamento) -> 
                     enabled = enabled,
                     tag = "pay_method_card",
                 ) { onSelectMethod(MetodoPagamento.CARTAO) }
+            }
+            AnimatedVisibility(state.method == MetodoPagamento.CARTAO && enabled) {
+                CardFormFields(state.card, onCard)
             }
         }
     }
@@ -438,6 +506,7 @@ private fun PixSheetContent(
     var expanded by remember { mutableStateOf(false) }
     var showQr by remember { mutableStateOf(false) }
     val expired = state.phase is PixPhase.Expired
+    val haptics = LocalHapticFeedback.current
     Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 24.dp)) {
         Text(stringResource(Res.string.pix_title), style = t.titleLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
         Spacer(Modifier.height(4.dp))
@@ -451,18 +520,20 @@ private fun PixSheetContent(
         }
         Spacer(Modifier.height(20.dp))
         if (expired) {
+            // E4: logo apos criar o jogo, o que acabou foi a trava de 10 min do horario (RN-08), nao so o codigo.
             NoticeCard(
-                stringResource(Res.string.error_pix_expired_title) + ". " + stringResource(Res.string.error_pix_expired_body),
+                if (state.afterCreate) stringResource(Res.string.error_checkout_expired_title) + ". " + stringResource(Res.string.error_checkout_expired_body)
+                else stringResource(Res.string.error_pix_expired_title) + ". " + stringResource(Res.string.error_pix_expired_body),
                 container = c.errorContainer,
                 content = c.onErrorContainer,
             )
             Spacer(Modifier.height(12.dp))
-            SCButton(stringResource(Res.string.pix_new_code), onRegenerate, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("pix_new_code"))
+            SCButton(stringResource(Res.string.error_pix_expired_action), onRegenerate, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("pix_new_code"))
             return@Column
         }
         SCButton(
             if (state.copied) stringResource(Res.string.pix_code_copied_button) else stringResource(Res.string.pix_copy_code),
-            { share.copy(code); onCopied() },
+            { share.copy(code); haptics.performHapticFeedback(HapticFeedbackType.Confirm); onCopied() },
             size = SCButtonSize.Large,
             fullWidth = true,
             leadingIcon = if (state.copied) Icons.Rounded.Check else Icons.Rounded.ContentCopy,
@@ -543,13 +614,24 @@ private fun PixSheetContent(
                 )
             }
             Spacer(Modifier.height(4.dp))
-            Text(stringResource(Res.string.pix_waiting_body), style = t.bodyMedium, color = c.onSurfaceVariant)
+            // E4: passou de 2 min aguardando -> "O pagamento esta demorando" (sem pagar de novo).
+            val clock = LocalSCClock.current
+            val now by produceState(clock.now(), state.waitingSince) {
+                while (true) { value = clock.now(); delay(15_000) }
+            }
+            val slow = !processing && state.waitingSince != null && now - state.waitingSince >= 2.minutes
+            if (slow) {
+                Text(stringResource(Res.string.error_payment_slow_title), style = t.titleSmall, color = c.onSurface, modifier = Modifier.testTag("pix_slow"))
+                Text(stringResource(Res.string.error_payment_slow_body), style = t.bodyMedium, color = c.onSurfaceVariant)
+            } else {
+                Text(stringResource(Res.string.pix_waiting_body), style = t.bodyMedium, color = c.onSurfaceVariant)
+            }
         }
         Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SCButton(stringResource(Res.string.pix_waiting_check), onCheckNow, variant = SCButtonVariant.Secondary)
-            SCButton(stringResource(Res.string.pix_pay_with_card), onPayWithCard, variant = SCButtonVariant.Text)
-        }
+        // C14: empilhados e com largura total; antes ficavam lado a lado com pesos visuais confusos.
+        SCButton(stringResource(Res.string.pix_waiting_check), onCheckNow, variant = SCButtonVariant.Secondary, fullWidth = true, modifier = Modifier.testTag("pix_check_now"))
+        Spacer(Modifier.height(4.dp))
+        SCButton(stringResource(Res.string.pix_pay_with_card), onPayWithCard, variant = SCButtonVariant.Text, fullWidth = true)
     }
 }
 
@@ -560,17 +642,28 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
     val t = MaterialTheme.typography
     val reduced = SportConnectTheme.reducedMotion
     var shown by remember { mutableStateOf(reduced) }
-    LaunchedEffect(Unit) { shown = true }
-    val scale by animateFloatAsState(if (shown) 1f else 0.8f)
+    val haptics = LocalHapticFeedback.current
+    LaunchedEffect(Unit) {
+        shown = true
+        haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+    }
+    // C15: check "pula" (spring com overshoot) e o conteudo fica centralizado na altura.
+    val scale by animateFloatAsState(
+        if (shown) 1f else 0.6f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow),
+    )
     val j = state.jogo
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+    Column(
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).heightIn(min = maxHeight),
+        verticalArrangement = Arrangement.Center,
+    ) {
         CenteredContent(Modifier.padding(24.dp)) {
             Column(
                 Modifier.fillMaxWidth().semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Assertive },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Spacer(Modifier.height(32.dp))
-                Icon(Icons.Rounded.CheckCircle, null, tint = ext.success, modifier = Modifier.size(64.dp).scale(scale))
+                Icon(Icons.Rounded.CheckCircle, null, tint = ext.success, modifier = Modifier.size(72.dp).scale(scale))
                 Spacer(Modifier.height(16.dp))
                 Text(stringResource(Res.string.pix_paid_title), style = t.headlineLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
                 Spacer(Modifier.height(8.dp))
@@ -578,9 +671,8 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
             }
             if (j != null) {
                 Spacer(Modifier.height(24.dp))
-                val counts = j.splitCounts(kotlin.time.Clock.System.now())
-                Text(stringResource(Res.string.split_progress, counts.paid + counts.covered, counts.total), style = t.titleMedium, color = c.onSurface)
-                Spacer(Modifier.height(8.dp))
+                // O SCSplitProgress ja traz o rotulo "x de y cotas pagas" (antes aparecia duplicado).
+                val counts = j.splitCounts(LocalSCClock.current.now())
                 SCSplitProgress(counts.total, counts.paid, processing = counts.processing, covered = counts.covered, variant = SCSplitProgressVariant.Compact)
             }
             Spacer(Modifier.height(32.dp))
@@ -592,6 +684,7 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
                     SCButton(stringResource(Res.string.pix_see_game), { actions.seeGame(id) }, size = SCButtonSize.Large, fullWidth = true, modifier = Modifier.testTag("pay_success_see_game"))
                 }
             }
+            if (isWebApp) AppOfferCard(j?.id)
             (state.phase as? PixPhase.Paid)?.cobranca?.pagamentoId?.let { pid ->
                 SCButton(
                     stringResource(Res.string.pix_paid_receipt),
@@ -603,10 +696,66 @@ private fun PaidContent(state: PaymentUiState, actions: PaymentActions) {
             }
         }
     }
+    }
+}
+
+/** E12: depois de pagar na web, oferece o app (avisos do jogo). Dispensavel. */
+@Composable
+private fun AppOfferCard(gameId: String?) {
+    var dismissed by rememberSaveable { mutableStateOf(false) }
+    if (dismissed) return
+    val c = SportConnectTheme.colors
+    val uri = LocalUriHandler.current
+    Spacer(Modifier.height(24.dp))
+    Column(
+        Modifier.fillMaxWidth().background(c.surfaceContainerLow, MaterialTheme.shapes.large).padding(16.dp).testTag("pay_app_offer"),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Rounded.NotificationsActive, null, tint = c.primary, modifier = Modifier.size(24.dp))
+            Spacer(Modifier.width(12.dp))
+            Text(stringResource(Res.string.payment_app_offer_title), style = MaterialTheme.typography.titleSmall, color = c.onSurface)
+        }
+        Spacer(Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SCButton(stringResource(Res.string.payment_app_offer_cta), { runCatching { uri.openUri(FeatureFlags.appLink(gameId)) } }, size = SCButtonSize.Small)
+            SCButton(stringResource(Res.string.payment_app_offer_dismiss), { dismissed = true }, variant = SCButtonVariant.Text, size = SCButtonSize.Small)
+        }
+    }
 }
 
 @Composable
-private fun ErrorContent(phase: PixPhase.Error, state: PaymentUiState, actions: PaymentActions, onRetry: () -> Unit) {
+private fun ErrorContent(
+    phase: PixPhase.Error,
+    state: PaymentUiState,
+    actions: PaymentActions,
+    onRetry: () -> Unit,
+    onSwitchToPix: () -> Unit = {},
+    onBackToForm: () -> Unit = {},
+) {
+    if (phase.code == "CARTAO_RECUSADO" || phase.code == "CARTAO_VENCIDO") {
+        // E4/E5: recusado -> sugere Pix; vencido -> volta para corrigir a validade.
+        val declined = phase.code == "CARTAO_RECUSADO"
+        br.com.sportconnect.core.designsystem.component.SCEmptyState(
+            title = stringResource(if (declined) Res.string.error_payment_declined_title else Res.string.error_card_expired_title),
+            description = stringResource(if (declined) Res.string.error_payment_declined_body else Res.string.error_card_expired_body),
+            illustration = br.com.sportconnect.core.designsystem.component.SCIllustration.Error,
+            primaryAction = if (declined) SCAction(stringResource(Res.string.error_payment_declined_action), onSwitchToPix) else SCAction(stringResource(Res.string.common_back), onBackToForm),
+            secondaryAction = if (declined) SCAction(stringResource(Res.string.common_back), onBackToForm) else null,
+            modifier = Modifier.testTag(if (declined) "pay_card_declined" else "pay_card_expired"),
+        )
+        return
+    }
+    if (phase.code == "NAO_AUTENTICADO") {
+        // E4: sessao expirou no meio do pagamento -> entrar de novo e voltar para ca.
+        br.com.sportconnect.core.designsystem.component.SCEmptyState(
+            title = stringResource(Res.string.error_session_expired_title),
+            description = stringResource(Res.string.error_session_expired_body),
+            illustration = br.com.sportconnect.core.designsystem.component.SCIllustration.Error,
+            primaryAction = state.jogo?.id?.let { id -> SCAction(stringResource(Res.string.profile_sign_in), { actions.login(id) }) },
+            modifier = Modifier.testTag("pay_session_expired"),
+        )
+        return
+    }
     val (title, body) = when (phase.code) {
         "JA_PAGOU" -> Res.string.error_already_paid_title to Res.string.error_already_paid_body
         "SEM_VAGAS" -> Res.string.error_game_full_title to Res.string.error_game_full_body
@@ -621,4 +770,72 @@ private fun ErrorContent(phase: PixPhase.Error, state: PaymentUiState, actions: 
         secondaryAction = if (phase.code == "JA_PAGOU" || phase.code == "SEM_VAGAS") null else SCAction(stringResource(Res.string.pix_new_code), onRetry),
         modifier = Modifier.testTag(if (phase.code == "JA_PAGOU") "pix_already_paid" else "pay_error"),
     )
+}
+
+/** E5: formulario do cartao. Erros so aparecem depois da 1a tentativa de pagar. */
+@Composable
+private fun CardFormFields(card: CardForm, onCard: ((CardForm) -> CardForm) -> Unit) {
+    val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
+    val today = LocalSCClock.current.now().toLocalDateTime(FusoSaoPaulo).date
+    val expiryState = CardValidation.expiryState(card.expiry, today)
+    Column(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp).testTag("card_form"), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        SCTextField(
+            value = card.number,
+            onValueChange = { v -> onCard { it.copy(number = v) } },
+            label = stringResource(Res.string.card_number_label),
+            type = SCTextFieldType.CardNumber,
+            supportingText = card.brand.takeIf { card.number.length >= 4 && it != CardBrand.OUTRA }?.label,
+            errorText = if (card.showErrors && !card.numberOk) stringResource(Res.string.card_number_invalid) else null,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.CreditCardNumber }.testTag("card_number"),
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            SCTextField(
+                value = card.expiry,
+                onValueChange = { v -> onCard { it.copy(expiry = v) } },
+                label = stringResource(Res.string.card_expiry_label),
+                type = SCTextFieldType.CardExpiry,
+                placeholder = "MM/AA",
+                errorText = when {
+                    !card.showErrors -> null
+                    expiryState == CardValidation.ExpiryState.Expired -> stringResource(Res.string.error_card_expired_title)
+                    expiryState != CardValidation.ExpiryState.Ok -> stringResource(Res.string.card_expiry_invalid)
+                    else -> null
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                modifier = Modifier.weight(1f).semantics { contentType = ContentType.CreditCardExpirationDate }.testTag("card_expiry"),
+            )
+            SCTextField(
+                value = card.cvv,
+                onValueChange = { v -> onCard { it.copy(cvv = v) } },
+                label = stringResource(Res.string.card_cvv_label),
+                type = SCTextFieldType.Cvv,
+                errorText = if (card.showErrors && !card.cvvOk) stringResource(Res.string.card_cvv_invalid) else null,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                modifier = Modifier.weight(1f).semantics { contentType = ContentType.CreditCardSecurityCode }.testTag("card_cvv"),
+            )
+        }
+        SCTextField(
+            value = card.name,
+            onValueChange = { v -> onCard { it.copy(name = v.take(40)) } },
+            label = stringResource(Res.string.card_name_label),
+            errorText = if (card.showErrors && !card.nameOk) stringResource(Res.string.card_name_invalid) else null,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters, imeAction = ImeAction.Done),
+            modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.PersonFullName }.testTag("card_name"),
+        )
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(role = Role.Checkbox) { onCard { it.copy(save = !it.save) } }.testTag("card_save"),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(checked = card.save, onCheckedChange = null)
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(Res.string.card_save_toggle), style = t.bodyMedium, color = c.onSurface)
+        }
+        Row(verticalAlignment = Alignment.Top) {
+            Icon(Icons.Rounded.Lock, null, tint = c.onSurfaceVariant, modifier = Modifier.size(16.dp).padding(top = 2.dp))
+            Spacer(Modifier.width(6.dp))
+            Text(stringResource(Res.string.card_secure_note), style = t.bodySmall, color = c.onSurfaceVariant)
+        }
+    }
 }

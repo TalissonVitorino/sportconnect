@@ -40,6 +40,14 @@ open class ArenaAdminNavigator(
         navController?.navigate(ArenaAdminRoute.CourtEdit(courtId))
     }
 
+    open fun openReports() {
+        navController?.navigate(ArenaAdminRoute.Reports)
+    }
+
+    open fun openSettings() {
+        navController?.navigate(ArenaAdminRoute.Settings)
+    }
+
     open fun openOnboarding() {
         navController?.navigate(ArenaAdminRoute.Onboarding)
     }

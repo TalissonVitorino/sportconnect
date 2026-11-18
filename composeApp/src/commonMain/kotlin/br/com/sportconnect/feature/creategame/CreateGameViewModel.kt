@@ -1,5 +1,6 @@
 package br.com.sportconnect.feature.creategame
 
+import br.com.sportconnect.core.model.Visibilidade
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.sportconnect.core.domain.HoldDeadlineCalculator
@@ -42,7 +43,7 @@ enum class RuleOption { Covers, Cancel, Resplit }
 enum class SpotsError { Range, MinShare }
 
 /** Erros de criacao mapeados para as strings do 07. */
-enum class CreateError { SlotTaken, DeadlineTooShort, CheckoutExpired, Generic }
+enum class CreateError { SlotTaken, DeadlineTooShort, CheckoutExpired, PriceChanged, SessionExpired, Generic }
 
 data class CreateGameUiState(
     val loading: Boolean = true,
@@ -62,6 +63,8 @@ data class CreateGameUiState(
     val guarantee: GarantiaCobertura = GarantiaCobertura.CARTAO,
     /** RN-16: teto do complemento em % da cota (padrao 50). */
     val capPct: Int = 50,
+    /** T3 (US-100): vagas restantes abertas para avulsos ("Jogos com vaga"). */
+    val openSpots: Boolean = false,
     /** Viabilidade por regra (RN-12). A: viavel se ao menos uma garantia couber. */
     val viable: Map<RuleOption, Boolean> = emptyMap(),
     val guaranteeViable: Map<GarantiaCobertura, Boolean> = emptyMap(),
@@ -183,6 +186,8 @@ class CreateGameViewModel(
         recompute()
     }
 
+    fun setOpenSpots(open: Boolean) = _uiState.update { it.copy(openSpots = open) }
+
     fun setCapPct(pct: Int) = _uiState.update { it.copy(capPct = pct.coerceIn(0, 100)) }
 
     /** Viabilidade (RN-12) e prazos (RN-10/11), como se a pre-reserva fosse ativada agora. */
@@ -262,6 +267,14 @@ class CreateGameViewModel(
         val sport = s.sport ?: return
         _uiState.update { it.copy(submitting = true, error = null) }
         viewModelScope.launch {
+            // E4: a arena pode ter mudado o preco entre a escolha e a confirmacao. Mostra o novo valor e o
+            // novo rateio antes de seguir (`error_price_changed_*`); confirmar de novo cria com o preco atual.
+            val current = runCatching { arenas.slot(slot.id) }.getOrNull()
+            if (current != null && current.preco != slot.preco) {
+                _uiState.update { it.copy(submitting = false, slot = current, error = CreateError.PriceChanged, errorMessage = current.preco.format()) }
+                analytics.track("erro_exibido", mapOf("error_id" to CreateError.PriceChanged.name))
+                return@launch
+            }
             createGame(
                 NovoJogo(
                     slotId = slot.id,
@@ -271,6 +284,7 @@ class CreateGameViewModel(
                     garantia = s.garantiaEfetiva,
                     tetoComplementoPct = s.capPct,
                     titulo = s.name.ifBlank { null },
+                    visibilidade = if (s.openSpots) Visibilidade.VAGAS_ABERTAS else Visibilidade.PRIVADO,
                 ),
             ).fold(
                 onSuccess = { jogo ->
@@ -281,6 +295,7 @@ class CreateGameViewModel(
                     val err = when ((e as? RegraNegocioException)?.codigo) {
                         "SLOT_INDISPONIVEL" -> CreateError.SlotTaken
                         "POLITICA_INVIAVEL" -> CreateError.DeadlineTooShort
+                        "NAO_AUTENTICADO" -> CreateError.SessionExpired
                         else -> CreateError.Generic
                     }
                     analytics.track("erro_exibido", mapOf("error_id" to err.name))

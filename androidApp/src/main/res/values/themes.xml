@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cor de fundo = `surface` dos tokens (docs/design-tokens.json). Evita o flash branco/preto
+         entre a abertura do processo e o primeiro frame do Compose. -->
+    <color name="sc_surface">#F5FBF6</color>
+
+    <style name="Theme.SportConnect" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/sc_surface</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <!-- Splash (SplashScreen API; Android 12+ nativo, compat ate o 6). Mesmo fundo do ícone nos dois modos. -->
+    <style name="Theme.SportConnect.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="windowSplashScreenAnimationDuration">300</item>
+        <item name="postSplashScreenTheme">@style/Theme.SportConnect</item>
+    </style>
+</resources>

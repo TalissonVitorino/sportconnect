@@ -38,6 +38,12 @@ class FakeArenaRepository(seed: DemoData) : ArenaRepository {
 
     override suspend fun slot(id: String): Slot? = _slots.value[id]
 
+    override suspend fun atualizarArena(id: String, transform: (Arena) -> Arena): Arena? {
+        var result: Arena? = null
+        arenas.update { list -> list.map { if (it.id == id) transform(it).also { a -> result = a } else it } }
+        return result
+    }
+
     override suspend fun atualizarSlot(slotId: String, transform: (Slot) -> Slot): Slot? {
         var resultado: Slot? = null
         _slots.update { mapa ->

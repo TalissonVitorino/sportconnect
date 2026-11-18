@@ -2,6 +2,53 @@
 
 package br.com.sportconnect.feature.explore
 
+import androidx.compose.runtime.LaunchedEffect
+import br.com.sportconnect.core.data.local.ArenaPhotoStore
+import br.com.sportconnect.core.designsystem.component.SCSportChipVariant
+import br.com.sportconnect.core.designsystem.component.SCSportChip
+import br.com.sportconnect.core.designsystem.theme.LocalSCClock
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyColumn
+import br.com.sportconnect.resources.empty_open_games_body
+import br.com.sportconnect.resources.empty_open_games_title
+import br.com.sportconnect.resources.search_tab_games
+import br.com.sportconnect.resources.search_tab_courts
+import br.com.sportconnect.core.designsystem.a11y.webSelectedLabel
+import androidx.compose.material3.Tab
+import androidx.compose.material3.PrimaryTabRow
+import br.com.sportconnect.core.model.Jogo
+import br.com.sportconnect.feature.common.OpenGameCard
+import br.com.sportconnect.feature.common.OpenGamesViewModel
+import br.com.sportconnect.core.designsystem.a11y.webCheckedLabel
+import br.com.sportconnect.resources.cd_map_pin
+import br.com.sportconnect.resources.search_list_view
+import br.com.sportconnect.resources.search_map_view
+import androidx.compose.material.icons.automirrored.rounded.List
+import androidx.compose.material.icons.rounded.Map
+import androidx.compose.ui.draw.clip
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.runtime.saveable.rememberSaveable
+import br.com.sportconnect.core.designsystem.map.rememberSCMapCamera
+import br.com.sportconnect.core.designsystem.map.SCMapPin
+import br.com.sportconnect.core.designsystem.map.SCMap
+import br.com.sportconnect.core.designsystem.map.MapTileCache
+import br.com.sportconnect.resources.search_price_up_to
+import br.com.sportconnect.resources.search_price_any
+import br.com.sportconnect.resources.search_period_night
+import br.com.sportconnect.resources.search_period_afternoon
+import br.com.sportconnect.resources.search_period_morning
+import br.com.sportconnect.resources.search_period_any
+import br.com.sportconnect.resources.search_filter_price
+import br.com.sportconnect.resources.search_filter_time
+import br.com.sportconnect.resources.search_sort_price
+import androidx.compose.material.icons.rounded.Payments
+import androidx.compose.material.icons.rounded.Schedule
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.domain.repository.GameRepository
+import br.com.sportconnect.core.designsystem.component.SCPullToRefresh
+import br.com.sportconnect.core.designsystem.theme.SCSelection
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +80,6 @@ import androidx.compose.material.icons.rounded.SportsSoccer
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -95,13 +141,22 @@ import org.koin.compose.viewmodel.koinViewModel
 
 data class ExploreActions(
     val openArena: (String) -> Unit = {},
+    /** T3: abre um jogo com vaga. */
+    val openGame: (String) -> Unit = {},
     val pickSlot: (slotId: String) -> Unit = {},
 )
 
 @Composable
-fun ExploreRoute(actions: ExploreActions, viewModel: ExploreViewModel = koinViewModel()) {
+fun ExploreRoute(actions: ExploreActions, viewModel: ExploreViewModel = koinViewModel(), openVm: OpenGamesViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val openGames by openVm.games.collectAsStateWithLifecycle()
+    // O filtro de esporte vale para as duas abas.
+    LaunchedEffect(state.sport) { openVm.setSport(state.sport) }
+    val games: GameRepository = koinInject()
+    val tiles: MapTileCache = koinInject()
     ExploreScreen(
+        tiles = tiles,
+        openGames = openGames,
         state = state,
         actions = actions,
         onQuery = viewModel::setQuery,
@@ -109,7 +164,11 @@ fun ExploreRoute(actions: ExploreActions, viewModel: ExploreViewModel = koinView
         onDate = viewModel::setDate,
         onCovered = viewModel::toggleCovered,
         onClear = viewModel::clearFilters,
+        onPeriod = viewModel::setPeriod,
+        onMaxPrice = viewModel::setMaxPrice,
+        onSort = viewModel::setSort,
         onRetry = viewModel::retry,
+        onRefresh = games::sincronizar,
     )
 }
 
@@ -124,18 +183,42 @@ fun ExploreScreen(
     onCovered: () -> Unit = {},
     onClear: () -> Unit = {},
     onRetry: () -> Unit = {},
+    onRefresh: suspend () -> Unit = {},
+    onPeriod: (DayPeriod?) -> Unit = {},
+    onMaxPrice: (Money?) -> Unit = {},
+    onSort: (ExploreSort) -> Unit = {},
+    /** M2: tiles do mapa; null (screenshots) = sem mapa. */
+    tiles: MapTileCache? = null,
+    /** T3: jogos com vaga (aba "Jogos com vaga", US-101). */
+    openGames: List<Jogo> = emptyList(),
 ) {
+    var gamesTab by rememberSaveable { mutableStateOf(false) }
     val c = SportConnectTheme.colors
+    var mapMode by rememberSaveable { mutableStateOf(false) }
+    var selectedArena by rememberSaveable { mutableStateOf<String?>(null) }
+    val camera = rememberSCMapCamera()
+    val gridState = rememberLazyGridState()
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val wc = widthClassOf(maxWidth)
-        val columns = if (wc == WidthClass.Compact) 1 else 2
+        // M2: no expandido, lista e mapa lado a lado.
+        val split = tiles != null && wc == WidthClass.Expanded
+        val columns = if (wc == WidthClass.Compact || split) 1 else 2
         val hPad = if (wc == WidthClass.Compact) 16.dp else 24.dp
         Scaffold(
             containerColor = c.surface,
-            topBar = { SCTopBar(stringResource(Res.string.search_title), navigation = null) },
+            // T4: titulo na mesma largura do conteudo (antes ficava colado a esquerda em telas medias).
+            topBar = {
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                    SCTopBar(
+                        stringResource(Res.string.search_title), navigation = null,
+                        modifier = Modifier.widthIn(max = if (split) 1600.dp else if (wc == WidthClass.Expanded) 1040.dp else 760.dp)
+                            .padding(horizontal = if (wc == WidthClass.Compact) 0.dp else 8.dp),
+                    )
+                }
+            },
         ) { padding ->
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
-                Column(Modifier.widthIn(max = if (wc == WidthClass.Expanded) 1040.dp else 760.dp).fillMaxSize()) {
+                Column(Modifier.widthIn(max = if (split) 1600.dp else if (wc == WidthClass.Expanded) 1040.dp else 760.dp).fillMaxSize()) {
                     SCTextField(
                         value = state.query,
                         onValueChange = onQuery,
@@ -148,7 +231,18 @@ fun ExploreScreen(
                         } else null,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = hPad).testTag("explore_search_field"),
                     )
-                    FilterRow(state, onSport, onDate, onCovered, hPad)
+                    // T3: abas "Quadras | Jogos com vaga" (09 ficha 4).
+                    PrimaryTabRow(selectedTabIndex = if (gamesTab) 1 else 0, containerColor = c.surface, modifier = Modifier.padding(top = 8.dp)) {
+                        val courtsLabel = stringResource(Res.string.search_tab_courts)
+                        val gamesLabel = stringResource(Res.string.search_tab_games)
+                        Tab(!gamesTab, { gamesTab = false }, text = { Text(courtsLabel) }, modifier = Modifier.webSelectedLabel(courtsLabel, !gamesTab).testTag("explore_tab_courts"))
+                        Tab(gamesTab, { gamesTab = true }, text = { Text(gamesLabel) }, modifier = Modifier.webSelectedLabel(gamesLabel, gamesTab).testTag("explore_tab_games"))
+                    }
+                    if (gamesTab) {
+                        OpenGamesList(openGames, state.sport, onSport, hPad, actions)
+                        return@Column
+                    }
+                    FilterRow(state, onSport, onDate, onCovered, hPad, onPeriod, onMaxPrice)
                     Row(Modifier.fillMaxWidth().padding(horizontal = hPad, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             stringResource(Res.string.search_results_count, state.results.size, PtBrFormat.relativeDay(state.date, state.today)),
@@ -156,13 +250,32 @@ fun ExploreScreen(
                             color = c.onSurface,
                             modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
                         )
-                        SCButton(
-                            stringResource(Res.string.search_sort_distance),
-                            {},
-                            variant = SCButtonVariant.Text,
-                            size = SCButtonSize.Small,
-                            modifier = Modifier.testTag("explore_sort"),
-                        )
+                        // E10: ordenar (antes o botao "Mais perto" nao fazia nada).
+                        Box {
+                            var sortMenu by remember { mutableStateOf(false) }
+                            SCButton(
+                                stringResource(if (state.sort == ExploreSort.PRICE) Res.string.search_sort_price else Res.string.search_sort_distance),
+                                { sortMenu = true },
+                                variant = SCButtonVariant.Text,
+                                size = SCButtonSize.Small,
+                                modifier = Modifier.testTag("explore_sort"),
+                            )
+                            DropdownMenu(expanded = sortMenu, onDismissRequest = { sortMenu = false }) {
+                                DropdownMenuItem(text = { Text(stringResource(Res.string.search_sort_distance)) }, onClick = { sortMenu = false; onSort(ExploreSort.DISTANCE) })
+                                DropdownMenuItem(text = { Text(stringResource(Res.string.search_sort_price)) }, onClick = { sortMenu = false; onSort(ExploreSort.PRICE) })
+                            }
+                        }
+                        // M2: alterna lista <-> mapa (no expandido os dois aparecem juntos).
+                        if (tiles != null && !split) {
+                            SCButton(
+                                stringResource(if (mapMode) Res.string.search_list_view else Res.string.search_map_view),
+                                { mapMode = !mapMode; selectedArena = null },
+                                variant = SCButtonVariant.Text,
+                                size = SCButtonSize.Small,
+                                leadingIcon = if (mapMode) Icons.AutoMirrored.Rounded.List else Icons.Rounded.Map,
+                                modifier = Modifier.testTag("explore_map_toggle"),
+                            )
+                        }
                     }
                     Crossfade(Triple(state.loading, state.error, state.results.isEmpty()), label = "results") { (loading, error, empty) ->
                         when {
@@ -177,15 +290,61 @@ fun ExploreScreen(
                                 primaryAction = SCAction(stringResource(Res.string.empty_search_cta), onClear),
                                 modifier = Modifier.testTag("explore_clear_filters"),
                             )
-                            else -> LazyVerticalGrid(
-                                columns = GridCells.Fixed(columns),
-                                contentPadding = PaddingValues(start = hPad, end = hPad, top = 8.dp, bottom = 24.dp),
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                modifier = Modifier.fillMaxSize(),
-                            ) {
-                                items(state.results, key = { it.quadra.id }) { r -> CourtResultCard(r, actions, wc) }
-                                item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.size(8.dp)) }
+                            else -> {
+                                val list: @Composable (Modifier) -> Unit = { m ->
+                                    SCPullToRefresh(onRefresh, m) {
+                                        LazyVerticalGrid(
+                                            columns = GridCells.Fixed(columns),
+                                            state = gridState,
+                                            contentPadding = PaddingValues(start = hPad, end = hPad, top = 8.dp, bottom = 24.dp),
+                                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                                            modifier = Modifier.fillMaxSize(),
+                                        ) {
+                                            // A10: ao filtrar, os cards entram/saem/reordenam animados.
+                                            items(state.results, key = { it.quadra.id }) { r -> Box(Modifier.animateItem()) { CourtResultCard(r, actions, wc) } }
+                                            item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.size(8.dp)) }
+                                        }
+                                    }
+                                }
+                                val pins = arenaPins(state.results)
+                                val scope = rememberCoroutineScope()
+                                when {
+                                    tiles != null && split -> Row(Modifier.fillMaxSize()) {
+                                        list(Modifier.weight(1f).fillMaxSize())
+                                        SCMap(
+                                            camera, tiles, pins,
+                                            modifier = Modifier.weight(1f).fillMaxSize().padding(end = hPad, top = 8.dp, bottom = 16.dp).clip(MaterialTheme.shapes.extraLarge),
+                                            selectedPinId = selectedArena,
+                                            onPinClick = { pin ->
+                                                selectedArena = pin.id
+                                                val idx = state.results.indexOfFirst { it.arena.arena.id == pin.id }
+                                                if (idx >= 0) scope.launch { gridState.animateScrollToItem(idx) }
+                                            },
+                                            onMapClick = { selectedArena = null },
+                                        )
+                                    }
+                                    tiles != null && mapMode -> Box(Modifier.fillMaxSize().testTag("explore_map")) {
+                                        SCMap(
+                                            camera, tiles, pins, Modifier.fillMaxSize(),
+                                            selectedPinId = selectedArena,
+                                            onPinClick = { selectedArena = it.id },
+                                            onMapClick = { selectedArena = null },
+                                        )
+                                        // A quadra mais barata da arena: o mesmo preco do pino.
+                                        val sel = state.results.filter { it.arena.arena.id == selectedArena }
+                                            .minByOrNull { r -> r.freeSlots.minOfOrNull { it.preco } ?: r.quadra.precoHora }
+                                        androidx.compose.animation.AnimatedVisibility(
+                                            visible = sel != null,
+                                            enter = androidx.compose.animation.slideInVertically { it } + androidx.compose.animation.fadeIn(),
+                                            exit = androidx.compose.animation.slideOutVertically { it } + androidx.compose.animation.fadeOut(),
+                                            modifier = Modifier.align(Alignment.BottomCenter).padding(hPad),
+                                        ) {
+                                            if (sel != null) CourtResultCard(sel, actions, wc, SCCourtCardVariant.Map)
+                                        }
+                                    }
+                                    else -> list(Modifier.fillMaxSize())
+                                }
                             }
                         }
                     }
@@ -202,16 +361,13 @@ private fun FilterRow(
     onDate: (LocalDate) -> Unit,
     onCovered: () -> Unit,
     hPad: androidx.compose.ui.unit.Dp,
+    onPeriod: (DayPeriod?) -> Unit = {},
+    onMaxPrice: (Money?) -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     var sportMenu by remember { mutableStateOf(false) }
     var dateMenu by remember { mutableStateOf(false) }
-    val chipColors = FilterChipDefaults.filterChipColors(
-        selectedContainerColor = c.primaryContainer,
-        selectedLabelColor = c.onPrimaryContainer,
-        selectedLeadingIconColor = c.onPrimaryContainer,
-        selectedTrailingIconColor = c.onPrimaryContainer,
-    )
+    val chipColors = SCSelection.filterChipColors()
     Row(
         Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(start = hPad, top = 12.dp, bottom = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -244,24 +400,15 @@ private fun FilterRow(
             FilterChip(
                 selected = state.date != state.today,
                 onClick = { dateMenu = true },
-                label = { Text(PtBrFormat.relativeDay(state.date, state.today)) },
+                label = { Text(PtBrFormat.relativeDayLabel(state.date, state.today)) },
                 leadingIcon = { Icon(Icons.Rounded.CalendarMonth, null, Modifier.size(18.dp)) },
                 trailingIcon = { Icon(Icons.Rounded.ArrowDropDown, null, Modifier.size(18.dp)) },
-                colors = FilterChipDefaults.filterChipColors(
-                    containerColor = c.secondaryContainer,
-                    labelColor = c.onSecondaryContainer,
-                    iconColor = c.onSecondaryContainer,
-                    selectedContainerColor = c.secondaryContainer,
-                    selectedLabelColor = c.onSecondaryContainer,
-                    selectedLeadingIconColor = c.onSecondaryContainer,
-                    selectedTrailingIconColor = c.onSecondaryContainer,
-                ),
-                border = null,
+                colors = chipColors,
                 modifier = Modifier.testTag("explore_filter_date"),
             )
             DropdownMenu(expanded = dateMenu, onDismissRequest = { dateMenu = false }) {
                 state.days.forEach { d ->
-                    DropdownMenuItem(text = { Text(PtBrFormat.relativeDay(d, state.today)) }, onClick = { dateMenu = false; onDate(d) })
+                    DropdownMenuItem(text = { Text(PtBrFormat.relativeDayLabel(d, state.today)) }, onClick = { dateMenu = false; onDate(d) })
                 }
             }
         }
@@ -271,15 +418,65 @@ private fun FilterRow(
             label = { Text(stringResource(Res.string.search_filter_covered)) },
             leadingIcon = { Icon(if (state.coveredOnly) Icons.Rounded.Check else Icons.Rounded.Roofing, null, Modifier.size(18.dp)) },
             colors = chipColors,
-            modifier = Modifier.testTag("explore_filter_covered"),
+            modifier = Modifier.webCheckedLabel(stringResource(Res.string.search_filter_covered), state.coveredOnly).testTag("explore_filter_covered"),
         )
+        // E10: faixa de horario.
+        Box {
+            var periodMenu by remember { mutableStateOf(false) }
+            val periodLabel = when (state.period) {
+                DayPeriod.MORNING -> stringResource(Res.string.search_period_morning)
+                DayPeriod.AFTERNOON -> stringResource(Res.string.search_period_afternoon)
+                DayPeriod.NIGHT -> stringResource(Res.string.search_period_night)
+                null -> stringResource(Res.string.search_filter_time)
+            }
+            FilterChip(
+                selected = state.period != null,
+                onClick = { periodMenu = true },
+                label = { Text(periodLabel) },
+                leadingIcon = { Icon(Icons.Rounded.Schedule, null, Modifier.size(18.dp)) },
+                trailingIcon = { Icon(Icons.Rounded.ArrowDropDown, null, Modifier.size(18.dp)) },
+                colors = chipColors,
+                modifier = Modifier.testTag("explore_filter_time"),
+            )
+            DropdownMenu(expanded = periodMenu, onDismissRequest = { periodMenu = false }) {
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_period_any)) }, onClick = { periodMenu = false; onPeriod(null) })
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_period_morning)) }, onClick = { periodMenu = false; onPeriod(DayPeriod.MORNING) })
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_period_afternoon)) }, onClick = { periodMenu = false; onPeriod(DayPeriod.AFTERNOON) })
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_period_night)) }, onClick = { periodMenu = false; onPeriod(DayPeriod.NIGHT) })
+            }
+        }
+        // E10: preco maximo por hora.
+        Box {
+            var priceMenu by remember { mutableStateOf(false) }
+            FilterChip(
+                selected = state.maxPrice != null,
+                onClick = { priceMenu = true },
+                label = { Text(state.maxPrice?.let { stringResource(Res.string.search_price_up_to, it.format()) } ?: stringResource(Res.string.search_filter_price)) },
+                leadingIcon = { Icon(Icons.Rounded.Payments, null, Modifier.size(18.dp)) },
+                trailingIcon = { Icon(Icons.Rounded.ArrowDropDown, null, Modifier.size(18.dp)) },
+                colors = chipColors,
+                modifier = Modifier.testTag("explore_filter_price"),
+            )
+            DropdownMenu(expanded = priceMenu, onDismissRequest = { priceMenu = false }) {
+                DropdownMenuItem(text = { Text(stringResource(Res.string.search_price_any)) }, onClick = { priceMenu = false; onMaxPrice(null) })
+                listOf(15_000L, 20_000L, 30_000L).forEach { cents ->
+                    val m = Money(cents)
+                    DropdownMenuItem(text = { Text(stringResource(Res.string.search_price_up_to, m.format())) }, onClick = { priceMenu = false; onMaxPrice(m) })
+                }
+            }
+        }
         Spacer(Modifier.width(8.dp))
     }
 }
 
 @Composable
-private fun CourtResultCard(r: CourtResult, actions: ExploreActions, wc: WidthClass) {
+private fun CourtResultCard(r: CourtResult, actions: ExploreActions, wc: WidthClass, variant: SCCourtCardVariant = SCCourtCardVariant.List) {
     val q = r.quadra
+    // T5: quando a arena tem fotos (E9), o card usa a primeira no lugar do desenho da quadra.
+    val photoStore: ArenaPhotoStore = koinInject()
+    val arenaId = r.arena.arena.id
+    LaunchedEffect(arenaId) { photoStore.load(arenaId) }
+    val photo = photoStore.photos.collectAsStateWithLifecycle().value[arenaId]?.firstOrNull()
     val price = r.freeSlots.minOf { it.preco }
     val spots = q.esportes.first().esporte.vagasPadrao.coerceAtMost(q.esportes.first().capacidadeMax)
     val perPerson = Money(price.cents / spots)
@@ -301,10 +498,54 @@ private fun CourtResultCard(r: CourtResult, actions: ExploreActions, wc: WidthCl
                 SlotUi(id = s.id, startLabel = PtBrFormat.hour(s.inicio), endLabel = PtBrFormat.hour(s.fim), price = s.preco)
             },
             estimateLabel = stringResource(Res.string.common_per_person_estimate, perPerson.format(), spots),
+            photo = photo,
         ),
         onClick = { actions.openArena(r.arena.arena.id) },
         onSlotClick = { actions.pickSlot(it.id) },
-        variant = SCCourtCardVariant.List,
+        variant = variant,
         modifier = Modifier.fillMaxWidth().testTag("explore_court_card_${q.id}"),
     )
+}
+
+/** M2: um pino por arena, com o menor preco/hora entre as quadras do resultado. */
+@Composable
+private fun arenaPins(results: List<CourtResult>): List<SCMapPin> {
+    val template = stringResource(Res.string.cd_map_pin, "%1", "%2")
+    val fromTemplate = stringResource(Res.string.search_card_price_from, "%3")
+    return results.groupBy { it.arena.arena.id }.map { (id, rs) ->
+        val a = rs.first().arena
+        val min = rs.minOf { r -> r.freeSlots.minOfOrNull { it.preco } ?: r.quadra.precoHora }
+        SCMapPin(
+            id = id,
+            latitude = a.arena.localizacao.latitude,
+            longitude = a.arena.localizacao.longitude,
+            label = min.format().substringBefore(","),
+            description = template.replace("%1", a.arena.nome).replace("%2", a.distanciaFormatada.removeSuffix(" km")) + ", " + fromTemplate.replace("%3", min.format()),
+        )
+    }
+}
+
+/** T3: aba "Jogos com vaga" — filtro de esporte e lista de jogos abertos (ou estado vazio do 07). */
+@Composable
+private fun OpenGamesList(games: List<Jogo>, sport: Sport?, onSport: (Sport?) -> Unit, hPad: androidx.compose.ui.unit.Dp, actions: ExploreActions) {
+    val now = LocalSCClock.current.now()
+    Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = hPad, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Sport.entries.forEach { s -> SCSportChip(s, variant = SCSportChipVariant.Filter, selected = sport == s, onClick = { onSport(if (sport == s) null else s) }) }
+    }
+    if (games.isEmpty()) {
+        SCEmptyState(
+            title = stringResource(Res.string.empty_open_games_title),
+            description = stringResource(Res.string.empty_open_games_body),
+            illustration = SCIllustration.NoResults,
+            modifier = Modifier.testTag("explore_open_games_empty"),
+        )
+    } else {
+        LazyColumn(
+            contentPadding = PaddingValues(start = hPad, end = hPad, top = 8.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxSize().testTag("explore_open_games"),
+        ) {
+            items(games, key = { it.id }) { j -> OpenGameCard(j, now, onClick = { actions.openGame(j.id) }, modifier = Modifier.animateItem()) }
+        }
+    }
 }

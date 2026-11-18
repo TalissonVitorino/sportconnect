@@ -10,6 +10,7 @@ import br.com.sportconnect.core.model.Money
 import br.com.sportconnect.core.model.Quadra
 import br.com.sportconnect.core.model.Slot
 import br.com.sportconnect.core.model.Sport
+import br.com.sportconnect.core.model.StatusArena
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
@@ -75,6 +76,8 @@ class GetArenasNearbyUseCase(
     ): List<ArenaProxima> {
         val ref = origem ?: Geo.CENTRO_SP
         val resultado = arenas.arenas().mapNotNull { arena ->
+            // T9 (13/US-012): so arena publicada (ATIVA) aparece na busca.
+            if (arena.status != StatusArena.ATIVA) return@mapNotNull null
             val quadras = arenas.quadras(arena.id).filter { it.ativa }
             val esportes = quadras.flatMap { q -> q.esportes.map { it.esporte } }.toSet()
             if (esporte != null && esporte !in esportes) return@mapNotNull null

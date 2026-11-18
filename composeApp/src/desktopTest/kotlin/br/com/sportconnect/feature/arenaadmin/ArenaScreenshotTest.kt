@@ -220,7 +220,7 @@ class ArenaScreenshotTest {
     fun quadras() {
         val e = env()
         val vm = ArenaCourtsViewModel(e.arenas, e.auth, e.store, e.clock)
-        render("arena-courts-compact.png", 400, 1300) { ArenaCourtsScreen(ArenaAdminNavigator.Preview, vm) }
+        render("arena-courts-compact.png", 400, 1300) { ArenaCourtsScreen(ArenaAdminNavigator.Preview, vm, br.com.sportconnect.core.data.local.ArenaPhotoStore(com.russhwolf.settings.MapSettings())) }
     }
 
     @Test
@@ -232,7 +232,7 @@ class ArenaScreenshotTest {
 
     @Test
     fun onboarding() {
-        val vm = ArenaOnboardingViewModel()
+        val vm = env().onboardingVm()
         vm.setName("Arena Pinheiros")
         render("arena-onboarding-compact.png", 400, 1000) { ArenaOnboardingScreen(ArenaAdminNavigator.Preview, vm) }
     }

@@ -5,3 +5,56 @@ html, body {
     padding: 0;
     overflow: hidden;
 }
+
+#sc-loader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background: #F5FBF6;
+    z-index: 10;
+    transition: opacity 220ms ease-in;
+}
+
+#sc-loader img {
+    border-radius: 22px;
+}
+
+#sc-loader.sc-hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sc-bar {
+    width: 120px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(245, 251, 246, 0.16);
+    overflow: hidden;
+}
+
+.sc-bar span {
+    display: block;
+    width: 40%;
+    height: 100%;
+    border-radius: 2px;
+    background: #00E46E;
+    animation: sc-slide 1.1s ease-in-out infinite;
+}
+
+@keyframes sc-slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(250%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sc-bar span { animation: none; width: 100%; }
+}
+
+/* W3: loader no tema do sistema (antes era sempre escuro e "piscava" no tema claro). */
+@media (prefers-color-scheme: dark) {
+    #sc-loader { background: #101411; }
+}

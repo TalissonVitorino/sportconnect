@@ -1,5 +1,10 @@
 package br.com.sportconnect.core.designsystem.component
 
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -8,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -149,8 +153,18 @@ fun SCTimeSlotPicker(
     columns: Int? = null,
     showLegend: Boolean = true,
     onSelectionRejected: (() -> Unit)? = null,
+    /** Rola a tela ate o primeiro horario livre do dia escolhido (C11). Sem efeito se ja estiver visivel. */
+    scrollToFirstAvailable: Boolean = true,
 ) {
     val spacing = SportConnectTheme.spacing
+    val haptics = LocalHapticFeedback.current
+    val firstAvailableId = slots.firstOrNull { it.state == SCSlotState.Available }?.id
+    val firstAvailableRequester = remember { BringIntoViewRequester() }
+    LaunchedEffect(selectedDay, firstAvailableId) {
+        if (scrollToFirstAvailable && firstAvailableId != null && selection.isEmpty()) {
+            runCatching { firstAvailableRequester.bringIntoView() }
+        }
+    }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(spacing.md)) {
         Row(
             Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
@@ -173,12 +187,19 @@ fun SCTimeSlotPicker(
                             SlotCell(
                                 slot = slot,
                                 selected = selected,
-                                modifier = Modifier.weight(1f).semantics {
-                                    collectionItemInfo = CollectionItemInfo(r, 1, ci, 1)
-                                },
+                                modifier = Modifier.weight(1f)
+                                    .then(if (slot.id == firstAvailableId) Modifier.bringIntoViewRequester(firstAvailableRequester) else Modifier)
+                                    .semantics { collectionItemInfo = CollectionItemInfo(r, 1, ci, 1) },
                                 onToggle = {
                                     val next = SCTimeSlotPickerDefaults.toggle(slots, selection, slot.id, maxContiguous)
-                                    if (next == null) onSelectionRejected?.invoke() else onSelectionChange(next)
+                                    // A7: toque leve ao escolher; "recusa" quando a selecao nao e permitida.
+                                    if (next == null) {
+                                        haptics.performHapticFeedback(HapticFeedbackType.Reject)
+                                        onSelectionRejected?.invoke()
+                                    } else {
+                                        haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                                        onSelectionChange(next)
+                                    }
                                 },
                             )
                         }
@@ -215,7 +236,8 @@ private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
 
 @Composable
 fun SlotLegend(modifier: Modifier = Modifier) {
-    FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    // C11: uma linha so (rola na horizontal se nao couber); antes quebrava em 2 linhas.
+    Row(modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         SCSlotState.entries.forEach { s ->
             val colors = SportConnectTheme.extendedColors.slot(s)
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {

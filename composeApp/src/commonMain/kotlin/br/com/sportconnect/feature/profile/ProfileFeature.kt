@@ -2,6 +2,47 @@
 
 package br.com.sportconnect.feature.profile
 
+import br.com.sportconnect.core.designsystem.a11y.webSelectedLabel
+import br.com.sportconnect.resources.refund_help
+import br.com.sportconnect.resources.refund_fee_note
+import br.com.sportconnect.resources.refund_pix_eta
+import br.com.sportconnect.resources.refund_card_eta
+import br.com.sportconnect.resources.refund_done
+import br.com.sportconnect.resources.refund_status_processing
+import br.com.sportconnect.resources.refund_requested
+import br.com.sportconnect.core.designsystem.component.scAlignTextButtonStart
+import androidx.compose.material.icons.rounded.RadioButtonUnchecked
+import androidx.compose.material.icons.rounded.Schedule
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.combine
+import br.com.sportconnect.core.model.MetodoPagamento
+import br.com.sportconnect.core.model.StatusReserva
+import br.com.sportconnect.core.model.StatusPagamento
+import br.com.sportconnect.core.domain.repository.PaymentGateway
+import br.com.sportconnect.core.data.local.ProfilePhotoStore
+import br.com.sportconnect.core.data.local.SocialStore
+import br.com.sportconnect.AppInfo
+import br.com.sportconnect.core.designsystem.component.SCSkeletonShape
+import br.com.sportconnect.core.designsystem.component.SCSkeleton
+import org.koin.compose.koinInject
+import br.com.sportconnect.core.domain.repository.GameRepository
+import br.com.sportconnect.core.designsystem.component.SCPullToRefresh
+import br.com.sportconnect.core.designsystem.theme.SCSelection
+import br.com.sportconnect.resources.cd_edit_profile
+import androidx.compose.material.icons.rounded.Edit
+import br.com.sportconnect.resources.profile_sign_in
+import br.com.sportconnect.resources.profile_signed_out_body
+import br.com.sportconnect.resources.profile_signed_out_title
+import br.com.sportconnect.resources.common_cancel
+import br.com.sportconnect.resources.logout_dialog_confirm
+import br.com.sportconnect.resources.logout_dialog_body
+import br.com.sportconnect.resources.logout_dialog_title
+import br.com.sportconnect.core.designsystem.component.SCDialogVariant
+import br.com.sportconnect.core.designsystem.component.SCDialog
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,6 +72,7 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material.icons.rounded.DoneAll
+import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.PrivacyTip
@@ -65,6 +107,15 @@ import androidx.lifecycle.viewModelScope
 import br.com.sportconnect.core.designsystem.component.AvatarUi
 import br.com.sportconnect.core.designsystem.component.PriceLine
 import br.com.sportconnect.core.designsystem.component.SCAction
+import br.com.sportconnect.core.designsystem.component.SCTextField
+import br.com.sportconnect.core.domain.isValidPixKey
+import br.com.sportconnect.resources.error_refund_failed_title
+import br.com.sportconnect.resources.error_refund_failed_body
+import br.com.sportconnect.resources.error_refund_failed_action
+import br.com.sportconnect.resources.error_pix_key_invalid_body
+import br.com.sportconnect.resources.refund_pix_key_field
+import br.com.sportconnect.resources.refund_pix_key_submit
+import br.com.sportconnect.resources.profile_attendance
 import br.com.sportconnect.core.designsystem.component.SCAvatar
 import br.com.sportconnect.core.designsystem.component.SCButton
 import br.com.sportconnect.core.designsystem.component.SCButtonVariant
@@ -144,7 +195,7 @@ import kotlin.time.Instant
 /** Modo do app (09 §2.1). */
 enum class AppMode { Athlete, Arena }
 
-data class ProfileUiState(val user: Usuario? = null, val switching: Boolean = false) {
+data class ProfileUiState(val user: Usuario? = null, val switching: Boolean = false, val attendance: Pair<Int, Int>? = null) {
     val hasArenaRole: Boolean get() = user?.papeis?.any { it == PapelUsuario.GESTOR_ARENA || it == PapelUsuario.OPERADOR_ARENA } == true
 }
 
@@ -152,12 +203,17 @@ data class ProfileUiState(val user: Usuario? = null, val switching: Boolean = fa
  * Perfil e troca de modo. No MVP fake, "Tenho uma arena"/"Minha Arena" entra como o gestor da demo
  * (`entrarComo("u-gestor")`) e "Atleta" volta para o organizador da demo.
  */
-class ProfileViewModel(private val auth: AuthRepository) : ViewModel() {
+class ProfileViewModel(private val auth: AuthRepository, private val social: SocialStore) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch { auth.currentUser.collect { u -> _uiState.update { it.copy(user = u) } } }
+        // T7 (13): presenca (E15); null enquanto ninguem marcou presenca em nenhum jogo do usuario.
+        viewModelScope.launch {
+            combine(auth.currentUser, social.attendance) { u, _ -> u }.collect { u ->
+                _uiState.update { it.copy(user = u, attendance = u?.let { user -> social.attendanceOf(user.id) }) }
+            }
+        }
     }
 
     fun switchMode(mode: AppMode, onDone: () -> Unit) {
@@ -190,6 +246,12 @@ data class ProfileActions(
     val notifications: () -> Unit = {},
     val switchMode: (AppMode) -> Unit = {},
     val loggedOut: () -> Unit = {},
+    val signIn: () -> Unit = {},
+    val editProfile: () -> Unit = {},
+    val sports: () -> Unit = {},
+    val savedCards: () -> Unit = {},
+    val privacy: () -> Unit = {},
+    val support: () -> Unit = {},
 )
 
 @Composable
@@ -213,20 +275,60 @@ fun ProfileScreen(
 ) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
+    var confirmLogout by rememberSaveable { mutableStateOf(false) }
+    val photo by koinInject<ProfilePhotoStore>().photo.collectAsStateWithLifecycle()
+    if (confirmLogout) {
+        // B14: sair pedia so um toque num texto vermelho, sem confirmacao.
+        SCDialog(
+            title = stringResource(Res.string.logout_dialog_title),
+            body = stringResource(Res.string.logout_dialog_body),
+            onDismissRequest = { confirmLogout = false },
+            confirm = SCAction(stringResource(Res.string.logout_dialog_confirm), { confirmLogout = false; onLogout() }),
+            dismiss = SCAction(stringResource(Res.string.common_cancel), { confirmLogout = false }),
+            variant = SCDialogVariant.Destructive,
+            modifier = Modifier.testTag("profile_logout_dialog"),
+        )
+    }
     Scaffold(
         containerColor = c.surface,
         topBar = { SCTopBar(stringResource(Res.string.profile_title), variant = SCTopBarVariant.CenterAligned, navigation = null) },
     ) { padding ->
+        if (state.user == null) {
+            // Visitante (09 ficha 1): explora sem conta; o Perfil convida a entrar.
+            SCEmptyState(
+                title = stringResource(Res.string.profile_signed_out_title),
+                description = stringResource(Res.string.profile_signed_out_body),
+                primaryAction = SCAction(stringResource(Res.string.profile_sign_in), actions.signIn),
+                modifier = Modifier.padding(padding).testTag("profile_signed_out"),
+            )
+            return@Scaffold
+        }
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             CenteredContent(Modifier.padding(horizontal = 16.dp)) {
                 val u = state.user
-                Row(Modifier.fillMaxWidth().padding(vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    SCAvatar(AvatarUi(u?.nome ?: "?"), size = 64.dp)
+                // B13: tocar no cabecalho (avatar/nome) abre "Editar perfil".
+                val editLabel = stringResource(Res.string.cd_edit_profile)
+                Row(
+                    Modifier.fillMaxWidth().clickable(role = Role.Button, onClickLabel = editLabel, onClick = actions.editProfile)
+                        .padding(vertical = 16.dp).testTag("profile_header"),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    SCAvatar(AvatarUi(u.nome, photo = photo), size = 64.dp)
                     Spacer(Modifier.width(16.dp))
                     Column {
-                        Text(u?.nome.orEmpty(), style = t.titleLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
-                        Text(u?.celular?.let { PtBrFormat.maskedPhone(it) }.orEmpty(), style = t.bodyMedium, color = c.onSurfaceVariant)
+                        Text(u.nome, style = t.titleLarge, color = c.onSurface, modifier = Modifier.semantics { heading() })
+                        Text(PtBrFormat.maskedPhone(u.celular), style = t.bodyMedium, color = c.onSurfaceVariant)
                     }
+                    Spacer(Modifier.weight(1f))
+                    Icon(Icons.Rounded.Edit, null, tint = c.onSurfaceVariant)
+                }
+                // T7 (13): presenca (E15, US-131); some ate o usuario ter algum jogo avaliado.
+                state.attendance?.let { (attended, total) ->
+                    Text(
+                        stringResource(Res.string.profile_attendance, "$attended/$total"),
+                        style = t.bodyMedium, color = c.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 16.dp).testTag("profile_attendance"),
+                    )
                 }
                 if (state.hasArenaRole) {
                     Text(stringResource(Res.string.profile_use_as), style = t.titleSmall, color = c.onSurfaceVariant)
@@ -238,23 +340,27 @@ fun ProfileScreen(
                             onClick = { onSwitch(AppMode.Athlete) },
                             enabled = !state.switching,
                             shape = SegmentedButtonDefaults.itemShape(0, 2),
+                            colors = SCSelection.segmentedColors(),
+                            modifier = Modifier.webSelectedLabel(stringResource(Res.string.profile_mode_athlete), false),
                         ) { Text(stringResource(Res.string.profile_mode_athlete)) }
                         SegmentedButton(
                             selected = true,
                             onClick = { onSwitch(AppMode.Arena) },
                             enabled = !state.switching,
                             shape = SegmentedButtonDefaults.itemShape(1, 2),
+                            colors = SCSelection.segmentedColors(),
+                            modifier = Modifier.webSelectedLabel(stringResource(Res.string.profile_mode_arena), true),
                         ) { Text(stringResource(Res.string.profile_mode_arena)) }
                     }
                     Spacer(Modifier.height(16.dp))
                 }
                 ProfileItem(Icons.Rounded.SportsScore, stringResource(Res.string.profile_my_games), "my_games", actions.myGames)
                 ProfileItem(Icons.Rounded.Payments, stringResource(Res.string.profile_payments), "payments", actions.payments)
-                ProfileItem(Icons.Rounded.SportsSoccer, stringResource(Res.string.profile_sports), "sports") {}
+                ProfileItem(Icons.Rounded.SportsSoccer, stringResource(Res.string.profile_sports), "sports", actions.sports)
                 ProfileItem(Icons.Rounded.Notifications, stringResource(Res.string.profile_notifications), "notifications", actions.notifications)
-                ProfileItem(Icons.Rounded.CreditCard, stringResource(Res.string.profile_saved_cards), "saved_cards") {}
-                ProfileItem(Icons.Rounded.PrivacyTip, stringResource(Res.string.profile_privacy), "privacy") {}
-                ProfileItem(Icons.AutoMirrored.Rounded.HelpOutline, stringResource(Res.string.profile_support), "support") {}
+                ProfileItem(Icons.Rounded.CreditCard, stringResource(Res.string.profile_saved_cards), "saved_cards", actions.savedCards)
+                ProfileItem(Icons.Rounded.PrivacyTip, stringResource(Res.string.profile_privacy), "privacy", actions.privacy)
+                ProfileItem(Icons.AutoMirrored.Rounded.HelpOutline, stringResource(Res.string.profile_support), "support", actions.support)
                 Spacer(Modifier.height(16.dp))
                 if (!state.hasArenaRole) {
                     SCButton(
@@ -272,9 +378,9 @@ fun ProfileScreen(
                     stringResource(Res.string.auth_logout),
                     style = t.labelLarge,
                     color = c.error,
-                    modifier = Modifier.heightIn(min = 48.dp).clickable(role = Role.Button, onClick = onLogout).padding(vertical = 14.dp).testTag("profile_logout"),
+                    modifier = Modifier.heightIn(min = 48.dp).clickable(role = Role.Button) { confirmLogout = true }.padding(vertical = 14.dp).testTag("profile_logout"),
                 )
-                Text(stringResource(Res.string.profile_version, "0.1.0"), style = t.bodySmall, color = c.onSurfaceVariant)
+                Text(stringResource(Res.string.profile_version, AppInfo.VERSION_NAME), style = t.bodySmall, color = c.onSurfaceVariant)
                 Spacer(Modifier.height(24.dp))
             }
         }
@@ -297,16 +403,30 @@ private fun ProfileItem(icon: ImageVector, label: String, id: String, onClick: (
 
 // =================================================================== pagamentos e comprovante
 
-data class PaymentsUiState(val loading: Boolean = true, val items: List<MeuPagamento> = emptyList())
+data class PaymentsUiState(
+    val loading: Boolean = true,
+    val items: List<MeuPagamento> = emptyList(),
+    /** Pagamentos com estorno em andamento no gateway (E6): chip "Reembolso · Em andamento". */
+    val refundsInProgress: Set<String> = emptySet(),
+)
 
-class PaymentsViewModel(getMyPayments: GetMyPaymentsUseCase) : ViewModel() {
+class PaymentsViewModel(getMyPayments: GetMyPaymentsUseCase, private val gateway: PaymentGateway) : ViewModel() {
     private val _uiState = MutableStateFlow(PaymentsUiState())
     val uiState: StateFlow<PaymentsUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch { getMyPayments().collect { list -> _uiState.value = PaymentsUiState(false, list) } }
+        viewModelScope.launch {
+            getMyPayments().collect { list ->
+                val inProgress = list.filter { gateway.pagamento(it.pagamentoId)?.status == StatusPagamento.ESTORNO_EM_PROCESSAMENTO }
+                    .map { it.pagamentoId }.toSet()
+                _uiState.value = PaymentsUiState(false, list, inProgress)
+            }
+        }
     }
 }
+
+/** Situacao do reembolso de um pagamento (E6, US-053). T6 (13): [failed] quando o cartao recusou a devolucao. */
+data class RefundUi(val done: Boolean, val doneAt: Instant?, val failed: Boolean = false)
 
 @Composable
 fun PaymentsRoute(onBack: () -> Unit, onReceipt: (String) -> Unit, vm: PaymentsViewModel = koinViewModel()) {
@@ -337,14 +457,20 @@ fun PaymentsScreen(state: PaymentsUiState, onBack: () -> Unit = {}, onReceipt: (
                             Column(Modifier.weight(1f)) {
                                 Text(p.jogo.titulo, style = t.bodyLarge, color = c.onSurface)
                                 Text("${PtBrFormat.date(PtBrFormat.date(p.pagoEm))} · ${p.metodo.rotulo}", style = t.bodyMedium, color = c.onSurfaceVariant)
-                                if (p.reembolsado) {
+                                val refundInProgress = p.pagamentoId in state.refundsInProgress
+                                if (p.reembolsado || refundInProgress) {
                                     Row(
                                         Modifier.padding(top = 4.dp).background(ext.successContainer, MaterialTheme.shapes.extraSmall).padding(horizontal = 6.dp, vertical = 2.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Icon(Icons.Rounded.CheckCircle, null, tint = ext.onSuccessContainer, modifier = Modifier.size(14.dp))
                                         Spacer(Modifier.width(4.dp))
-                                        Text(stringResource(Res.string.refund_title) + " · " + stringResource(Res.string.refund_status_done), style = t.labelMedium, color = ext.onSuccessContainer)
+                                        Text(
+                                            stringResource(Res.string.refund_title) + " · " +
+                                                stringResource(if (refundInProgress) Res.string.refund_status_processing else Res.string.refund_status_done),
+                                            style = t.labelMedium,
+                                            color = ext.onSuccessContainer,
+                                        )
                                     }
                                 }
                             }
@@ -358,30 +484,59 @@ fun PaymentsScreen(state: PaymentsUiState, onBack: () -> Unit = {}, onReceipt: (
     }
 }
 
-class ReceiptViewModel(private val route: Route.Receipt, getMyPayments: GetMyPaymentsUseCase) : ViewModel() {
-    private val _uiState = MutableStateFlow<MeuPagamento?>(null)
-    val uiState: StateFlow<MeuPagamento?> = _uiState.asStateFlow()
+data class ReceiptUiState(val payment: MeuPagamento? = null, val refund: RefundUi? = null)
 
-    init {
-        viewModelScope.launch { getMyPayments().collect { list -> _uiState.value = list.firstOrNull { it.pagamentoId == route.paymentId } } }
+class ReceiptViewModel(
+    private val route: Route.Receipt,
+    getMyPayments: GetMyPaymentsUseCase,
+    private val gateway: PaymentGateway,
+) : ViewModel() {
+    val uiState: StateFlow<ReceiptUiState> = combine(getMyPayments(), gateway.observePagamento(route.paymentId)) { list, pg ->
+        val p = list.firstOrNull { it.pagamentoId == route.paymentId }
+        // O gateway sabe do estorno em tempo real; a cota marcada REEMBOLSADA cobre os dados semeados.
+        val refund = when {
+            pg?.status == StatusPagamento.ESTORNADO -> RefundUi(done = true, doneAt = pg.estornadoEm)
+            pg?.status == StatusPagamento.ESTORNO_FALHOU -> RefundUi(done = false, doneAt = null, failed = true)
+            pg?.status == StatusPagamento.ESTORNO_EM_PROCESSAMENTO -> RefundUi(done = false, doneAt = null)
+            p?.reembolsado == true -> RefundUi(done = true, doneAt = null)
+            else -> null
+        }
+        ReceiptUiState(p, refund)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, ReceiptUiState())
+
+    /** T6 (13): depois do ESTORNO_FALHOU, reenvia o reembolso para a chave Pix informada. */
+    fun informarChavePix(chave: String) {
+        viewModelScope.launch { gateway.informarChavePixReembolso(route.paymentId, chave) }
     }
 }
 
 @Composable
-fun ReceiptRoute(route: Route.Receipt, onBack: () -> Unit) {
+fun ReceiptRoute(route: Route.Receipt, onBack: () -> Unit, onHelp: () -> Unit = {}) {
     val vm: ReceiptViewModel = koinViewModel(key = "receipt-${route.paymentId}") { parametersOf(route) }
-    val p by vm.uiState.collectAsStateWithLifecycle()
-    ReceiptScreen(p, onBack)
+    val state by vm.uiState.collectAsStateWithLifecycle()
+    ReceiptScreen(state.payment, onBack, refund = state.refund, onHelp = onHelp, onInformPixKey = vm::informarChavePix)
 }
 
 /** Comprovante (10 §2.14). */
 @Composable
-fun ReceiptScreen(p: MeuPagamento?, onBack: () -> Unit = {}) {
+fun ReceiptScreen(
+    p: MeuPagamento?,
+    onBack: () -> Unit = {},
+    refund: RefundUi? = null,
+    onHelp: () -> Unit = {},
+    onInformPixKey: (String) -> Unit = {},
+) {
     val c = SportConnectTheme.colors
     val t = MaterialTheme.typography
     val share = rememberShareActions()
     Scaffold(containerColor = c.surface, topBar = { SCTopBar(stringResource(Res.string.receipt_title), onNavigationClick = onBack) }) { padding ->
-        if (p == null) return@Scaffold
+        if (p == null) {
+            // C22: esqueleto enquanto o comprovante carrega (antes a tela ficava em branco).
+            CenteredContent(Modifier.padding(padding).padding(16.dp)) {
+                SCSkeleton(SCSkeletonShape.Box(height = 280.dp), Modifier.fillMaxWidth())
+            }
+            return@Scaffold
+        }
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             CenteredContent(Modifier.padding(16.dp)) {
                 Column(
@@ -402,6 +557,10 @@ fun ReceiptScreen(p: MeuPagamento?, onBack: () -> Unit = {}) {
                     Spacer(Modifier.height(16.dp))
                     Text(stringResource(Res.string.receipt_transaction_id), style = t.titleSmall, color = c.onSurface)
                     Text(p.pagamentoId, style = SportConnectTheme.typographyExt.pixCode, color = c.onSurfaceVariant)
+                }
+                if (refund != null) {
+                    Spacer(Modifier.height(16.dp))
+                    RefundTimeline(p, refund, onHelp, onInformPixKey)
                 }
                 Spacer(Modifier.height(16.dp))
                 val text = "${p.jogo.titulo} · ${p.total.format()} · ${p.pagamentoId}"
@@ -429,7 +588,8 @@ class NotificationsViewModel(private val getNotifications: GetNotificationsUseCa
 @Composable
 fun NotificationsRoute(onBack: () -> Unit, onOpenGame: (String) -> Unit, vm: NotificationsViewModel = koinViewModel()) {
     val state by vm.uiState.collectAsStateWithLifecycle()
-    NotificationsScreen(state, onBack, onOpenGame, vm::markAll)
+    val games: GameRepository = koinInject()
+    NotificationsScreen(state, onBack, onOpenGame, vm::markAll, onRefresh = games::sincronizar)
 }
 
 /** Avisos (10 §2.15): itens por dia, icone por tipo, nao lidos com ponto. */
@@ -439,6 +599,7 @@ fun NotificationsScreen(
     onBack: () -> Unit = {},
     onOpenGame: (String) -> Unit = {},
     onMarkAll: () -> Unit = {},
+    onRefresh: suspend () -> Unit = {},
 ) {
     val c = SportConnectTheme.colors
     val ext = SportConnectTheme.extendedColors
@@ -459,9 +620,10 @@ fun NotificationsScreen(
             return@Scaffold
         }
         val unreadLabel = stringResource(Res.string.notifications_unread_label)
-        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
+        SCPullToRefresh(onRefresh, Modifier.fillMaxSize().padding(padding)) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             LazyColumn(Modifier.widthIn(max = 640.dp).fillMaxSize()) {
-                state.items.groupBy { PtBrFormat.relativeDay(PtBrFormat.date(it.em), PtBrFormat.date(state.now)) }.forEach { (day, items) ->
+                state.items.groupBy { PtBrFormat.relativeDayLabel(PtBrFormat.date(it.em), PtBrFormat.date(state.now)) }.forEach { (day, items) ->
                     item(key = "d$day") { SectionHeader(day.replaceFirstChar { it.uppercase() }, Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp)) }
                     items(items, key = { it.id }) { a ->
                         val (icon, bg, fg) = when (a.tipo) {
@@ -506,5 +668,109 @@ fun NotificationsScreen(
                 }
             }
         }
+    }
+        }
+}
+
+/** E6/US-053: pedido -> em andamento -> concluido, com o prazo do metodo e o atalho para o suporte. */
+@Composable
+private fun RefundTimeline(p: MeuPagamento, refund: RefundUi, onHelp: () -> Unit, onInformPixKey: (String) -> Unit) {
+    val c = SportConnectTheme.colors
+    val ext = SportConnectTheme.extendedColors
+    val t = MaterialTheme.typography
+    val value = (if (p.jogo.status == StatusReserva.CANCELADO) p.total else p.valorCota).format()
+    Column(
+        Modifier.fillMaxWidth().background(c.surfaceContainerLow, MaterialTheme.shapes.large).padding(16.dp).testTag("receipt_refund"),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(stringResource(Res.string.refund_title), style = t.titleMedium, color = c.onSurface, modifier = Modifier.semantics { heading() })
+        if (refund.failed) {
+            // T6 (13): a conta de origem (cartao) recusou a devolucao -> pede uma chave Pix para concluir.
+            RefundFailed(onInformPixKey)
+            return@Column
+        }
+        RefundStep(stringResource(Res.string.refund_requested, value), done = true, current = false)
+        RefundStep(stringResource(Res.string.refund_status_processing), done = refund.done, current = !refund.done)
+        RefundStep(
+            if (refund.done) stringResource(Res.string.refund_done, value, refund.doneAt?.let { PtBrFormat.dateTime(it) } ?: stringResource(Res.string.refund_status_done))
+            else stringResource(Res.string.refund_status_done),
+            done = refund.done,
+            current = false,
+        )
+        Text(
+            stringResource(if (p.metodo == MetodoPagamento.CARTAO) Res.string.refund_card_eta else Res.string.refund_pix_eta),
+            style = t.bodyMedium, color = c.onSurfaceVariant,
+        )
+        if (p.jogo.status == StatusReserva.CANCELADO) {
+            Text(stringResource(Res.string.refund_fee_note), style = t.bodySmall, color = c.onSurfaceVariant)
+        }
+        SCButton(stringResource(Res.string.refund_help), onHelp, variant = SCButtonVariant.Text, modifier = Modifier.scAlignTextButtonStart().testTag("refund_help"))
+    }
+}
+
+/** T6 (13): error_refund_failed_* com a acao de informar a chave Pix para concluir o reembolso. */
+@Composable
+private fun RefundFailed(onInformPixKey: (String) -> Unit) {
+    val c = SportConnectTheme.colors
+    val t = MaterialTheme.typography
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    Row(
+        Modifier.fillMaxWidth().background(c.errorContainer, MaterialTheme.shapes.medium).padding(16.dp).testTag("receipt_refund_failed"),
+    ) {
+        Icon(Icons.Rounded.ErrorOutline, null, tint = c.onErrorContainer, modifier = Modifier.size(20.dp).padding(top = 2.dp))
+        Spacer(Modifier.width(12.dp))
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(stringResource(Res.string.error_refund_failed_title), style = t.titleSmall, color = c.onErrorContainer)
+            Text(stringResource(Res.string.error_refund_failed_body), style = t.bodyMedium, color = c.onErrorContainer)
+            SCButton(
+                stringResource(Res.string.error_refund_failed_action),
+                { showDialog = true },
+                variant = SCButtonVariant.Text,
+                modifier = Modifier.scAlignTextButtonStart().testTag("refund_inform_pix_key"),
+            )
+        }
+    }
+    if (showDialog) {
+        PixKeyDialog(onDismiss = { showDialog = false }, onSubmit = { key -> showDialog = false; onInformPixKey(key) })
+    }
+}
+
+@Composable
+private fun PixKeyDialog(onDismiss: () -> Unit, onSubmit: (String) -> Unit) {
+    var key by rememberSaveable { mutableStateOf("") }
+    var showErrors by rememberSaveable { mutableStateOf(false) }
+    val invalid = !isValidPixKey(key)
+    SCDialog(
+        title = stringResource(Res.string.error_refund_failed_action),
+        onDismissRequest = onDismiss,
+        confirm = SCAction(stringResource(Res.string.refund_pix_key_submit), { if (invalid) showErrors = true else onSubmit(key.trim()) }),
+        dismiss = SCAction(stringResource(Res.string.common_cancel), onDismiss),
+        modifier = Modifier.testTag("refund_pix_key_dialog"),
+        content = {
+            SCTextField(
+                key, { key = it }, stringResource(Res.string.refund_pix_key_field), Modifier.fillMaxWidth(),
+                errorText = if (showErrors && invalid) stringResource(Res.string.error_pix_key_invalid_body) else null,
+            )
+        },
+    )
+}
+
+@Composable
+private fun RefundStep(text: String, done: Boolean, current: Boolean) {
+    val c = SportConnectTheme.colors
+    val ext = SportConnectTheme.extendedColors
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            when {
+                done -> Icons.Rounded.CheckCircle
+                current -> Icons.Rounded.Schedule
+                else -> Icons.Rounded.RadioButtonUnchecked
+            },
+            null,
+            tint = if (done) ext.success else if (current) c.primary else c.outline,
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.width(12.dp))
+        Text(text, style = MaterialTheme.typography.bodyMedium, color = if (done || current) c.onSurface else c.onSurfaceVariant)
     }
 }

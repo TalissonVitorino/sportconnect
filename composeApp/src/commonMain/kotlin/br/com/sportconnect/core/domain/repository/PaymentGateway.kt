@@ -31,6 +31,8 @@ data class SolicitacaoCobranca(
     val expiraEm: Instant,
     /** Cobertura do organizador (RN-14) — confirma toda a janela, nao uma cota. */
     val cobertura: Boolean = false,
+    /** T8 (13/US-111, RN-26): id da cota PAGA sendo substituida; a confirmacao chama [WaitlistManager.substituir]. */
+    val substituicaoCotaId: String? = null,
 )
 
 /** Notificacao assincrona do gateway (webhook). */
@@ -44,6 +46,7 @@ data class WebhookPagamento(
     val status: StatusPagamento,
     val em: Instant,
     val cobertura: Boolean = false,
+    val substituicaoCotaId: String? = null,
 )
 
 interface PaymentGateway {
@@ -56,8 +59,14 @@ interface PaymentGateway {
     fun observePagamento(id: String): Flow<Pagamento?>
     suspend fun pagamento(id: String): Pagamento?
 
-    /** Solicita estorno (RN-25); o pagamento passa por ESTORNO_EM_PROCESSAMENTO -> ESTORNADO. */
+    /**
+     * Solicita estorno (RN-25); o pagamento passa por ESTORNO_EM_PROCESSAMENTO -> ESTORNADO.
+     * T6 (13): no cartao, a conta de origem pode recusar a devolucao -> ESTORNO_FALHOU.
+     */
     suspend fun estornar(pagamentoId: String, valor: Money)
+
+    /** T6 (13): depois de um ESTORNO_FALHOU, tenta de novo enviando o reembolso para uma chave Pix. */
+    suspend fun informarChavePixReembolso(pagamentoId: String, chave: String)
 
     /** Apenas para demo/teste: forca a confirmacao imediata (simula o webhook). */
     suspend fun simularConfirmacao(pagamentoId: String)

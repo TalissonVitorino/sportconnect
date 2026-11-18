@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -84,6 +85,8 @@ fun SCSplitProgress(
     total: Money? = null,
     variant: SCSplitProgressVariant = SCSplitProgressVariant.Full,
     showLegend: Boolean = variant == SCSplitProgressVariant.Full,
+    /** false = so a barra (o rotulo "x de y cotas pagas" ja aparece em outro lugar, ex.: selo do card). */
+    showLabel: Boolean = true,
     expired: Boolean = false,
     onCompleteAnimationEnd: (() -> Unit)? = null,
 ) {
@@ -109,11 +112,12 @@ fun SCSplitProgress(
         wasComplete = complete
     }
 
-    val stripePhase = if (processing > 0 && !reduced) {
+    // A fase das listras e lida so dentro do Canvas (fase de desenho): animar nao recompoe o componente.
+    val stripePhaseState: State<Float>? = if (processing > 0 && !reduced) {
         val inf = rememberInfiniteTransition(label = "split-stripes")
-        inf.animateFloat(0f, 1f, infiniteRepeatable(tween(SCMotion.ShimmerCycle, easing = LinearEasing), RepeatMode.Restart), label = "phase").value
+        inf.animateFloat(0f, 1f, infiniteRepeatable(tween(SCMotion.ShimmerCycle, easing = LinearEasing), RepeatMode.Restart), label = "phase")
     } else {
-        0f
+        null
     }
 
     val a11y = buildString {
@@ -144,7 +148,9 @@ fun SCSplitProgress(
     ) {
         // DS-PATCH (10 §6.3 / I13): rotulo do 07 `split_progress` ("8 de 12 cotas pagas"); no Full os numeros vao em numericScore.
         val label = stringResource(Res.string.split_progress, paid, totalShares)
-        if (compact) {
+        if (compact && !showLabel) {
+            // So a barra; a leitura de acessibilidade (a11y) continua com a contagem completa.
+        } else if (compact) {
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(label, style = t.titleSmall, color = c.onSurface)
                 if (collected != null && total != null) {
@@ -174,7 +180,7 @@ fun SCSplitProgress(
             if (effectiveVariant == SCSplitProgressVariant.Continuous) {
                 drawContinuous(n, paid, processing, covered, segColors)
             } else {
-                drawSegments(n, paid, processing, covered, refunded, segColors, stripePhase, expired)
+                drawSegments(n, paid, processing, covered, refunded, segColors, stripePhaseState?.value ?: 0f, expired)
             }
         }
         if (showLegend && !compact) {

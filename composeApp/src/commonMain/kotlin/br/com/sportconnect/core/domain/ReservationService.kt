@@ -179,6 +179,20 @@ class ReservationService(
                     AnalyticsEvents.PAGAMENTO_CONFIRMADO,
                     mapOf("pagamento_id" to w.pagamentoId, "metodo" to w.metodo.name.lowercase()),
                 )
+                if (w.substituicaoCotaId != null) {
+                    // T8 (13/US-111): o pagamento do substituto fecha a troca (RN-26) e devolve o dinheiro de quem saiu.
+                    return@withLock runCatching {
+                        val original = jogo.reserva.cotas.firstOrNull { it.id == w.substituicaoCotaId }
+                        val resultado = waitlistManager.substituir(jogo, w.substituicaoCotaId, w.pagadorId, w.pagadorNome, w.em, w.metodo, w.pagamentoId)
+                        val salvo = games.update(jogo.id) { resultado.jogo } ?: resultado.jogo
+                        original?.pagamentoId?.let { gateway.estornar(it, resultado.reembolso.total) }
+                        analytics.track(
+                            AnalyticsEvents.REEMBOLSO_SOLICITADO,
+                            mapOf("pagamento_id" to (original?.pagamentoId ?: ""), "motivo" to SituacaoReembolso.SUBSTITUICAO.analytics, "taxa_devolvida" to false),
+                        )
+                        salvo
+                    }
+                }
                 val eventos = when {
                     w.cobertura -> listOf(EventoReserva.CoberturaPaga(w.em, w.pagamentoId))
                     jogo.status == StatusReserva.RASCUNHO -> {
