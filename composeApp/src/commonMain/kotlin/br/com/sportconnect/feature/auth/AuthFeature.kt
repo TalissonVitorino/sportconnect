@@ -2,6 +2,8 @@
 
 package br.com.sportconnect.feature.auth
 
+import br.com.sportconnect.core.designsystem.component.SCInlineLink
+import br.com.sportconnect.core.designsystem.component.SCInlineLinks
 import br.com.sportconnect.resources.common_or
 import br.com.sportconnect.resources.auth_apple
 import br.com.sportconnect.resources.auth_google
@@ -74,14 +76,9 @@ import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -595,26 +592,17 @@ private fun NameStep(
     }
 }
 
-/** "Ao continuar, voce concorda com os Termos de Uso e a Politica de Privacidade." com os dois links. */
+/** "Ao continuar, voce concorda com os Termos de Uso e a Politica de Privacidade." com os dois links (A3). */
 @Composable
 private fun TermsText(onOpenLegal: (LegalDoc) -> Unit) {
-    val c = SportConnectTheme.colors
-    val full = stringResource(Res.string.auth_terms)
-    val termsLabel = stringResource(Res.string.auth_terms_link_terms)
-    val privacyLabel = stringResource(Res.string.auth_terms_link_privacy)
-    val linkStyle = TextLinkStyles(SpanStyle(color = c.primary, textDecoration = TextDecoration.Underline))
-    val text = remember(full, termsLabel, privacyLabel, linkStyle) {
-        buildAnnotatedString {
-            append(full)
-            listOf(termsLabel to LegalDoc.Terms, privacyLabel to LegalDoc.Privacy).forEach { (label, doc) ->
-                val start = full.indexOf(label)
-                if (start >= 0) {
-                    addLink(LinkAnnotation.Clickable(doc.name, linkStyle) { onOpenLegal(doc) }, start, start + label.length)
-                }
-            }
-        }
-    }
-    Text(text, style = MaterialTheme.typography.bodySmall, color = c.onSurfaceVariant, modifier = Modifier.testTag("auth_terms"))
+    SCInlineLinks(
+        text = stringResource(Res.string.auth_terms),
+        links = listOf(
+            SCInlineLink(stringResource(Res.string.auth_terms_link_terms)) { onOpenLegal(LegalDoc.Terms) },
+            SCInlineLink(stringResource(Res.string.auth_terms_link_privacy)) { onOpenLegal(LegalDoc.Privacy) },
+        ),
+        modifier = Modifier.testTag("auth_terms"),
+    )
 }
 
 @Composable

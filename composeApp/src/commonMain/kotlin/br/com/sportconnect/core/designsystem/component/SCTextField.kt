@@ -153,7 +153,8 @@ fun SCTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .semantics {
-                    contentDescription = label
+                    // A3: campo sem rotulo visivel (busca) usa o placeholder como nome.
+                    contentDescription = label.ifBlank { placeholder.orEmpty() }
                     if (isError) {
                         error(errorText)
                     }
