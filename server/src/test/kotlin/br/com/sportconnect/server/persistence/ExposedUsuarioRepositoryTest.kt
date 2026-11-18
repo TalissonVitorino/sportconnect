@@ -65,4 +65,13 @@ class ExposedUsuarioRepositoryTest {
     fun busca_por_celular_inexistente_devolve_null() = runBlocking {
         assertNull(repo.buscarPorCelular("+5511900000000"))
     }
+
+    // Finding 4 (review final): um `usuarioId` sintaticamente invalido (nao-UUID) nao pode
+    // propagar `IllegalArgumentException` de `UUID.fromString` - isso virava um 500 ERRO_INTERNO
+    // sem controle em `GET /me`. Um id malformado simplesmente "nao e encontrado", igual a um UUID
+    // valido sem linha correspondente.
+    @Test
+    fun busca_por_id_malformado_devolve_null_em_vez_de_lancar() = runBlocking {
+        assertNull(repo.buscarPorId("nao-e-uuid"))
+    }
 }

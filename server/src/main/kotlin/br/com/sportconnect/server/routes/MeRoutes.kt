@@ -33,9 +33,14 @@ fun Route.meRoutes(usuarios: UsuarioRepository) {
             }
             val usuario = usuarios.buscarPorId(usuarioId)
             if (usuario == null) {
+                // Não inventa um código de erro novo (ex.: "USUARIO_NAO_ENCONTRADO") fora do
+                // catálogo (docs/15 §12, regra de docs/14 §5): um token com assinatura/issuer/tipo
+                // válidos cujo usuarioId não resolve mais (usuário deletado/anonimizado via LGPD,
+                // ou claim malformada) é tratado como a mesma sessão inválida do caso "sem token" -
+                // o cliente só sabe reagir ao 401 NAO_AUTENTICADO universal.
                 call.respond(
-                    HttpStatusCode.NotFound,
-                    ErroEnvelope(ErroCorpo(codigo = "USUARIO_NAO_ENCONTRADO", mensagem = "Usuario nao encontrado.")),
+                    CatalogoErros.statusPara("NAO_AUTENTICADO"),
+                    ErroEnvelope(ErroCorpo(codigo = "NAO_AUTENTICADO", mensagem = "Token sem usuario correspondente.")),
                 )
                 return@get
             }

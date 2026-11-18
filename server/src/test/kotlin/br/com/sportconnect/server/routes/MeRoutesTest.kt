@@ -159,4 +159,22 @@ class MeRoutesTest {
         assertEquals(HttpStatusCode.Unauthorized, resposta.status)
         assertTrue(resposta.bodyAsText().contains("NAO_AUTENTICADO"))
     }
+
+    // Findings 3 e 4 (review final): um JWT de acesso valido (assinatura/emissor/tipo OK, nao
+    // expirado) cujo `usuarioId` nao existe em `usuarios` - usuario deletado/anonimizado via LGPD
+    // enquanto o token ainda era tecnicamente valido - nao pode inventar um codigo de erro novo
+    // (`USUARIO_NAO_ENCONTRADO`, 404) que nao existe no catalogo (docs/15 §12). O cliente so sabe
+    // tratar o 401 NAO_AUTENTICADO universal para "esta sessao nao e mais valida".
+    @Test
+    fun me_com_usuario_id_inexistente_devolve_401_nao_autenticado() = testApplication {
+        application { module(config) }
+        val tokenService = TokenService(config)
+        val usuarioIdInexistente = java.util.UUID.randomUUID().toString()
+        val acesso = tokenService.emitirAcesso(usuarioIdInexistente)
+
+        val resposta = client.get("/me") { header(HttpHeaders.Authorization, "Bearer $acesso") }
+
+        assertEquals(HttpStatusCode.Unauthorized, resposta.status)
+        assertTrue(resposta.bodyAsText().contains("NAO_AUTENTICADO"))
+    }
 }

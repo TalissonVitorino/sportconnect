@@ -24,9 +24,18 @@ class ExposedUsuarioRepository(private val db: Database) : UsuarioRepository {
     }
 
     override suspend fun buscarPorId(id: String): Usuario? = withContext(Dispatchers.IO) {
+        // Um `id` sintaticamente inválido (não-UUID) não deve propagar `IllegalArgumentException`
+        // de `UUID.fromString` — isso viraria um 500 sem controle em `GET /me` (Finding 4 do
+        // review final). Trata como "não encontrado", igual a um UUID válido sem linha
+        // correspondente.
+        val uuid = try {
+            UUID.fromString(id)
+        } catch (_: IllegalArgumentException) {
+            return@withContext null
+        }
         transaction(db) {
             UsuariosTable.selectAll()
-                .where { UsuariosTable.id eq UUID.fromString(id) }
+                .where { UsuariosTable.id eq uuid }
                 .map(::paraUsuario)
                 .singleOrNull()
         }

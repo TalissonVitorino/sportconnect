@@ -162,4 +162,63 @@ class AuthRoutesTest {
         assertTrue(corpoQuinta.contains("TOO_MANY_ATTEMPTS"))
         assertTrue(corpoQuinta.contains("tentarApos"))
     }
+
+    // Finding 1 (review final): corpo mal formado deve virar 4xx/VALIDATION_ERROR, nunca 500.
+    // `call.receive<T>()` lança `BadRequestException` (campo obrigatorio ausente, JSON invalido)
+    // ou `UnsupportedMediaTypeException` (sem Content-Type) — sem handler dedicado em
+    // `TratamentoDeErros.kt`, essas exceptions caiam no catch-all `Throwable` e voltavam 500.
+
+    @Test
+    fun otp_com_campo_obrigatorio_ausente_devolve_validation_error_nao_500() = testApplication {
+        application { module(config) }
+
+        val resposta = client.post("/auth/otp") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"canal":"SMS"}""")
+        }
+
+        assertTrue(resposta.status.value in 400..499, "esperado 4xx, foi ${resposta.status}")
+        assertEquals(HttpStatusCode.UnprocessableEntity, resposta.status)
+        assertTrue(resposta.bodyAsText().contains("VALIDATION_ERROR"))
+    }
+
+    @Test
+    fun otp_com_json_invalido_devolve_validation_error_nao_500() = testApplication {
+        application { module(config) }
+
+        val resposta = client.post("/auth/otp") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"celular": "+5511988887777", """) // JSON truncado/invalido
+        }
+
+        assertTrue(resposta.status.value in 400..499, "esperado 4xx, foi ${resposta.status}")
+        assertEquals(HttpStatusCode.UnprocessableEntity, resposta.status)
+        assertTrue(resposta.bodyAsText().contains("VALIDATION_ERROR"))
+    }
+
+    @Test
+    fun otp_sem_content_type_devolve_validation_error_nao_500() = testApplication {
+        application { module(config) }
+
+        val resposta = client.post("/auth/otp") {
+            setBody(corpoOtp("+5511988887777"))
+        }
+
+        assertTrue(resposta.status.value in 400..499, "esperado 4xx, foi ${resposta.status}")
+        assertTrue(resposta.bodyAsText().contains("VALIDATION_ERROR"))
+    }
+
+    @Test
+    fun confirmar_sem_codigo_devolve_validation_error_nao_500() = testApplication {
+        application { module(config) }
+
+        val resposta = client.post("/auth/otp/confirmar") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"celular":"+5511988887777"}""")
+        }
+
+        assertTrue(resposta.status.value in 400..499, "esperado 4xx, foi ${resposta.status}")
+        assertEquals(HttpStatusCode.UnprocessableEntity, resposta.status)
+        assertTrue(resposta.bodyAsText().contains("VALIDATION_ERROR"))
+    }
 }
