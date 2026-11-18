@@ -25,7 +25,7 @@
 | `nome` | text | não | |
 | `celular` | text | não | único — é o identificador de login (E.164) |
 | `email` | text | sim | |
-| `cpf` | text | sim | só quando o gateway exigir (03 Q-01, ainda aberta) |
+| `cpf` | text | sim | exigido pelo Asaas (gateway escolhido) antes de qualquer cobrança — ver [03 Q-01](03-product-design-prd.md#15-questões-em-aberto) e [ADR — 17](17-adr-gateway-pagamento.md#resposta-à-q-01--cpf-obrigatório-é-regra-do-banco-central-ou-política-do-gateway) |
 | `celular_verificado` | boolean | não | default `true` (verificado no próprio OTP de cadastro) |
 | `papeis` | `papel_usuario[]` | não | enum `ATLETA, ORGANIZADOR, GESTOR_ARENA, OPERADOR_ARENA`; default `{ATLETA}` |
 | `arena_id` | uuid → `arenas.id` | sim | só relevante para `GESTOR_ARENA`/`OPERADOR_ARENA` |

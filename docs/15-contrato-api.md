@@ -284,7 +284,7 @@ Depois de um estorno recusado pelo cartão (`status == "ESTORNO_FALHOU"`), reenv
 
 ## 9. Webhooks (gateway → backend)
 
-O backend assina webhooks do PSP (Asaas/Pagar.me/Mercado Pago — [03 Q-02](03-product-design-prd.md#15-questões-em-aberto), ainda em aberto) e os traduz para o formato interno que `ReservationService.onWebhook` já consome:
+O backend assina webhooks do PSP (**Asaas**, decidido no [ADR — 17](17-adr-gateway-pagamento.md); ver [03 Q-02](03-product-design-prd.md#15-questões-em-aberto)) e os traduz para o formato interno que `ReservationService.onWebhook` já consome:
 
 ```json
 {
